@@ -72,6 +72,7 @@ const EventForm: FC<{ details?: Events }> = ({ details }) => {
         ? dayjs(new Date())
         : dayjs(eventDetail?.registrationEndDate),
   });
+  console.log(DateInfo);
 
   const onChangeDateInfo = (date: Dayjs, type: string) => {
     switch (type) {
@@ -493,7 +494,7 @@ const EventForm: FC<{ details?: Events }> = ({ details }) => {
             <Flex align="center" gap={40}>
               <DatePicker
                 disabledDate={disabledDate}
-                defaultValue={DateInfo.startDate}
+                value={DateInfo.startDate}
                 format={"YY/MM/DD"}
                 style={{ width: 170 }}
                 onChange={(value) => {
@@ -525,7 +526,7 @@ const EventForm: FC<{ details?: Events }> = ({ details }) => {
           >
             <Flex align="center" gap={40}>
               <DatePicker
-                defaultValue={DateInfo.endDate}
+                value={DateInfo.endDate}
                 disabledDate={disabledEndDate}
                 format={"YY/MM/DD"}
                 style={{ width: 170 }}
@@ -600,7 +601,7 @@ const EventForm: FC<{ details?: Events }> = ({ details }) => {
           >
             <Space size={40}>
               <DatePicker
-                defaultValue={DateInfo.registrationEndDate}
+                value={DateInfo.registrationEndDate}
                 disabledDate={enableRegistrationDate}
                 format={"YY/MM/DD"}
                 style={{ width: 170 }}
