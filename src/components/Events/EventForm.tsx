@@ -32,6 +32,7 @@ import { certificateConfig } from "@/lib/certificatesConfig";
 import dayjs, { Dayjs } from "dayjs";
 import { RangePickerProps } from "antd/es/date-picker";
 import moment from "moment";
+import EventTime from "./EventTime";
 
 const EventForm: FC<{ details?: Events }> = ({ details }) => {
   const [messageApi, contextHolder] = message.useMessage();
@@ -46,18 +47,31 @@ const EventForm: FC<{ details?: Events }> = ({ details }) => {
     publish: false,
   });
 
+  // const [timeRange, setTimeRange] = useState<{
+  //   startTime: Dayjs;
+  //   endTime: Dayjs;
+  //   registrationEndTime: Dayjs;
+  // }>({
+  //   startTime: !eventDetail?.startTime ? roundToNearestStep(dayjs(new Date()), 30) : dayjs(eventDetail?.startTime),
+  //   endTime: !eventDetail?.endTime
+  //     ? dayjs(roundToNearestStep(dayjs(new Date()), 30)).add(60, "minute")
+  //     : dayjs(eventDetail?.endTime),
+  //   registrationEndTime: !eventDetail?.registrationEndDate
+  //     ? roundToNearestStep(dayjs(new Date()), 30)
+  //     : dayjs(eventDetail?.registrationEndDate),
+  // });
   const [timeRange, setTimeRange] = useState<{
-    startTime: Dayjs;
-    endTime: Dayjs;
-    registrationEndTime: Dayjs;
+    startTime: number;
+    endTime: number;
+    registrationEndTime: number;
   }>({
-    startTime: !eventDetail?.startTime ? roundToNearestStep(dayjs(new Date()), 30) : dayjs(eventDetail?.startTime),
-    endTime: !eventDetail?.endTime
-      ? dayjs(roundToNearestStep(dayjs(new Date()), 30)).add(60, "minute")
-      : dayjs(eventDetail?.endTime),
+    startTime: !eventDetail?.startTime
+      ? new Date().getHours() * 60 + 30
+      : new Date(eventDetail.startTime).getHours() * 60,
+    endTime: !eventDetail?.endTime ? new Date().getHours() * 60 + 90 : new Date(eventDetail.endTime).getHours() * 60,
     registrationEndTime: !eventDetail?.registrationEndDate
-      ? roundToNearestStep(dayjs(new Date()), 30)
-      : dayjs(eventDetail?.registrationEndDate),
+      ? new Date().getHours() * 60
+      : new Date(eventDetail.registrationEndDate).getHours() * 60,
   });
 
   const [DateInfo, setDateInfo] = useState<{
@@ -72,7 +86,6 @@ const EventForm: FC<{ details?: Events }> = ({ details }) => {
         ? dayjs(new Date())
         : dayjs(eventDetail?.registrationEndDate),
   });
-  console.log(DateInfo);
 
   const onChangeDateInfo = (date: Dayjs, type: string) => {
     switch (type) {
@@ -103,13 +116,38 @@ const EventForm: FC<{ details?: Events }> = ({ details }) => {
     }
   };
 
-  const onChangeTimeRange = (time: Dayjs, type: string) => {
+  // const onChangeTimeRange = (time: Dayjs, type: string) => {
+  //   switch (type) {
+  //     case "start":
+  //       return setTimeRange({
+  //         ...timeRange,
+  //         startTime: time,
+  //         endTime: time.add(60, "minute"),
+  //         registrationEndTime: time,
+  //       });
+  //     case "end":
+  //       return setTimeRange({
+  //         ...timeRange,
+  //         endTime: time,
+  //       });
+
+  //     case "registration":
+  //       return setTimeRange({
+  //         ...timeRange,
+  //         registrationEndTime: time,
+  //       });
+  //     default:
+  //       break;
+  //   }
+  // };
+
+  const onChangeTimeRange = (time: number, type: string) => {
+    console.log(time, type, "this is");
     switch (type) {
       case "start":
         return setTimeRange({
-          ...timeRange,
           startTime: time,
-          endTime: time.add(60, "minute"),
+          endTime: time + 60,
           registrationEndTime: time,
         });
       case "end":
@@ -127,7 +165,6 @@ const EventForm: FC<{ details?: Events }> = ({ details }) => {
         break;
     }
   };
-
   let eventTypeList = [EventType.WORKSHOP, EventType.TALK];
   let eventModeList = [EventMode.OFFLINE, EventMode.ONLINE];
 
@@ -202,11 +239,20 @@ const EventForm: FC<{ details?: Events }> = ({ details }) => {
     }
   };
 
-  const joinDateAndTime = (date: Dayjs, time: Dayjs) => {
-    const combinedDateTime = date.hour(time.hour()).minute(time.minute()).second(time.second());
+  const joinDateAndTime = (date: Dayjs, minutes: number) => {
+    // const combinedDateTime = date.hour(time.hour()).minute(time.minute()).second(time.second());
 
-    const formattedDateTime = combinedDateTime.toDate();
-    return formattedDateTime;
+    // const formattedDateTime = combinedDateTime.toDate();
+    // return formattedDateTime;
+
+    const timeFromMinutes = dayjs().startOf("day").add(minutes, "minute");
+
+    const combinedDateTime = date
+      .hour(timeFromMinutes.hour())
+      .minute(timeFromMinutes.minute())
+      .second(timeFromMinutes.second());
+
+    return combinedDateTime.toDate();
   };
 
   const onPostEvent = (state: StateType, exit?: boolean) => {
@@ -495,13 +541,13 @@ const EventForm: FC<{ details?: Events }> = ({ details }) => {
               <DatePicker
                 disabledDate={disabledDate}
                 value={DateInfo.startDate}
-                format={"YY/MM/DD"}
+                format={"DD/MM/YY"}
                 style={{ width: 170 }}
                 onChange={(value) => {
                   value && onChangeDateInfo(value, "start");
                 }}
               />
-              <TimePicker
+              {/* <TimePicker
                 hourStep={1}
                 minuteStep={30}
                 onOk={(value) => {
@@ -510,6 +556,12 @@ const EventForm: FC<{ details?: Events }> = ({ details }) => {
                 format="hh:mm"
                 value={timeRange.startTime}
                 style={{ width: 100 }}
+              /> */}
+              {/* <EventTime currentHour={new Date().getHours()} currentMin={new Date().getMinutes()} /> */}
+              <EventTime
+                min={router.query.id ? timeRange.startTime : new Date().getHours() * 60}
+                onChangeTimeRange={onChangeTimeRange}
+                type="start"
               />
             </Flex>
           </Form.Item>
@@ -528,13 +580,13 @@ const EventForm: FC<{ details?: Events }> = ({ details }) => {
               <DatePicker
                 value={DateInfo.endDate}
                 disabledDate={disabledEndDate}
-                format={"YY/MM/DD"}
+                format={"DD/MM/YY"}
                 style={{ width: 170 }}
                 onChange={(value) => {
                   value && onChangeDateInfo(value, "end");
                 }}
               />
-              <TimePicker
+              {/* <TimePicker
                 hourStep={1}
                 minuteStep={30}
                 format="hh:mm"
@@ -543,6 +595,12 @@ const EventForm: FC<{ details?: Events }> = ({ details }) => {
                 }}
                 value={timeRange.endTime}
                 style={{ width: 100 }}
+              /> */}
+              {/* <EventTime currentHour={new Date().getHours()} currentMin={new Date().getMinutes()} /> */}
+              <EventTime
+                min={router.query.id ? timeRange.endTime : new Date().getHours() * 60}
+                onChangeTimeRange={onChangeTimeRange}
+                type="end"
               />
             </Flex>
           </Form.Item>
@@ -603,13 +661,13 @@ const EventForm: FC<{ details?: Events }> = ({ details }) => {
               <DatePicker
                 value={DateInfo.registrationEndDate}
                 disabledDate={enableRegistrationDate}
-                format={"YY/MM/DD"}
+                format={"DD/MM/YY"}
                 style={{ width: 170 }}
                 onChange={(value) => {
                   value && onChangeDateInfo(value, "registration");
                 }}
               />
-              <TimePicker
+              {/* <TimePicker
                 hourStep={1}
                 minuteStep={30}
                 format="hh:mm"
@@ -618,7 +676,7 @@ const EventForm: FC<{ details?: Events }> = ({ details }) => {
                   onChangeTimeRange(value, "registration");
                 }}
                 style={{ width: 100 }}
-              />
+              /> */}
             </Space>
           </Form.Item>
 
