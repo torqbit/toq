@@ -1,24 +1,30 @@
 <br /><br />
 
 <p align="center">
-<a href="https://torqbit.com/torqbit">
-  <img src="https://cdn.torqbit.com/static/torq.png" alt="Torq Logo" width="180">
-</a>
+  <a href="https://www.torqbit.com">
+    <img src="https://cdn.torqbit.com/static/torq.png"" width="100px" alt="Torqbit logo" />
+  </a>
+</p>
+<h2 align="center" >The Open-Source LMS </h3>
+<p align="center">Create unmatched learning experience for your students, employees and customers</p>
+
+<p align="center"><a href="https://torqbit.com">🌐 Website</a> · <a href="https://torqbit.com/docs">📚 Documentation</a> ·  <a href="https://discord.com/invite/DHU38pGw7C"><img src="./public/img/discord.png" width="15" height="15"/> Discord</a>
+
+<p align="center">
+  <a href="https://www.torqbit.com.com">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="./public/readme/torqbit-dark.png">
+      <source media="(prefers-color-scheme: light)" srcset="./public/readme/torqbit-light.png">
+      <img src="./public/readme/torqbit-os-hero.png" alt="Companies view" />
+    </picture>
+  </a>
 </p>
 
-<!-- <h3 align="center"><b>Torqbit</b></h3> -->
+<br>
 
-<p>
-    <a href="https://github.com/torqbit/torq" target="_blank">
-      <img
-        src="screenshots/screenshot-torq.png"
-        alt="Course management screen"
-        width="100%"
-      />
-    </a>
-</p>
+We've explored lot of options for selling courses and webinars. Most are proprietory like Kajabi, Podia, Teachable etc. But all of them had limited customization options, and thats why we started building Torqbit, to create a quality open source alternative to all of these platforms.
 
-The easiest way to get started with Torqbit is by installing in your local machine.
+⚠️ Torqbit is currently under active development. Expect a series of updates in the coming weeks.
 
 ## 🍙 Self Hosting
 
@@ -55,37 +61,34 @@ First need to add .env file with some credentials:
 
 ```bash
 # Next ENV
-NODE_ENV=development
-NEXT_PUBLIC_SECRET=uPijyPl163ihk570sksueTQrNMnKW4
-NEXTAUTH_URL=http://localhost:3000
-JWT_SECRET = uPijyPl163ihk570eXbQrNMnKW4
-NEXT_PUBLIC_APP_ENV=development
-
-# Admin details
-ADMIN_EMAIL=admin@email.com
-
-
-# DB Credentials
-DATABASE_URL="mysql://torqbit:passw0rd@0.0.0.0/torqdb"
-
-
-# Google Auth Credentials
-GOOGLE_ID=******************.apps.googleusercontent.com
-GOOGLE_SECRET=******************
-
-# GitHub Auth Credentials
-GITHUB_ID=******************
-GITHUB_SECRET=******************
+DATABASE_URL=****
+GOOGLE_ID=****
+GOOGLE_SECRET=****
+GITHUB_ID=****
+GITHUB_SECRET=****
+NEXT_PUBLIC_SECRET=****
+JWT_SECRET=****
+NEXTAUTH_URL="http://localhost:3000"
+ADMIN_EMAIL=****
+NEXT_PUBLIC_APP_ENV="development"
+NODE_ENV="production"
+CASHFREE_SECRET_KEY=****
+CASHFREE_CLIENT_ID=****
+GATEWAY_PROVIDER_NAME="CASHFREE"
+NEXT_SMTP_HOST="smtp.emailservice.com"
+NEXT_SMTP_USER="torqbit"
+NEXT_SMTP_PASSWORD=****
+MEDIA_UPLOAD_PATH=****
+INVOICE_UPLOAD_PATH=****
+FROM_SMTP_USER_EMAIL=****
+VERIFIED_EMAIL=****
+FROM_SMTP_SUPPORT_EMAIL=****
+NEXT_PUBLIC_NEXTAUTH_URL="http://localhost:3000"
+INVOICE_DIRECTORY=****
 
 ```
 
 ### Installing Packages
-
-Using npm:
-
-```bash
-$ npm install
-```
 
 Using yarn:
 
@@ -94,12 +97,6 @@ $ yarn install
 ```
 
 Then, you can run locally in development mode with live reload:
-
-Using npm:
-
-```bash
-$ npm dev
-```
 
 Using yarn:
 
