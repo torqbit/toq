@@ -13,8 +13,8 @@
 <p align="center">
   <a href="https://www.torqbit.com.com">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="./public/readme/torqbit-os-hero-dark.png">
-      <source media="(prefers-color-scheme: light)" srcset="./public/readme/torqbit-os-hero.png">
+      <source media="(prefers-color-scheme: dark)" srcset="./public/readme/torqbit-dark.png">
+      <source media="(prefers-color-scheme: light)" srcset="./public/readme/torqbit-light.png">
       <img src="./public/readme/torqbit-os-hero.png" alt="Companies view" />
     </picture>
   </a>
