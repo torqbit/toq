@@ -33,7 +33,7 @@ services:
           "CMD",
           "sh",
           "-c",
-          "mysqladmin -uroot -pMehrab@123 status && mysql -uroot -pMehrab@123 -e 'USE console; SHOW TABLES ; SELECT * FROM User;'",
+          "mysqladmin -utorqbit -ptorq@123 status && mysql -utorqbit -ptorq@123 -e 'USE console; SHOW TABLES ; SELECT * FROM User;'",
         ]
       interval: 30s
       timeout: 2s
@@ -42,8 +42,9 @@ services:
     ports:
       - "3306:3306"
     environment:
-      MYSQL_ROOT_PASSWORD: Mehrab@123
-      MYSQL_DATABASE: console
+      MYSQL_USER: torqbit
+      MYSQL_ROOT_PASSWORD: torq@123
+      MYSQL_DATABASE: torqbitdb
     volumes:
       - db-data:/var/lib/mysql
       - /c/Users/mehra/training/database_backup:/backups
