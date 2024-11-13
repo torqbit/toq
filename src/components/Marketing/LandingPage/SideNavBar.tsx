@@ -18,8 +18,8 @@ const SideNav: FC<{ isOpen: boolean; onAnchorClick: () => void }> = ({ isOpen, o
       href: "/#courses",
     },
     {
-      label: "Updates",
-      href: "/updates",
+      label: "Events",
+      href: "/events",
     },
     {
       label: "Blogs",

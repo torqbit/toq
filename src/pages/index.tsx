@@ -132,14 +132,7 @@ const LandingPage: FC<IProps> = ({ user }) => {
       courseTitle={`Learn to build software products | ${appConstant.platformName}`}
       user={user}
       heroSection={<Hero isMobile={isMobile} user={user} />}
-    >
-      <HeroImage isMobile={isMobile} />
-      <CourseCategory direction="ltr" category={courseCategoryFrontend} index={1} isMobile={isMobile} />
-      <CourseCategory direction="rtl" category={courseCategoryBackend} index={2} isMobile={isMobile} />
-      <CourseCategory direction="ltr" category={courseCategoryDevops} index={3} isMobile={isMobile} />
-      <About />
-      <GetStarted user={user} />
-    </MarketingLayout>
+    ></MarketingLayout>
   );
 };
 
