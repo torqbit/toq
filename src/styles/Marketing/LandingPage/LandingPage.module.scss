@@ -22,9 +22,14 @@
     background: var(--bg-header);
 
     justify-content: space-between;
-    padding: 5px 15px;
+    padding: 5px 35px;
 
     box-shadow: var(--box-shadow);
+    .link_wrapper {
+      display: flex;
+      align-items: center;
+      gap: 40px;
+    }
     .contact_button {
       width: 100%;
       padding: 0px 15px;
