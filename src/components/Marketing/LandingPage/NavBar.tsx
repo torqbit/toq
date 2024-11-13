@@ -2,7 +2,6 @@ import { FC, ReactElement, useEffect } from "react";
 import styles from "@/styles/Marketing/LandingPage/LandingPage.module.scss";
 import Image from "next/image";
 import { Button, Dropdown, Flex, MenuProps, Tooltip } from "antd";
-import appConstant from "@/services/appConstant";
 import Link from "next/link";
 import SvgIcons from "@/components/SvgIcons";
 import { useAppContext } from "@/components/ContextApi/AppContext";
@@ -51,20 +50,20 @@ const NavBar: FC<INavBarProps> = ({ user, items }): ReactElement => {
       <nav>
         <Link href={"/"} aria-label="Go back to landing page">
           <Flex align="center" gap={5}>
-            {typeof themeConfig.logo === "string" ? (
-              <Image src={themeConfig.logo} height={40} width={40} alt={"logo"} />
+            {typeof themeConfig?.brand?.logo === "string" ? (
+              <Image src={themeConfig.brand.logo} height={40} width={40} alt={"logo"} />
             ) : (
-              themeConfig.logo
+              themeConfig?.brand?.logo
             )}
-            <h1 className="font-brand">{themeConfig.platformName.toUpperCase()}</h1>
+            <h1 className="font-brand">{themeConfig?.brand?.name?.toUpperCase()}</h1>
           </Flex>
         </Link>
         <div className={styles.link_wrapper}>
-          {themeConfig.navigationLinks.length === 0 ? (
+          {items.length === 0 ? (
             <div></div>
           ) : (
             <ul>
-              {themeConfig.navigationLinks.map((navigation, i) => {
+              {items.map((navigation, i) => {
                 return (
                   <li key={i}>
                     <Link href={navigation.link} aria-label={`link to ${navigation.title} page`}>

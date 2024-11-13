@@ -1,12 +1,14 @@
-import { ReactNode } from "react";
+import { FC, ReactNode } from "react";
 import { INavBarProps } from "./courses/navbar";
 
 export interface ThemeSchema {
-  platformName: string;
-  navBar: {
-    component: React.FC<INavBarProps>;
+  navBar?: {
+    component?: React.FC<INavBarProps>;
+    navigationLinks?: { title: string; link: string }[];
   };
-  logo: ReactNode | string;
-  navigationLinks: { title: string; link: string }[];
-  darkMode: boolean;
+  brand?: {
+    logo?: ReactNode | string;
+    name?: string;
+  };
+  darkMode?: boolean;
 }

@@ -8,23 +8,27 @@ export type PageThemeConfig = ThemeSchema;
 export const DEFAULT_THEME: PageThemeConfig = {
   navBar: {
     component: NavBar,
+    navigationLinks: [
+      {
+        title: "Courses",
+        link: "/#courses",
+      },
+      {
+        title: "Events",
+        link: "/events",
+      },
+      {
+        title: "Blogs",
+        link: "/blogs",
+      },
+    ],
   },
-  platformName: "Torqbit",
-  logo: "/icon/torqbit.png",
-  navigationLinks: [
-    {
-      title: "Courses",
-      link: "/#courses",
-    },
-    {
-      title: "Events",
-      link: "/events",
-    },
-    {
-      title: "Blogs",
-      link: "/blogs",
-    },
-  ],
+
+  brand: {
+    name: "Torqbit",
+    logo: "/icon/torqbit.png",
+  },
+
   darkMode: false,
 };
 

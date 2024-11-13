@@ -14,6 +14,7 @@ import Image from "next/image";
 import appConstant from "@/services/appConstant";
 import Hamburger from "hamburger-react";
 import Footer from "../Marketing/LandingPage/Footer";
+import config from "../../theme.config";
 
 import { User } from "@prisma/client";
 import { ThemeConfigProvider, useThemeConfig } from "../ContextApi/ThemeConfigContext";
@@ -44,6 +45,7 @@ const MarketingLayout: FC<{
 
   let contentDescription = description ? description : "Learn, build and solve the problems that matters the most";
   let ogImage = thumbnail ? thumbnail : "https://torqbit-dev.b-cdn.net/website/img/torqbit-landing.png";
+  const customeConfig = { ...themeConfig, ...config };
 
   return (
     <>
@@ -64,7 +66,8 @@ const MarketingLayout: FC<{
           <SpinLoader className="marketing__spinner" />
         </div>
       }
-      <ThemeConfigProvider value={themeConfig}>
+
+      <ThemeConfigProvider value={customeConfig}>
         <ConfigProvider theme={globalState.theme == "dark" ? darkThemConfig : antThemeConfig}>
           <Head>
             <title>{courseTitle}</title>
@@ -81,13 +84,7 @@ const MarketingLayout: FC<{
           <section className={styles.heroWrapper}>
             <NavBar
               user={user}
-              items={[
-                {
-                  label: "",
-                  icon: "",
-                  href: "",
-                },
-              ]}
+              items={customeConfig.navBar?.navigationLinks ? customeConfig.navBar.navigationLinks : []}
             />
             <SideNav isOpen={showSideNav} onAnchorClick={onAnchorClick} />
             <Link href={"/"} className={styles.platformNameLogo}>
