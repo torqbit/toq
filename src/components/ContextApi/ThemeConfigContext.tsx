@@ -14,19 +14,7 @@ export function ThemeConfigProvider({
   children: ReactNode;
 }): ReactElement {
   const storeRef = useRef<PageThemeConfig>();
-  // storeRef.current ||= {
-  //   ...DEFAULT_THEME,
-  //   ...(value &&
-  //     Object.fromEntries(
-  //       Object.entries(value).map(([key, value]) => [
-  //         key,
-  //         value && typeof value === "object" && DEEP_OBJECT_KEYS.includes(key)
-  //           ? // @ts-expect-error -- key has always object value
-  //             { ...DEFAULT_THEME[key], ...value }
-  //           : value,
-  //       ])
-  //     )),
-  // };
+
   storeRef.current ||= {
     ...DEFAULT_THEME,
     ...(value &&

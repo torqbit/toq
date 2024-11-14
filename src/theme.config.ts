@@ -43,7 +43,7 @@ const config: PageThemeConfig = {
     banner: {
       lightPath: "/img/macbook-light.png",
       darkPath: "/img/macbook-dark.png",
-      align: "left",
+      align: "right",
     },
   },
 };
