@@ -41,10 +41,15 @@ const config: PageThemeConfig = {
       },
     },
     banner: {
-      lightPath: "/img/macbook-light.png",
-      darkPath: "/img/macbook-dark.png",
+      lightModePath: "/img/macbook-light.png",
+      darkModePath: "/img/macbook-dark.png",
       align: "right",
     },
+  },
+  footer: {
+    discordLink: "https://discord.gg/NserMXcx",
+    githubLink: "https://github.com/torqbit",
+    youtubeLink: "https://www.youtube.com/@torqbit",
   },
 };
 export default config;

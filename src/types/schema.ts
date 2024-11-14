@@ -26,9 +26,16 @@ export interface ThemeSchema {
       };
     };
     banner?: {
-      lightPath?: string;
-      darkPath?: string;
+      lightModePath?: string;
+      darkModePath?: string;
       align?: bannerAlignment;
     };
+  };
+  footer?: {
+    githubLink?: string;
+    youtubeLink?: string;
+    instagramLink?: string;
+    twitterLink?: string;
+    discordLink?: string;
   };
 }
