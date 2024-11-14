@@ -54,20 +54,6 @@ export const DEFAULT_THEME: PageThemeConfig = {
     discordLink: "https://discord.gg/NserMXcx",
     githubLink: "https://github.com/torqbit",
     youtubeLink: "https://www.youtube.com/@torqbit",
-    // socialLinks: [
-    //   {
-    //     icon: SvgIcons.discord,
-    //     link:,
-    //   },
-    //   {
-    //     icon: SvgIcons.github,
-    //     link: ,
-    //   },
-    //   {
-    //     icon: SvgIcons.youtube,
-    //     link: ,
-    //   },
-    // ],
   },
 };
 
