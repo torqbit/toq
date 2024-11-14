@@ -1,6 +1,4 @@
 import { FC, ReactElement, useEffect } from "react";
-// import styles from "@/components/Marketing/LandingPage/NavBar/NavBar.module.scss";
-import styles from "./NavBar.module.scss";
 import Image from "next/image";
 import { Button, Flex, Tooltip } from "antd";
 import Link from "next/link";
@@ -8,6 +6,7 @@ import SvgIcons from "@/components/SvgIcons";
 import { useAppContext } from "@/components/ContextApi/AppContext";
 import { INavBarProps } from "@/types/courses/navbar";
 import { useThemeConfig } from "@/components/ContextApi/ThemeConfigContext";
+import styles from "@/styles/Marketing/Navbar/NavBar.module.scss";
 
 const NavBar: FC<INavBarProps> = ({ user, items }): ReactElement => {
   const { dispatch, globalState } = useAppContext();
@@ -48,14 +47,14 @@ const NavBar: FC<INavBarProps> = ({ user, items }): ReactElement => {
   return (
     <div className={styles.navBarContainer}>
       <nav>
-        <Link href={"/"} aria-label="Go back to landing page">
-          <Flex align="center" gap={5}>
+        <Link href={"/"} aria-label='Go back to landing page'>
+          <Flex align='center' gap={5}>
             {typeof themeConfig?.brand?.logo === "string" ? (
               <Image src={themeConfig.brand.logo} height={40} width={40} alt={"logo"} />
             ) : (
               themeConfig?.brand?.logo
             )}
-            <h1 className="font-brand">{themeConfig?.brand?.name?.toUpperCase()}</h1>
+            <h1 className='font-brand'>{themeConfig?.brand?.name?.toUpperCase()}</h1>
           </Flex>
         </Link>
         <div className={styles.link_wrapper}>
@@ -74,15 +73,15 @@ const NavBar: FC<INavBarProps> = ({ user, items }): ReactElement => {
               })}
             </ul>
           )}
-          <Flex align="center" gap={20}>
+          <Flex align='center' gap={20}>
             {themeConfig.darkMode && (
               <Tooltip title={"Switch Theme"}>
                 <Button
-                  type="default"
-                  name="theme button"
-                  aria-label="Theme Switch"
+                  type='default'
+                  name='theme button'
+                  aria-label='Theme Switch'
                   className={styles.switchBtn}
-                  shape="circle"
+                  shape='circle'
                   onClick={() => {
                     onChangeTheme();
                   }}
@@ -91,8 +90,8 @@ const NavBar: FC<INavBarProps> = ({ user, items }): ReactElement => {
               </Tooltip>
             )}
 
-            <Link href={user ? `/dashboard` : `/login`} aria-label="Get started">
-              <Button type="primary">{user ? "Go to Dashboard" : "Get Started"}</Button>
+            <Link href={user ? `/dashboard` : `/login`} aria-label='Get started'>
+              <Button type='primary'>{user ? "Go to Dashboard" : "Get Started"}</Button>
             </Link>
           </Flex>
         </div>
