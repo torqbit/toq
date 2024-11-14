@@ -13,7 +13,7 @@ import NavBar from "../Marketing/LandingPage/NavBar/NavBar";
 import Image from "next/image";
 import appConstant from "@/services/appConstant";
 import Hamburger from "hamburger-react";
-import Footer from "../Marketing/LandingPage/Footer";
+import Footer from "../Marketing/LandingPage/Footer/Footer";
 import config from "../../theme.config";
 
 import { User } from "@prisma/client";
