@@ -1,14 +1,12 @@
 import React, { FC, useState } from "react";
-import styles from "./NavBar.module.scss";
 
 import Link from "next/link";
 import Image from "next/image";
-
 import { Button, Drawer, Flex, Tooltip } from "antd";
-import appConstant from "@/services/appConstant";
 import { useAppContext } from "@/components/ContextApi/AppContext";
 import SvgIcons from "@/components/SvgIcons";
 import { useThemeConfig } from "@/components/ContextApi/ThemeConfigContext";
+import styles from "./NavBar.module.scss";
 
 const SideNav: FC<{
   isOpen: boolean;
@@ -44,19 +42,19 @@ const SideNav: FC<{
         classNames={{ header: styles.drawerHeader }}
         title={
           <div className={styles.drawerTitle}>
-            <Link href={"/"} aria-label="Go back to landing page">
-              <Flex align="center" gap={5}>
-                <Image src={`${themeConfig.brand?.logo}`} height={40} width={40} alt={"logo"} loading="lazy" />
-                <h1 className="font-brand">{themeConfig.brand?.name?.toUpperCase()}</h1>
+            <Link href={"/"} aria-label='Go back to landing page'>
+              <Flex align='center' gap={5}>
+                <Image src={`${themeConfig.brand?.logo}`} height={40} width={40} alt={"logo"} loading='lazy' />
+                <h1 className='font-brand'>{themeConfig.brand?.name?.toUpperCase()}</h1>
               </Flex>
             </Link>
             {isOpen && themeConfig.darkMode && (
               <Tooltip title={""}>
                 <Button
-                  type="default"
-                  aria-label="Theme Switch"
+                  type='default'
+                  aria-label='Theme Switch'
                   className={styles.switchBtn}
-                  shape="circle"
+                  shape='circle'
                   onClick={() => {
                     onChangeTheme();
                   }}
@@ -66,20 +64,15 @@ const SideNav: FC<{
             )}
           </div>
         }
-        placement="left"
+        placement='left'
         width={300}
         closable={false}
         onClose={onAnchorClick}
-        open={isOpen}
-      >
+        open={isOpen}>
         <div className={styles.menuDrawer}>
           {items.map((item, i) => {
             return (
-              <div
-                key={i}
-                className={styles.drawerMenuItems}
-                onClick={() => item.title === "Courses" && onAnchorClick()}
-              >
+              <div key={i} className={styles.drawerMenuItems} onClick={() => item.title === "Courses" && onAnchorClick()}>
                 {item.title === "Courses" ? (
                   <a href={item.link} className={styles.menuTitle} aria-label={`link to ${item.title}`}>
                     <div>{item.title}</div>

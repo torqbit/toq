@@ -1,7 +1,6 @@
 import React, { FC } from "react";
 import { useAppContext } from "@/components/ContextApi/AppContext";
-import { CourseCategory, ICourseCategory } from "@/components/CourseCategory/CourseCategory";
-import About from "@/components/Marketing/LandingPage/About";
+
 import Hero from "@/components/Marketing/LandingPage/Hero/Hero";
 import { Theme, User } from "@prisma/client";
 
@@ -11,10 +10,6 @@ import MarketingLayout from "@/components/Layouts/MarketingLayout";
 import { GetServerSidePropsContext, NextPage } from "next";
 import { getCookieName } from "@/lib/utils";
 import { getToken } from "next-auth/jwt";
-import AOS from "aos";
-import GetStarted from "@/components/Marketing/LandingPage/GetStarted";
-import Image from "next/image";
-import HeroImage from "@/components/Marketing/LandingPage/HeroImage";
 import appConstant from "@/services/appConstant";
 interface IProps {
   user: User;
@@ -47,7 +42,6 @@ const LandingPage: FC<IProps> = ({ user }) => {
   };
 
   useEffect(() => {
-    AOS.init();
     onCheckTheme();
   }, []);
 

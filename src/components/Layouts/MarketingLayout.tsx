@@ -43,14 +43,13 @@ const MarketingLayout: FC<{
             width: "100%",
             background: "#fff",
             zIndex: 10,
-          }}
-        >
-          <SpinLoader className="marketing__spinner" />
+          }}>
+          <SpinLoader className='marketing__spinner' />
         </div>
       }
 
-      <ThemeConfigProvider value={config}>
-        <ConfigProvider theme={globalState.theme == "dark" ? darkThemConfig : antThemeConfig}>
+      <ConfigProvider theme={globalState.theme == "dark" ? darkThemConfig : antThemeConfig}>
+        <ThemeConfigProvider value={config}>
           <Head>
             <title>
               {themeConfig.brand?.title} | {themeConfig.brand?.name}
@@ -73,16 +72,16 @@ const MarketingLayout: FC<{
               items={themeConfig.navBar?.navigationLinks ? themeConfig.navBar.navigationLinks : []}
             />
             <Link href={"/"} className={styles.platformNameLogo}>
-              <Flex align="center" gap={5}>
-                <Image src={`${themeConfig.brand?.logo}`} height={40} width={40} alt={"logo"} loading="lazy" />
-                <h4 className="font-brand">{themeConfig.brand?.name?.toUpperCase()}</h4>
+              <Flex align='center' gap={5}>
+                <Image src={`${themeConfig.brand?.logo}`} height={40} width={40} alt={"logo"} loading='lazy' />
+                <h4 className='font-brand'>{themeConfig.brand?.name?.toUpperCase()}</h4>
               </Flex>
             </Link>
 
-            <div role="button" className={styles.hamburger} aria-label="Toggle menu">
+            <div role='button' className={styles.hamburger} aria-label='Toggle menu'>
               <Hamburger
                 rounded
-                direction="left"
+                direction='left'
                 toggled={showSideNav}
                 onToggle={(toggle: boolean | ((prevState: boolean) => boolean)) => {
                   setSideNav(toggle);
@@ -93,8 +92,8 @@ const MarketingLayout: FC<{
           </section>
           <div className={styles.children_wrapper}>{children}</div>
           <Footer />
-        </ConfigProvider>
-      </ThemeConfigProvider>
+        </ThemeConfigProvider>
+      </ConfigProvider>
     </>
   );
 };

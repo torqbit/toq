@@ -14,8 +14,10 @@ function App({ Component, pageProps }: AppProps<{ session: Session }>) {
     <>
       <AppProvider>
         <SessionProvider session={pageProps.session}>
+
           <NextNProgress />
           <Component {...pageProps} />
+
         </SessionProvider>
       </AppProvider>
     </>
