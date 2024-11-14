@@ -328,7 +328,6 @@ Violate These Terms Or ${appConstant.platformName}'s Then-Current Policies And O
 
   return (
     <MarketingLayout
-      courseTitle={`Term & Conditions | ${appConstant.platformName}`}
       user={user}
       heroSection={
         <DefaulttHero

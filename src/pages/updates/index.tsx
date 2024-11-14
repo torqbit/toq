@@ -11,7 +11,6 @@ import { getToken } from "next-auth/jwt";
 import prisma from "@/lib/prisma";
 import styles from "@/styles/Marketing/Updates/Updates.module.scss";
 import UpdateCard from "@/components/Marketing/Updates/UpdateCard";
-import appConstant from "@/services/appConstant";
 interface IProps {
   user: User;
   updateData: {
@@ -58,7 +57,6 @@ const updatePage: FC<IProps> = ({ user, updateData }) => {
 
   return (
     <MarketingLayout
-      courseTitle={`Update list | ${appConstant.platformName}`}
       user={user}
       heroSection={<HeroBlog title="Updates" description="New changes to our learning platform & courses" />}
     >

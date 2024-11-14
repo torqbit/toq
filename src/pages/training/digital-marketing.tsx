@@ -82,7 +82,6 @@ const DigitalMarketing: FC<{ user: User }> = ({ user }) => {
   return (
     <>
       <MarketingLayout
-        courseTitle={`Digital Marketing | ${appConstant.platformName}`}
         user={user}
         heroSection={
           <HeroCoursePreview

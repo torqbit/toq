@@ -44,7 +44,6 @@ const ContactUsPage: FC<{ user: User }> = ({ user }) => {
 
   return (
     <MarketingLayout
-      courseTitle={`Contact Us | ${appConstant.platformName}`}
       user={user}
       heroSection={
         <DefaulttHero

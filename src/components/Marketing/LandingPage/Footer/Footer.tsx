@@ -1,60 +1,51 @@
 import appConstant from "@/services/appConstant";
-import styles from "@/styles/Marketing/LandingPage/LandingPage.module.scss";
+import styles from "./Footer.module.scss";
 
 import { Flex } from "antd";
 import Link from "next/link";
 import Image from "next/image";
 import SvgIcons from "@/components/SvgIcons";
+import { useThemeConfig } from "@/components/ContextApi/ThemeConfigContext";
 
 const Footer = () => {
+  const { footer, navBar, brand } = useThemeConfig();
   const footerContent = [
     {
       title: "Resources",
-      links: [
-        {
-          arialLabel: "link for updates page",
-          href: "/updates",
-          label: "Updates",
-        },
-        {
-          arialLabel: "link for blogs page",
-
-          href: "/blog",
-          label: "Blog",
-        },
-        {
-          arialLabel: "link for event page",
-
-          href: "/events",
-          label: "Events",
-        },
-      ],
+      links: navBar?.navigationLinks?.map((nav) => {
+        return {
+          href: nav.link,
+          label: nav.title,
+        };
+      }),
     },
     {
-      title: "More",
+      title: "Community",
       links: [
         {
-          arialLabel: "link for discord page",
-
-          href: "https://discord.gg/DHU38pGw7C",
+          href: footer?.discordLink,
           label: "Discord",
         },
         {
-          arialLabel: "link for Github page",
-
-          href: "https://github.com/torqbit",
+          href: footer?.githubLink,
           label: "Github",
         },
         {
-          arialLabel: "link for youtube ",
-
-          href: "https://www.youtube.com/@torqbit",
+          href: footer?.youtubeLink,
           label: "Youtube",
+        },
+        {
+          href: footer?.instagramLink,
+          label: "Instagram",
+        },
+        {
+          href: footer?.twitterLink,
+          label: "Twitter",
         },
       ],
     },
     {
-      title: "About Torqbit",
+      title: "About ",
       links: [
         {
           arialLabel: "link for story page",
@@ -101,22 +92,24 @@ const Footer = () => {
   ];
   const socialLinks = [
     {
-      arialLabel: "link to discord",
-
       icon: SvgIcons.discord,
-      href: "https://discord.gg/NserMXcx",
+      href: footer?.discordLink,
     },
     {
-      arialLabel: "link to github",
-
       icon: SvgIcons.github,
-      href: "https://github.com/torqbit",
+      href: footer?.githubLink,
     },
     {
-      arialLabel: "link to youtube",
-
       icon: SvgIcons.youtube,
-      href: "https://www.youtube.com/@torqbit",
+      href: footer?.youtubeLink,
+    },
+    {
+      icon: SvgIcons.youtube,
+      href: footer?.instagramLink,
+    },
+    {
+      icon: SvgIcons.youtube,
+      href: footer?.twitterLink,
     },
   ];
   return (
@@ -125,15 +118,15 @@ const Footer = () => {
         <div>
           <Link href={"/landing-page"}>
             <Flex align="center" gap={5}>
-              <Image src={"/icon/torqbit.png"} height={40} width={40} alt={"logo"} loading="lazy" />
-              <h1 className="font-brand">{appConstant.platformName.toUpperCase()}</h1>
+              <Image src={`${brand?.logo}`} height={40} width={40} alt={"logo"} loading="lazy" />
+              <h1 className="font-brand">{brand?.name?.toUpperCase()}</h1>
             </Flex>
           </Link>
           <div className={styles.socialIcons}>
-            {socialLinks.map((link, i) => {
+            {socialLinks?.map((social, i) => {
               return (
-                <Link key={i} href={link.href} aria-label={link.arialLabel}>
-                  <i> {link.icon}</i>
+                <Link key={i} href={`${social.href}`} style={{ display: !social.href ? "none" : "unset" }}>
+                  <i> {social.icon}</i>
                 </Link>
               );
             })}
@@ -142,19 +135,15 @@ const Footer = () => {
 
         <div>
           <div className={styles.linkWrapper}>
-            {" "}
             {footerContent.map((content, i) => {
               return (
                 <div key={i} className={styles.linkList}>
                   <div className={styles.title}>{content.title}</div>
                   <ul>
-                    {content.links.map((link, i) => {
+                    {content?.links?.map((link, i) => {
                       return (
-                        <li key={i}>
-                          <Link href={link.href} aria-label={link.arialLabel}>
-                            {" "}
-                            {link.label}
-                          </Link>
+                        <li key={i} style={{ display: !link.href ? "none" : "block" }}>
+                          <Link href={`${link.href}`}> {link.label}</Link>
                         </li>
                       );
                     })}
