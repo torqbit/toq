@@ -8,7 +8,7 @@ import SvgIcons from "@/components/SvgIcons";
 import { useThemeConfig } from "@/components/ContextApi/ThemeConfigContext";
 
 const Footer = () => {
-  const { footer, navBar } = useThemeConfig();
+  const { footer, navBar, brand } = useThemeConfig();
   const footerContent = [
     {
       title: "Resources",
@@ -118,8 +118,8 @@ const Footer = () => {
         <div>
           <Link href={"/landing-page"}>
             <Flex align="center" gap={5}>
-              <Image src={"/icon/torqbit.png"} height={40} width={40} alt={"logo"} loading="lazy" />
-              <h1 className="font-brand">{appConstant.platformName.toUpperCase()}</h1>
+              <Image src={`${brand?.logo}`} height={40} width={40} alt={"logo"} loading="lazy" />
+              <h1 className="font-brand">{brand?.name?.toUpperCase()}</h1>
             </Flex>
           </Link>
           <div className={styles.socialIcons}>
