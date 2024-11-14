@@ -311,3 +311,19 @@ export const getCertificateDescripiton2 = (objectType: string, authorName: strin
       return "";
   }
 };
+
+export const deepMerge = (defaultObj: any, userObj: any): any => {
+  if (userObj === null || userObj === undefined) return defaultObj;
+
+  if (typeof userObj === "object" && !Array.isArray(userObj) && userObj !== null) {
+    return Object.entries(userObj).reduce(
+      (acc, [key, value]) => {
+        acc[key] = key in defaultObj ? deepMerge(defaultObj[key], value) : value;
+        return acc;
+      },
+      { ...defaultObj }
+    );
+  }
+
+  return userObj;
+};

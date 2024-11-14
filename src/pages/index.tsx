@@ -2,7 +2,7 @@ import React, { FC } from "react";
 import { useAppContext } from "@/components/ContextApi/AppContext";
 import { CourseCategory, ICourseCategory } from "@/components/CourseCategory/CourseCategory";
 import About from "@/components/Marketing/LandingPage/About";
-import Hero from "@/components/Marketing/LandingPage/Hero";
+import Hero from "@/components/Marketing/LandingPage/Hero/Hero";
 import { Theme, User } from "@prisma/client";
 
 import { useEffect } from "react";

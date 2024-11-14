@@ -70,7 +70,7 @@ const updatePage: FC<IProps> = ({ user, updateData }) => {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            backgroundColor: globalState.theme === "dark" ? "#283040" : "#fff",
+            backgroundColor: globalState.theme === "dark" ? "#283040" : "#eee",
             color: globalState.theme === "dark" ? "#fff" : "#000",
           }}
         >
