@@ -2,12 +2,11 @@ import React, { FC, useState } from "react";
 
 import Link from "next/link";
 import Image from "next/image";
-import styles from "@/styles/Marketing/Navbar/NavBar.module.scss";
 import { Button, Drawer, Flex, Tooltip } from "antd";
-import appConstant from "@/services/appConstant";
 import { useAppContext } from "@/components/ContextApi/AppContext";
 import SvgIcons from "@/components/SvgIcons";
 import { useThemeConfig } from "@/components/ContextApi/ThemeConfigContext";
+import styles from "./NavBar.module.scss";
 
 const SideNav: FC<{
   isOpen: boolean;

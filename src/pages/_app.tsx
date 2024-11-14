@@ -8,17 +8,16 @@ import { SessionProvider } from "next-auth/react";
 import { Session } from "next-auth";
 import NextNProgress from "nextjs-progressbar";
 import { AppProvider } from "@/components/ContextApi/AppContext";
-import { ConfigProvider } from "antd";
 
 function App({ Component, pageProps }: AppProps<{ session: Session }>) {
   return (
     <>
       <AppProvider>
         <SessionProvider session={pageProps.session}>
-          <ConfigProvider>
-            <NextNProgress />
-            <Component {...pageProps} />
-          </ConfigProvider>
+
+          <NextNProgress />
+          <Component {...pageProps} />
+
         </SessionProvider>
       </AppProvider>
     </>

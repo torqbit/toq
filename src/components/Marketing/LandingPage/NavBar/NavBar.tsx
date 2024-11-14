@@ -6,7 +6,7 @@ import SvgIcons from "@/components/SvgIcons";
 import { useAppContext } from "@/components/ContextApi/AppContext";
 import { INavBarProps } from "@/types/courses/navbar";
 import { useThemeConfig } from "@/components/ContextApi/ThemeConfigContext";
-import styles from "@/styles/Marketing/Navbar/NavBar.module.scss";
+import styles from "./NavBar.module.scss";
 
 const NavBar: FC<INavBarProps> = ({ user, items }): ReactElement => {
   const { dispatch, globalState } = useAppContext();

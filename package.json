@@ -14,7 +14,7 @@
     "start:prod": "cross-env NODE_ENV=production & next start"
   },
   "dependencies": {
-    "@ant-design/cssinjs": "1.18.1",
+    "@ant-design/cssinjs": "1.22.0",
     "@ant-design/icons": "^5.2.6",
     "@cashfreepayments/cashfree-js": "^1.0.5",
     "@cashfreepayments/cashfree-sdk": "^0.1.7",
@@ -29,7 +29,7 @@
     "@react-email/components": "0.0.19",
     "@react-email/render": "0.0.15",
     "@react-pdf/renderer": "^3.1.14",
-    "antd": "5.12.4",
+    "antd": "5.20.0",
     "antd-img-crop": "4.23.0",
     "aos": "^3.0.0-beta.6",
     "canvas": "^2.11.2",
@@ -77,6 +77,7 @@
     "@types/react": "18.2.45",
     "@types/react-dom": "18.0.11",
     "@types/react-scroll": "^1.8.7",
+    "cross-env": "^7.0.3",
     "prisma": "^5.1.1"
   }
 }

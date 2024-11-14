@@ -64,47 +64,47 @@ const MarketingLayout: FC<{
         </div>
       }
 
-      {/* <ConfigProvider theme={globalState.theme == "dark" ? darkThemConfig : antThemeConfig}> */}
-      <ThemeConfigProvider value={config}>
-        <Head>
-          <title>{courseTitle}</title>
-          <meta name='description' content={contentDescription} />
-          <meta property='og:image' content={ogImage} />
-          <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
+      <ConfigProvider theme={globalState.theme == "dark" ? darkThemConfig : antThemeConfig}>
+        <ThemeConfigProvider value={config}>
+          <Head>
+            <title>{courseTitle}</title>
+            <meta name='description' content={contentDescription} />
+            <meta property='og:image' content={ogImage} />
+            <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
 
-          <link rel='icon' href='/favicon.ico' />
-        </Head>
+            <link rel='icon' href='/favicon.ico' />
+          </Head>
 
-        <section className={styles.heroWrapper}>
-          <NavBar user={user} items={customeConfig.navBar?.navigationLinks ? customeConfig.navBar.navigationLinks : []} />
-          <SideNav
-            isOpen={showSideNav}
-            onAnchorClick={onAnchorClick}
-            items={customeConfig.navBar?.navigationLinks ? customeConfig.navBar.navigationLinks : []}
-          />
-          <Link href={"/"} className={styles.platformNameLogo}>
-            <Flex align='center' gap={5}>
-              <Image src={`${themeConfig.brand?.logo}`} height={40} width={40} alt={"logo"} loading='lazy' />
-              <h4 className='font-brand'>{themeConfig.brand?.name?.toUpperCase()}</h4>
-            </Flex>
-          </Link>
-
-          <div role='button' className={styles.hamburger} aria-label='Toggle menu'>
-            <Hamburger
-              rounded
-              direction='left'
-              toggled={showSideNav}
-              onToggle={(toggle: boolean | ((prevState: boolean) => boolean)) => {
-                setSideNav(toggle);
-              }}
+          <section className={styles.heroWrapper}>
+            <NavBar user={user} items={customeConfig.navBar?.navigationLinks ? customeConfig.navBar.navigationLinks : []} />
+            <SideNav
+              isOpen={showSideNav}
+              onAnchorClick={onAnchorClick}
+              items={customeConfig.navBar?.navigationLinks ? customeConfig.navBar.navigationLinks : []}
             />
-          </div>
-          {heroSection}
-        </section>
-        <div className={styles.children_wrapper}>{children}</div>
-        <Footer />
-      </ThemeConfigProvider>
-      {/* </ConfigProvider> */}
+            <Link href={"/"} className={styles.platformNameLogo}>
+              <Flex align='center' gap={5}>
+                <Image src={`${themeConfig.brand?.logo}`} height={40} width={40} alt={"logo"} loading='lazy' />
+                <h4 className='font-brand'>{themeConfig.brand?.name?.toUpperCase()}</h4>
+              </Flex>
+            </Link>
+
+            <div role='button' className={styles.hamburger} aria-label='Toggle menu'>
+              <Hamburger
+                rounded
+                direction='left'
+                toggled={showSideNav}
+                onToggle={(toggle: boolean | ((prevState: boolean) => boolean)) => {
+                  setSideNav(toggle);
+                }}
+              />
+            </div>
+            {heroSection}
+          </section>
+          <div className={styles.children_wrapper}>{children}</div>
+          <Footer />
+        </ThemeConfigProvider>
+      </ConfigProvider>
     </>
   );
 };
