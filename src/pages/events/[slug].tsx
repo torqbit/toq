@@ -44,8 +44,6 @@ const EventInfoPage: FC<{ user: User; eventInfo: IEventInfo; registrationExpired
   }, []);
   return (
     <MarketingLayout
-      courseTitle={`${eventInfo.title} | ${appConstant.platformName}`}
-      thumbnail={eventInfo.banner}
       user={user}
       heroSection={
         <div className={styles.banner_Wrapper}>

@@ -45,12 +45,7 @@ const LandingPage: FC<IProps> = ({ user }) => {
     onCheckTheme();
   }, []);
 
-  return (
-    <MarketingLayout
-      courseTitle={`Learn to build software products | ${appConstant.platformName}`}
-      user={user}
-      heroSection={<Hero isMobile={isMobile} user={user} />}></MarketingLayout>
-  );
+  return <MarketingLayout user={user} heroSection={<Hero isMobile={isMobile} user={user} />}></MarketingLayout>;
 };
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {

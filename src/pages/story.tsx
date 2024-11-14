@@ -42,7 +42,6 @@ const StoryPage: FC<{ user: User }> = ({ user }) => {
 
   return (
     <MarketingLayout
-      courseTitle={`Story | ${appConstant.platformName}`}
       user={user}
       heroSection={
         <HeroBlog

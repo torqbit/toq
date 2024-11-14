@@ -48,7 +48,6 @@ const EventsPage: FC<{ user: User; eventList: IEventList[]; totalEventsLength: n
 
   return (
     <MarketingLayout
-      courseTitle={`Events | ${appConstant.platformName}`}
       user={user}
       heroSection={<DefaulttHero title="Events" description="Connect, Learn, and Thrive Together!" />}
     >

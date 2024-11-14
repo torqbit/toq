@@ -173,20 +173,16 @@ const FullStackDevelopmentPage: FC<{ user: User }> = ({ user }) => {
   }, []);
   return (
     <section className={styles.landing_page_wrapper}>
-      <MarketingLayout
-        courseTitle={`Learn to build software products | ${appConstant.platformName}`}
-        user={user}
-        heroSection={<OfflineHero />}
-        offlineCourse={true}>
+      <MarketingLayout user={user} heroSection={<OfflineHero />}>
         <section className={styles.fullstack_development_wrapper}>
           <ProgramTitle
-            title='Our Classroom Programs'
+            title="Our Classroom Programs"
             description={`Over the course of the program,
                 learners will engage in project-based activities,
                  collaborating with peers and instructors to tackle real-world challenges.`}
-            icon='/img/offline-course/flower.png'
+            icon="/img/offline-course/flower.png"
           />
-          <Space direction='vertical' size={10}>
+          <Space direction="vertical" size={10}>
             {programDetails.map((detail, i) => {
               return (
                 <OfflineCoursePreview

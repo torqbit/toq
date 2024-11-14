@@ -89,9 +89,9 @@ const MarketingHero: FC<{ isMobile: boolean; user: User }> = ({ isMobile, user }
           width={getBannerWidth(bannerAlign as bannerAlignment)}
           loading="lazy"
           src={`${
-            globalState.theme === Theme.dark && heroSection?.banner?.darkPath
-              ? heroSection.banner.darkPath
-              : heroSection?.banner?.lightPath
+            globalState.theme === Theme.dark && heroSection?.banner?.darkModePath
+              ? heroSection.banner.darkModePath
+              : heroSection?.banner?.lightModePath
           }`}
         />
       </Flex>

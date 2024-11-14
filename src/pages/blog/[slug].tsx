@@ -66,7 +66,6 @@ const BlogPage: FC<IProps> = ({ user, htmlData, blogData, description, currentUr
   }, []);
   return (
     <MarketingLayout
-      courseTitle={`${blogData.title} | ${appConstant.platformName}`}
       user={user}
       heroSection={
         <section className={styles.blogPageWrapper}>

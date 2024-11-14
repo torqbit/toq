@@ -126,7 +126,6 @@ const TermAndConditonPage: FC<{ user: User }> = ({ user }) => {
 
   return (
     <MarketingLayout
-      courseTitle={`Privacy Policy | ${appConstant.platformName}`}
       user={user}
       heroSection={
         <DefaulttHero

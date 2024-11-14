@@ -10,6 +10,10 @@ export interface ThemeSchema {
   brand?: {
     logo?: ReactNode | string;
     name?: string;
+    title?: string;
+    description?: string;
+    ogImage?: string;
+    favicon?: string;
   };
   darkMode?: boolean;
   heroSection?: {
@@ -26,9 +30,17 @@ export interface ThemeSchema {
       };
     };
     banner?: {
-      lightPath?: string;
-      darkPath?: string;
+      lightModePath?: string;
+      darkModePath?: string;
       align?: bannerAlignment;
     };
+  };
+
+  footer?: {
+    githubLink?: string;
+    youtubeLink?: string;
+    instagramLink?: string;
+    twitterLink?: string;
+    discordLink?: string;
   };
 }

@@ -72,10 +72,7 @@ const CourseDetailPage: FC<IProps> = ({ user, courseId, courseDetails }) => {
   return (
     <>
       <MarketingLayout
-        description={getBriefText(courseDetails.description, 15)}
         user={user}
-        courseTitle={`${String(courseDetails.name)} | ${appConstant.platformName}`}
-        thumbnail={courseDetails.videoThumbnail}
         heroSection={
           courseDetails ? (
             <HeroCoursePreview
