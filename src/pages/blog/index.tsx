@@ -60,7 +60,6 @@ const BlogPage: FC<IProps> = ({ user, blogData }) => {
 
   return (
     <MarketingLayout
-      courseTitle={`Blog list | ${appConstant.platformName}`}
       user={user}
       heroSection={<HeroBlog title="Blog" description="Our engineering experience, explained in detail" />}
     >

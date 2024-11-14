@@ -1,4 +1,3 @@
-import SvgIcons from "@/components/SvgIcons";
 import { ThemeSchema } from "@/types/schema";
 import { lazy } from "react";
 const NavBar = lazy(() => import("@/components/Marketing/LandingPage/NavBar/NavBar"));
@@ -27,11 +26,15 @@ export const DEFAULT_THEME: PageThemeConfig = {
   brand: {
     name: "Torqbit",
     logo: "/icon/torqbit.png",
+    title: "Become a Pro Product Builder",
+    description: "Master the art of product building and turn your ideas into successful, scalable products",
+    ogImage: "/icon/torqbit.png",
+    favicon: "/favicon.ico",
   },
 
   darkMode: false,
   heroSection: {
-    title: "Become a Coder Product Builder",
+    title: "Become a Pro Product Builder",
     description:
       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores rerum voluptatum perferendis autem veritatis nostrum. Libero aliquam dignissimos sunt voluptatum!",
     actionButtons: {

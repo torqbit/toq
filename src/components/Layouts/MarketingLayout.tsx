@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useState } from "react";
 import React from "react";
 import styles from "@/components/Marketing/LandingPage/Hero/Hero.module.scss";
 import Head from "next/head";
@@ -11,41 +11,23 @@ import SpinLoader from "../SpinLoader/SpinLoader";
 import SideNav from "../Marketing/LandingPage/NavBar/SideNavBar";
 import NavBar from "../Marketing/LandingPage/NavBar/NavBar";
 import Image from "next/image";
-import appConstant from "@/services/appConstant";
 import Hamburger from "hamburger-react";
 import Footer from "../Marketing/LandingPage/Footer/Footer";
 import config from "../../theme.config";
-
 import { User } from "@prisma/client";
 import { ThemeConfigProvider, useThemeConfig } from "../ContextApi/ThemeConfigContext";
-import { PageThemeConfig } from "@/services/themeConstant";
 
 const MarketingLayout: FC<{
   children?: React.ReactNode;
-  className?: string;
   heroSection?: React.ReactNode;
   user?: User;
-  courseTitle: string;
-  description?: string;
-  thumbnail?: string;
-  offlineCourse?: boolean;
-}> = ({ children, className, heroSection, offlineCourse, user, courseTitle, description, thumbnail }) => {
+}> = ({ children, heroSection, user }) => {
   const { globalState } = useAppContext();
   const themeConfig = useThemeConfig();
-
   const [showSideNav, setSideNav] = useState(false);
-
   const onAnchorClick = () => {
     setSideNav(false);
   };
-
-  useEffect(() => {
-    document.title = courseTitle;
-  }, [courseTitle]);
-
-  let contentDescription = description ? description : "Learn, build and solve the problems that matters the most";
-  let ogImage = thumbnail ? thumbnail : "https://torqbit-dev.b-cdn.net/website/img/torqbit-landing.png";
-  const customeConfig = { ...themeConfig, ...config };
 
   return (
     <>
@@ -53,7 +35,7 @@ const MarketingLayout: FC<{
         <div
           style={{
             position: "fixed",
-            display: globalState.pageLoading || !courseTitle ? "unset" : "none",
+            display: globalState.pageLoading || !themeConfig.brand?.title ? "unset" : "none",
             top: 0,
             left: 0,
             bottom: 0,
@@ -70,26 +52,25 @@ const MarketingLayout: FC<{
       <ThemeConfigProvider value={config}>
         <ConfigProvider theme={globalState.theme == "dark" ? darkThemConfig : antThemeConfig}>
           <Head>
-            <title>{courseTitle}</title>
-            <meta name="description" content={contentDescription} />
-            <meta property="og:image" content={ogImage} />
+            <title>
+              {themeConfig.brand?.title} | {themeConfig.brand?.name}
+            </title>
+            <meta name="description" content={themeConfig.brand?.description} />
+            <meta property="og:image" content={themeConfig.brand?.ogImage} />
             <meta
               name="viewport"
               content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
             />
 
-            <link rel="icon" href="/favicon.ico" />
+            <link rel="icon" href={themeConfig.brand?.favicon} />
           </Head>
 
           <section className={styles.heroWrapper}>
-            <NavBar
-              user={user}
-              items={customeConfig.navBar?.navigationLinks ? customeConfig.navBar.navigationLinks : []}
-            />
+            <NavBar user={user} items={themeConfig.navBar?.navigationLinks ? themeConfig.navBar.navigationLinks : []} />
             <SideNav
               isOpen={showSideNav}
               onAnchorClick={onAnchorClick}
-              items={customeConfig.navBar?.navigationLinks ? customeConfig.navBar.navigationLinks : []}
+              items={themeConfig.navBar?.navigationLinks ? themeConfig.navBar.navigationLinks : []}
             />
             <Link href={"/"} className={styles.platformNameLogo}>
               <Flex align="center" gap={5}>
