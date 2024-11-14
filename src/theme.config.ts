@@ -1,6 +1,6 @@
 import { PageThemeConfig } from "@/services/themeConstant";
 import SvgIcons from "./components/SvgIcons";
-import NavBar from "./components/Marketing/LandingPage/NavBar";
+import NavBar from "./components/Marketing/LandingPage/NavBar/NavBar";
 
 const config: PageThemeConfig = {
   navBar: {
@@ -15,8 +15,8 @@ const config: PageThemeConfig = {
         link: "/events",
       },
       {
-        title: "Blogs",
-        link: "/blogs",
+        title: "Blog",
+        link: "/blog",
       },
     ],
   },

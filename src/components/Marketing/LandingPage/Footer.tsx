@@ -19,8 +19,8 @@ const Footer = () => {
         {
           arialLabel: "link for blogs page",
 
-          href: "/blogs",
-          label: "Blogs",
+          href: "/blog",
+          label: "Blog",
         },
         {
           arialLabel: "link for event page",

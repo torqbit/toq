@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from "react";
 import React from "react";
-import styles from "@/styles/Marketing/LandingPage/LandingPage.module.scss";
+import styles from "@/components/Marketing/LandingPage/Hero/Hero.module.scss";
 import Head from "next/head";
 import { useAppContext } from "../ContextApi/AppContext";
 import { ConfigProvider, Flex } from "antd";
@@ -8,8 +8,8 @@ import Link from "next/link";
 import darkThemConfig from "@/services/darkThemConfig";
 import antThemeConfig from "@/services/antThemeConfig";
 import SpinLoader from "../SpinLoader/SpinLoader";
-import SideNav from "../Marketing/LandingPage/SideNavBar";
-import NavBar from "../Marketing/LandingPage/NavBar";
+import SideNav from "../Marketing/LandingPage/NavBar/SideNavBar";
+import NavBar from "../Marketing/LandingPage/NavBar/NavBar";
 import Image from "next/image";
 import appConstant from "@/services/appConstant";
 import Hamburger from "hamburger-react";
@@ -86,11 +86,15 @@ const MarketingLayout: FC<{
               user={user}
               items={customeConfig.navBar?.navigationLinks ? customeConfig.navBar.navigationLinks : []}
             />
-            <SideNav isOpen={showSideNav} onAnchorClick={onAnchorClick} />
+            <SideNav
+              isOpen={showSideNav}
+              onAnchorClick={onAnchorClick}
+              items={customeConfig.navBar?.navigationLinks ? customeConfig.navBar.navigationLinks : []}
+            />
             <Link href={"/"} className={styles.platformNameLogo}>
               <Flex align="center" gap={5}>
-                <Image src={"/icon/torqbit.png"} height={40} width={40} alt={"logo"} loading="lazy" />
-                <h4 className="font-brand">{appConstant.platformName.toUpperCase()}</h4>
+                <Image src={`${themeConfig.brand?.logo}`} height={40} width={40} alt={"logo"} loading="lazy" />
+                <h4 className="font-brand">{themeConfig.brand?.name?.toUpperCase()}</h4>
               </Flex>
             </Link>
 

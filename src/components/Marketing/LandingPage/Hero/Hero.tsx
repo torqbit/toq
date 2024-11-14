@@ -1,6 +1,6 @@
 import { FC } from "react";
 
-import styles from "@/styles/Marketing/LandingPage/LandingPage.module.scss";
+import styles from "./Hero.module.scss";
 import { Flex, Space } from "antd";
 import Link from "next/link";
 import { Theme, User } from "@prisma/client";

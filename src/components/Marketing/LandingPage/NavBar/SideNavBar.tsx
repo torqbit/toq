@@ -1,6 +1,5 @@
 import React, { FC, useState } from "react";
-
-import styles from "@/styles/Marketing/LandingPage/LandingPage.module.scss";
+import styles from "./NavBar.module.scss";
 
 import Link from "next/link";
 import Image from "next/image";
@@ -9,24 +8,18 @@ import { Button, Drawer, Flex, Tooltip } from "antd";
 import appConstant from "@/services/appConstant";
 import { useAppContext } from "@/components/ContextApi/AppContext";
 import SvgIcons from "@/components/SvgIcons";
+import { useThemeConfig } from "@/components/ContextApi/ThemeConfigContext";
 
-const SideNav: FC<{ isOpen: boolean; onAnchorClick: () => void }> = ({ isOpen, onAnchorClick }) => {
+const SideNav: FC<{
+  isOpen: boolean;
+  onAnchorClick: () => void;
+  items: {
+    title: string;
+    link: string;
+  }[];
+}> = ({ isOpen, onAnchorClick, items }) => {
   const { dispatch } = useAppContext();
-  const menuItems = [
-    {
-      label: "Courses",
-      href: "/#courses",
-    },
-    {
-      label: "Events",
-      href: "/events",
-    },
-    {
-      label: "Blogs",
-      href: "/blogs",
-    },
-  ];
-
+  const themeConfig = useThemeConfig();
   const onChangeTheme = () => {
     const currentTheme = localStorage.getItem("theme");
 
@@ -53,11 +46,11 @@ const SideNav: FC<{ isOpen: boolean; onAnchorClick: () => void }> = ({ isOpen, o
           <div className={styles.drawerTitle}>
             <Link href={"/"} aria-label="Go back to landing page">
               <Flex align="center" gap={5}>
-                <Image src={"/icon/torqbit.png"} height={40} width={40} alt={"logo"} loading="lazy" />
-                <h1 className="font-brand">{appConstant.platformName.toUpperCase()}</h1>
+                <Image src={`${themeConfig.brand?.logo}`} height={40} width={40} alt={"logo"} loading="lazy" />
+                <h1 className="font-brand">{themeConfig.brand?.name?.toUpperCase()}</h1>
               </Flex>
             </Link>
-            {isOpen && (
+            {isOpen && themeConfig.darkMode && (
               <Tooltip title={""}>
                 <Button
                   type="default"
@@ -80,20 +73,20 @@ const SideNav: FC<{ isOpen: boolean; onAnchorClick: () => void }> = ({ isOpen, o
         open={isOpen}
       >
         <div className={styles.menuDrawer}>
-          {menuItems.map((item, i) => {
+          {items.map((item, i) => {
             return (
               <div
                 key={i}
                 className={styles.drawerMenuItems}
-                onClick={() => item.label === "Courses" && onAnchorClick()}
+                onClick={() => item.title === "Courses" && onAnchorClick()}
               >
-                {item.label === "Courses" ? (
-                  <a href={item.href} className={styles.menuTitle} aria-label={`link to ${item.label}`}>
-                    <div>{item.label}</div>
+                {item.title === "Courses" ? (
+                  <a href={item.link} className={styles.menuTitle} aria-label={`link to ${item.title}`}>
+                    <div>{item.title}</div>
                   </a>
                 ) : (
-                  <Link key={i} href={item.href} aria-label={`link to ${item.label}`}>
-                    {item.label}
+                  <Link key={i} href={item.link} aria-label={`link to ${item.title}`}>
+                    {item.title}
                   </Link>
                 )}
               </div>

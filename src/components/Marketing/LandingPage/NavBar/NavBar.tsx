@@ -1,11 +1,11 @@
 import { FC, ReactElement, useEffect } from "react";
-import styles from "@/styles/Marketing/LandingPage/LandingPage.module.scss";
+// import styles from "@/components/Marketing/LandingPage/NavBar/NavBar.module.scss";
+import styles from "./NavBar.module.scss";
 import Image from "next/image";
-import { Button, Dropdown, Flex, MenuProps, Tooltip } from "antd";
+import { Button, Flex, Tooltip } from "antd";
 import Link from "next/link";
 import SvgIcons from "@/components/SvgIcons";
 import { useAppContext } from "@/components/ContextApi/AppContext";
-import { User } from "@prisma/client";
 import { INavBarProps } from "@/types/courses/navbar";
 import { useThemeConfig } from "@/components/ContextApi/ThemeConfigContext";
 

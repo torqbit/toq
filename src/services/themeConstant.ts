@@ -1,6 +1,6 @@
 import { ThemeSchema } from "@/types/schema";
 import { lazy } from "react";
-const NavBar = lazy(() => import("@/components/Marketing/LandingPage/NavBar"));
+const NavBar = lazy(() => import("@/components/Marketing/LandingPage/NavBar/NavBar"));
 
 export type PageThemeConfig = ThemeSchema;
 
@@ -17,8 +17,8 @@ export const DEFAULT_THEME: PageThemeConfig = {
         link: "/events",
       },
       {
-        title: "Blogs",
-        link: "/blogs",
+        title: "Blog",
+        link: "/blog",
       },
     ],
   },

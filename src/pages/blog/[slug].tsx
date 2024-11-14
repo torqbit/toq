@@ -180,7 +180,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
       redirect: {
         permanent: false,
 
-        destination: "/blogs",
+        destination: "/blog",
       },
     };
   }

@@ -72,7 +72,7 @@ const BlogPage: FC<IProps> = ({ user, blogData }) => {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            backgroundColor: globalState.theme === "dark" ? "#283040" : "#fff",
+            backgroundColor: globalState.theme === "dark" ? "#283040" : "#eee",
             color: globalState.theme === "dark" ? "#fff" : "#000",
           }}
         >
