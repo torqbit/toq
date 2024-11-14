@@ -1,23 +1,31 @@
 import { PageThemeConfig } from "@/services/themeConstant";
 import SvgIcons from "./components/SvgIcons";
+import NavBar from "./components/Marketing/LandingPage/NavBar";
 
 const config: PageThemeConfig = {
   navBar: {
+    component: NavBar,
     navigationLinks: [
       {
-        title: "first",
-        link: "/",
+        title: "Courses",
+        link: "/#courses",
       },
       {
-        title: "second",
-        link: "/",
+        title: "Events",
+        link: "/events",
+      },
+      {
+        title: "Blogs",
+        link: "/blogs",
       },
     ],
   },
-  brand: {
-    name: "Mehrab",
-    logo: SvgIcons.sun,
-  },
-};
 
+  brand: {
+    name: "Torqbit",
+    logo: "/icon/torqbit.png",
+  },
+
+  darkMode: false,
+};
 export default config;
