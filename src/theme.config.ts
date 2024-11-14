@@ -23,9 +23,28 @@ const config: PageThemeConfig = {
 
   brand: {
     name: "Torqbit",
-    logo: "/icon/torqbit.png",
   },
 
   darkMode: false,
+  heroSection: {
+    title: "Become a Pro Product Builder",
+    description:
+      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores rerum voluptatum perferendis autem veritatis nostrum. Libero aliquam dignissimos sunt voluptatum!",
+    actionButtons: {
+      primary: {
+        label: "Go to Dashboard",
+        link: "/dashboard",
+      },
+      secondary: {
+        label: "Contact Us",
+        link: "mailto:support@torqbit.com",
+      },
+    },
+    banner: {
+      lightPath: "/img/macbook-light.png",
+      darkPath: "/img/macbook-dark.png",
+      align: "left",
+    },
+  },
 };
 export default config;

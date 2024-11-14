@@ -67,7 +67,7 @@ const MarketingLayout: FC<{
         </div>
       }
 
-      <ThemeConfigProvider value={customeConfig}>
+      <ThemeConfigProvider value={config}>
         <ConfigProvider theme={globalState.theme == "dark" ? darkThemConfig : antThemeConfig}>
           <Head>
             <title>{courseTitle}</title>

@@ -132,7 +132,7 @@
     margin: 0 auto;
     padding: 100px 0;
     display: flex;
-    flex-direction: column;
+    // flex-direction: column;
     align-items: center;
     justify-content: center;
 
@@ -161,6 +161,8 @@
     }
 
     h1 {
+      padding: 0px 20px;
+
       font-size: 72px;
       font-weight: 900;
       text-align: center;
@@ -176,6 +178,8 @@
     }
 
     button {
+      padding: 0px 20px;
+
       font-size: 16px;
       height: 50px;
     }
