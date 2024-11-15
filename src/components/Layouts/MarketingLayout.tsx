@@ -52,7 +52,7 @@ const MarketingLayout: FC<{
         <ThemeConfigProvider value={config}>
           <Head>
             <title>
-              {themeConfig.brand?.title} | {themeConfig.brand?.name}
+              {`${themeConfig.brand?.title} | ${themeConfig.brand?.name}`}
             </title>
             <meta name="description" content={themeConfig.brand?.description} />
             <meta property="og:image" content={themeConfig.brand?.ogImage} />

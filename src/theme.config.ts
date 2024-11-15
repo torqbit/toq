@@ -24,7 +24,7 @@ const config: PageThemeConfig = {
   brand: {
     name: "Torqbit",
     logo: "/icon/torqbit.png",
-    title: "Become a Pro Product Builder",
+    title: "A platform to guide you to the future",
     description: "Master the art of product building and turn your ideas into successful, scalable products",
     ogImage: "/icon/torqbit.png",
     favicon: "/favicon.ico",
