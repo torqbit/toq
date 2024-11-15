@@ -1,7 +1,7 @@
 {
   "description": "",
   "name": "torqbit",
-  "version": "0.1.0",
+  "version": "0.1.2-rc1",
   "private": true,
   "scripts": {
     "dev": "next dev",
