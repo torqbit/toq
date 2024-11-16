@@ -16,8 +16,10 @@ import styles from "@/styles/Marketing/OfflineCourse/OfflineCourse.module.scss";
 import AboutTrainer from "@/components/Marketing/OfflineCourse/AboutTrainer";
 import { IProgramDetails, IstudentStories } from "@/types/courses/offline";
 import StudentStories from "@/components/Marketing/OfflineCourse/StudentStories";
+import { useThemeConfig } from "@/components/ContextApi/ThemeConfigContext";
+import { PageThemeConfig } from "@/services/themeConstant";
 
-const FullStackDevelopmentPage: FC<{ user: User }> = ({ user }) => {
+const FullStackDevelopmentPage: FC<{ user: User; themeConfig: PageThemeConfig }> = ({ user, themeConfig }) => {
   const { dispatch } = useAppContext();
 
   const programDetails: IProgramDetails[] = [
@@ -173,7 +175,7 @@ const FullStackDevelopmentPage: FC<{ user: User }> = ({ user }) => {
   }, []);
   return (
     <section className={styles.landing_page_wrapper}>
-      <MarketingLayout user={user} heroSection={<OfflineHero />}>
+      <MarketingLayout themeConfig={themeConfig} user={user} heroSection={<OfflineHero />}>
         <section className={styles.fullstack_development_wrapper}>
           <ProgramTitle
             title="Our Classroom Programs"
@@ -210,9 +212,20 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const { req } = ctx;
 
   let cookieName = getCookieName();
+  const themeConfig = useThemeConfig();
 
   const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
-
-  return { props: { user } };
+  return {
+    props: {
+      user,
+      themeConfig: {
+        ...themeConfig,
+        navBar: {
+          ...themeConfig.navBar,
+          component: themeConfig.navBar?.component?.name as any,
+        },
+      },
+    },
+  };
 };
 export default FullStackDevelopmentPage;

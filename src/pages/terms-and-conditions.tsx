@@ -12,8 +12,9 @@ import DefaulttHero from "@/components/Marketing/Blog/DefaultHero";
 import { getCookieName } from "@/lib/utils";
 import { getToken } from "next-auth/jwt";
 import LegalAgreement from "@/components/Marketing/LegalAgreement";
+import { PageThemeConfig } from "@/services/themeConstant";
 
-const TermAndConditonPage: FC<{ user: User }> = ({ user }) => {
+const TermAndConditonPage: FC<{ user: User; themeConfig: PageThemeConfig }> = ({ user, themeConfig }) => {
   const { dispatch } = useAppContext();
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
 
@@ -328,6 +329,7 @@ Violate These Terms Or ${appConstant.platformName}'s Then-Current Policies And O
 
   return (
     <MarketingLayout
+      themeConfig={themeConfig}
       user={user}
       heroSection={
         <DefaulttHero

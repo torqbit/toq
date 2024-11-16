@@ -9,8 +9,10 @@ import { useMediaQuery } from "react-responsive";
 import { getCookieName } from "@/lib/utils";
 import { getToken } from "next-auth/jwt";
 import appConstant from "@/services/appConstant";
+import { useThemeConfig } from "@/components/ContextApi/ThemeConfigContext";
+import { PageThemeConfig } from "@/services/themeConstant";
 
-const StoryPage: FC<{ user: User }> = ({ user }) => {
+const StoryPage: FC<{ user: User; themeConfig: PageThemeConfig }> = ({ user, themeConfig }) => {
   const { dispatch, globalState } = useAppContext();
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
 
@@ -42,6 +44,7 @@ const StoryPage: FC<{ user: User }> = ({ user }) => {
 
   return (
     <MarketingLayout
+      themeConfig={themeConfig}
       user={user}
       heroSection={
         <HeroBlog
@@ -82,6 +85,18 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   let cookieName = getCookieName();
 
   const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
+  const themeConfig = useThemeConfig();
 
-  return { props: { user } };
+  return {
+    props: {
+      user,
+      themeConfig: {
+        ...themeConfig,
+        navBar: {
+          ...themeConfig.navBar,
+          component: themeConfig.navBar?.component?.name as any,
+        },
+      },
+    },
+  };
 };

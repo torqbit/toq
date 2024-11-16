@@ -11,12 +11,15 @@ import DefaulttHero from "@/components/Marketing/Blog/DefaultHero";
 import appConstant from "@/services/appConstant";
 import MarketingLayout from "@/components/Layouts/MarketingLayout";
 import { useAppContext } from "@/components/ContextApi/AppContext";
+import { useThemeConfig } from "@/components/ContextApi/ThemeConfigContext";
+import { PageThemeConfig } from "@/services/themeConstant";
 
-const EventsPage: FC<{ user: User; eventList: IEventList[]; totalEventsLength: number }> = ({
-  user,
-  eventList,
-  totalEventsLength,
-}) => {
+const EventsPage: FC<{
+  user: User;
+  eventList: IEventList[];
+  totalEventsLength: number;
+  themeConfig: PageThemeConfig;
+}> = ({ user, eventList, totalEventsLength, themeConfig }) => {
   const { dispatch, globalState } = useAppContext();
   const setGlobalTheme = (theme: Theme) => {
     dispatch({
@@ -48,6 +51,7 @@ const EventsPage: FC<{ user: User; eventList: IEventList[]; totalEventsLength: n
 
   return (
     <MarketingLayout
+      themeConfig={themeConfig}
       user={user}
       heroSection={<DefaulttHero title="Events" description="Connect, Learn, and Thrive Together!" />}
     >
@@ -57,10 +61,9 @@ const EventsPage: FC<{ user: User; eventList: IEventList[]; totalEventsLength: n
     </MarketingLayout>
   );
 };
-
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const { req } = ctx;
-
+  const themeConfig = useThemeConfig();
   let cookieName = getCookieName();
 
   const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
@@ -118,6 +121,13 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
         }),
 
         totalEventsLength: await prisma.events.count({ where: { state: StateType.ACTIVE } }),
+        themeConfig: {
+          ...themeConfig,
+          navBar: {
+            ...themeConfig.navBar,
+            component: themeConfig.navBar?.component?.name as any,
+          },
+        },
       },
     };
   } else {
@@ -125,6 +135,13 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
       props: {
         user,
         eventList: [],
+        themeConfig: {
+          ...themeConfig,
+          navBar: {
+            ...themeConfig.navBar,
+            component: themeConfig.navBar?.component?.name as any,
+          },
+        },
       },
     };
   }

@@ -20,7 +20,7 @@ interface IProps {
 
 const LandingPage: FC<IProps> = ({ user, themeConfig }) => {
   console.log(themeConfig, "theme config value using stati propp");
-  const { dispatch } = useAppContext();
+  const { dispatch, globalState } = useAppContext();
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
 
   const setGlobalTheme = (theme: Theme) => {
@@ -49,6 +49,8 @@ const LandingPage: FC<IProps> = ({ user, themeConfig }) => {
     onCheckTheme();
   }, []);
 
+  console.log(globalState.pageLoading);
+
   return (
     <MarketingLayout
       user={user}
@@ -71,7 +73,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
         ...themeConfig,
         navBar: {
           ...themeConfig.navBar,
-          component: themeConfig.navBar?.component?.name as any,
+          component: themeConfig.navBar?.component?.name || null,
         },
       },
     },

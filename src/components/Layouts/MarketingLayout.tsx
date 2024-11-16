@@ -18,7 +18,11 @@ import { Theme, User } from "@prisma/client";
 import { useThemeConfig } from "../ContextApi/ThemeConfigContext";
 import { PageThemeConfig } from "@/services/themeConstant";
 import { onChangeTheme } from "@/lib/utils";
-import { IBrandInfo } from "@/types/courses/navbar";
+import { IBrandInfo, INavBarProps } from "@/types/courses/navbar";
+
+export const componentMap: Record<string, FC<INavBarProps>> = {
+  NavBar, // Maps "NavBar" string to the actual component
+};
 
 const MarketingLayout: FC<{
   children?: React.ReactNode;
@@ -26,6 +30,7 @@ const MarketingLayout: FC<{
   themeConfig: PageThemeConfig;
   user?: User;
 }> = ({ children, heroSection, user, themeConfig }) => {
+  const { navBar } = useThemeConfig();
   const { globalState, dispatch } = useAppContext();
   const [showSideNav, setSideNav] = useState(false);
   const onAnchorClick = () => {
@@ -40,7 +45,11 @@ const MarketingLayout: FC<{
 
   useEffect(() => {
     onChangeTheme(dispatch, themeConfig.darkMode);
+    console.log(globalState.pageLoading);
   }, []);
+
+  const NavBarComponent = navBar?.component ? navBar.component : null;
+
   return (
     <>
       {
@@ -73,13 +82,23 @@ const MarketingLayout: FC<{
         </Head>
 
         <section className={styles.heroWrapper}>
-          <NavBar
+          {NavBarComponent && (
+            <NavBarComponent
+              user={user}
+              items={themeConfig.navBar?.navigationLinks ? themeConfig.navBar.navigationLinks : []}
+              showThemeSwitch={themeConfig.darkMode as boolean}
+              activeTheme={globalState.theme as Theme}
+              brand={themeConfig?.brand as { name: string; logo: ReactNode | string }}
+            />
+          )}
+
+          {/* <NavBar
             user={user}
             items={themeConfig.navBar?.navigationLinks ? themeConfig.navBar.navigationLinks : []}
             showThemeSwitch={themeConfig.darkMode as boolean}
             activeTheme={globalState.theme as Theme}
             brand={themeConfig?.brand as { name: string; logo: ReactNode | string }}
-          />
+          /> */}
           <SideNav
             isOpen={showSideNav}
             onAnchorClick={onAnchorClick}

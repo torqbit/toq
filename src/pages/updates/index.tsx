@@ -11,8 +11,11 @@ import { getToken } from "next-auth/jwt";
 import prisma from "@/lib/prisma";
 import styles from "@/styles/Marketing/Updates/Updates.module.scss";
 import UpdateCard from "@/components/Marketing/Updates/UpdateCard";
+import { useThemeConfig } from "@/components/ContextApi/ThemeConfigContext";
+import { PageThemeConfig } from "@/services/themeConstant";
 interface IProps {
   user: User;
+  themeConfig: PageThemeConfig;
   updateData: {
     title: string;
     id: string;
@@ -25,7 +28,7 @@ interface IProps {
   }[];
 }
 
-const updatePage: FC<IProps> = ({ user, updateData }) => {
+const updatePage: FC<IProps> = ({ user, updateData, themeConfig }) => {
   const { dispatch, globalState } = useAppContext();
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
 
@@ -57,6 +60,7 @@ const updatePage: FC<IProps> = ({ user, updateData }) => {
 
   return (
     <MarketingLayout
+      themeConfig={themeConfig}
       user={user}
       heroSection={<HeroBlog title="Updates" description="New changes to our learning platform & courses" />}
     >
@@ -105,7 +109,7 @@ const updatePage: FC<IProps> = ({ user, updateData }) => {
 };
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const { req } = ctx;
-
+  const themeConfig = useThemeConfig();
   let cookieName = getCookieName();
 
   const update = (await prisma.blog.findMany({
@@ -137,6 +141,13 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
     return {
       props: {
         user,
+        themeConfig: {
+          ...themeConfig,
+          navBar: {
+            ...themeConfig.navBar,
+            component: themeConfig.navBar?.component?.name as any,
+          },
+        },
         updateData: update.map((b: any) => {
           return {
             title: b.title,
@@ -154,6 +165,13 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
     return {
       props: {
         user,
+        themeConfig: {
+          ...themeConfig,
+          navBar: {
+            ...themeConfig.navBar,
+            component: themeConfig.navBar?.component?.name as any,
+          },
+        },
         blogData: [],
       },
     };

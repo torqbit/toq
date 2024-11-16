@@ -10,8 +10,10 @@ import { getToken } from "next-auth/jwt";
 
 import { FC, useEffect } from "react";
 import appConstant from "@/services/appConstant";
+import { useThemeConfig } from "@/components/ContextApi/ThemeConfigContext";
+import { PageThemeConfig } from "@/services/themeConstant";
 
-const DigitalMarketing: FC<{ user: User }> = ({ user }) => {
+const DigitalMarketing: FC<{ user: User; themeConfig: PageThemeConfig }> = ({ user, themeConfig }) => {
   const { dispatch } = useAppContext();
   const details = {
     authorImage: "https://lh3.googleusercontent.com/a/ACg8ocL5CcMo3dM-wmENI59uakOetimQSCa9WvM7I0xK0li7M9EbkAw=s96-c",
@@ -82,6 +84,7 @@ const DigitalMarketing: FC<{ user: User }> = ({ user }) => {
   return (
     <>
       <MarketingLayout
+        themeConfig={themeConfig}
         user={user}
         heroSection={
           <HeroCoursePreview
@@ -103,8 +106,20 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   let cookieName = getCookieName();
 
   const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
+  const themeConfig = useThemeConfig();
 
-  return { props: { user } };
+  return {
+    props: {
+      user,
+      themeConfig: {
+        ...themeConfig,
+        navBar: {
+          ...themeConfig.navBar,
+          component: themeConfig.navBar?.component?.name as any,
+        },
+      },
+    },
+  };
 };
 
 export default DigitalMarketing;

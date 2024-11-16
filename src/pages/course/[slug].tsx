@@ -4,7 +4,7 @@ import { CourseState, Theme, User } from "@prisma/client";
 import { FC, useEffect, useState } from "react";
 import MarketingLayout from "@/components/Layouts/MarketingLayout";
 import CoursePreview from "@/components/Marketing/Courses/CoursePreview";
-import { getBriefText, getCookieName } from "@/lib/utils";
+import { getCookieName } from "@/lib/utils";
 import { getToken } from "next-auth/jwt";
 import { useAppContext } from "@/components/ContextApi/AppContext";
 import HeroCoursePreview from "@/components/Marketing/Courses/HeroCoursePreview";
@@ -15,14 +15,17 @@ import { useSession } from "next-auth/react";
 import SpinLoader from "@/components/SpinLoader/SpinLoader";
 import appConstant from "@/services/appConstant";
 import getCourseDetail, { extractLessonAndChapterDetail } from "@/actions/getCourseDetail";
+import { useThemeConfig } from "@/components/ContextApi/ThemeConfigContext";
+import { PageThemeConfig } from "@/services/themeConstant";
 
 interface IProps {
   user: User;
   courseId: number;
   courseDetails: ICoursePageDetail;
+  themeConfig: PageThemeConfig;
 }
 
-const CourseDetailPage: FC<IProps> = ({ user, courseId, courseDetails }) => {
+const CourseDetailPage: FC<IProps> = ({ user, courseId, courseDetails, themeConfig }) => {
   const { dispatch } = useAppContext();
   const router = useRouter();
   const { data: session, status } = useSession();
@@ -72,6 +75,7 @@ const CourseDetailPage: FC<IProps> = ({ user, courseId, courseDetails }) => {
   return (
     <>
       <MarketingLayout
+        themeConfig={themeConfig}
         user={user}
         heroSection={
           courseDetails ? (
@@ -108,6 +112,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
       courseId: true,
     },
   });
+  const themeConfig = useThemeConfig();
 
   if (courseDetail && courseDetail?.courseId) {
     const detail = await getCourseDetail(Number(courseDetail.courseId), user?.role, user?.id);
@@ -138,7 +143,20 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
         userStatus: result.courseInfo.userStatus ? result.courseInfo.userStatus : null,
         videoThumbnail: result.courseInfo.videoThumbnail,
       };
-      return { props: { courseId: courseDetail?.courseId, user, courseDetails: courseLessonDetail } };
+      return {
+        props: {
+          courseId: courseDetail?.courseId,
+          user,
+          courseDetails: courseLessonDetail,
+          themeConfig: {
+            ...themeConfig,
+            navBar: {
+              ...themeConfig.navBar,
+              component: themeConfig.navBar?.component?.name as any,
+            },
+          },
+        },
+      };
     } else {
       return {
         redirect: {
