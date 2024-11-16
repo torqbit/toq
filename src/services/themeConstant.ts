@@ -30,6 +30,7 @@ export const DEFAULT_THEME: PageThemeConfig = {
     description: "Master the art of product building and turn your ideas into successful, scalable products",
     ogImage: "/icon/torqbit.png",
     favicon: "/favicon.ico",
+    brandColor: "#5b63d3",
   },
 
   darkMode: false,

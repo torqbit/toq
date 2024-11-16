@@ -17,10 +17,14 @@ import {
 } from "@react-email/components";
 import { Flex } from "antd";
 import * as React from "react";
+import { useThemeConfig } from "../ContextApi/ThemeConfigContext";
 interface IProps {
   configData: IWelcomeEmailConfig;
 }
+
 const WelcomeEmailPage = ({ configData }: IProps) => {
+  const themeConfig = useThemeConfig();
+
   return (
     <Tailwind>
       <Html>
@@ -57,7 +61,7 @@ const WelcomeEmailPage = ({ configData }: IProps) => {
 
               <Button
                 href={configData.url}
-                className="bg-[#5b63d3] px-5 py-2 text-white text-left text-[12px]  rounded"
+                className={`bg-[${themeConfig.brand?.brandColor}] px-5 py-2 text-white text-left text-[12px]  rounded`}
               >
                 Visit Dashboard
               </Button>

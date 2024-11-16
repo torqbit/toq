@@ -18,12 +18,15 @@ import {
 } from "@react-email/components";
 
 import * as React from "react";
+import { useThemeConfig } from "../ContextApi/ThemeConfigContext";
 
 interface IProps {
   configData: INewLessonConfig;
 }
 
 export const NewLessonEmail = ({ configData }: IProps) => {
+  const themeConfig = useThemeConfig();
+
   return (
     <Tailwind>
       <Html>
@@ -61,7 +64,7 @@ export const NewLessonEmail = ({ configData }: IProps) => {
               </Button>
               <Button
                 href={configData.url}
-                className="bg-[#5b63d3] px-5 mt-[10px] py-2 w-[100px] text-white text-center text-[12px]  rounded"
+                className={`bg-[${themeConfig.brand?.brandColor}] px-5 mt-[10px] py-2 w-[100px] text-white text-center text-[12px]  rounded`}
               >
                 Watch Lesson
               </Button>

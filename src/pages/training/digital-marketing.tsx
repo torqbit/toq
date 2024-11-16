@@ -20,7 +20,7 @@ const DigitalMarketing: FC<{ user: User }> = ({ user }) => {
     description: "Description about the Digital Marketing ",
     difficultyLevel: "Intermediate",
     name: "History of Git",
-    thumbnail: "https://torqbit-dev.b-cdn.net/static//courses/banners/History-of-Git_banner-1722974067410.png",
+    thumbnail: "https://cdn.torqbit.com/static//courses/banners/History-of-Git_banner-1722974067410.png",
 
     chapters: [
       {
@@ -86,7 +86,7 @@ const DigitalMarketing: FC<{ user: User }> = ({ user }) => {
         heroSection={
           <HeroCoursePreview
             courseName={"Digital Marketing"}
-            authorImage={"https://torqbit-dev.b-cdn.net/static//user/profile/MD-MEHRAB-ALAM_profile-1724237296553.jpg"}
+            authorImage={"https://cdn.torqbit.com/static//user/profile/MD-MEHRAB-ALAM_profile-1724237296553.jpg"}
             authorName={"MD MEHRAB ALAM"}
             courseTrailer={"https://iframe.mediadelivery.net/embed/227219/8ca1cded-c33c-4810-bb61-796778c147bf"}
           />
