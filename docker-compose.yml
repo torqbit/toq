@@ -4,15 +4,15 @@ services:
   web:
     image: torqbit/torqbit:0.1.2-rc1
     ports:
-      - "3000:3000"
+      - "3000:80"
     build: .
-    command: ["sh", "-c", "npx prisma db push --accept-data-loss && yarn start"]
+    command: ["sh", "-c", "nginx ; npx prisma db push --accept-data-loss; yarn start"]
 
     depends_on:
       db:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/api/user/get-all || exit 1"]
+      test: ["CMD", "curl", "-f", "http://localhost:80/api/user/get-all || exit 1"]
       interval: 30s
       timeout: 2s
       retries: 5
