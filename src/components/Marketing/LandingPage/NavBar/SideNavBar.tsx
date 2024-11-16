@@ -7,72 +7,54 @@ import { useAppContext } from "@/components/ContextApi/AppContext";
 import SvgIcons from "@/components/SvgIcons";
 import { useThemeConfig } from "@/components/ContextApi/ThemeConfigContext";
 import styles from "./NavBar.module.scss";
+import { ISideNavBarProps } from "@/types/courses/navbar";
+import { onChangeTheme } from "@/lib/utils";
+import ThemeSwitch from "@/components/ThemeSwitch/ThemeSwitch";
 
-const SideNav: FC<{
-  isOpen: boolean;
-  onAnchorClick: () => void;
-  items: {
-    title: string;
-    link: string;
-  }[];
-}> = ({ isOpen, onAnchorClick, items }) => {
-  const { dispatch } = useAppContext();
-  const themeConfig = useThemeConfig();
-  const onChangeTheme = () => {
-    const currentTheme = localStorage.getItem("theme");
-
-    if (currentTheme === "dark") {
-      localStorage.setItem("theme", "light");
-      dispatch({
-        type: "SWITCH_THEME",
-        payload: "light",
-      });
-    } else if (currentTheme === "light") {
-      localStorage.setItem("theme", "dark");
-      dispatch({
-        type: "SWITCH_THEME",
-        payload: "dark",
-      });
-    }
-  };
-
+const SideNav: FC<ISideNavBarProps> = ({ isOpen, onAnchorClick, items, showThemeSwitch, activeTheme, brand }) => {
   return (
     <section className={styles.sideNaveContainer}>
       <Drawer
         classNames={{ header: styles.drawerHeader }}
         title={
           <div className={styles.drawerTitle}>
-            <Link href={"/"} aria-label='Go back to landing page'>
-              <Flex align='center' gap={5}>
-                <Image src={`${themeConfig.brand?.logo}`} height={40} width={40} alt={"logo"} loading='lazy' />
-                <h1 className='font-brand'>{themeConfig.brand?.name?.toUpperCase()}</h1>
+            <Link href={"/"} aria-label="Go back to landing page">
+              <Flex align="center" gap={5}>
+                <Image src={`${brand?.logo}`} height={40} width={40} alt={"logo"} loading="lazy" />
+                <h1 className="font-brand">{brand?.name?.toUpperCase()}</h1>
               </Flex>
             </Link>
-            {isOpen && themeConfig.darkMode && (
-              <Tooltip title={""}>
-                <Button
-                  type='default'
-                  aria-label='Theme Switch'
-                  className={styles.switchBtn}
-                  shape='circle'
-                  onClick={() => {
-                    onChangeTheme();
-                  }}
-                  icon={localStorage.getItem("theme") == "dark" ? SvgIcons.sun : SvgIcons.moon}
-                />
-              </Tooltip>
+            {isOpen && showThemeSwitch && (
+              // <Tooltip title={""}>
+              //   <Button
+              //     type="default"
+              //     aria-label="Theme Switch"
+              //     className={styles.switchBtn}
+              //     shape="circle"
+              //     onClick={() => {
+              //       onChangeTheme(dispatch, showThemeSwitch);
+              //     }}
+              //     icon={activeTheme == "dark" ? SvgIcons.sun : SvgIcons.moon}
+              //   />
+              // </Tooltip>
+              <ThemeSwitch activeTheme={activeTheme} />
             )}
           </div>
         }
-        placement='left'
+        placement="left"
         width={300}
         closable={false}
         onClose={onAnchorClick}
-        open={isOpen}>
+        open={isOpen}
+      >
         <div className={styles.menuDrawer}>
           {items.map((item, i) => {
             return (
-              <div key={i} className={styles.drawerMenuItems} onClick={() => item.title === "Courses" && onAnchorClick()}>
+              <div
+                key={i}
+                className={styles.drawerMenuItems}
+                onClick={() => item.title === "Courses" && onAnchorClick()}
+              >
                 {item.title === "Courses" ? (
                   <a href={item.link} className={styles.menuTitle} aria-label={`link to ${item.title}`}>
                     <div>{item.title}</div>

@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC, ReactNode, useEffect, useState } from "react";
 import React from "react";
 import styles from "@/components/Marketing/LandingPage/Hero/Hero.module.scss";
 import Head from "next/head";
@@ -14,16 +14,19 @@ import Image from "next/image";
 import Hamburger from "hamburger-react";
 import Footer from "../Marketing/LandingPage/Footer/Footer";
 import config from "../../theme.config";
-import { User } from "@prisma/client";
-import { ThemeConfigProvider, useThemeConfig } from "../ContextApi/ThemeConfigContext";
+import { Theme, User } from "@prisma/client";
+import { useThemeConfig } from "../ContextApi/ThemeConfigContext";
+import { PageThemeConfig } from "@/services/themeConstant";
+import { onChangeTheme } from "@/lib/utils";
+import { IBrandInfo } from "@/types/courses/navbar";
 
 const MarketingLayout: FC<{
   children?: React.ReactNode;
   heroSection?: React.ReactNode;
+  themeConfig: PageThemeConfig;
   user?: User;
-}> = ({ children, heroSection, user }) => {
-  const { globalState } = useAppContext();
-  const themeConfig = useThemeConfig();
+}> = ({ children, heroSection, user, themeConfig }) => {
+  const { globalState, dispatch } = useAppContext();
   const [showSideNav, setSideNav] = useState(false);
   const onAnchorClick = () => {
     setSideNav(false);
@@ -33,6 +36,10 @@ const MarketingLayout: FC<{
   useEffect(() => {
     const root = document.documentElement;
     root.style.setProperty("--btn-primary", `${brand?.brandColor}`);
+  }, []);
+
+  useEffect(() => {
+    onChangeTheme(dispatch, themeConfig.darkMode);
   }, []);
   return (
     <>
@@ -54,7 +61,6 @@ const MarketingLayout: FC<{
         </div>
       }
       <ConfigProvider theme={globalState.theme == "dark" ? darkThemConfig() : antThemeConfig()}>
-        {/* <ThemeConfigProvider value={config}> */}
         <Head>
           <title>
             {themeConfig.brand?.title} | {themeConfig.brand?.name}
@@ -67,11 +73,20 @@ const MarketingLayout: FC<{
         </Head>
 
         <section className={styles.heroWrapper}>
-          <NavBar user={user} items={themeConfig.navBar?.navigationLinks ? themeConfig.navBar.navigationLinks : []} />
+          <NavBar
+            user={user}
+            items={themeConfig.navBar?.navigationLinks ? themeConfig.navBar.navigationLinks : []}
+            showThemeSwitch={themeConfig.darkMode as boolean}
+            activeTheme={globalState.theme as Theme}
+            brand={themeConfig?.brand as { name: string; logo: ReactNode | string }}
+          />
           <SideNav
             isOpen={showSideNav}
             onAnchorClick={onAnchorClick}
             items={themeConfig.navBar?.navigationLinks ? themeConfig.navBar.navigationLinks : []}
+            showThemeSwitch={themeConfig.darkMode as boolean}
+            activeTheme={globalState.theme as Theme}
+            brand={themeConfig.brand as IBrandInfo}
           />
           <Link href={"/"} className={styles.platformNameLogo}>
             <Flex align="center" gap={5}>
@@ -94,7 +109,6 @@ const MarketingLayout: FC<{
         </section>
         <div className={styles.children_wrapper}>{children}</div>
         <Footer />
-        {/* </ThemeConfigProvider> */}
       </ConfigProvider>
     </>
   );

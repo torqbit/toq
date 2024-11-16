@@ -1,5 +1,8 @@
+import { AppAction, useAppContext } from "@/components/ContextApi/AppContext";
+import { useThemeConfig } from "@/components/ContextApi/ThemeConfigContext";
 import SvgIcons from "@/components/SvgIcons";
 import appConstant from "@/services/appConstant";
+import { Dispatch } from "react";
 const md5 = require("md5");
 
 export const getCookieName = () => {
@@ -339,3 +342,30 @@ export const deepMerge = (defaultObj: any, userObj: any): any => {
 //     root.style.setProperty(key, value);
 //   }
 // };
+
+export const onChangeTheme = (dispatch: Dispatch<AppAction>, darkMode?: boolean) => {
+  if (!darkMode) {
+    localStorage.setItem("theme", "light");
+    dispatch({
+      type: "SWITCH_THEME",
+      payload: "light",
+    });
+    return;
+  } else {
+    const currentTheme = localStorage.getItem("theme");
+
+    if (currentTheme === "dark") {
+      localStorage.setItem("theme", "light");
+      dispatch({
+        type: "SWITCH_THEME",
+        payload: "light",
+      });
+    } else if (currentTheme === "light") {
+      localStorage.setItem("theme", "dark");
+      dispatch({
+        type: "SWITCH_THEME",
+        payload: "dark",
+      });
+    }
+  }
+};

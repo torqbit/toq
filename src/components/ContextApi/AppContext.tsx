@@ -31,7 +31,7 @@ type AppState = {
 };
 
 // Define your action type
-type AppAction =
+export type AppAction =
   | { type: "SET_UNREAD_NOTIFICATION"; payload: number }
   | { type: "GET_NOTIFICATION"; payload: INotification[] }
   | { type: "SET_NAVBAR_MENU"; payload: IResponsiveNavMenu }
