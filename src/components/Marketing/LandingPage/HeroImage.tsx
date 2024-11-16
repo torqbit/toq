@@ -11,7 +11,7 @@ const HeroImage: FC<{ isMobile: boolean }> = ({ isMobile }) => (
         height={218}
         width={350}
         loading="lazy"
-        src="https://torqbit-dev.b-cdn.net/website/img/display-markkk.png"
+        src="https://cdn.torqbit.com/website/img/display-markkk.png"
       />
     </MediaQuery>
 
@@ -21,7 +21,7 @@ const HeroImage: FC<{ isMobile: boolean }> = ({ isMobile }) => (
         height={625}
         width={1000}
         loading="lazy"
-        src="https://torqbit-dev.b-cdn.net/website/img/display-markkk.png"
+        src="https://cdn.torqbit.com/website/img/display-markkk.png"
       />
     </MediaQuery>
   </section>

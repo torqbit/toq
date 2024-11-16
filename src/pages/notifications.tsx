@@ -134,7 +134,7 @@ const NotificationList: FC = () => {
             <div className={styles.notification_content}>
               <List.Item.Meta
                 avatar={
-                  <Badge color="blue" dot={!item.isView}>
+                  <Badge style={{ color: "var(--btn-primary)", background: "var(--btn-primary)" }} dot={!item.isView}>
                     <Avatar src={item.fromUser.image} icon={<UserOutlined />} />
                   </Badge>
                 }

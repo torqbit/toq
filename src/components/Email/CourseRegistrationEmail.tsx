@@ -17,11 +17,14 @@ import {
 } from "@react-email/components";
 import { Flex } from "antd";
 import * as React from "react";
+import { useThemeConfig } from "../ContextApi/ThemeConfigContext";
 interface IProps {
   configData: IEnrolmentEmailConfig;
 }
 
 export const CourseEnrolmentEmail = ({ configData }: IProps) => {
+  const themeConfig = useThemeConfig();
+
   return (
     <Tailwind>
       <Html>
@@ -65,7 +68,7 @@ export const CourseEnrolmentEmail = ({ configData }: IProps) => {
                     <div className="flex item-center justify-start">
                       <Button
                         href={`${configData.url}`}
-                        className="bg-[#5b63d3] px-5 py-2 text-white text-left text-[12px]  rounded"
+                        className={`bg-[${themeConfig.brand?.brandColor}] px-5 py-2 text-white text-left text-[12px]  rounded`}
                       >
                         Start Course
                       </Button>
