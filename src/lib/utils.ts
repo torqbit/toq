@@ -331,18 +331,6 @@ export const deepMerge = (defaultObj: any, userObj: any): any => {
   return userObj;
 };
 
-// export const applyTheme = (theme: keyof typeof themeConfig) => {
-//   const root = document.documentElement;
-
-//   // Get the selected theme's variables
-//   const themeVariables = themeConfig[theme];
-
-//   // Apply each variable to the :root
-//   for (const [key, value] of Object.entries(themeVariables)) {
-//     root.style.setProperty(key, value);
-//   }
-// };
-
 export const onChangeTheme = (dispatch: Dispatch<AppAction>, darkMode?: boolean) => {
   if (!darkMode) {
     localStorage.setItem("theme", "light");
