@@ -57,12 +57,11 @@ const MarketingLayout: FC<{
         {/* <ThemeConfigProvider value={config}> */}
         <Head>
           <title>
-            {themeConfig.brand?.title} | {themeConfig.brand?.name}
+            {`${themeConfig.brand?.title} | ${themeConfig.brand?.name}`}
           </title>
           <meta name="description" content={themeConfig.brand?.description} />
           <meta property="og:image" content={themeConfig.brand?.ogImage} />
           <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-
           <link rel="icon" href={themeConfig.brand?.favicon} />
         </Head>
 
