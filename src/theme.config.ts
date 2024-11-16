@@ -7,7 +7,7 @@ const config: PageThemeConfig = {
     component: NavBar,
     navigationLinks: [
       {
-        title: "Courses",
+        title: "Course",
         link: "/#courses",
       },
       {
@@ -28,6 +28,7 @@ const config: PageThemeConfig = {
     description: "Master the art of product building and turn your ideas into successful, scalable products",
     ogImage: "/icon/torqbit.png",
     favicon: "/favicon.ico",
+    brandColor: "#000",
   },
 
   darkMode: false,
@@ -48,7 +49,7 @@ const config: PageThemeConfig = {
     banner: {
       lightModePath: "/img/macbook-light.png",
       darkModePath: "/img/macbook-dark.png",
-      align: "right",
+      align: "left",
     },
   },
   footer: {

@@ -20,7 +20,7 @@ const EmailTemplatePage = () => {
         email: "/",
         course: {
           name: "Git Branch",
-          thumbnail: "https://torqbit-dev.b-cdn.net/static//courses/banners/Git-Intro_banner-1717674874299.jpg",
+          thumbnail: "https://cdn.torqbit.com/static//courses/banners/Git-Intro_banner-1717674874299.jpg",
         },
       }}
     />

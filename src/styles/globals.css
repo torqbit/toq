@@ -85,7 +85,6 @@ ul {
   --hd-box-shadow: 0 7px 30px -10px rgba(150, 170, 180, 0.5);
   --box-shadow: 0 7px 30px -10px rgba(150, 170, 180, 0.5);
   --card-bg: #fff;
-  --btn-primary: #5b63d3;
   --border-radius: 4px;
   --ft-color-dull: #848484;
   --hover-text: #c4c4c4;
@@ -148,7 +147,6 @@ ul {
 
   --font-warning: #faad14;
   --hover-text: #c4c4c4;
-  --btn-primary: #5b63d3;
   --font-secondary: #939db8;
   --font-footer: #939db8;
   --draft-bg: #202433;
@@ -501,7 +499,7 @@ a {
   border-radius: 50%;
   border: 9px solid;
   border-color: #dbdcef;
-  border-right-color: #5b63d3;
+  border-right-color: var(--btn-primary);
   animation: spinner-d3wgkg 1s infinite linear;
 }
 .spinner_container > .course__spinner {
@@ -514,7 +512,7 @@ a {
   border-radius: 50%;
   border: 9px solid;
   border-color: #dbdcef;
-  border-right-color: #5b63d3;
+  border-right-color: var(--btn-primary);
   animation: spinner-d3wgkg 1s infinite linear;
 }
 
@@ -528,7 +526,7 @@ a {
   border-radius: 50%;
   border: 9px solid;
   border-color: #dbdcef;
-  border-right-color: #5b63d3;
+  border-right-color: var(--btn-primary);
   animation: spinner-d3wgkg 1s infinite linear;
 }
 
@@ -542,7 +540,7 @@ a {
   border-radius: 50%;
   border: 9px solid;
   border-color: #dbdcef;
-  border-right-color: #5b63d3;
+  border-right-color: var(--btn-primary);
   animation: spinner-d3wgkg 1s infinite linear;
 }
 
@@ -555,7 +553,7 @@ a {
   border-radius: 50%;
   border: 9px solid;
   border-color: #dbdcef;
-  border-right-color: #5b63d3;
+  border-right-color: var(--btn-primary);
   animation: spinner-d3wgkg 1s infinite linear;
 }
 
@@ -1042,7 +1040,7 @@ a {
   border-radius: 50%;
   border: 5px solid;
   border-color: #dbdcef;
-  border-right-color: #5b63d3;
+  border-right-color: var(--btn-primary);
   animation: spinner-d3wgkg 1s infinite linear;
 }
 

@@ -14,6 +14,7 @@ export interface ThemeSchema {
     description?: string;
     ogImage?: string;
     favicon?: string;
+    brandColor?: string;
   };
   darkMode?: boolean;
   heroSection?: {

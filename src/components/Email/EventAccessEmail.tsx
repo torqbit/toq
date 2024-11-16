@@ -19,11 +19,14 @@ import { Flex } from "antd";
 import * as React from "react";
 import PurifyContent from "../PurifyContent/PurifyContent";
 import { convertToDayMonthTime } from "@/lib/utils";
+import { useThemeConfig } from "../ContextApi/ThemeConfigContext";
 interface IProps {
   configData: IEventAccessMailConfig;
 }
 
 export const EventAccessEmail = ({ configData }: IProps) => {
+  const themeConfig = useThemeConfig();
+
   return (
     <Tailwind>
       <Html>
@@ -86,7 +89,7 @@ export const EventAccessEmail = ({ configData }: IProps) => {
                     <div className="flex item-center justify-start">
                       <Button
                         href={`${configData.url}`}
-                        className="bg-[#5b63d3] px-5 py-2 text-white text-left text-[12px]  rounded"
+                        className={`bg-[${themeConfig.brand?.brandColor}] px-5 py-2 text-white text-left text-[12px]  rounded`}
                       >
                         View Details
                       </Button>
