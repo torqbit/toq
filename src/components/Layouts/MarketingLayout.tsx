@@ -1,6 +1,7 @@
 import { FC, useEffect } from "react";
 import React from "react";
 import styles from "@/components/Marketing/LandingPage/Hero/Hero.module.scss";
+import landingPage from "@/styles/Marketing/LandingPage/LandingPage.module.scss";
 import Head from "next/head";
 import { useAppContext } from "../ContextApi/AppContext";
 import { ConfigProvider } from "antd";
@@ -55,20 +56,17 @@ const MarketingLayout: FC<{
             width: "100%",
             background: "#fff",
             zIndex: 10,
-          }}
-        >
-          <SpinLoader className="marketing__spinner" />
+          }}>
+          <SpinLoader className='marketing__spinner' />
         </div>
       }
       <ConfigProvider theme={globalState.theme == "dark" ? darkThemConfig() : antThemeConfig()}>
         <Head>
-          <title>
-            {`${themeConfig.brand?.title} | ${themeConfig.brand?.name}`}
-          </title>
-          <meta name="description" content={themeConfig.brand?.description} />
-          <meta property="og:image" content={themeConfig.brand?.ogImage} />
-          <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-          <link rel="icon" href={themeConfig.brand?.favicon} />
+          <title>{`${themeConfig.brand?.title} | ${themeConfig.brand?.name}`}</title>
+          <meta name='description' content={themeConfig.brand?.description} />
+          <meta property='og:image' content={themeConfig.brand?.ogImage} />
+          <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
+          <link rel='icon' href={themeConfig.brand?.favicon} />
         </Head>
 
         <section className={styles.heroWrapper}>
@@ -85,7 +83,7 @@ const MarketingLayout: FC<{
 
           {heroSection}
         </section>
-        <div className={styles.children_wrapper}>{children}</div>
+        <div className={landingPage.children_wrapper}>{children}</div>
         <Footer themeConfig={themeConfig} />
       </ConfigProvider>
     </>

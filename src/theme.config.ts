@@ -22,23 +22,23 @@ const config: PageThemeConfig = {
   },
 
   brand: {
-    name: "Torqbit",
+    name: "TORQBIT",
     logo: "/icon/torqbit.png",
     title: "A platform to guide you to the future",
     description: "Master the art of product building and turn your ideas into successful, scalable products",
     ogImage: "/icon/torqbit.png",
     favicon: "/favicon.ico",
-    brandColor: "#000",
+    brandColor: "#6B74EE",
   },
 
   darkMode: true,
   heroSection: {
-    title: "Become a Pro Product Builder",
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores rerum voluptatum perferendis autem veritatis nostrum. Libero aliquam dignissimos sunt voluptatum!",
+    title: "The Awesomest teaching platform",
+    description: `Torqbit, an open-source platform, serves as a learning management software
+ that works for single person to largest educational institutions `,
     actionButtons: {
       primary: {
-        label: "Go to Dashboard",
+        label: "Get Started",
         link: "/dashboard",
       },
       secondary: {
@@ -47,9 +47,9 @@ const config: PageThemeConfig = {
       },
     },
     banner: {
-      lightModePath: "/img/macbook-light.png",
-      darkModePath: "/img/macbook-dark.png",
-      align: "left",
+      lightModePath: "/img/landing/online-learning.png",
+      darkModePath: "/img/landing/online-learning.png",
+      align: "right",
     },
   },
   footer: {

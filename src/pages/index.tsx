@@ -13,13 +13,13 @@ import { getToken } from "next-auth/jwt";
 
 import { PageThemeConfig } from "@/services/themeConstant";
 import { useThemeConfig } from "@/components/ContextApi/ThemeConfigContext";
+import SetupPlatform from "@/components/Marketing/LandingPage/Setup/SetupPlatform";
 interface IProps {
   user: User;
   themeConfig: PageThemeConfig;
 }
 
 const LandingPage: FC<IProps> = ({ user, themeConfig }) => {
-  console.log(themeConfig, "theme config value using stati propp");
   const { dispatch, globalState } = useAppContext();
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
 
@@ -52,11 +52,9 @@ const LandingPage: FC<IProps> = ({ user, themeConfig }) => {
   console.log(globalState.pageLoading);
 
   return (
-    <MarketingLayout
-      user={user}
-      themeConfig={themeConfig}
-      heroSection={<Hero isMobile={isMobile} user={user} />}
-    ></MarketingLayout>
+    <MarketingLayout user={user} themeConfig={themeConfig} heroSection={<Hero isMobile={isMobile} user={user} />}>
+      <SetupPlatform />
+    </MarketingLayout>
   );
 };
 
