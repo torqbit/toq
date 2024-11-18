@@ -1,6 +1,7 @@
 import { FC, useEffect } from "react";
 import React from "react";
 import styles from "@/components/Marketing/LandingPage/Hero/Hero.module.scss";
+import landingPage from "@/styles/Marketing/LandingPage/LandingPage.module.scss";
 import Head from "next/head";
 import { useAppContext } from "../ContextApi/AppContext";
 import { ConfigProvider } from "antd";
@@ -55,9 +56,8 @@ const MarketingLayout: FC<{
             width: "100%",
             background: "#fff",
             zIndex: 10,
-          }}
-        >
-          <SpinLoader className="marketing__spinner" />
+          }}>
+          <SpinLoader className='marketing__spinner' />
         </div>
       }
       <ConfigProvider theme={globalState.theme == "dark" ? darkThemConfig() : antThemeConfig()}>
@@ -83,7 +83,7 @@ const MarketingLayout: FC<{
 
           {heroSection}
         </section>
-        <div className={styles.children_wrapper}>{children}</div>
+        <div className={landingPage.children_wrapper}>{children}</div>
         <Footer themeConfig={themeConfig} isMobile={isMobile} />
       </ConfigProvider>
     </>

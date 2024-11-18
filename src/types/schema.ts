@@ -33,7 +33,7 @@ export interface ThemeSchema {
     banner?: {
       lightModePath?: string;
       darkModePath?: string;
-      align?: bannerAlignment;
+      align?: "left" | "right" | "bottom" | "background";
     };
   };
 
