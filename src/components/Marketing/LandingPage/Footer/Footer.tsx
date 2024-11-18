@@ -1,15 +1,12 @@
-import appConstant from "@/services/appConstant";
 import styles from "./Footer.module.scss";
-
 import { Flex } from "antd";
 import Link from "next/link";
 import Image from "next/image";
 import SvgIcons from "@/components/SvgIcons";
-import { useThemeConfig } from "@/components/ContextApi/ThemeConfigContext";
 import { FC } from "react";
 import { PageThemeConfig } from "@/services/themeConstant";
 
-const Footer: FC<{ themeConfig: PageThemeConfig }> = ({ themeConfig }) => {
+const Footer: FC<{ themeConfig: PageThemeConfig; isMobile: boolean }> = ({ themeConfig, isMobile }) => {
   const { footer, navBar, brand } = themeConfig;
 
   const footerContent = [
@@ -93,28 +90,7 @@ const Footer: FC<{ themeConfig: PageThemeConfig }> = ({ themeConfig }) => {
       ],
     },
   ];
-  const socialLinks = [
-    {
-      icon: SvgIcons.discord,
-      href: footer?.discordLink,
-    },
-    {
-      icon: SvgIcons.github,
-      href: footer?.githubLink,
-    },
-    {
-      icon: SvgIcons.youtube,
-      href: footer?.youtubeLink,
-    },
-    {
-      icon: SvgIcons.youtube,
-      href: footer?.instagramLink,
-    },
-    {
-      icon: SvgIcons.youtube,
-      href: footer?.twitterLink,
-    },
-  ];
+
   return (
     <section className={styles.footerContainer}>
       <footer>
@@ -125,15 +101,7 @@ const Footer: FC<{ themeConfig: PageThemeConfig }> = ({ themeConfig }) => {
               <h1 className="font-brand">{brand?.name}</h1>
             </Flex>
           </Link>
-          <div className={styles.socialIcons}>
-            {socialLinks?.map((social, i) => {
-              return (
-                <Link key={i} href={`${social.href}`} style={{ display: !social.href ? "none" : "unset" }}>
-                  <i> {social.icon}</i>
-                </Link>
-              );
-            })}
-          </div>
+          <h4>{footer?.tagLine}</h4>
         </div>
 
         <div>

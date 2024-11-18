@@ -1,6 +1,6 @@
 .footerContainer {
-  background-color: #000;
-  color: #fff;
+  background-color: var(--bg-primary);
+  color: var(--font-primary);
   padding: 40px 0px;
 
   footer {
@@ -10,24 +10,21 @@
     align-items: flex-start;
     justify-content: space-between;
 
-    h1 {
-      color: #fff;
-    }
-
     > div:first-child {
       display: flex;
       flex-direction: column;
+      gap: 30px;
 
       .socialIcons {
         margin-top: 50px;
         display: flex;
         align-items: center;
         gap: 20px;
-        fill: #fff;
+        fill: var(--font-primary);
       }
 
       i {
-        fill: #fff;
+        fill: var(--font-primary);
       }
     }
 
@@ -52,7 +49,7 @@
           li {
             list-style: none;
             padding-top: 10px;
-            color: var(--font-footer);
+            color: var(--font-secondary);
             cursor: pointer;
 
             &:hover {
@@ -80,9 +77,6 @@
         align-items: center;
         width: 100%;
         gap: 70px;
-        .socialIcons {
-          margin: 0;
-        }
       }
 
       .linkWrapper {
