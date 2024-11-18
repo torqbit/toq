@@ -6,9 +6,12 @@ import Link from "next/link";
 import Image from "next/image";
 import SvgIcons from "@/components/SvgIcons";
 import { useThemeConfig } from "@/components/ContextApi/ThemeConfigContext";
+import { FC } from "react";
+import { PageThemeConfig } from "@/services/themeConstant";
 
-const Footer = () => {
-  const { footer, navBar, brand } = useThemeConfig();
+const Footer: FC<{ themeConfig: PageThemeConfig }> = ({ themeConfig }) => {
+  const { footer, navBar, brand } = themeConfig;
+
   const footerContent = [
     {
       title: "Resources",
@@ -119,7 +122,7 @@ const Footer = () => {
           <Link href={"/landing-page"}>
             <Flex align="center" gap={5}>
               <Image src={`${brand?.logo}`} height={40} width={40} alt={"logo"} loading="lazy" />
-              <h1 className="font-brand">{brand?.name?.toUpperCase()}</h1>
+              <h1 className="font-brand">{brand?.name}</h1>
             </Flex>
           </Link>
           <div className={styles.socialIcons}>

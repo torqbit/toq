@@ -1,39 +1,46 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect } from "react";
 import React from "react";
 import styles from "@/components/Marketing/LandingPage/Hero/Hero.module.scss";
 import Head from "next/head";
 import { useAppContext } from "../ContextApi/AppContext";
-import { ConfigProvider, Flex } from "antd";
-import Link from "next/link";
+import { ConfigProvider } from "antd";
 import darkThemConfig from "@/services/darkThemConfig";
 import antThemeConfig from "@/services/antThemeConfig";
 import SpinLoader from "../SpinLoader/SpinLoader";
-import SideNav from "../Marketing/LandingPage/NavBar/SideNavBar";
-import NavBar from "../Marketing/LandingPage/NavBar/NavBar";
-import Image from "next/image";
-import Hamburger from "hamburger-react";
 import Footer from "../Marketing/LandingPage/Footer/Footer";
-import config from "../../theme.config";
-import { User } from "@prisma/client";
-import { ThemeConfigProvider, useThemeConfig } from "../ContextApi/ThemeConfigContext";
+import { useThemeConfig } from "../ContextApi/ThemeConfigContext";
+import { DEFAULT_THEME, PageThemeConfig } from "@/services/themeConstant";
+import { onChangeTheme } from "@/lib/utils";
+import { useMediaQuery } from "react-responsive";
+import { Theme, User } from "@prisma/client";
+import { IBrandInfo } from "@/types/landing/navbar";
 
 const MarketingLayout: FC<{
   children?: React.ReactNode;
   heroSection?: React.ReactNode;
+  themeConfig: PageThemeConfig;
   user?: User;
-}> = ({ children, heroSection, user }) => {
-  const { globalState } = useAppContext();
-  const themeConfig = useThemeConfig();
-  const [showSideNav, setSideNav] = useState(false);
-  const onAnchorClick = () => {
-    setSideNav(false);
-  };
+}> = ({ children, heroSection, user, themeConfig }) => {
+  const { navBar } = useThemeConfig();
+  const { globalState, dispatch } = useAppContext();
+  const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
 
   const { brand } = useThemeConfig();
   useEffect(() => {
     const root = document.documentElement;
     root.style.setProperty("--btn-primary", `${brand?.brandColor}`);
   }, []);
+
+  useEffect(() => {
+    onChangeTheme(dispatch, themeConfig.darkMode);
+  }, []);
+
+  const NavBarComponent = navBar?.component ? navBar.component : null;
+  let brandInfo: IBrandInfo = {
+    logo: themeConfig.brand?.logo ?? DEFAULT_THEME.brand.logo,
+    name: themeConfig.brand?.name ?? DEFAULT_THEME.brand.name,
+  };
+
   return (
     <>
       {
@@ -54,7 +61,6 @@ const MarketingLayout: FC<{
         </div>
       }
       <ConfigProvider theme={globalState.theme == "dark" ? darkThemConfig() : antThemeConfig()}>
-        {/* <ThemeConfigProvider value={config}> */}
         <Head>
           <title>
             {`${themeConfig.brand?.title} | ${themeConfig.brand?.name}`}
@@ -66,34 +72,21 @@ const MarketingLayout: FC<{
         </Head>
 
         <section className={styles.heroWrapper}>
-          <NavBar user={user} items={themeConfig.navBar?.navigationLinks ? themeConfig.navBar.navigationLinks : []} />
-          <SideNav
-            isOpen={showSideNav}
-            onAnchorClick={onAnchorClick}
-            items={themeConfig.navBar?.navigationLinks ? themeConfig.navBar.navigationLinks : []}
-          />
-          <Link href={"/"} className={styles.platformNameLogo}>
-            <Flex align="center" gap={5}>
-              <Image src={`${themeConfig.brand?.logo}`} height={40} width={40} alt={"logo"} loading="lazy" />
-              <h4 className="font-brand">{themeConfig.brand?.name?.toUpperCase()}</h4>
-            </Flex>
-          </Link>
-
-          <div role="button" className={styles.hamburger} aria-label="Toggle menu">
-            <Hamburger
-              rounded
-              direction="left"
-              toggled={showSideNav}
-              onToggle={(toggle: boolean | ((prevState: boolean) => boolean)) => {
-                setSideNav(toggle);
-              }}
+          {NavBarComponent && (
+            <NavBarComponent
+              user={user}
+              isMobile={isMobile}
+              items={themeConfig.navBar?.navigationLinks ?? []}
+              showThemeSwitch={themeConfig.darkMode ?? DEFAULT_THEME.darkMode}
+              activeTheme={globalState.theme ?? Theme.light}
+              brand={brandInfo}
             />
-          </div>
+          )}
+
           {heroSection}
         </section>
         <div className={styles.children_wrapper}>{children}</div>
-        <Footer />
-        {/* </ThemeConfigProvider> */}
+        <Footer themeConfig={themeConfig} />
       </ConfigProvider>
     </>
   );

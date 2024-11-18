@@ -31,7 +31,7 @@ const config: PageThemeConfig = {
     brandColor: "#000",
   },
 
-  darkMode: false,
+  darkMode: true,
   heroSection: {
     title: "Become a Pro Product Builder",
     description:

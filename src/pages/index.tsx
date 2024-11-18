@@ -10,13 +10,17 @@ import MarketingLayout from "@/components/Layouts/MarketingLayout";
 import { GetServerSidePropsContext, NextPage } from "next";
 import { getCookieName } from "@/lib/utils";
 import { getToken } from "next-auth/jwt";
-import appConstant from "@/services/appConstant";
+
+import { PageThemeConfig } from "@/services/themeConstant";
+import { useThemeConfig } from "@/components/ContextApi/ThemeConfigContext";
 interface IProps {
   user: User;
+  themeConfig: PageThemeConfig;
 }
 
-const LandingPage: FC<IProps> = ({ user }) => {
-  const { dispatch } = useAppContext();
+const LandingPage: FC<IProps> = ({ user, themeConfig }) => {
+  console.log(themeConfig, "theme config value using stati propp");
+  const { dispatch, globalState } = useAppContext();
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
 
   const setGlobalTheme = (theme: Theme) => {
@@ -45,16 +49,34 @@ const LandingPage: FC<IProps> = ({ user }) => {
     onCheckTheme();
   }, []);
 
-  return <MarketingLayout user={user} heroSection={<Hero isMobile={isMobile} user={user} />}></MarketingLayout>;
+  console.log(globalState.pageLoading);
+
+  return (
+    <MarketingLayout
+      user={user}
+      themeConfig={themeConfig}
+      heroSection={<Hero isMobile={isMobile} user={user} />}
+    ></MarketingLayout>
+  );
 };
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const { req } = ctx;
-
   let cookieName = getCookieName();
-
   const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
+  const themeConfig = useThemeConfig();
 
-  return { props: { user } };
+  return {
+    props: {
+      user,
+      themeConfig: {
+        ...themeConfig,
+        navBar: {
+          ...themeConfig.navBar,
+          component: themeConfig.navBar?.component?.name || null,
+        },
+      },
+    },
+  };
 };
 export default LandingPage;

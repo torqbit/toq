@@ -11,10 +11,11 @@ import { getToken } from "next-auth/jwt";
 import { Flex, Space } from "antd";
 import styles from "@/styles/Marketing/Contact/ContactUs.module.scss";
 import appConstant from "@/services/appConstant";
+import { useThemeConfig } from "@/components/ContextApi/ThemeConfigContext";
+import { PageThemeConfig } from "@/services/themeConstant";
 
-const ContactUsPage: FC<{ user: User }> = ({ user }) => {
-  const { dispatch, globalState } = useAppContext();
-  const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
+const ContactUsPage: FC<{ user: User; themeConfig: PageThemeConfig }> = ({ user, themeConfig }) => {
+  const { dispatch } = useAppContext();
 
   const setGlobalTheme = (theme: Theme) => {
     dispatch({
@@ -44,6 +45,7 @@ const ContactUsPage: FC<{ user: User }> = ({ user }) => {
 
   return (
     <MarketingLayout
+      themeConfig={themeConfig}
       user={user}
       heroSection={
         <DefaulttHero
@@ -78,6 +80,18 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   let cookieName = getCookieName();
 
   const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
+  const themeConfig = useThemeConfig();
 
-  return { props: { user } };
+  return {
+    props: {
+      user,
+      themeConfig: {
+        ...themeConfig,
+        navBar: {
+          ...themeConfig.navBar,
+          component: themeConfig.navBar?.component?.name as any,
+        },
+      },
+    },
+  };
 };

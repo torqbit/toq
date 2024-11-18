@@ -16,8 +16,11 @@ import styles from "@/styles/Marketing/Blog/Blog.module.scss";
 import Link from "next/link";
 import { UserOutlined } from "@ant-design/icons";
 import appConstant from "@/services/appConstant";
+import { useThemeConfig } from "@/components/ContextApi/ThemeConfigContext";
+import { PageThemeConfig } from "@/services/themeConstant";
 interface IProps {
   user: User;
+  themeConfig: PageThemeConfig;
   blogData: {
     title: string;
     id: string;
@@ -28,7 +31,7 @@ interface IProps {
   }[];
 }
 
-const BlogPage: FC<IProps> = ({ user, blogData }) => {
+const BlogPage: FC<IProps> = ({ user, blogData, themeConfig }) => {
   const { dispatch, globalState } = useAppContext();
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
 
@@ -60,6 +63,7 @@ const BlogPage: FC<IProps> = ({ user, blogData }) => {
 
   return (
     <MarketingLayout
+      themeConfig={themeConfig}
       user={user}
       heroSection={<HeroBlog title="Blog" description="Our engineering experience, explained in detail" />}
     >
@@ -180,6 +184,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   });
 
   const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
+  const themeConfig = useThemeConfig();
   if (blog.length > 0) {
     return {
       props: {
@@ -194,6 +199,13 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
             slug: b.slug,
           };
         }),
+        themeConfig: {
+          ...themeConfig,
+          navBar: {
+            ...themeConfig.navBar,
+            component: themeConfig.navBar?.component?.name as any,
+          },
+        },
       },
     };
   } else {
@@ -201,6 +213,13 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
       props: {
         user,
         blogData: [],
+        themeConfig: {
+          ...themeConfig,
+          navBar: {
+            ...themeConfig.navBar,
+            component: themeConfig.navBar?.component?.name as any,
+          },
+        },
       },
     };
   }

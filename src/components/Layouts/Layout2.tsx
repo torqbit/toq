@@ -21,7 +21,7 @@ import { Theme } from "@prisma/client";
 import { postFetch } from "@/services/request";
 import { useMediaQuery } from "react-responsive";
 import config from "@/theme.config";
-import { ThemeConfigProvider, useThemeConfig } from "../ContextApi/ThemeConfigContext";
+import { useThemeConfig } from "../ContextApi/ThemeConfigContext";
 
 const { Content } = Layout;
 
@@ -353,7 +353,6 @@ const Layout2: FC<{ children?: React.ReactNode; className?: string }> = ({ child
       ) : (
         <>
           <ConfigProvider theme={globalState.session?.theme == "dark" ? darkThemConfig() : antThemeConfig()}>
-            {/* <ThemeConfigProvider value={config}> */}
             <Head>
               <title>Torqbit | Learn to build software products</title>
 
@@ -474,7 +473,6 @@ const Layout2: FC<{ children?: React.ReactNode; className?: string }> = ({ child
             ) : (
               <Offline />
             )}
-            {/* </ThemeConfigProvider> */}
           </ConfigProvider>
         </>
       )}

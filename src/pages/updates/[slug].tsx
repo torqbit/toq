@@ -17,6 +17,8 @@ import Head from "next/head";
 import appConstant from "@/services/appConstant";
 import { truncateString } from "@/services/helper";
 import PurifyContent from "@/components/PurifyContent/PurifyContent";
+import { useThemeConfig } from "@/components/ContextApi/ThemeConfigContext";
+import { PageThemeConfig } from "@/services/themeConstant";
 
 interface IProps {
   user: User;
@@ -24,6 +26,7 @@ interface IProps {
   description: string;
   currentUrl: string;
   hostName: string;
+  themeConfig: PageThemeConfig;
   updateData: {
     title: string;
     id: string;
@@ -35,7 +38,7 @@ interface IProps {
   };
 }
 
-const BlogPage: FC<IProps> = ({ user, htmlData, updateData, description, currentUrl, hostName }) => {
+const BlogPage: FC<IProps> = ({ user, htmlData, updateData, description, currentUrl, hostName, themeConfig }) => {
   const { dispatch } = useAppContext();
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
 
@@ -66,6 +69,7 @@ const BlogPage: FC<IProps> = ({ user, htmlData, updateData, description, current
   }, []);
   return (
     <MarketingLayout
+      themeConfig={themeConfig}
       user={user}
       heroSection={
         <section className={styles.blogPageWrapper}>
@@ -127,6 +131,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const { req } = ctx;
   const params = ctx?.params;
   let cookieName = getCookieName();
+  const themeConfig = useThemeConfig();
 
   const protocol = req.headers["x-forwarded-proto"] || "http"; // Detect protocol
   const host = req.headers["x-forwarded-host"] || req.headers.host; // Detect host
@@ -168,6 +173,13 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
           authorImage: update?.user.image,
           slug: update.slug,
           contentType: update.contentType,
+        },
+        themeConfig: {
+          ...themeConfig,
+          navBar: {
+            ...themeConfig.navBar,
+            component: themeConfig.navBar?.component?.name as any,
+          },
         },
       },
     };

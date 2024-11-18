@@ -10,12 +10,15 @@ import prisma from "@/lib/prisma";
 import { IEventInfo } from "@/services/EventService";
 import styles from "@/styles/Marketing/Events/Event.module.scss";
 import EventInfo from "@/components/Events/EventInfo";
+import { useThemeConfig } from "@/components/ContextApi/ThemeConfigContext";
+import { PageThemeConfig } from "@/services/themeConstant";
 
-const EventInfoPage: FC<{ user: User; eventInfo: IEventInfo; registrationExpired: boolean }> = ({
-  user,
-  eventInfo,
-  registrationExpired,
-}) => {
+const EventInfoPage: FC<{
+  user: User;
+  eventInfo: IEventInfo;
+  registrationExpired: boolean;
+  themeConfig: PageThemeConfig;
+}> = ({ user, eventInfo, registrationExpired, themeConfig }) => {
   const { dispatch, globalState } = useAppContext();
   const setGlobalTheme = (theme: Theme) => {
     dispatch({
@@ -44,6 +47,7 @@ const EventInfoPage: FC<{ user: User; eventInfo: IEventInfo; registrationExpired
   }, []);
   return (
     <MarketingLayout
+      themeConfig={themeConfig}
       user={user}
       heroSection={
         <div className={styles.banner_Wrapper}>
@@ -58,7 +62,7 @@ const EventInfoPage: FC<{ user: User; eventInfo: IEventInfo; registrationExpired
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const { req } = ctx;
   const params = ctx?.params;
-
+  const themeConfig = useThemeConfig();
   let cookieName = getCookieName();
   const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
   const eventInfo = await prisma.events.findUnique({
@@ -103,12 +107,26 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
             : "",
         },
         registrationExpired,
+        themeConfig: {
+          ...themeConfig,
+          navBar: {
+            ...themeConfig.navBar,
+            component: themeConfig.navBar?.component?.name as any,
+          },
+        },
       },
     };
   } else {
     return {
       props: {
         user,
+        themeConfig: {
+          ...themeConfig,
+          navBar: {
+            ...themeConfig.navBar,
+            component: themeConfig.navBar?.component?.name as any,
+          },
+        },
       },
     };
   }
