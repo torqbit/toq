@@ -13,6 +13,7 @@ import { getToken } from "next-auth/jwt";
 
 import { PageThemeConfig } from "@/services/themeConstant";
 import { useThemeConfig } from "@/components/ContextApi/ThemeConfigContext";
+import SetupPlatform from "@/components/Marketing/LandingPage/Setup/SetupPlatform";
 interface IProps {
   user: User;
   themeConfig: PageThemeConfig;
@@ -49,11 +50,9 @@ const LandingPage: FC<IProps> = ({ user, themeConfig }) => {
   }, []);
 
   return (
-    <MarketingLayout
-      user={user}
-      themeConfig={themeConfig}
-      heroSection={<Hero isMobile={isMobile} user={user} themeConfig={themeConfig} />}
-    ></MarketingLayout>
+    <MarketingLayout user={user} themeConfig={themeConfig} heroSection={<Hero isMobile={isMobile} user={user} />}>
+      <SetupPlatform />
+    </MarketingLayout>
   );
 };
 

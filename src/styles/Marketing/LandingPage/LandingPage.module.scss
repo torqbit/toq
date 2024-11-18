@@ -183,6 +183,9 @@
     color: var(--font-primary);
   }
 }
+.children_wrapper {
+  background-color: var(--bg-secondary);
+}
 
 @media only screen and (max-width: 435px) {
   .coursesListWrapper {
@@ -219,10 +222,6 @@
   }
 
   //children
-
-  .children_wrapper {
-    background-color: var(--bg-secondary);
-  }
 
   // Course Catgory
 

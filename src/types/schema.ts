@@ -34,6 +34,8 @@ export interface ThemeSchema {
       lightModePath?: string;
       darkModePath?: string;
       position?: bannerAlignment;
+
+
     };
   };
 
