@@ -1,6 +1,5 @@
 .footerContainer {
   background-color: var(--bg-primary);
-  color: var(--font-primary);
   padding: 40px 0px;
 
   footer {
@@ -14,18 +13,6 @@
       display: flex;
       flex-direction: column;
       gap: 15px;
-
-      .socialIcons {
-        margin-top: 50px;
-        display: flex;
-        align-items: center;
-        gap: 20px;
-        fill: var(--font-primary);
-      }
-
-      i {
-        fill: var(--font-primary);
-      }
     }
 
     .linkWrapper {
