@@ -63,10 +63,10 @@ const MarketingLayout: FC<{
       <ConfigProvider theme={globalState.theme == "dark" ? darkThemConfig() : antThemeConfig()}>
         <Head>
           <title>{`${themeConfig.brand?.title} | ${themeConfig.brand?.name}`}</title>
-          <meta name='description' content={themeConfig.brand?.description} />
-          <meta property='og:image' content={themeConfig.brand?.ogImage} />
-          <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
-          <link rel='icon' href={themeConfig.brand?.favicon} />
+          <meta name="description" content={themeConfig.brand?.description} />
+          <meta property="og:image" content={themeConfig.brand?.ogImage} />
+          <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+          <link rel="icon" href={themeConfig.brand?.favicon} />
         </Head>
 
         <section className={styles.heroWrapper}>
@@ -84,7 +84,7 @@ const MarketingLayout: FC<{
           {heroSection}
         </section>
         <div className={landingPage.children_wrapper}>{children}</div>
-        <Footer themeConfig={themeConfig} />
+        <Footer themeConfig={themeConfig} isMobile={isMobile} />
       </ConfigProvider>
     </>
   );

@@ -43,5 +43,6 @@ export interface ThemeSchema {
     instagramLink?: string;
     twitterLink?: string;
     discordLink?: string;
+    tagLine?: String;
   };
 }

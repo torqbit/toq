@@ -1,7 +1,7 @@
 import { FC } from "react";
 
 import styles from "./Hero.module.scss";
-import { Flex, Space } from "antd";
+import { Button, Flex, Space } from "antd";
 import Link from "next/link";
 import { Theme, User } from "@prisma/client";
 import Image from "next/image";
@@ -68,18 +68,11 @@ const MarketingHero: FC<{ isMobile: boolean; user: User }> = ({ isMobile, user }
           <p style={{ textAlign: getTextAlign(bannerAlign) }}>{heroSection && heroSection.description}</p>
 
           <Space size={"large"} style={{ marginBottom: 50, padding: "0px 20px" }}>
-            <Link
-              href={user ? `${heroSection?.actionButtons?.primary?.link}` : `/login`}
-              className={styles.btn__signup}
-            >
-              {user ? heroSection?.actionButtons?.primary?.label : " Sign up for free"}
+            <Link href={user ? `${heroSection?.actionButtons?.primary?.link}` : `/login`}>
+              <Button type="primary">{user ? heroSection?.actionButtons?.primary?.label : " Sign up for free"}</Button>
             </Link>
-            <a
-              className={styles.btn__contact}
-              href={heroSection?.actionButtons?.secondary?.link}
-              aria-label="Contact us through mail"
-            >
-              {heroSection?.actionButtons?.secondary?.label}
+            <a href={heroSection?.actionButtons?.secondary?.link} aria-label="Contact us through mail">
+              <Button className={styles.btn__contact}>{heroSection?.actionButtons?.secondary?.label}</Button>
             </a>
           </Space>
         </Flex>

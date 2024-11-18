@@ -56,6 +56,7 @@ const config: PageThemeConfig = {
     discordLink: "https://discord.gg/NserMXcx",
     githubLink: "https://github.com/torqbit",
     youtubeLink: "https://www.youtube.com/@torqbit",
+    tagLine: "Master Skills, Transform Futures",
   },
 };
 export default config;

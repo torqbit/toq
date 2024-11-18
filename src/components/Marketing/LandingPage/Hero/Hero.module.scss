@@ -1,7 +1,7 @@
 .heroWrapper {
   position: relative;
   z-index: 1;
-  background: var(--hero-gradient);
+  background-color: var(--bg-secondary);
   min-height: 50vh;
 
   .hero_img_bg {
@@ -18,7 +18,6 @@
     margin: 0 auto;
     padding: 100px 0;
     display: flex;
-    // flex-direction: column;
     align-items: center;
     justify-content: center;
 
@@ -61,13 +60,6 @@
       margin-bottom: 40px;
       padding: 0 20px;
     }
-
-    button {
-      padding: 0px 20px;
-
-      font-size: 16px;
-      height: 50px;
-    }
   }
 
   .heroWaveIcon {
@@ -93,17 +85,9 @@
 }
 
 .btn__contact {
-  background-color: #cf6c66a1;
-  padding: 5px 15px;
   display: inline-block;
 
-  line-height: 1.9;
   border-radius: 4px;
-  color: white;
-
-  &:hover {
-    background-color: #cf6c66d4;
-  }
 }
 .hero__img {
   width: 100%;

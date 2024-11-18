@@ -49,8 +49,6 @@ const LandingPage: FC<IProps> = ({ user, themeConfig }) => {
     onCheckTheme();
   }, []);
 
-  console.log(globalState.pageLoading);
-
   return (
     <MarketingLayout user={user} themeConfig={themeConfig} heroSection={<Hero isMobile={isMobile} user={user} />}>
       <SetupPlatform />
