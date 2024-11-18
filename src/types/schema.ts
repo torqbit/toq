@@ -1,5 +1,5 @@
 import { FC, ReactNode } from "react";
-import { INavBarProps } from "./courses/navbar";
+import { INavBarProps } from "./landing/navbar";
 export type bannerAlignment = "left" | "right" | "bottom";
 
 export interface ThemeSchema {

@@ -4,7 +4,7 @@ const NavBar = lazy(() => import("@/components/Marketing/LandingPage/NavBar/NavB
 
 export type PageThemeConfig = ThemeSchema;
 
-export const DEFAULT_THEME: PageThemeConfig = {
+export const DEFAULT_THEME = {
   navBar: {
     component: NavBar,
     navigationLinks: [

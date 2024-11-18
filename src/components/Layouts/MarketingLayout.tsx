@@ -9,10 +9,11 @@ import antThemeConfig from "@/services/antThemeConfig";
 import SpinLoader from "../SpinLoader/SpinLoader";
 import Footer from "../Marketing/LandingPage/Footer/Footer";
 import { useThemeConfig } from "../ContextApi/ThemeConfigContext";
-import { PageThemeConfig } from "@/services/themeConstant";
+import { DEFAULT_THEME, PageThemeConfig } from "@/services/themeConstant";
 import { onChangeTheme } from "@/lib/utils";
 import { useMediaQuery } from "react-responsive";
-import { User } from "@prisma/client";
+import { Theme, User } from "@prisma/client";
+import { IBrandInfo, INavBarProps } from "@/types/landing/navbar";
 
 const MarketingLayout: FC<{
   children?: React.ReactNode;
@@ -35,6 +36,10 @@ const MarketingLayout: FC<{
   }, []);
 
   const NavBarComponent = navBar?.component ? navBar.component : null;
+  let brandInfo: IBrandInfo = {
+    logo: themeConfig.brand?.logo ?? DEFAULT_THEME.brand.logo,
+    name: themeConfig.brand?.name ?? DEFAULT_THEME.brand.name,
+  };
 
   return (
     <>
@@ -72,10 +77,10 @@ const MarketingLayout: FC<{
             <NavBarComponent
               user={user}
               isMobile={isMobile}
-              items={themeConfig.navBar?.navigationLinks ? themeConfig.navBar.navigationLinks : []}
-              showThemeSwitch={themeConfig.darkMode}
-              activeTheme={globalState.theme}
-              brand={themeConfig.brand}
+              items={themeConfig.navBar?.navigationLinks ?? []}
+              showThemeSwitch={themeConfig.darkMode ?? DEFAULT_THEME.darkMode}
+              activeTheme={globalState.theme ?? Theme.light}
+              brand={brandInfo}
             />
           )}
 
