@@ -13,7 +13,7 @@ import { DEFAULT_THEME, PageThemeConfig } from "@/services/themeConstant";
 import { onChangeTheme } from "@/lib/utils";
 import { useMediaQuery } from "react-responsive";
 import { Theme, User } from "@prisma/client";
-import { IBrandInfo, INavBarProps } from "@/types/landing/navbar";
+import { IBrandInfo } from "@/types/landing/navbar";
 
 const MarketingLayout: FC<{
   children?: React.ReactNode;
@@ -87,7 +87,7 @@ const MarketingLayout: FC<{
           {heroSection}
         </section>
         <div className={styles.children_wrapper}>{children}</div>
-        <Footer />
+        <Footer themeConfig={themeConfig} />
       </ConfigProvider>
     </>
   );

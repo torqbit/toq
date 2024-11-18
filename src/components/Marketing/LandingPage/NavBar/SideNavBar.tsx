@@ -7,7 +7,7 @@ import { INavBarProps } from "@/types/landing/navbar";
 import ThemeSwitch from "@/components/ThemeSwitch/ThemeSwitch";
 import Hamburger from "hamburger-react";
 
-const SideNav: FC<INavBarProps> = ({ items, showThemeSwitch, activeTheme, brand, isMobile }) => {
+const MobileNav: FC<INavBarProps> = ({ items, showThemeSwitch, activeTheme, brand, isMobile }) => {
   const [showSideNav, setSideNav] = useState(false);
 
   const onAnchorClick = () => {
@@ -24,8 +24,8 @@ const SideNav: FC<INavBarProps> = ({ items, showThemeSwitch, activeTheme, brand,
                 <div className={styles.drawerTitle}>
                   <Link href={"/"} aria-label="Go back to landing page">
                     <Flex align="center" gap={5}>
-                      <Image src={`${brand?.logo}`} height={40} width={40} alt={"logo"} loading="lazy" />
-                      <h1 className="font-brand">{brand?.name?.toUpperCase()}</h1>
+                      <Image src={`${brand.logo}`} height={40} width={40} alt={"logo"} loading="lazy" />
+                      <h1 className="font-brand">{brand.name}</h1>
                     </Flex>
                   </Link>
                   {showSideNav && showThemeSwitch && <ThemeSwitch activeTheme={activeTheme} />}
@@ -63,8 +63,8 @@ const SideNav: FC<INavBarProps> = ({ items, showThemeSwitch, activeTheme, brand,
           </section>
           <Link href={"/"} className={styles.platformNameLogo}>
             <Flex align="center" gap={5}>
-              <Image src={`${brand?.logo}`} height={40} width={40} alt={"logo"} loading="lazy" />
-              <h4 className="font-brand">{brand?.name?.toUpperCase()}</h4>
+              <Image src={`${brand.logo}`} height={40} width={40} alt={"logo"} loading="lazy" />
+              <h4 className="font-brand">{brand.name}</h4>
             </Flex>
           </Link>
           <div role="button" className={styles.hamburger} aria-label="Toggle menu">
@@ -83,4 +83,4 @@ const SideNav: FC<INavBarProps> = ({ items, showThemeSwitch, activeTheme, brand,
   );
 };
 
-export default SideNav;
+export default MobileNav;

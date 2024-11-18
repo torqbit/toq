@@ -1,12 +1,11 @@
-import { FC, ReactElement, useState } from "react";
+import { FC, ReactElement } from "react";
 import Image from "next/image";
 import { Button, Flex } from "antd";
 import Link from "next/link";
 import { INavBarProps } from "@/types/landing/navbar";
 import styles from "./NavBar.module.scss";
 import ThemeSwitch from "@/components/ThemeSwitch/ThemeSwitch";
-import SideNav from "./SideNavBar";
-import Hamburger from "hamburger-react";
+import MobileNav from "./SideNavBar";
 
 const NavBar: FC<INavBarProps> = ({ user, items, brand, showThemeSwitch, activeTheme, isMobile }): ReactElement => {
   return (
@@ -15,12 +14,12 @@ const NavBar: FC<INavBarProps> = ({ user, items, brand, showThemeSwitch, activeT
         <nav>
           <Link href={"/"} aria-label="Go back to landing page">
             <Flex align="center" gap={5}>
-              {typeof brand?.logo === "string" ? (
+              {typeof brand.logo === "string" ? (
                 <Image src={brand.logo} height={40} width={40} alt={"logo"} />
               ) : (
-                brand?.logo
+                brand.logo
               )}
-              <h1 className="font-brand">{brand?.name?.toUpperCase()}</h1>
+              <h1 className="font-brand">{brand.name}</h1>
             </Flex>
           </Link>
           <div className={styles.link_wrapper}>
@@ -51,7 +50,7 @@ const NavBar: FC<INavBarProps> = ({ user, items, brand, showThemeSwitch, activeT
       </div>
 
       <>
-        <SideNav
+        <MobileNav
           items={items}
           showThemeSwitch={showThemeSwitch}
           activeTheme={activeTheme}
