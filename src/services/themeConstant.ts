@@ -51,7 +51,7 @@ export const DEFAULT_THEME = {
     banner: {
       lightModePath: "/img/macbook-light.png",
       darkModePath: "/img/macbook-dark.png",
-      align: "bottom",
+      position: "bottom",
     },
   },
   footer: {

@@ -9,7 +9,7 @@ import MobileNav from "./SideNavBar";
 
 const NavBar: FC<INavBarProps> = ({ user, items, brand, showThemeSwitch, activeTheme, isMobile }): ReactElement => {
   return (
-    <>
+    <section className={styles.navigation_main_container}>
       {isMobile ? (
         <MobileNav
           items={items}
@@ -58,7 +58,7 @@ const NavBar: FC<INavBarProps> = ({ user, items, brand, showThemeSwitch, activeT
           </nav>
         </div>
       )}
-    </>
+    </section>
   );
 };
 

@@ -8,12 +8,20 @@ import Image from "next/image";
 import { useAppContext } from "@/components/ContextApi/AppContext";
 import { useThemeConfig } from "@/components/ContextApi/ThemeConfigContext";
 import { bannerAlignment } from "@/types/schema";
+import { PageThemeConfig } from "@/services/themeConstant";
 
-const MarketingHero: FC<{ isMobile: boolean; user: User }> = ({ isMobile, user }) => {
+const MarketingHero: FC<{ isMobile: boolean; user: User; themeConfig: PageThemeConfig }> = ({
+  isMobile,
+  user,
+  themeConfig,
+}) => {
   const { globalState } = useAppContext();
-  const { heroSection } = useThemeConfig();
+  const { heroSection } = themeConfig;
 
-  let bannerAlign = isMobile ? "bottom" : (heroSection?.banner?.align as bannerAlignment);
+  let bannerAlign =
+    isMobile && heroSection?.banner?.position !== "background"
+      ? "bottom"
+      : (heroSection?.banner?.position as bannerAlignment);
 
   const getFlexDirection = (align: bannerAlignment) => {
     switch (align) {
@@ -48,11 +56,30 @@ const MarketingHero: FC<{ isMobile: boolean; user: User }> = ({ isMobile, user }
         return "center";
     }
   };
+  let backgroundStyles = bannerAlign === "background" && {
+    backgroundImage: ` ${
+      bannerAlign === "background"
+        ? `url(${
+            globalState.theme === Theme.dark && heroSection?.banner?.darkModePath
+              ? heroSection.banner.darkModePath
+              : heroSection?.banner?.lightModePath
+          })`
+        : ""
+    }`,
+    backgroundSize: "cover",
+    backgroundRepeat: "no-repeat",
+    backgroundPosition: "top 60px",
+    margin: "0px auto",
+  };
 
   return (
-    <>
+    <section
+      style={{
+        ...backgroundStyles,
+      }}
+    >
       <Flex
-        vertical={bannerAlign === "bottom"}
+        vertical={bannerAlign === "bottom" || bannerAlign === "background"}
         style={{
           flexDirection: getFlexDirection(bannerAlign as bannerAlignment),
         }}
@@ -61,8 +88,8 @@ const MarketingHero: FC<{ isMobile: boolean; user: User }> = ({ isMobile, user }
       >
         <Flex
           vertical
-          align={bannerAlign === "bottom" ? "center" : "start"}
-          justify={bannerAlign === "bottom" ? "center" : "flex-start"}
+          align={bannerAlign === "bottom" || bannerAlign === "background" ? "center" : "start"}
+          justify={bannerAlign === "bottom" || bannerAlign === "background" ? "center" : "flex-start"}
         >
           <h1 style={{ textAlign: getTextAlign(bannerAlign) }}>{heroSection && heroSection.title}</h1>
           <p style={{ textAlign: getTextAlign(bannerAlign) }}>{heroSection && heroSection.description}</p>
@@ -76,20 +103,22 @@ const MarketingHero: FC<{ isMobile: boolean; user: User }> = ({ isMobile, user }
             </a>
           </Space>
         </Flex>
-        <Image
-          alt="Website builder screenshot"
-          height={625}
-          width={getBannerWidth(bannerAlign as bannerAlignment)}
-          loading="lazy"
-          src={`${
-            globalState.theme === Theme.dark && heroSection?.banner?.darkModePath
-              ? heroSection.banner.darkModePath
-              : heroSection?.banner?.lightModePath
-          }`}
-        />
+        {bannerAlign !== "background" && (
+          <Image
+            alt="Website builder screenshot"
+            height={625}
+            width={getBannerWidth(bannerAlign as bannerAlignment)}
+            loading="lazy"
+            src={`${
+              globalState.theme === Theme.dark && heroSection?.banner?.darkModePath
+                ? heroSection.banner.darkModePath
+                : heroSection?.banner?.lightModePath
+            }`}
+          />
+        )}
       </Flex>
       {bannerAlign === "bottom" && <div className={styles.hero_img_bg}></div>}
-    </>
+    </section>
   );
 };
 

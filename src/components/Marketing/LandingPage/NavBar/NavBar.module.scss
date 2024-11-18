@@ -69,11 +69,6 @@
       border: none;
       color: var(--font-primary);
     }
-
-    button {
-      border-radius: 30px;
-      width: 150px;
-    }
   }
 }
 
@@ -90,6 +85,8 @@
   .sideNaveContainer,
   .platformNameLogo {
     display: unset;
+    position: fixed;
+    top: 0;
   }
 
   .switchBtn {
@@ -145,6 +142,22 @@
   .sideNaveContainer,
   .platformNameLogo {
     display: unset;
+  }
+
+  .responsive__header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100vw;
+    background-color: var(--bg-primary);
+    box-shadow: var(--box-shadow);
+    backdrop-filter: blur(10px);
+    background: var(--bg-header);
+    height: 60px;
   }
 
   .hamburger {
