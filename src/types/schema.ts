@@ -1,6 +1,6 @@
 import { FC, ReactNode } from "react";
 import { INavBarProps } from "./landing/navbar";
-export type bannerAlignment = "left" | "right" | "bottom";
+export type bannerAlignment = "left" | "right" | "bottom" | "background";
 
 export interface ThemeSchema {
   navBar?: {
@@ -33,7 +33,7 @@ export interface ThemeSchema {
     banner?: {
       lightModePath?: string;
       darkModePath?: string;
-      align?: bannerAlignment;
+      position?: bannerAlignment;
     };
   };
 

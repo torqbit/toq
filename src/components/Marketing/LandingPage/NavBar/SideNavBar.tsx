@@ -59,21 +59,23 @@ const MobileNav: FC<INavBarProps> = ({ items, showThemeSwitch, activeTheme, bran
           </div>
         </Drawer>
       </section>
-      <Link href={"/"} className={styles.platformNameLogo}>
-        <Flex align="center" gap={5}>
-          <Image src={`${brand.logo}`} height={40} width={40} alt={"logo"} loading="lazy" />
-          <h4 className="font-brand">{brand.name}</h4>
-        </Flex>
-      </Link>
-      <div role="button" className={styles.hamburger} aria-label="Toggle menu">
-        <Hamburger
-          rounded
-          direction="left"
-          toggled={showSideNav}
-          onToggle={(toggle: boolean | ((prevState: boolean) => boolean)) => {
-            setSideNav(toggle);
-          }}
-        />
+      <div className={styles.responsive__header}>
+        <Link href={"/"} className={styles.platformNameLogo}>
+          <Flex align="center" gap={5}>
+            <Image src={`${brand.logo}`} height={40} width={40} alt={"logo"} loading="lazy" />
+            <h4 className="font-brand">{brand.name}</h4>
+          </Flex>
+        </Link>
+        <div role="button" className={styles.hamburger} aria-label="Toggle menu">
+          <Hamburger
+            rounded
+            direction="left"
+            toggled={showSideNav}
+            onToggle={(toggle: boolean | ((prevState: boolean) => boolean)) => {
+              setSideNav(toggle);
+            }}
+          />
+        </div>
       </div>
     </>
   );

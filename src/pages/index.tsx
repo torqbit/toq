@@ -52,7 +52,7 @@ const LandingPage: FC<IProps> = ({ user, themeConfig }) => {
     <MarketingLayout
       user={user}
       themeConfig={themeConfig}
-      heroSection={<Hero isMobile={isMobile} user={user} />}
+      heroSection={<Hero isMobile={isMobile} user={user} themeConfig={themeConfig} />}
     ></MarketingLayout>
   );
 };
