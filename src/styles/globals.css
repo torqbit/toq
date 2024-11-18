@@ -39,6 +39,10 @@ strong,
 ul {
   font-size: var(--font-secondary);
 }
+
+p {
+  color: var(--font-secondary);
+}
 :root[data-theme="light"] {
   --bg-secondary: #eee;
   --bg-primary: #fff;

@@ -101,7 +101,7 @@ const Footer: FC<{ themeConfig: PageThemeConfig; isMobile: boolean }> = ({ theme
               <h1 className="font-brand">{brand?.name}</h1>
             </Flex>
           </Link>
-          <h4>{footer?.tagLine}</h4>
+          <p>{footer?.tagLine}</p>
         </div>
 
         <div>
