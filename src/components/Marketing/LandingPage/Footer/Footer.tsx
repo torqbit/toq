@@ -109,7 +109,7 @@ const Footer: FC<{ themeConfig: PageThemeConfig; isMobile: boolean }> = ({ theme
             {footerContent.map((content, i) => {
               return (
                 <div key={i} className={styles.linkList}>
-                  <div className={styles.title}>{content.title}</div>
+                  <h4 className={styles.title}>{content.title}</h4>
                   <ul>
                     {content?.links?.map((link, i) => {
                       return (

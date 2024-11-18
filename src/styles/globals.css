@@ -37,7 +37,7 @@ a {
 li,
 strong,
 ul {
-  font-size: var(--font-secondary);
+  color: var(--font-secondary);
 }
 
 p {
