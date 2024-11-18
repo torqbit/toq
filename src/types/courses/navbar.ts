@@ -2,14 +2,15 @@ import { Theme } from "@prisma/client";
 import { User } from "next-auth";
 import { ReactNode } from "react";
 export interface IBrandInfo {
-  name: string;
-  logo: ReactNode | string;
+  name?: string;
+  logo?: ReactNode | string;
 }
 export interface INavBarProps {
   user: User | undefined;
-  showThemeSwitch: boolean;
-  activeTheme: Theme;
-  brand: IBrandInfo;
+  showThemeSwitch?: boolean;
+  activeTheme?: Theme;
+  isMobile: boolean;
+  brand?: IBrandInfo;
   items: {
     title: string;
     link: string;
@@ -19,12 +20,12 @@ export interface INavBarProps {
 export interface ISideNavBarProps {
   isOpen: boolean;
   onAnchorClick: () => void;
-  items: {
+  items?: {
     title: string;
     link: string;
   }[];
 
-  showThemeSwitch: boolean;
-  activeTheme: Theme;
-  brand: IBrandInfo;
+  showThemeSwitch?: boolean;
+  activeTheme?: Theme;
+  brand?: IBrandInfo;
 }

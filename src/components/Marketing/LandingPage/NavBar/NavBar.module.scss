@@ -77,6 +77,14 @@
   }
 }
 
+.platformNameLogo {
+  display: none;
+}
+
+.hamburger {
+  display: none;
+}
+
 @media only screen and (max-width: 435px) {
   // NavBar
   .sideNaveContainer,
@@ -133,5 +141,27 @@
   }
   .navBarContainer {
     display: none;
+  }
+  .sideNaveContainer,
+  .platformNameLogo {
+    display: unset;
+  }
+
+  .hamburger {
+    display: unset;
+    color: var(--font-primary);
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    z-index: 2;
+  }
+
+  .platformNameLogo {
+    display: unset;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 2;
+    color: var(--font-primary);
   }
 }

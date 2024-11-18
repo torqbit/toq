@@ -1,28 +1,18 @@
-import { FC, ReactNode, useEffect, useState } from "react";
+import { FC, useEffect } from "react";
 import React from "react";
 import styles from "@/components/Marketing/LandingPage/Hero/Hero.module.scss";
 import Head from "next/head";
 import { useAppContext } from "../ContextApi/AppContext";
-import { ConfigProvider, Flex } from "antd";
-import Link from "next/link";
+import { ConfigProvider } from "antd";
 import darkThemConfig from "@/services/darkThemConfig";
 import antThemeConfig from "@/services/antThemeConfig";
 import SpinLoader from "../SpinLoader/SpinLoader";
-import SideNav from "../Marketing/LandingPage/NavBar/SideNavBar";
-import NavBar from "../Marketing/LandingPage/NavBar/NavBar";
-import Image from "next/image";
-import Hamburger from "hamburger-react";
 import Footer from "../Marketing/LandingPage/Footer/Footer";
-import config from "../../theme.config";
-import { Theme, User } from "@prisma/client";
 import { useThemeConfig } from "../ContextApi/ThemeConfigContext";
 import { PageThemeConfig } from "@/services/themeConstant";
 import { onChangeTheme } from "@/lib/utils";
-import { IBrandInfo, INavBarProps } from "@/types/courses/navbar";
-
-export const componentMap: Record<string, FC<INavBarProps>> = {
-  NavBar, // Maps "NavBar" string to the actual component
-};
+import { useMediaQuery } from "react-responsive";
+import { User } from "@prisma/client";
 
 const MarketingLayout: FC<{
   children?: React.ReactNode;
@@ -32,10 +22,7 @@ const MarketingLayout: FC<{
 }> = ({ children, heroSection, user, themeConfig }) => {
   const { navBar } = useThemeConfig();
   const { globalState, dispatch } = useAppContext();
-  const [showSideNav, setSideNav] = useState(false);
-  const onAnchorClick = () => {
-    setSideNav(false);
-  };
+  const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
 
   const { brand } = useThemeConfig();
   useEffect(() => {
@@ -45,7 +32,6 @@ const MarketingLayout: FC<{
 
   useEffect(() => {
     onChangeTheme(dispatch, themeConfig.darkMode);
-    console.log(globalState.pageLoading);
   }, []);
 
   const NavBarComponent = navBar?.component ? navBar.component : null;
@@ -85,45 +71,14 @@ const MarketingLayout: FC<{
           {NavBarComponent && (
             <NavBarComponent
               user={user}
+              isMobile={isMobile}
               items={themeConfig.navBar?.navigationLinks ? themeConfig.navBar.navigationLinks : []}
-              showThemeSwitch={themeConfig.darkMode as boolean}
-              activeTheme={globalState.theme as Theme}
-              brand={themeConfig?.brand as { name: string; logo: ReactNode | string }}
+              showThemeSwitch={themeConfig.darkMode}
+              activeTheme={globalState.theme}
+              brand={themeConfig.brand}
             />
           )}
 
-          {/* <NavBar
-            user={user}
-            items={themeConfig.navBar?.navigationLinks ? themeConfig.navBar.navigationLinks : []}
-            showThemeSwitch={themeConfig.darkMode as boolean}
-            activeTheme={globalState.theme as Theme}
-            brand={themeConfig?.brand as { name: string; logo: ReactNode | string }}
-          /> */}
-          <SideNav
-            isOpen={showSideNav}
-            onAnchorClick={onAnchorClick}
-            items={themeConfig.navBar?.navigationLinks ? themeConfig.navBar.navigationLinks : []}
-            showThemeSwitch={themeConfig.darkMode as boolean}
-            activeTheme={globalState.theme as Theme}
-            brand={themeConfig.brand as IBrandInfo}
-          />
-          <Link href={"/"} className={styles.platformNameLogo}>
-            <Flex align="center" gap={5}>
-              <Image src={`${themeConfig.brand?.logo}`} height={40} width={40} alt={"logo"} loading="lazy" />
-              <h4 className="font-brand">{themeConfig.brand?.name?.toUpperCase()}</h4>
-            </Flex>
-          </Link>
-
-          <div role="button" className={styles.hamburger} aria-label="Toggle menu">
-            <Hamburger
-              rounded
-              direction="left"
-              toggled={showSideNav}
-              onToggle={(toggle: boolean | ((prevState: boolean) => boolean)) => {
-                setSideNav(toggle);
-              }}
-            />
-          </div>
           {heroSection}
         </section>
         <div className={styles.children_wrapper}>{children}</div>
