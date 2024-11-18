@@ -68,10 +68,10 @@ const darkThemConfig = () => {
         labelColor: "#888",
       },
       Button: {
-        colorBgContainer: "#374362",
+        defaultBg: "#283040",
+
         groupBorderColor: "#000",
-        defaultHoverBorderColor: "#000",
-        defaultHoverColor: "#fff",
+
         colorPrimaryActive: "#fff",
       },
       Input: {

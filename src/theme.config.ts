@@ -28,7 +28,7 @@ const config: PageThemeConfig = {
     description: "Master the art of product building and turn your ideas into successful, scalable products",
     ogImage: "/icon/torqbit.png",
     favicon: "/favicon.ico",
-    brandColor: "#000",
+    brandColor: "#5b63d3",
   },
 
   darkMode: true,
@@ -56,6 +56,7 @@ const config: PageThemeConfig = {
     discordLink: "https://discord.gg/NserMXcx",
     githubLink: "https://github.com/torqbit",
     youtubeLink: "https://www.youtube.com/@torqbit",
+    tagLine: "Master Skills, Transform Futures",
   },
 };
 export default config;

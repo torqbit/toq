@@ -19,7 +19,6 @@ interface IProps {
 }
 
 const LandingPage: FC<IProps> = ({ user, themeConfig }) => {
-  console.log(themeConfig, "theme config value using stati propp");
   const { dispatch, globalState } = useAppContext();
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
 
@@ -48,8 +47,6 @@ const LandingPage: FC<IProps> = ({ user, themeConfig }) => {
   useEffect(() => {
     onCheckTheme();
   }, []);
-
-  console.log(globalState.pageLoading);
 
   return (
     <MarketingLayout
