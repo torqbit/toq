@@ -49,8 +49,7 @@ const config: PageThemeConfig = {
     banner: {
       lightModePath: "/img/landing/online-learning.png",
       darkModePath: "/img/landing/online-learning.png",
-      align: "right",
-
+      position: "right",
     },
   },
   footer: {

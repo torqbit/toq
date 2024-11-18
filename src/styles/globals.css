@@ -603,9 +603,7 @@ a {
   .events_content_wrapper {
     margin-bottom: 60px !important;
   }
-  .events_list_wrapper {
-    /* margin-bottom: 80px; */
-  }
+
   .assign_editor_view {
     height: 300px;
     overflow: auto;

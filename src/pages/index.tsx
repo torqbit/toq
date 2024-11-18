@@ -50,7 +50,7 @@ const LandingPage: FC<IProps> = ({ user, themeConfig }) => {
   }, []);
 
   return (
-    <MarketingLayout user={user} themeConfig={themeConfig} heroSection={<Hero isMobile={isMobile} user={user} />}>
+    <MarketingLayout user={user} themeConfig={themeConfig} heroSection={<Hero themeConfig={themeConfig} isMobile={isMobile} user={user} />}>
       <SetupPlatform />
     </MarketingLayout>
   );
