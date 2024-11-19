@@ -1,7 +1,9 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
+import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import bcrypt from "bcryptjs";
 import prisma from "@/lib/prisma";
 import getUserByEmail from "@/actions/getUserByEmail";
 import MailerService from "@/services/MailerService";
@@ -35,6 +37,36 @@ export const authOptions: NextAuthOptions = {
     },
   },
   providers: [
+    CredentialsProvider({
+      credentials: {
+        email: { label: "Email", type: "text" },
+        password: { label: "Password", type: "password" },
+        rememberMe: { label: "Remember Me", type: "boolean" },
+      },
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password) {
+          throw new Error("Missing credentials");
+        }
+
+        const { email, password, rememberMe } = credentials;
+
+        console.log(credentials);
+
+        const user = await getUserByEmail(email);
+        if (!user) {
+          //throw new Error("No user found with this email");
+          return null;
+        }
+        console.log("REMEMBER ME", rememberMe);
+
+        if (user && (await bcrypt.compare(password, user?.account[0].password))) {
+          const maxAge = rememberMe === "true" ? 30 * 24 * 60 * 60 : 24 * 60 * 60;
+          return { id: user.id, email: user.email, name: user.name, maxAge: maxAge, image: user.image };
+        } else {
+          throw new Error("Invalid credentials");
+        }
+      },
+    }),
     GithubProvider({
       clientId: process.env.GITHUB_ID as string,
       clientSecret: process.env.GITHUB_SECRET as string,
@@ -69,7 +101,6 @@ export const authOptions: NextAuthOptions = {
         if (account) {
           token.accessToken = account.access_token;
           token.id = user?.id;
-          token.role = "STUDENT";
         }
 
         return this.signIn;
@@ -80,11 +111,11 @@ export const authOptions: NextAuthOptions = {
         role: dbUser.role,
         phone: dbUser.phone,
         isActive: dbUser.isActive,
+        maxAge: user["maxAge"] as number,
         user: {
           name: dbUser.name,
           email: dbUser?.email,
           image: dbUser.image,
-          theme: dbUser.theme,
         },
       };
     },
@@ -94,6 +125,7 @@ export const authOptions: NextAuthOptions = {
         session.role = token.role;
         session.phone = token.phone as string;
         session.isActive = token.isActive;
+        session.expires = new Date(Date.now() + (token.maxAge as number) * 1000).toISOString();
         session.user = token.user as Object;
         session.user.name = token.name;
 
