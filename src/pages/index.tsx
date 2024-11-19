@@ -12,7 +12,7 @@ import { getToken } from "next-auth/jwt";
 import { DEFAULT_THEME, PageSiteConfig } from "@/services/siteConstant";
 import { useSiteConfig } from "@/components/ContextApi/SiteConfigContext";
 import SetupPlatform from "@/components/Marketing/LandingPage/Setup/SetupPlatform";
-import Blogs from "@/components/Marketing/Blog/Blogs";
+import Blogs from "@/components/Marketing/LandingPage/Blog/Blogs";
 
 interface IProps {
   user: User;
