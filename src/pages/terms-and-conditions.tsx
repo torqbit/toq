@@ -10,10 +10,10 @@ import DefaulttHero from "@/components/Marketing/Blog/DefaultHero";
 import { getCookieName } from "@/lib/utils";
 import { getToken } from "next-auth/jwt";
 import LegalAgreement from "@/components/Marketing/LegalAgreement";
-import { PageThemeConfig } from "@/services/themeConstant";
-import { useThemeConfig } from "@/components/ContextApi/ThemeConfigContext";
+import { PageSiteConfig } from "@/services/siteConstant";
+import { useSiteConfig } from "@/components/ContextApi/SiteConfigContext";
 
-const TermAndConditonPage: FC<{ user: User; themeConfig: PageThemeConfig }> = ({ user, themeConfig }) => {
+const TermAndConditonPage: FC<{ user: User; siteConfig: PageSiteConfig }> = ({ user, siteConfig }) => {
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
 
   const termAndCondionList = [
@@ -301,7 +301,7 @@ Violate These Terms Or ${appConstant.platformName}'s Then-Current Policies And O
 
   return (
     <MarketingLayout
-      themeConfig={themeConfig}
+      siteConfig={siteConfig}
       user={user}
       heroSection={
         <DefaulttHero
@@ -321,18 +321,25 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const { req } = ctx;
 
   let cookieName = getCookieName();
-  const themeConfig = useThemeConfig();
+  const siteConfig = useSiteConfig();
 
   const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
 
   return {
     props: {
       user,
-      themeConfig: {
-        ...themeConfig,
+      siteConfig: {
+        ...siteConfig,
         navBar: {
-          ...themeConfig.navBar,
-          component: themeConfig.navBar?.component?.name as any,
+          ...siteConfig.navBar,
+          component: siteConfig.navBar?.component?.name as any,
+        },
+        sections: {
+          ...siteConfig.sections,
+          feature: {
+            ...siteConfig.sections.feature,
+            component: siteConfig.sections.feature?.component?.name || null,
+          },
         },
       },
     },

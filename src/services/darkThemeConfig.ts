@@ -1,7 +1,7 @@
-import { useThemeConfig } from "@/components/ContextApi/ThemeConfigContext";
+import { useSiteConfig } from "@/components/ContextApi/SiteConfigContext";
 
-const darkThemConfig = () => {
-  const themeConfig = useThemeConfig();
+const darkThemeConfig = () => {
+  const siteConfig = useSiteConfig();
 
   return {
     token: {
@@ -10,13 +10,13 @@ const darkThemConfig = () => {
       colorBgContainer: "#283040",
       colorBorder: "#374362",
       colorTextPlaceholder: "#666",
-      colorPrimary: `${themeConfig.brand?.brandColor}`,
+      colorPrimary: `${siteConfig.brand?.brandColor}`,
       colorSplit: "#2f3647",
       colorTextDisabled: "#939db8",
     },
 
     Badge: {
-      colorInfo: `${themeConfig.brand?.brandColor}`,
+      colorInfo: `${siteConfig.brand?.brandColor}`,
     },
     components: {
       Layout: {
@@ -30,7 +30,7 @@ const darkThemConfig = () => {
       },
       Progress: {
         remainingColor: "#d4d4d4",
-        defaultColor: `${themeConfig.brand?.brandColor}`,
+        defaultColor: `${siteConfig.brand?.brandColor}`,
       },
       Tree: {
         nodeSelectedBg: "#283040",
@@ -175,4 +175,4 @@ const darkThemConfig = () => {
   };
 };
 
-export default darkThemConfig;
+export default darkThemeConfig;

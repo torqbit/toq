@@ -2,10 +2,10 @@ import appConstant from "@/services/appConstant";
 import MarketingSvgIcons from "../MarketingSvgIcons";
 import { Button, Card } from "antd";
 import styles from "@/styles/Marketing/LandingPage/LandingPage.module.scss";
-import { useThemeConfig } from "@/components/ContextApi/ThemeConfigContext";
+import { useSiteConfig } from "@/components/ContextApi/SiteConfigContext";
 
 const About = () => {
-  const { brand } = useThemeConfig();
+  const { brand } = useSiteConfig();
   const cardDetail = [
     {
       icon: MarketingSvgIcons.openSource,

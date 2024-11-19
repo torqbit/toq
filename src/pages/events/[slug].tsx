@@ -8,18 +8,18 @@ import prisma from "@/lib/prisma";
 import { IEventInfo } from "@/services/EventService";
 import styles from "@/styles/Marketing/Events/Event.module.scss";
 import EventInfo from "@/components/Events/EventInfo";
-import { useThemeConfig } from "@/components/ContextApi/ThemeConfigContext";
-import { PageThemeConfig } from "@/services/themeConstant";
+import { useSiteConfig } from "@/components/ContextApi/SiteConfigContext";
+import { PageSiteConfig } from "@/services/siteConstant";
 
 const EventInfoPage: FC<{
   user: User;
   eventInfo: IEventInfo;
   registrationExpired: boolean;
-  themeConfig: PageThemeConfig;
-}> = ({ user, eventInfo, registrationExpired, themeConfig }) => {
+  siteConfig: PageSiteConfig;
+}> = ({ user, eventInfo, registrationExpired, siteConfig }) => {
   return (
     <MarketingLayout
-      themeConfig={themeConfig}
+      siteConfig={siteConfig}
       user={user}
       heroSection={
         <div className={styles.banner_Wrapper}>
@@ -34,7 +34,7 @@ const EventInfoPage: FC<{
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const { req } = ctx;
   const params = ctx?.params;
-  const themeConfig = useThemeConfig();
+  const siteConfig = useSiteConfig();
   let cookieName = getCookieName();
   const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
   const eventInfo = await prisma.events.findUnique({
@@ -79,11 +79,11 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
             : "",
         },
         registrationExpired,
-        themeConfig: {
-          ...themeConfig,
+        siteConfig: {
+          ...siteConfig,
           navBar: {
-            ...themeConfig.navBar,
-            component: themeConfig.navBar?.component?.name as any,
+            ...siteConfig.navBar,
+            component: siteConfig.navBar?.component?.name as any,
           },
         },
       },
@@ -92,11 +92,11 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
     return {
       props: {
         user,
-        themeConfig: {
-          ...themeConfig,
+        siteConfig: {
+          ...siteConfig,
           navBar: {
-            ...themeConfig.navBar,
-            component: themeConfig.navBar?.component?.name as any,
+            ...siteConfig.navBar,
+            component: siteConfig.navBar?.component?.name as any,
           },
         },
       },

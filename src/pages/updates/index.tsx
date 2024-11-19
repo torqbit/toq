@@ -1,8 +1,7 @@
 import React, { FC } from "react";
 import { useAppContext } from "@/components/ContextApi/AppContext";
-import { Theme, User } from "@prisma/client";
+import { User } from "@prisma/client";
 import { GetServerSidePropsContext } from "next";
-import { useEffect } from "react";
 import MarketingLayout from "@/components/Layouts/MarketingLayout";
 import HeroBlog from "@/components/Marketing/Blog/DefaultHero";
 import { useMediaQuery } from "react-responsive";
@@ -11,11 +10,11 @@ import { getToken } from "next-auth/jwt";
 import prisma from "@/lib/prisma";
 import styles from "@/styles/Marketing/Updates/Updates.module.scss";
 import UpdateCard from "@/components/Marketing/Updates/UpdateCard";
-import { useThemeConfig } from "@/components/ContextApi/ThemeConfigContext";
-import { PageThemeConfig } from "@/services/themeConstant";
+import { useSiteConfig } from "@/components/ContextApi/SiteConfigContext";
+import { PageSiteConfig } from "@/services/siteConstant";
 interface IProps {
   user: User;
-  themeConfig: PageThemeConfig;
+  siteConfig: PageSiteConfig;
   updateData: {
     title: string;
     id: string;
@@ -28,13 +27,13 @@ interface IProps {
   }[];
 }
 
-const updatePage: FC<IProps> = ({ user, updateData, themeConfig }) => {
+const updatePage: FC<IProps> = ({ user, updateData, siteConfig }) => {
   const { globalState } = useAppContext();
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
 
   return (
     <MarketingLayout
-      themeConfig={themeConfig}
+      siteConfig={siteConfig}
       user={user}
       heroSection={<HeroBlog title="Updates" description="New changes to our learning platform & courses" />}
     >
@@ -83,7 +82,7 @@ const updatePage: FC<IProps> = ({ user, updateData, themeConfig }) => {
 };
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const { req } = ctx;
-  const themeConfig = useThemeConfig();
+  const siteConfig = useSiteConfig();
   let cookieName = getCookieName();
 
   const update = (await prisma.blog.findMany({
@@ -115,11 +114,18 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
     return {
       props: {
         user,
-        themeConfig: {
-          ...themeConfig,
+        siteConfig: {
+          ...siteConfig,
           navBar: {
-            ...themeConfig.navBar,
-            component: themeConfig.navBar?.component?.name as any,
+            ...siteConfig.navBar,
+            component: siteConfig.navBar?.component?.name as any,
+          },
+          sections: {
+            ...siteConfig.sections,
+            feature: {
+              ...siteConfig.sections.feature,
+              component: siteConfig.sections.feature?.component?.name || null,
+            },
           },
         },
         updateData: update.map((b: any) => {
@@ -139,11 +145,18 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
     return {
       props: {
         user,
-        themeConfig: {
-          ...themeConfig,
+        siteConfig: {
+          ...siteConfig,
           navBar: {
-            ...themeConfig.navBar,
-            component: themeConfig.navBar?.component?.name as any,
+            ...siteConfig.navBar,
+            component: siteConfig.navBar?.component?.name as any,
+          },
+          sections: {
+            ...siteConfig.sections,
+            feature: {
+              ...siteConfig.sections.feature,
+              component: siteConfig.sections.feature?.component?.name || null,
+            },
           },
         },
         blogData: [],

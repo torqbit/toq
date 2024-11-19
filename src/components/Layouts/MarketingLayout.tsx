@@ -5,12 +5,12 @@ import landingPage from "@/styles/Marketing/LandingPage/LandingPage.module.scss"
 import Head from "next/head";
 import { useAppContext } from "../ContextApi/AppContext";
 import { ConfigProvider } from "antd";
-import darkThemConfig from "@/services/darkThemConfig";
+import darkThemeConfig from "@/services/darkThemeConfig";
 import antThemeConfig from "@/services/antThemeConfig";
 import SpinLoader from "../SpinLoader/SpinLoader";
 import Footer from "../Marketing/LandingPage/Footer/Footer";
-import { useThemeConfig } from "../ContextApi/ThemeConfigContext";
-import { DEFAULT_THEME, PageThemeConfig } from "@/services/themeConstant";
+import { useSiteConfig } from "../ContextApi/SiteConfigContext";
+import { DEFAULT_THEME, PageSiteConfig } from "@/services/siteConstant";
 import { useMediaQuery } from "react-responsive";
 import { User } from "@prisma/client";
 import { IBrandInfo } from "@/types/landing/navbar";
@@ -19,14 +19,14 @@ import { Theme } from "@/types/theme";
 const MarketingLayout: FC<{
   children?: React.ReactNode;
   heroSection?: React.ReactNode;
-  themeConfig: PageThemeConfig;
+  siteConfig: PageSiteConfig;
   user?: User;
-}> = ({ children, heroSection, user, themeConfig }) => {
-  const { navBar } = useThemeConfig();
+}> = ({ children, heroSection, user, siteConfig }) => {
+  const { navBar } = useSiteConfig();
   const { globalState, dispatch } = useAppContext();
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
 
-  const { brand } = useThemeConfig();
+  const { brand } = useSiteConfig();
   useEffect(() => {
     const root = document.documentElement;
     root.style.setProperty("--btn-primary", `${brand?.brandColor}`);
@@ -34,8 +34,8 @@ const MarketingLayout: FC<{
 
   const NavBarComponent = navBar?.component ? navBar.component : null;
   let brandInfo: IBrandInfo = {
-    logo: themeConfig.brand?.logo ?? DEFAULT_THEME.brand.logo,
-    name: themeConfig.brand?.name ?? DEFAULT_THEME.brand.name,
+    logo: siteConfig.brand?.logo ?? DEFAULT_THEME.brand.logo,
+    name: siteConfig.brand?.name ?? DEFAULT_THEME.brand.name,
   };
 
   const setGlobalTheme = (theme: Theme) => {
@@ -47,9 +47,9 @@ const MarketingLayout: FC<{
 
   const onCheckTheme = () => {
     const currentTheme = localStorage.getItem("theme");
-    if ((!currentTheme || currentTheme === "dark") && themeConfig.darkMode) {
+    if ((!currentTheme || currentTheme === "dark") && siteConfig.darkMode) {
       localStorage.setItem("theme", "dark");
-    } else if (currentTheme === "light" || !themeConfig.darkMode) {
+    } else if (currentTheme === "light" || !siteConfig.darkMode) {
       localStorage.setItem("theme", "light");
     }
     setGlobalTheme(localStorage.getItem("theme") as Theme);
@@ -70,7 +70,7 @@ const MarketingLayout: FC<{
         <div
           style={{
             position: "fixed",
-            display: globalState.pageLoading || !themeConfig.brand?.title ? "unset" : "none",
+            display: globalState.pageLoading || !siteConfig.brand?.title ? "unset" : "none",
             top: 0,
             left: 0,
             bottom: 0,
@@ -83,13 +83,13 @@ const MarketingLayout: FC<{
           <SpinLoader className="marketing__spinner" />
         </div>
       }
-      <ConfigProvider theme={globalState.theme == "dark" ? darkThemConfig() : antThemeConfig()}>
+      <ConfigProvider theme={globalState.theme == "dark" ? darkThemeConfig() : antThemeConfig()}>
         <Head>
-          <title>{`${themeConfig.brand?.title} | ${themeConfig.brand?.name}`}</title>
-          <meta name="description" content={themeConfig.brand?.description} />
-          <meta property="og:image" content={themeConfig.brand?.ogImage} />
+          <title>{`${siteConfig.brand?.title} | ${siteConfig.brand?.name}`}</title>
+          <meta name="description" content={siteConfig.brand?.description} />
+          <meta property="og:image" content={siteConfig.brand?.ogImage} />
           <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-          <link rel="icon" href={themeConfig.brand?.favicon} />
+          <link rel="icon" href={siteConfig.brand?.favicon} />
         </Head>
 
         <section className={styles.heroWrapper}>
@@ -97,8 +97,8 @@ const MarketingLayout: FC<{
             <NavBarComponent
               user={user}
               isMobile={isMobile}
-              items={themeConfig.navBar?.navigationLinks ?? []}
-              showThemeSwitch={themeConfig.darkMode ?? DEFAULT_THEME.darkMode}
+              items={siteConfig.navBar?.navigationLinks ?? []}
+              showThemeSwitch={siteConfig.darkMode ?? DEFAULT_THEME.darkMode}
               activeTheme={globalState.theme ?? "light"}
               brand={brandInfo}
             />
@@ -107,7 +107,7 @@ const MarketingLayout: FC<{
           {heroSection}
         </section>
         <div className={landingPage.children_wrapper}>{children}</div>
-        <Footer themeConfig={themeConfig} isMobile={isMobile} />
+        <Footer siteConfig={siteConfig} isMobile={isMobile} />
       </ConfigProvider>
     </>
   );

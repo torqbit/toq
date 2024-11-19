@@ -9,7 +9,7 @@ import { Badge, ConfigProvider, Dropdown, Flex, Layout, MenuProps, message } fro
 import SvgIcons from "../SvgIcons";
 import Link from "next/link";
 import { UserSession } from "@/lib/types/user";
-import darkThemConfig from "@/services/darkThemConfig";
+import darkThemeConfig from "@/services/darkThemeConfig";
 import antThemeConfig from "@/services/antThemeConfig";
 import { useRouter } from "next/router";
 import SpinLoader from "../SpinLoader/SpinLoader";
@@ -21,20 +21,20 @@ import Offline from "../Offline/Offline";
 import { postFetch } from "@/services/request";
 import { useMediaQuery } from "react-responsive";
 
-import { useThemeConfig } from "../ContextApi/ThemeConfigContext";
+import { useSiteConfig } from "../ContextApi/SiteConfigContext";
 import { Theme } from "@/types/theme";
 
 const { Content } = Layout;
 
 const Layout2: FC<{ children?: React.ReactNode; className?: string }> = ({ children, className }) => {
   const { data: user, status, update } = useSession();
-  const themeConfig = useThemeConfig();
+  const siteConfig = useSiteConfig();
   const isMobile = useMediaQuery({ query: "(max-width: 933px)" });
 
   const { globalState, dispatch } = useAppContext();
   const [conversationList, setConversationList] = useState<IConversationData[]>();
   const [comment, setComment] = useState<string>("");
-  const { brand } = useThemeConfig();
+  const { brand } = useSiteConfig();
 
   const [conversationLoading, setConversationLoading] = useState<{
     postLoading: boolean;
@@ -199,9 +199,9 @@ const Layout2: FC<{ children?: React.ReactNode; className?: string }> = ({ child
 
   const onCheckTheme = () => {
     const currentTheme = localStorage.getItem("theme");
-    if ((!currentTheme || currentTheme === "dark") && themeConfig.darkMode) {
+    if ((!currentTheme || currentTheme === "dark") && siteConfig.darkMode) {
       localStorage.setItem("theme", "dark");
-    } else if (currentTheme === "light" || !themeConfig.darkMode) {
+    } else if (currentTheme === "light" || !siteConfig.darkMode) {
       localStorage.setItem("theme", "light");
     }
     setGlobalTheme(localStorage.getItem("theme") as Theme);
@@ -365,7 +365,7 @@ const Layout2: FC<{ children?: React.ReactNode; className?: string }> = ({ child
         <SpinLoader />
       ) : (
         <>
-          <ConfigProvider theme={globalState.theme == "dark" ? darkThemConfig() : antThemeConfig()}>
+          <ConfigProvider theme={globalState.theme == "dark" ? darkThemeConfig() : antThemeConfig()}>
             <Head>
               <title>Torqbit | Learn to build software products</title>
 

@@ -9,24 +9,33 @@ import { GetServerSidePropsContext } from "next";
 import { getCookieName } from "@/lib/utils";
 import { getToken } from "next-auth/jwt";
 
-import { PageThemeConfig } from "@/services/themeConstant";
-import { useThemeConfig } from "@/components/ContextApi/ThemeConfigContext";
+import { DEFAULT_THEME, PageSiteConfig } from "@/services/siteConstant";
+import { useSiteConfig } from "@/components/ContextApi/SiteConfigContext";
 import SetupPlatform from "@/components/Marketing/LandingPage/Setup/SetupPlatform";
+
 interface IProps {
   user: User;
-  themeConfig: PageThemeConfig;
+  siteConfig: PageSiteConfig;
 }
 
-const LandingPage: FC<IProps> = ({ user, themeConfig }) => {
+const LandingPage: FC<IProps> = ({ user, siteConfig }) => {
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
+  const { sections } = useSiteConfig();
+  let featureInfo = siteConfig?.sections?.feature?.featureInfo ?? DEFAULT_THEME.sections.feature.featureInfo;
+  let FeatureComponent = sections?.feature?.component ?? DEFAULT_THEME.sections.feature.component;
 
   return (
     <MarketingLayout
       user={user}
-      themeConfig={themeConfig}
-      heroSection={<Hero themeConfig={themeConfig} isMobile={isMobile} user={user} />}
+      siteConfig={siteConfig}
+      heroSection={<Hero siteConfig={siteConfig} isMobile={isMobile} user={user} />}
     >
       <SetupPlatform />
+      <FeatureComponent
+        title={featureInfo?.title}
+        description={featureInfo?.description}
+        featureList={featureInfo?.featureList}
+      />
     </MarketingLayout>
   );
 };
@@ -35,16 +44,23 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const { req } = ctx;
   let cookieName = getCookieName();
   const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
-  const themeConfig = useThemeConfig();
+  const siteConfig = useSiteConfig();
 
   return {
     props: {
       user,
-      themeConfig: {
-        ...themeConfig,
+      siteConfig: {
+        ...siteConfig,
         navBar: {
-          ...themeConfig.navBar,
-          component: themeConfig.navBar?.component?.name || null,
+          ...siteConfig.navBar,
+          component: siteConfig.navBar?.component?.name || null,
+        },
+        sections: {
+          ...siteConfig.sections,
+          feature: {
+            ...siteConfig.sections.feature,
+            component: siteConfig.sections.feature?.component?.name || null,
+          },
         },
       },
     },

@@ -6,17 +6,17 @@ import HeroBlog from "@/components/Marketing/Blog/DefaultHero";
 import { useMediaQuery } from "react-responsive";
 import { getCookieName } from "@/lib/utils";
 import { getToken } from "next-auth/jwt";
-import { useThemeConfig } from "@/components/ContextApi/ThemeConfigContext";
-import { PageThemeConfig } from "@/services/themeConstant";
+import { useSiteConfig } from "@/components/ContextApi/SiteConfigContext";
+import { PageSiteConfig } from "@/services/siteConstant";
 import { useAppContext } from "@/components/ContextApi/AppContext";
 
-const StoryPage: FC<{ user: User; themeConfig: PageThemeConfig }> = ({ user, themeConfig }) => {
+const StoryPage: FC<{ user: User; siteConfig: PageSiteConfig }> = ({ user, siteConfig }) => {
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
   const { globalState } = useAppContext();
 
   return (
     <MarketingLayout
-      themeConfig={themeConfig}
+      siteConfig={siteConfig}
       user={user}
       heroSection={
         <HeroBlog
@@ -57,16 +57,23 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   let cookieName = getCookieName();
 
   const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
-  const themeConfig = useThemeConfig();
+  const siteConfig = useSiteConfig();
 
   return {
     props: {
       user,
-      themeConfig: {
-        ...themeConfig,
+      siteConfig: {
+        ...siteConfig,
         navBar: {
-          ...themeConfig.navBar,
-          component: themeConfig.navBar?.component?.name as any,
+          ...siteConfig.navBar,
+          component: siteConfig.navBar?.component?.name as any,
+        },
+        sections: {
+          ...siteConfig.sections,
+          feature: {
+            ...siteConfig.sections.feature,
+            component: siteConfig.sections.feature?.component?.name || null,
+          },
         },
       },
     },
