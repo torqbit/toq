@@ -3,9 +3,8 @@ import { getCookieName } from "@/lib/utils";
 import { GetServerSidePropsContext } from "next";
 import { getToken } from "next-auth/jwt";
 import prisma from "@/lib/prisma";
-import { Theme, User } from "@prisma/client";
-import { FC, useEffect } from "react";
-import { useAppContext } from "@/components/ContextApi/AppContext";
+import { User } from "@prisma/client";
+import { FC } from "react";
 import { useMediaQuery } from "react-responsive";
 import styles from "@/styles/Marketing/Blog/Blog.module.scss";
 
@@ -14,7 +13,6 @@ import Image from "next/image";
 
 import { UserOutlined } from "@ant-design/icons";
 import Head from "next/head";
-import appConstant from "@/services/appConstant";
 import { truncateString } from "@/services/helper";
 import PurifyContent from "@/components/PurifyContent/PurifyContent";
 import { useThemeConfig } from "@/components/ContextApi/ThemeConfigContext";
@@ -39,34 +37,8 @@ interface IProps {
 }
 
 const BlogPage: FC<IProps> = ({ user, htmlData, updateData, description, currentUrl, hostName, themeConfig }) => {
-  const { dispatch } = useAppContext();
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
 
-  const setGlobalTheme = (theme: Theme) => {
-    dispatch({
-      type: "SWITCH_THEME",
-      payload: theme,
-    });
-  };
-
-  const onCheckTheme = () => {
-    const currentTheme = localStorage.getItem("theme");
-    if (!currentTheme || currentTheme === "dark") {
-      localStorage.setItem("theme", "dark");
-    } else if (currentTheme === "light") {
-      localStorage.setItem("theme", "light");
-    }
-    setGlobalTheme(localStorage.getItem("theme") as Theme);
-
-    dispatch({
-      type: "SET_LOADER",
-      payload: false,
-    });
-  };
-
-  useEffect(() => {
-    onCheckTheme();
-  }, []);
   return (
     <MarketingLayout
       themeConfig={themeConfig}

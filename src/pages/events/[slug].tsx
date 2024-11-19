@@ -1,11 +1,9 @@
-import { useAppContext } from "@/components/ContextApi/AppContext";
 import MarketingLayout from "@/components/Layouts/MarketingLayout";
 import { checkDateExpired, convertToDayMonthTime, getCookieName } from "@/lib/utils";
-import appConstant from "@/services/appConstant";
-import { StateType, Theme, User } from "@prisma/client";
+import { StateType, User } from "@prisma/client";
 import { GetServerSidePropsContext } from "next";
 import { getToken } from "next-auth/jwt";
-import { FC, useEffect } from "react";
+import { FC } from "react";
 import prisma from "@/lib/prisma";
 import { IEventInfo } from "@/services/EventService";
 import styles from "@/styles/Marketing/Events/Event.module.scss";
@@ -19,32 +17,6 @@ const EventInfoPage: FC<{
   registrationExpired: boolean;
   themeConfig: PageThemeConfig;
 }> = ({ user, eventInfo, registrationExpired, themeConfig }) => {
-  const { dispatch, globalState } = useAppContext();
-  const setGlobalTheme = (theme: Theme) => {
-    dispatch({
-      type: "SWITCH_THEME",
-      payload: theme,
-    });
-  };
-
-  const onCheckTheme = () => {
-    const currentTheme = localStorage.getItem("theme");
-    if (!currentTheme || currentTheme === "dark") {
-      localStorage.setItem("theme", "dark");
-    } else if (currentTheme === "light") {
-      localStorage.setItem("theme", "light");
-    }
-    setGlobalTheme(localStorage.getItem("theme") as Theme);
-
-    dispatch({
-      type: "SET_LOADER",
-      payload: false,
-    });
-  };
-
-  useEffect(() => {
-    onCheckTheme();
-  }, []);
   return (
     <MarketingLayout
       themeConfig={themeConfig}

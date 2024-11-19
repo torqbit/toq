@@ -1,4 +1,4 @@
-import { Theme } from "@prisma/client";
+import { Theme } from "@/types/theme";
 import { User } from "next-auth";
 import { ReactNode } from "react";
 export interface IBrandInfo {

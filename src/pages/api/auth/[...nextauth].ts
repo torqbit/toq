@@ -29,7 +29,6 @@ export const authOptions: NextAuthOptions = {
         data: {
           ...user,
           role: user.email == process.env.ADMIN_EMAIL ? $Enums.Role.ADMIN : $Enums.Role.STUDENT,
-          theme: "light",
         },
       });
     },
@@ -84,7 +83,6 @@ export const authOptions: NextAuthOptions = {
           name: dbUser.name,
           email: dbUser?.email,
           image: dbUser.image,
-          theme: dbUser.theme,
         },
       };
     },

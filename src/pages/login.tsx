@@ -10,6 +10,7 @@ import appConstant from "@/services/appConstant";
 import { getCookieName } from "@/lib/utils";
 
 import Image from "next/image";
+import { useThemeConfig } from "@/components/ContextApi/ThemeConfigContext";
 
 const LoginPage: NextPage = () => {
   const router = useRouter();
@@ -17,6 +18,7 @@ const LoginPage: NextPage = () => {
   const [googleLoading, setGoogleLoading] = useState<boolean>(false);
   const [loginError, setLoginError] = React.useState("");
   const { data: session, status: sessionStatus } = useSession();
+  const { brand } = useThemeConfig();
 
   React.useEffect(() => {
     if (router.query.error) {
@@ -45,7 +47,7 @@ const LoginPage: NextPage = () => {
     <div className={styles.login_page_wrapper}>
       <div className={styles.social_login_container}>
         <Image src={"/icon/torqbit.png"} height={60} width={60} alt={"logo"} />
-        <h3>Login to {appConstant.platformName}</h3>
+        <h3>Login to {brand.name}</h3>
 
         <Button
           onClick={() => {

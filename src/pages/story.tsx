@@ -1,46 +1,18 @@
 import React, { FC } from "react";
-import { useAppContext } from "@/components/ContextApi/AppContext";
-import { Theme, User } from "@prisma/client";
-import { GetServerSidePropsContext, NextPage } from "next";
-import { useEffect } from "react";
+import { User } from "@prisma/client";
+import { GetServerSidePropsContext } from "next";
 import MarketingLayout from "@/components/Layouts/MarketingLayout";
 import HeroBlog from "@/components/Marketing/Blog/DefaultHero";
 import { useMediaQuery } from "react-responsive";
 import { getCookieName } from "@/lib/utils";
 import { getToken } from "next-auth/jwt";
-import appConstant from "@/services/appConstant";
 import { useThemeConfig } from "@/components/ContextApi/ThemeConfigContext";
 import { PageThemeConfig } from "@/services/themeConstant";
+import { useAppContext } from "@/components/ContextApi/AppContext";
 
 const StoryPage: FC<{ user: User; themeConfig: PageThemeConfig }> = ({ user, themeConfig }) => {
-  const { dispatch, globalState } = useAppContext();
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
-
-  const setGlobalTheme = (theme: Theme) => {
-    dispatch({
-      type: "SWITCH_THEME",
-      payload: theme,
-    });
-  };
-
-  const onCheckTheme = () => {
-    const currentTheme = localStorage.getItem("theme");
-    if (!currentTheme || currentTheme === "dark") {
-      localStorage.setItem("theme", "dark");
-    } else if (currentTheme === "light") {
-      localStorage.setItem("theme", "light");
-    }
-    setGlobalTheme(localStorage.getItem("theme") as Theme);
-
-    dispatch({
-      type: "SET_LOADER",
-      payload: false,
-    });
-  };
-
-  useEffect(() => {
-    onCheckTheme();
-  }, []);
+  const { globalState } = useAppContext();
 
   return (
     <MarketingLayout

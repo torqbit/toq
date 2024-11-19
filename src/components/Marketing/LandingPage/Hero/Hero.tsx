@@ -3,7 +3,7 @@ import { FC } from "react";
 import styles from "./Hero.module.scss";
 import { Button, Flex, Space } from "antd";
 import Link from "next/link";
-import { Theme, User } from "@prisma/client";
+import { User } from "@prisma/client";
 import Image from "next/image";
 import { useAppContext } from "@/components/ContextApi/AppContext";
 import { useThemeConfig } from "@/components/ContextApi/ThemeConfigContext";
@@ -60,7 +60,7 @@ const MarketingHero: FC<{ isMobile: boolean; user: User; themeConfig: PageThemeC
     backgroundImage: ` ${
       bannerAlign === "background"
         ? `url(${
-            globalState.theme === Theme.dark && heroSection?.banner?.darkModePath
+            globalState.theme === "dark" && heroSection?.banner?.darkModePath
               ? heroSection.banner.darkModePath
               : heroSection?.banner?.lightModePath
           })`
@@ -110,7 +110,7 @@ const MarketingHero: FC<{ isMobile: boolean; user: User; themeConfig: PageThemeC
             width={getBannerWidth(bannerAlign as bannerAlignment)}
             loading="lazy"
             src={`${
-              globalState.theme === Theme.dark && heroSection?.banner?.darkModePath
+              globalState.theme === "dark" && heroSection?.banner?.darkModePath
                 ? heroSection.banner.darkModePath
                 : heroSection?.banner?.lightModePath
             }`}

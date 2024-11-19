@@ -1,8 +1,6 @@
 import React, { FC } from "react";
-import { useAppContext } from "@/components/ContextApi/AppContext";
-import { Theme, User } from "@prisma/client";
-import { GetServerSidePropsContext, NextPage } from "next";
-import { useEffect } from "react";
+import { User } from "@prisma/client";
+import { GetServerSidePropsContext } from "next";
 import MarketingLayout from "@/components/Layouts/MarketingLayout";
 import { useMediaQuery } from "react-responsive";
 import appConstant from "@/services/appConstant";
@@ -13,9 +11,9 @@ import { getCookieName } from "@/lib/utils";
 import { getToken } from "next-auth/jwt";
 import LegalAgreement from "@/components/Marketing/LegalAgreement";
 import { PageThemeConfig } from "@/services/themeConstant";
+import { useThemeConfig } from "@/components/ContextApi/ThemeConfigContext";
 
 const TermAndConditonPage: FC<{ user: User; themeConfig: PageThemeConfig }> = ({ user, themeConfig }) => {
-  const { dispatch } = useAppContext();
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
 
   const termAndCondionList = [
@@ -301,32 +299,6 @@ Violate These Terms Or ${appConstant.platformName}'s Then-Current Policies And O
     },
   ];
 
-  const setGlobalTheme = (theme: Theme) => {
-    dispatch({
-      type: "SWITCH_THEME",
-      payload: theme,
-    });
-  };
-
-  const onCheckTheme = () => {
-    const currentTheme = localStorage.getItem("theme");
-    if (!currentTheme || currentTheme === "dark") {
-      localStorage.setItem("theme", "dark");
-    } else if (currentTheme === "light") {
-      localStorage.setItem("theme", "light");
-    }
-    setGlobalTheme(localStorage.getItem("theme") as Theme);
-
-    dispatch({
-      type: "SET_LOADER",
-      payload: false,
-    });
-  };
-
-  useEffect(() => {
-    onCheckTheme();
-  }, []);
-
   return (
     <MarketingLayout
       themeConfig={themeConfig}
@@ -349,8 +321,20 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const { req } = ctx;
 
   let cookieName = getCookieName();
+  const themeConfig = useThemeConfig();
 
   const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
 
-  return { props: { user } };
+  return {
+    props: {
+      user,
+      themeConfig: {
+        ...themeConfig,
+        navBar: {
+          ...themeConfig.navBar,
+          component: themeConfig.navBar?.component?.name as any,
+        },
+      },
+    },
+  };
 };
