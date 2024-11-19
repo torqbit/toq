@@ -20,6 +20,7 @@ const Features: FC<IFeatureInfo> = ({ title, description, featureList }) => (
         {featureList.map((feature, i) => {
           return (
             <FeatureCard
+              key={i}
               img={feature.img}
               title={feature.title}
               description={feature.description}
