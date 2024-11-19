@@ -6,12 +6,13 @@ import { User } from "@prisma/client";
 import { useMediaQuery } from "react-responsive";
 import MarketingLayout from "@/components/Layouts/MarketingLayout";
 import { GetServerSidePropsContext } from "next";
-import { getCookieName } from "@/lib/utils";
+import { generateDayAndYear, getCookieName } from "@/lib/utils";
 import { getToken } from "next-auth/jwt";
 
 import { DEFAULT_THEME, PageSiteConfig } from "@/services/siteConstant";
 import { useSiteConfig } from "@/components/ContextApi/SiteConfigContext";
 import SetupPlatform from "@/components/Marketing/LandingPage/Setup/SetupPlatform";
+import Blogs from "@/components/Marketing/Blog/Blogs";
 
 interface IProps {
   user: User;

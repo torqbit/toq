@@ -7,7 +7,7 @@ import prisma from "@/lib/prisma";
 import { IEventList } from "@/services/EventService";
 import styles from "@/styles/Marketing/Events/Event.module.scss";
 import Events from "@/components/Events/Events";
-import DefaulttHero from "@/components/Marketing/Blog/DefaultHero";
+import DefaulttHero from "@/components/Marketing/DefaultHero/DefaultHero";
 import MarketingLayout from "@/components/Layouts/MarketingLayout";
 import { useSiteConfig } from "@/components/ContextApi/SiteConfigContext";
 import { PageSiteConfig } from "@/services/siteConstant";

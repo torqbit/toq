@@ -8,7 +8,7 @@ import appConstant from "@/services/appConstant";
 import Link from "next/link";
 import LegalAgreement from "@/components/Marketing/LegalAgreement";
 
-import DefaulttHero from "@/components/Marketing/Blog/DefaultHero";
+import DefaulttHero from "@/components/Marketing/DefaultHero/DefaultHero";
 import { getCookieName } from "@/lib/utils";
 import { getToken } from "next-auth/jwt";
 import { useSiteConfig } from "@/components/ContextApi/SiteConfigContext";

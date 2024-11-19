@@ -6,7 +6,7 @@ import { useMediaQuery } from "react-responsive";
 import appConstant from "@/services/appConstant";
 import Link from "next/link";
 
-import DefaulttHero from "@/components/Marketing/Blog/DefaultHero";
+import DefaulttHero from "@/components/Marketing/DefaultHero/DefaultHero";
 import { getCookieName } from "@/lib/utils";
 import { getToken } from "next-auth/jwt";
 import LegalAgreement from "@/components/Marketing/LegalAgreement";
