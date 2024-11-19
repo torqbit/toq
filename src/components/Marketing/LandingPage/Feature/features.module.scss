@@ -1,4 +1,4 @@
-.setup__container {
+.features__container {
   max-width: var(--marketing-container-width);
   display: flex;
   flex-direction: column;
@@ -10,11 +10,11 @@
     font-weight: 800;
   }
 
-  .steps {
+  .features {
     display: grid;
     gap: 30px;
 
-    .steps__card {
+    .features__card {
       background-color: var(--bg-primary);
       border-radius: 16px;
       padding: 20px;
@@ -31,37 +31,32 @@
         margin-bottom: 20px;
       }
     }
-    .steps__card__small {
+    .features__card__small {
       width: 380px;
     }
 
-    .steps__card__large {
+    .features__card__large {
       width: 580px;
     }
   }
 
-  .steps__triple {
+  .features__triple {
     grid-template-columns: 1fr 1fr 1fr;
-  }
-
-  .steps__double {
-    grid-template-columns: 1fr 1fr;
   }
 }
 
 @media only screen and (max-width: 435px) {
-  .setup__container {
+  .features__container {
     max-width: 80vw;
 
-    .steps {
-      .steps__card__large,
-      .steps__card__small {
+    .features {
+      .features__card__large,
+      .features__card__small {
         width: 80vw;
       }
     }
 
-    .steps__triple,
-    .steps__double {
+    .features__triple {
       grid-template-columns: 1fr;
     }
   }

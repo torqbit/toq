@@ -1,7 +1,7 @@
 import { ThemeSchema } from "@/types/schema";
 import { lazy } from "react";
 const NavBar = lazy(() => import("@/components/Marketing/LandingPage/NavBar/NavBar"));
-const Feature = lazy(() => import("@/components/Marketing/LandingPage/Feature/Feature"));
+const Features = lazy(() => import("@/components/Marketing/LandingPage/Feature/Features"));
 
 export type PageSiteConfig = ThemeSchema;
 
@@ -63,7 +63,7 @@ export const DEFAULT_THEME = {
   },
   sections: {
     feature: {
-      component: Feature,
+      component: Features,
 
       featureInfo: {
         featureList: [

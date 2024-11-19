@@ -1,6 +1,6 @@
 import { PageSiteConfig } from "@/services/siteConstant";
 import NavBar from "./components/Marketing/LandingPage/NavBar/NavBar";
-import Feature from "./components/Marketing/LandingPage/Feature/Feature";
+import Features from "./components/Marketing/LandingPage/Feature/Features";
 
 const config: PageSiteConfig = {
   navBar: {
@@ -60,7 +60,7 @@ const config: PageSiteConfig = {
   },
   sections: {
     feature: {
-      component: Feature,
+      component: Features,
       featureInfo: {
         featureList: [
           {

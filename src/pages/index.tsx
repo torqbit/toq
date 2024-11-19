@@ -12,8 +12,7 @@ import { getToken } from "next-auth/jwt";
 import { DEFAULT_THEME, PageSiteConfig } from "@/services/siteConstant";
 import { useSiteConfig } from "@/components/ContextApi/SiteConfigContext";
 import SetupPlatform from "@/components/Marketing/LandingPage/Setup/SetupPlatform";
-import Feature from "@/components/Marketing/LandingPage/Feature/Feature";
-import { IFeatureCard } from "@/types/landing/feature";
+
 interface IProps {
   user: User;
   siteConfig: PageSiteConfig;
