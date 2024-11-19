@@ -2,8 +2,10 @@ import appConstant from "@/services/appConstant";
 import MarketingSvgIcons from "../MarketingSvgIcons";
 import { Button, Card } from "antd";
 import styles from "@/styles/Marketing/LandingPage/LandingPage.module.scss";
+import { useThemeConfig } from "@/components/ContextApi/ThemeConfigContext";
 
 const About = () => {
+  const { brand } = useThemeConfig();
   const cardDetail = [
     {
       icon: MarketingSvgIcons.openSource,
@@ -27,13 +29,8 @@ const About = () => {
   return (
     <section className={styles.aboutContainer}>
       <div>
-        <h3>
-          What&apos;s different about {appConstant.platformName}?
-        </h3>
-        <div
-          className={styles.cardWrapper}
-
-        >
+        <h3>What&apos;s different about {brand.name}?</h3>
+        <div className={styles.cardWrapper}>
           {cardDetail.map((detail, i) => {
             return (
               <div key={i} className={styles.card}>
@@ -47,7 +44,6 @@ const About = () => {
           })}
         </div>
       </div>
-
     </section>
   );
 };

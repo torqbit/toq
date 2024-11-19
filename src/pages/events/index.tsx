@@ -1,16 +1,14 @@
-import { checkDateExpired, convertToDayMonthTime, generateYearAndDayName, getCookieName } from "@/lib/utils";
-import { StateType, Theme, User } from "@prisma/client";
+import { checkDateExpired, convertToDayMonthTime, getCookieName } from "@/lib/utils";
+import { StateType, User } from "@prisma/client";
 import { GetServerSidePropsContext } from "next";
 import { getToken } from "next-auth/jwt";
-import { FC, useEffect } from "react";
+import { FC } from "react";
 import prisma from "@/lib/prisma";
 import { IEventList } from "@/services/EventService";
 import styles from "@/styles/Marketing/Events/Event.module.scss";
 import Events from "@/components/Events/Events";
 import DefaulttHero from "@/components/Marketing/Blog/DefaultHero";
-import appConstant from "@/services/appConstant";
 import MarketingLayout from "@/components/Layouts/MarketingLayout";
-import { useAppContext } from "@/components/ContextApi/AppContext";
 import { useThemeConfig } from "@/components/ContextApi/ThemeConfigContext";
 import { PageThemeConfig } from "@/services/themeConstant";
 
@@ -20,35 +18,6 @@ const EventsPage: FC<{
   totalEventsLength: number;
   themeConfig: PageThemeConfig;
 }> = ({ user, eventList, totalEventsLength, themeConfig }) => {
-  const { dispatch, globalState } = useAppContext();
-  const setGlobalTheme = (theme: Theme) => {
-    dispatch({
-      type: "SWITCH_THEME",
-      payload: theme,
-    });
-  };
-
-  const onCheckTheme = () => {
-    const currentTheme = localStorage.getItem("theme");
-    if (!currentTheme || currentTheme === "dark") {
-      localStorage.setItem("theme", "dark");
-    } else if (currentTheme === "light") {
-      localStorage.setItem("theme", "light");
-    }
-    setGlobalTheme(localStorage.getItem("theme") as Theme);
-
-    setTimeout(() => {
-      dispatch({
-        type: "SET_LOADER",
-        payload: false,
-      });
-    }, 500);
-  };
-
-  useEffect(() => {
-    onCheckTheme();
-  }, []);
-
   return (
     <MarketingLayout
       themeConfig={themeConfig}

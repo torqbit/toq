@@ -29,34 +29,8 @@ interface IProps {
 }
 
 const updatePage: FC<IProps> = ({ user, updateData, themeConfig }) => {
-  const { dispatch, globalState } = useAppContext();
+  const { globalState } = useAppContext();
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
-
-  const setGlobalTheme = (theme: Theme) => {
-    dispatch({
-      type: "SWITCH_THEME",
-      payload: theme,
-    });
-  };
-
-  const onCheckTheme = () => {
-    const currentTheme = localStorage.getItem("theme");
-    if (!currentTheme || currentTheme === "dark") {
-      localStorage.setItem("theme", "dark");
-    } else if (currentTheme === "light") {
-      localStorage.setItem("theme", "light");
-    }
-    setGlobalTheme(localStorage.getItem("theme") as Theme);
-
-    dispatch({
-      type: "SET_LOADER",
-      payload: false,
-    });
-  };
-
-  useEffect(() => {
-    onCheckTheme();
-  }, []);
 
   return (
     <MarketingLayout

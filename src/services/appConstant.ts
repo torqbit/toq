@@ -1,6 +1,6 @@
 export default {
   cmnErrorMsg: "Something went wrong. Please try again later",
-  platformName: "Your Company",
+  platformName: "TORQBIT",
   platformLogo: `/public/icon/torqbit.png`,
   courseTags: ["HTML", "CSS", "JS", "ReactJS"],
   assignmentLang: ["html", "css", "javascript", "java", "python", "go", "nodejs", "reactjs"],

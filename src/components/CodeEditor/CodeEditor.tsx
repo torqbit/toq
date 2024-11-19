@@ -61,7 +61,7 @@ const CodeEditor: FC<{
       <Editor
         width={!readOnly ? getCodeWidth() : "100%"}
         className={styles.code__editor_container}
-        theme={globalState.theme === $Enums.Theme.dark ? "vs-dark" : "light"}
+        theme={globalState.theme === "dark" ? "vs-dark" : "light"}
         height={"calc(100vh - 230px)"}
         language={getCodeLanguage(getExtension(fileName))}
         value={defaultValue}

@@ -1,8 +1,6 @@
 import React, { FC } from "react";
-import { useAppContext } from "@/components/ContextApi/AppContext";
-import { Theme, User } from "@prisma/client";
-import { GetServerSidePropsContext, NextPage } from "next";
-import { useEffect } from "react";
+import { User } from "@prisma/client";
+import { GetServerSidePropsContext } from "next";
 import MarketingLayout from "@/components/Layouts/MarketingLayout";
 
 import { useMediaQuery } from "react-responsive";
@@ -17,7 +15,6 @@ import { useThemeConfig } from "@/components/ContextApi/ThemeConfigContext";
 import { PageThemeConfig } from "@/services/themeConstant";
 
 const TermAndConditonPage: FC<{ user: User; themeConfig: PageThemeConfig }> = ({ user, themeConfig }) => {
-  const { dispatch } = useAppContext();
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
 
   const privacyPoliciesList = [
@@ -99,32 +96,6 @@ const TermAndConditonPage: FC<{ user: User; themeConfig: PageThemeConfig }> = ({
       ],
     },
   ];
-
-  const setGlobalTheme = (theme: Theme) => {
-    dispatch({
-      type: "SWITCH_THEME",
-      payload: theme,
-    });
-  };
-
-  const onCheckTheme = () => {
-    const currentTheme = localStorage.getItem("theme");
-    if (!currentTheme || currentTheme === "dark") {
-      localStorage.setItem("theme", "dark");
-    } else if (currentTheme === "light") {
-      localStorage.setItem("theme", "light");
-    }
-    setGlobalTheme(localStorage.getItem("theme") as Theme);
-
-    dispatch({
-      type: "SET_LOADER",
-      payload: false,
-    });
-  };
-
-  useEffect(() => {
-    onCheckTheme();
-  }, []);
 
   return (
     <MarketingLayout

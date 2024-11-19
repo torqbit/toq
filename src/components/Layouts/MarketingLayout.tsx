@@ -11,10 +11,10 @@ import SpinLoader from "../SpinLoader/SpinLoader";
 import Footer from "../Marketing/LandingPage/Footer/Footer";
 import { useThemeConfig } from "../ContextApi/ThemeConfigContext";
 import { DEFAULT_THEME, PageThemeConfig } from "@/services/themeConstant";
-import { onChangeTheme } from "@/lib/utils";
 import { useMediaQuery } from "react-responsive";
-import { Theme, User } from "@prisma/client";
+import { User } from "@prisma/client";
 import { IBrandInfo } from "@/types/landing/navbar";
+import { Theme } from "@/types/theme";
 
 const MarketingLayout: FC<{
   children?: React.ReactNode;
@@ -32,15 +32,37 @@ const MarketingLayout: FC<{
     root.style.setProperty("--btn-primary", `${brand?.brandColor}`);
   }, []);
 
-  useEffect(() => {
-    onChangeTheme(dispatch, themeConfig.darkMode);
-  }, []);
-
   const NavBarComponent = navBar?.component ? navBar.component : null;
   let brandInfo: IBrandInfo = {
     logo: themeConfig.brand?.logo ?? DEFAULT_THEME.brand.logo,
     name: themeConfig.brand?.name ?? DEFAULT_THEME.brand.name,
   };
+
+  const setGlobalTheme = (theme: Theme) => {
+    dispatch({
+      type: "SWITCH_THEME",
+      payload: theme,
+    });
+  };
+
+  const onCheckTheme = () => {
+    const currentTheme = localStorage.getItem("theme");
+    if ((!currentTheme || currentTheme === "dark") && themeConfig.darkMode) {
+      localStorage.setItem("theme", "dark");
+    } else if (currentTheme === "light" || !themeConfig.darkMode) {
+      localStorage.setItem("theme", "light");
+    }
+    setGlobalTheme(localStorage.getItem("theme") as Theme);
+
+    dispatch({
+      type: "SET_LOADER",
+      payload: false,
+    });
+  };
+
+  useEffect(() => {
+    onCheckTheme();
+  }, []);
 
   return (
     <>
@@ -56,8 +78,9 @@ const MarketingLayout: FC<{
             width: "100%",
             background: "#fff",
             zIndex: 10,
-          }}>
-          <SpinLoader className='marketing__spinner' />
+          }}
+        >
+          <SpinLoader className="marketing__spinner" />
         </div>
       }
       <ConfigProvider theme={globalState.theme == "dark" ? darkThemConfig() : antThemeConfig()}>
@@ -76,7 +99,7 @@ const MarketingLayout: FC<{
               isMobile={isMobile}
               items={themeConfig.navBar?.navigationLinks ?? []}
               showThemeSwitch={themeConfig.darkMode ?? DEFAULT_THEME.darkMode}
-              activeTheme={globalState.theme ?? Theme.light}
+              activeTheme={globalState.theme ?? "light"}
               brand={brandInfo}
             />
           )}

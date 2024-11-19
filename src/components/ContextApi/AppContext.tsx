@@ -1,7 +1,7 @@
 import { createContext, Dispatch, useContext, useReducer } from "react";
 import { INotification } from "@/lib/types/discussions";
 import { UserSession } from "@/lib/types/user";
-import { Theme } from "@prisma/client";
+import { Theme } from "@/types/theme";
 
 export type ISiderMenu =
   | "dashboard"
