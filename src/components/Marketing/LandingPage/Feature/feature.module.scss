@@ -1,0 +1,68 @@
+.setup__container {
+  max-width: var(--marketing-container-width);
+  display: flex;
+  flex-direction: column;
+  padding: 50px 0;
+  gap: 50px;
+  margin: 0 auto;
+
+  h2 {
+    font-weight: 800;
+  }
+
+  .steps {
+    display: grid;
+    gap: 30px;
+
+    .steps__card {
+      background-color: var(--bg-primary);
+      border-radius: 16px;
+      padding: 20px;
+      transition: all 0.4s;
+      border: 1px solid var(--bg-primary);
+
+      &:hover {
+        border: 1px solid var(--btn-primary);
+      }
+
+      img {
+        width: auto;
+        height: 40px;
+        margin-bottom: 20px;
+      }
+    }
+    .steps__card__small {
+      width: 380px;
+    }
+
+    .steps__card__large {
+      width: 580px;
+    }
+  }
+
+  .steps__triple {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
+  .steps__double {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media only screen and (max-width: 435px) {
+  .setup__container {
+    max-width: 80vw;
+
+    .steps {
+      .steps__card__large,
+      .steps__card__small {
+        width: 80vw;
+      }
+    }
+
+    .steps__triple,
+    .steps__double {
+      grid-template-columns: 1fr;
+    }
+  }
+}

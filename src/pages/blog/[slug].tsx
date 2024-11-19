@@ -16,8 +16,8 @@ import { UserOutlined } from "@ant-design/icons";
 import Head from "next/head";
 import { truncateString } from "@/services/helper";
 import PurifyContent from "@/components/PurifyContent/PurifyContent";
-import { useThemeConfig } from "@/components/ContextApi/ThemeConfigContext";
-import { PageThemeConfig } from "@/services/themeConstant";
+import { useSiteConfig } from "@/components/ContextApi/SiteConfigContext";
+import { PageSiteConfig } from "@/services/siteConstant";
 
 interface IProps {
   user: User;
@@ -25,7 +25,7 @@ interface IProps {
   description: string;
   currentUrl: string;
   hostName: string;
-  themeConfig: PageThemeConfig;
+  siteConfig: PageSiteConfig;
   blogData: {
     title: string;
     id: string;
@@ -37,12 +37,12 @@ interface IProps {
   };
 }
 
-const BlogPage: FC<IProps> = ({ user, htmlData, blogData, description, currentUrl, hostName, themeConfig }) => {
+const BlogPage: FC<IProps> = ({ user, htmlData, blogData, description, currentUrl, hostName, siteConfig }) => {
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
 
   return (
     <MarketingLayout
-      themeConfig={themeConfig}
+      siteConfig={siteConfig}
       user={user}
       heroSection={
         <section className={styles.blogPageWrapper}>
@@ -107,7 +107,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const params = ctx?.params;
   let cookieName = getCookieName();
 
-  const themeConfig = useThemeConfig();
+  const siteConfig = useSiteConfig();
 
   const protocol = req.headers["x-forwarded-proto"] || "http";
   const host = req.headers["x-forwarded-host"] || req.headers.host;
@@ -151,11 +151,18 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
           slug: blog.slug,
           contentType: blog.contentType,
         },
-        themeConfig: {
-          ...themeConfig,
+        siteConfig: {
+          ...siteConfig,
           navBar: {
-            ...themeConfig.navBar,
-            component: themeConfig.navBar?.component?.name as any,
+            ...siteConfig.navBar,
+            component: siteConfig.navBar?.component?.name as any,
+          },
+          sections: {
+            ...siteConfig.sections,
+            feature: {
+              ...siteConfig.sections.feature,
+              component: siteConfig.sections.feature?.component?.name || null,
+            },
           },
         },
       },

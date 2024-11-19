@@ -9,18 +9,18 @@ import styles from "@/styles/Marketing/Events/Event.module.scss";
 import Events from "@/components/Events/Events";
 import DefaulttHero from "@/components/Marketing/Blog/DefaultHero";
 import MarketingLayout from "@/components/Layouts/MarketingLayout";
-import { useThemeConfig } from "@/components/ContextApi/ThemeConfigContext";
-import { PageThemeConfig } from "@/services/themeConstant";
+import { useSiteConfig } from "@/components/ContextApi/SiteConfigContext";
+import { PageSiteConfig } from "@/services/siteConstant";
 
 const EventsPage: FC<{
   user: User;
   eventList: IEventList[];
   totalEventsLength: number;
-  themeConfig: PageThemeConfig;
-}> = ({ user, eventList, totalEventsLength, themeConfig }) => {
+  siteConfig: PageSiteConfig;
+}> = ({ user, eventList, totalEventsLength, siteConfig }) => {
   return (
     <MarketingLayout
-      themeConfig={themeConfig}
+      siteConfig={siteConfig}
       user={user}
       heroSection={<DefaulttHero title="Events" description="Connect, Learn, and Thrive Together!" />}
     >
@@ -32,7 +32,7 @@ const EventsPage: FC<{
 };
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const { req } = ctx;
-  const themeConfig = useThemeConfig();
+  const siteConfig = useSiteConfig();
   let cookieName = getCookieName();
 
   const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
@@ -90,11 +90,18 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
         }),
 
         totalEventsLength: await prisma.events.count({ where: { state: StateType.ACTIVE } }),
-        themeConfig: {
-          ...themeConfig,
+        siteConfig: {
+          ...siteConfig,
           navBar: {
-            ...themeConfig.navBar,
-            component: themeConfig.navBar?.component?.name as any,
+            ...siteConfig.navBar,
+            component: siteConfig.navBar?.component?.name as any,
+          },
+          sections: {
+            ...siteConfig.sections,
+            feature: {
+              ...siteConfig.sections.feature,
+              component: siteConfig.sections.feature?.component?.name || null,
+            },
           },
         },
       },
@@ -104,11 +111,18 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
       props: {
         user,
         eventList: [],
-        themeConfig: {
-          ...themeConfig,
+        siteConfig: {
+          ...siteConfig,
           navBar: {
-            ...themeConfig.navBar,
-            component: themeConfig.navBar?.component?.name as any,
+            ...siteConfig.navBar,
+            component: siteConfig.navBar?.component?.name as any,
+          },
+          sections: {
+            ...siteConfig.sections,
+            feature: {
+              ...siteConfig.sections.feature,
+              component: siteConfig.sections.feature?.component?.name || null,
+            },
           },
         },
       },

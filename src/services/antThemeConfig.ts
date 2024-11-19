@@ -1,13 +1,13 @@
-import { useThemeConfig } from "@/components/ContextApi/ThemeConfigContext";
+import { useSiteConfig } from "@/components/ContextApi/SiteConfigContext";
 
 const antThemeConfig = () => {
-  const themeConfig = useThemeConfig();
+  const siteConfig = useSiteConfig();
 
   return {
     token: {
       borderRadius: 4,
       colorText: "#666",
-      colorPrimary: `${themeConfig.brand?.brandColor}`,
+      colorPrimary: `${siteConfig.brand?.brandColor}`,
       colorSplit: "#888",
       colorTextDisabled: "#666",
     },
@@ -17,11 +17,11 @@ const antThemeConfig = () => {
       },
 
       Badge: {
-        colorInfo: `${themeConfig.brand?.brandColor}`,
+        colorInfo: `${siteConfig.brand?.brandColor}`,
       },
       Progress: {
         remainingColor: "#666",
-        defaultColor: `${themeConfig.brand?.brandColor}`,
+        defaultColor: `${siteConfig.brand?.brandColor}`,
       },
       Tree: {
         nodeSelectedBg: "#fff",
@@ -70,7 +70,7 @@ const antThemeConfig = () => {
       },
       Button: {
         groupBorderColor: "#000",
-        colorPrimary: `${themeConfig.brand?.brandColor}`,
+        colorPrimary: `${siteConfig.brand?.brandColor}`,
       },
       Input: {
         borderRadius: 4,

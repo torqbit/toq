@@ -1,5 +1,5 @@
 import { AppAction, useAppContext } from "@/components/ContextApi/AppContext";
-import { useThemeConfig } from "@/components/ContextApi/ThemeConfigContext";
+import { useSiteConfig } from "@/components/ContextApi/SiteConfigContext";
 import SvgIcons from "@/components/SvgIcons";
 import appConstant from "@/services/appConstant";
 import { Dispatch } from "react";

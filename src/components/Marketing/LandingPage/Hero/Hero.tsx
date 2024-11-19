@@ -6,17 +6,17 @@ import Link from "next/link";
 import { User } from "@prisma/client";
 import Image from "next/image";
 import { useAppContext } from "@/components/ContextApi/AppContext";
-import { useThemeConfig } from "@/components/ContextApi/ThemeConfigContext";
+import { useSiteConfig } from "@/components/ContextApi/SiteConfigContext";
 import { bannerAlignment } from "@/types/schema";
-import { PageThemeConfig } from "@/services/themeConstant";
+import { PageSiteConfig } from "@/services/siteConstant";
 
-const MarketingHero: FC<{ isMobile: boolean; user: User; themeConfig: PageThemeConfig }> = ({
+const MarketingHero: FC<{ isMobile: boolean; user: User; siteConfig: PageSiteConfig }> = ({
   isMobile,
   user,
-  themeConfig,
+  siteConfig,
 }) => {
   const { globalState } = useAppContext();
-  const { heroSection } = themeConfig;
+  const { heroSection } = siteConfig;
 
   let bannerAlign =
     isMobile && heroSection?.banner?.position !== "background"

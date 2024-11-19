@@ -14,11 +14,11 @@ import styles from "@/styles/Marketing/Blog/Blog.module.scss";
 
 import Link from "next/link";
 import { UserOutlined } from "@ant-design/icons";
-import { useThemeConfig } from "@/components/ContextApi/ThemeConfigContext";
-import { PageThemeConfig } from "@/services/themeConstant";
+import { useSiteConfig } from "@/components/ContextApi/SiteConfigContext";
+import { PageSiteConfig } from "@/services/siteConstant";
 interface IProps {
   user: User;
-  themeConfig: PageThemeConfig;
+  siteConfig: PageSiteConfig;
   blogData: {
     title: string;
     id: string;
@@ -29,13 +29,13 @@ interface IProps {
   }[];
 }
 
-const BlogPage: FC<IProps> = ({ user, blogData, themeConfig }) => {
+const BlogPage: FC<IProps> = ({ user, blogData, siteConfig }) => {
   const { dispatch, globalState } = useAppContext();
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
 
   return (
     <MarketingLayout
-      themeConfig={themeConfig}
+      siteConfig={siteConfig}
       user={user}
       heroSection={<HeroBlog title="Blog" description="Our engineering experience, explained in detail" />}
     >
@@ -156,7 +156,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   });
 
   const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
-  const themeConfig = useThemeConfig();
+  const siteConfig = useSiteConfig();
   if (blog.length > 0) {
     return {
       props: {
@@ -171,11 +171,18 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
             slug: b.slug,
           };
         }),
-        themeConfig: {
-          ...themeConfig,
+        siteConfig: {
+          ...siteConfig,
           navBar: {
-            ...themeConfig.navBar,
-            component: themeConfig.navBar?.component?.name as any,
+            ...siteConfig.navBar,
+            component: siteConfig.navBar?.component?.name as any,
+          },
+          sections: {
+            ...siteConfig.sections,
+            feature: {
+              ...siteConfig.sections.feature,
+              component: siteConfig.sections.feature?.component?.name || null,
+            },
           },
         },
       },
@@ -185,11 +192,18 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
       props: {
         user,
         blogData: [],
-        themeConfig: {
-          ...themeConfig,
+        siteConfig: {
+          ...siteConfig,
           navBar: {
-            ...themeConfig.navBar,
-            component: themeConfig.navBar?.component?.name as any,
+            ...siteConfig.navBar,
+            component: siteConfig.navBar?.component?.name as any,
+          },
+          sections: {
+            ...siteConfig.sections,
+            feature: {
+              ...siteConfig.sections.feature,
+              component: siteConfig.sections.feature?.component?.name || null,
+            },
           },
         },
       },

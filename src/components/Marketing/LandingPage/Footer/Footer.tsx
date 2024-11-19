@@ -4,10 +4,10 @@ import Link from "next/link";
 import Image from "next/image";
 import SvgIcons from "@/components/SvgIcons";
 import { FC } from "react";
-import { PageThemeConfig } from "@/services/themeConstant";
+import { PageSiteConfig } from "@/services/siteConstant";
 
-const Footer: FC<{ themeConfig: PageThemeConfig; isMobile: boolean }> = ({ themeConfig, isMobile }) => {
-  const { footer, navBar, brand } = themeConfig;
+const Footer: FC<{ siteConfig: PageSiteConfig; isMobile: boolean }> = ({ siteConfig, isMobile }) => {
+  const { footer, navBar, brand } = siteConfig;
 
   const footerContent = [
     {

@@ -27,7 +27,7 @@ import { ISiderMenu, useAppContext } from "../ContextApi/AppContext";
 import { postFetch } from "@/services/request";
 import appConstant from "@/services/appConstant";
 import Feedback from "../Feedback/Feedback";
-import { useThemeConfig } from "../ContextApi/ThemeConfigContext";
+import { useSiteConfig } from "../ContextApi/SiteConfigContext";
 import { Theme } from "@/types/theme";
 
 const { Sider } = Layout;
@@ -36,7 +36,7 @@ const Sidebar: FC<{ menu: MenuProps["items"] }> = ({ menu }) => {
   // const [collapsed, setCollapsed] = React.useState(false);
   const { data: user, status, update } = useSession();
   const { globalState, dispatch } = useAppContext();
-  const { brand } = useThemeConfig();
+  const { brand } = useSiteConfig();
 
   const [modal, contextWrapper] = Modal.useModal();
 

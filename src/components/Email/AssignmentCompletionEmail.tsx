@@ -18,14 +18,14 @@ import {
 } from "@react-email/components";
 
 import * as React from "react";
-import { useThemeConfig } from "../ContextApi/ThemeConfigContext";
+import { useSiteConfig } from "../ContextApi/SiteConfigContext";
 
 interface IProps {
   configData: IAssignmentCompletionConfig;
 }
 
 export const AssignmentCompletionEmail = ({ configData }: IProps) => {
-  const themeConfig = useThemeConfig();
+  const siteConfig = useSiteConfig();
 
   return (
     <Tailwind>
@@ -65,7 +65,7 @@ export const AssignmentCompletionEmail = ({ configData }: IProps) => {
 
               <Button
                 href={configData.url}
-                className={`bg-[${themeConfig.brand?.brandColor}] px-5 py-2 text-white text-left text-[12px]  rounded`}
+                className={`bg-[${siteConfig.brand?.brandColor}] px-5 py-2 text-white text-left text-[12px]  rounded`}
               >
                 View Details
               </Button>

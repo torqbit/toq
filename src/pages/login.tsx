@@ -10,7 +10,7 @@ import appConstant from "@/services/appConstant";
 import { getCookieName } from "@/lib/utils";
 
 import Image from "next/image";
-import { useThemeConfig } from "@/components/ContextApi/ThemeConfigContext";
+import { useSiteConfig } from "@/components/ContextApi/SiteConfigContext";
 
 const LoginPage: NextPage = () => {
   const router = useRouter();
@@ -18,7 +18,7 @@ const LoginPage: NextPage = () => {
   const [googleLoading, setGoogleLoading] = useState<boolean>(false);
   const [loginError, setLoginError] = React.useState("");
   const { data: session, status: sessionStatus } = useSession();
-  const { brand } = useThemeConfig();
+  const { brand } = useSiteConfig();
 
   React.useEffect(() => {
     if (router.query.error) {

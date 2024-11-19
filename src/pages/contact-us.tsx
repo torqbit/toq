@@ -8,13 +8,13 @@ import { getToken } from "next-auth/jwt";
 import { Flex, Space } from "antd";
 import styles from "@/styles/Marketing/Contact/ContactUs.module.scss";
 import appConstant from "@/services/appConstant";
-import { useThemeConfig } from "@/components/ContextApi/ThemeConfigContext";
-import { PageThemeConfig } from "@/services/themeConstant";
+import { useSiteConfig } from "@/components/ContextApi/SiteConfigContext";
+import { PageSiteConfig } from "@/services/siteConstant";
 
-const ContactUsPage: FC<{ user: User; themeConfig: PageThemeConfig }> = ({ user, themeConfig }) => {
+const ContactUsPage: FC<{ user: User; siteConfig: PageSiteConfig }> = ({ user, siteConfig }) => {
   return (
     <MarketingLayout
-      themeConfig={themeConfig}
+      siteConfig={siteConfig}
       user={user}
       heroSection={
         <DefaulttHero
@@ -49,16 +49,23 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   let cookieName = getCookieName();
 
   const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
-  const themeConfig = useThemeConfig();
+  const siteConfig = useSiteConfig();
 
   return {
     props: {
       user,
-      themeConfig: {
-        ...themeConfig,
+      siteConfig: {
+        ...siteConfig,
         navBar: {
-          ...themeConfig.navBar,
-          component: themeConfig.navBar?.component?.name as any,
+          ...siteConfig.navBar,
+          component: siteConfig.navBar?.component?.name as any,
+        },
+        sections: {
+          ...siteConfig.sections,
+          feature: {
+            ...siteConfig.sections.feature,
+            component: siteConfig.sections.feature?.component?.name || null,
+          },
         },
       },
     },
