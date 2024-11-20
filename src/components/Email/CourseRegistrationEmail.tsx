@@ -1,5 +1,6 @@
 import { IEnrolmentEmailConfig } from "@/lib/emailConfig";
-import { getSiteConfig } from "@/services/getSiteConfig";
+
+import { DEFAULT_THEME } from "@/services/siteConstant";
 import {
   Body,
   Button,
@@ -24,7 +25,7 @@ interface IProps {
 }
 
 export const CourseEnrolmentEmail = ({ configData }: IProps) => {
-  const siteConfig = getSiteConfig();
+  const siteConfig = DEFAULT_THEME;
 
   return (
     <Tailwind>

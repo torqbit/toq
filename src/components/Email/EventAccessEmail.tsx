@@ -21,12 +21,13 @@ import PurifyContent from "../PurifyContent/PurifyContent";
 import { convertToDayMonthTime } from "@/lib/utils";
 
 import { getSiteConfig } from "@/services/getSiteConfig";
+import { DEFAULT_THEME } from "@/services/siteConstant";
 interface IProps {
   configData: IEventAccessMailConfig;
 }
 
 export const EventAccessEmail = ({ configData }: IProps) => {
-  const siteConfig = getSiteConfig();
+  const siteConfig = DEFAULT_THEME;
 
   return (
     <Tailwind>

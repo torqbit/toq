@@ -1,5 +1,6 @@
 import { IAssignmentSubmissionConfig } from "@/lib/emailConfig";
-import { getSiteConfig } from "@/services/getSiteConfig";
+
+import { DEFAULT_THEME } from "@/services/siteConstant";
 
 import {
   Body,
@@ -24,7 +25,7 @@ interface IProps {
 }
 
 export const AssignmentSubmissionEmail = ({ configData }: IProps) => {
-  const siteConfig = getSiteConfig();
+  const siteConfig = DEFAULT_THEME;
 
   return (
     <Tailwind>

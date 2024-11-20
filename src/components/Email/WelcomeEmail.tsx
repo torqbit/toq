@@ -18,13 +18,13 @@ import {
 
 import * as React from "react";
 
-import { getSiteConfig } from "@/services/getSiteConfig";
+import { DEFAULT_THEME } from "@/services/siteConstant";
 interface IProps {
   configData: IWelcomeEmailConfig;
 }
 
 const WelcomeEmailPage = ({ configData }: IProps) => {
-  const siteConfig = getSiteConfig();
+  const siteConfig = DEFAULT_THEME;
 
   return (
     <Tailwind>

@@ -1,6 +1,6 @@
 import { IAssignmentCompletionConfig, ICompletionEmailConfig } from "@/lib/emailConfig";
 import appConstant from "@/services/appConstant";
-import { getSiteConfig } from "@/services/getSiteConfig";
+import { DEFAULT_THEME } from "@/services/siteConstant";
 
 import {
   Body,
@@ -25,7 +25,7 @@ interface IProps {
 }
 
 export const AssignmentCompletionEmail = ({ configData }: IProps) => {
-  const siteConfig = getSiteConfig();
+  const siteConfig = DEFAULT_THEME;
 
   return (
     <Tailwind>
