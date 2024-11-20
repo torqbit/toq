@@ -36,9 +36,9 @@ const LoginWithEmail: NextPage<{ loginMethods: { available: string[]; configured
   }
 
   const validateMessages = {
-    required: "${label} is required!",
+    required: "Field is required!",
     types: {
-      email: "${label} is not a valid email!",
+      email: "This is not a valid email!",
       number: "${label} is not a valid number!",
     },
     number: {
@@ -68,12 +68,12 @@ const LoginWithEmail: NextPage<{ loginMethods: { available: string[]; configured
           layout='vertical'
           requiredMark='optional'
           validateMessages={validateMessages}
-          validateTrigger='onBlur'>
-          <Form.Item name='email' label='Email' rules={[{ required: true, message: "Email is required" }, { type: "email" }]}>
-            <Input type='email' placeholder='donald@trump.com' height={40} />
+          validateTrigger='onSubmit'>
+          <Form.Item name='email' label='' rules={[{ required: true, message: "Email is required" }, { type: "email" }]}>
+            <Input type='email' placeholder='Enter your email address..' style={{ height: 40, background: "transparent" }} />
           </Form.Item>
-          <Form.Item name='password' label='Password' rules={[{ required: true, message: "Password is required" }]}>
-            <Input.Password placeholder='sec3et' height={40} />
+          <Form.Item name='password' label='' rules={[{ required: true, message: "Password is required" }]}>
+            <Input.Password placeholder='Enter your password' style={{ height: 40, background: "transparent" }} />
           </Form.Item>
           <Button
             onClick={() => {
