@@ -1,4 +1,7 @@
 import { AppAction, useAppContext } from "@/components/ContextApi/AppContext";
+import { useSiteConfig } from "@/components/ContextApi/SiteConfigContext";
+import SvgIcons from "@/components/SvgIcons";
+
 import appConstant from "@/services/appConstant";
 import { Dispatch } from "react";
 const md5 = require("md5");
@@ -338,31 +341,4 @@ export const deepMerge = (defaultObj: any, userObj: any): any => {
   }
 
   return userObj;
-};
-
-export const onChangeTheme = (dispatch: Dispatch<AppAction>, darkMode?: boolean) => {
-  if (!darkMode) {
-    localStorage.setItem("theme", "light");
-    dispatch({
-      type: "SWITCH_THEME",
-      payload: "light",
-    });
-    return;
-  } else {
-    const currentTheme = localStorage.getItem("theme");
-
-    if (currentTheme === "dark") {
-      localStorage.setItem("theme", "light");
-      dispatch({
-        type: "SWITCH_THEME",
-        payload: "light",
-      });
-    } else if (currentTheme === "light") {
-      localStorage.setItem("theme", "dark");
-      dispatch({
-        type: "SWITCH_THEME",
-        payload: "dark",
-      });
-    }
-  }
 };

@@ -1,75 +1,42 @@
 import React, { FC } from "react";
-import { useAppContext } from "@/components/ContextApi/AppContext";
-
-import Hero from "@/components/Marketing/LandingPage/Hero/Hero";
-import { Theme, User } from "@prisma/client";
-
-import { useEffect } from "react";
-import { useMediaQuery } from "react-responsive";
-import MarketingLayout from "@/components/Layouts/MarketingLayout";
-import { GetServerSidePropsContext, NextPage } from "next";
+import { User } from "@prisma/client";
+import { GetServerSidePropsContext } from "next";
 import { getCookieName } from "@/lib/utils";
 import { getToken } from "next-auth/jwt";
+import { PageSiteConfig } from "@/services/siteConstant";
+import { useSiteConfig } from "@/components/ContextApi/SiteConfigContext";
+import StandardTemplate from "@/Templates/Standard/StandardTemplate";
 
-import { PageThemeConfig } from "@/services/themeConstant";
-import { useThemeConfig } from "@/components/ContextApi/ThemeConfigContext";
-import SetupPlatform from "@/components/Marketing/LandingPage/Setup/SetupPlatform";
 interface IProps {
   user: User;
-  themeConfig: PageThemeConfig;
+  siteConfig: PageSiteConfig;
 }
 
-const LandingPage: FC<IProps> = ({ user, themeConfig }) => {
-  const { dispatch, globalState } = useAppContext();
-  const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
-
-  const setGlobalTheme = (theme: Theme) => {
-    dispatch({
-      type: "SWITCH_THEME",
-      payload: theme,
-    });
-  };
-
-  const onCheckTheme = () => {
-    const currentTheme = localStorage.getItem("theme");
-    if (!currentTheme || currentTheme === "dark") {
-      localStorage.setItem("theme", "dark");
-    } else if (currentTheme === "light") {
-      localStorage.setItem("theme", "light");
-    }
-    setGlobalTheme(localStorage.getItem("theme") as Theme);
-
-    dispatch({
-      type: "SET_LOADER",
-      payload: false,
-    });
-  };
-
-  useEffect(() => {
-    onCheckTheme();
-  }, []);
-
-  return (
-    <MarketingLayout user={user} themeConfig={themeConfig} heroSection={<Hero themeConfig={themeConfig} isMobile={isMobile} user={user} />}>
-      <SetupPlatform />
-    </MarketingLayout>
-  );
+const LandingPage: FC<IProps> = ({ user, siteConfig }) => {
+  return <StandardTemplate user={user} siteConfig={siteConfig} />;
 };
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const { req } = ctx;
   let cookieName = getCookieName();
   const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
-  const themeConfig = useThemeConfig();
+  const siteConfig = useSiteConfig();
 
   return {
     props: {
       user,
-      themeConfig: {
-        ...themeConfig,
+      siteConfig: {
+        ...siteConfig,
         navBar: {
-          ...themeConfig.navBar,
-          component: themeConfig.navBar?.component?.name || null,
+          ...siteConfig.navBar,
+          component: siteConfig.navBar?.component?.name || null,
+        },
+        sections: {
+          ...siteConfig.sections,
+          feature: {
+            ...siteConfig.sections.feature,
+            component: siteConfig.sections.feature?.component?.name || null,
+          },
         },
       },
     },

@@ -1,62 +1,33 @@
 import { GetServerSidePropsContext } from "next";
 import prisma from "@/lib/prisma";
-import { CourseState, Theme, User } from "@prisma/client";
+import { CourseState, User } from "@prisma/client";
 import { FC, useEffect, useState } from "react";
 import MarketingLayout from "@/components/Layouts/MarketingLayout";
 import CoursePreview from "@/components/Marketing/Courses/CoursePreview";
 import { getCookieName } from "@/lib/utils";
 import { getToken } from "next-auth/jwt";
-import { useAppContext } from "@/components/ContextApi/AppContext";
 import HeroCoursePreview from "@/components/Marketing/Courses/HeroCoursePreview";
 import { ICoursePageDetail } from "@/types/courses/Course";
 import ProgramService from "@/services/ProgramService";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import SpinLoader from "@/components/SpinLoader/SpinLoader";
-import appConstant from "@/services/appConstant";
 import getCourseDetail, { extractLessonAndChapterDetail } from "@/actions/getCourseDetail";
-import { useThemeConfig } from "@/components/ContextApi/ThemeConfigContext";
-import { PageThemeConfig } from "@/services/themeConstant";
+import { useSiteConfig } from "@/components/ContextApi/SiteConfigContext";
+import { PageSiteConfig } from "@/services/siteConstant";
 
 interface IProps {
   user: User;
   courseId: number;
   courseDetails: ICoursePageDetail;
-  themeConfig: PageThemeConfig;
+  siteConfig: PageSiteConfig;
 }
 
-const CourseDetailPage: FC<IProps> = ({ user, courseId, courseDetails, themeConfig }) => {
-  const { dispatch } = useAppContext();
+const CourseDetailPage: FC<IProps> = ({ user, courseId, courseDetails, siteConfig }) => {
   const router = useRouter();
   const { data: session, status } = useSession();
 
   const [nextLessonId, setNextLessonId] = useState<number>();
-
-  const setGlobalTheme = (theme: Theme) => {
-    dispatch({
-      type: "SWITCH_THEME",
-      payload: theme,
-    });
-  };
-
-  const onCheckTheme = () => {
-    const currentTheme = localStorage.getItem("theme");
-    if (!currentTheme || currentTheme === "dark") {
-      localStorage.setItem("theme", "dark");
-    } else if (currentTheme === "light") {
-      localStorage.setItem("theme", "light");
-    }
-    setGlobalTheme(localStorage.getItem("theme") as Theme);
-
-    dispatch({
-      type: "SET_LOADER",
-      payload: false,
-    });
-  };
-
-  useEffect(() => {
-    onCheckTheme();
-  }, []);
 
   const getNextLessonId = async (courseId: number) => {
     ProgramService.getNextLessonId(
@@ -75,7 +46,7 @@ const CourseDetailPage: FC<IProps> = ({ user, courseId, courseDetails, themeConf
   return (
     <>
       <MarketingLayout
-        themeConfig={themeConfig}
+        siteConfig={siteConfig}
         user={user}
         heroSection={
           courseDetails ? (
@@ -112,7 +83,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
       courseId: true,
     },
   });
-  const themeConfig = useThemeConfig();
+  const siteConfig = useSiteConfig();
 
   if (courseDetail && courseDetail?.courseId) {
     const detail = await getCourseDetail(Number(courseDetail.courseId), user?.role, user?.id);
@@ -148,11 +119,18 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
           courseId: courseDetail?.courseId,
           user,
           courseDetails: courseLessonDetail,
-          themeConfig: {
-            ...themeConfig,
+          siteConfig: {
+            ...siteConfig,
             navBar: {
-              ...themeConfig.navBar,
-              component: themeConfig.navBar?.component?.name as any,
+              ...siteConfig.navBar,
+              component: siteConfig.navBar?.component?.name as any,
+            },
+            sections: {
+              ...siteConfig.sections,
+              feature: {
+                ...siteConfig.sections.feature,
+                component: siteConfig.sections.feature?.component?.name || null,
+              },
             },
           },
         },

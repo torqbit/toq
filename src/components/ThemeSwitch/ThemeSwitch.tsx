@@ -1,13 +1,20 @@
-import { onChangeTheme } from "@/lib/utils";
 import { Button, Tooltip } from "antd";
 import { FC } from "react";
-import styles from "@/components/Marketing/LandingPage/NavBar/NavBar.module.scss";
+import styles from "@/Templates/Standard/components/NavBar/NavBar.module.scss";
 import { useAppContext } from "../ContextApi/AppContext";
-import { Theme } from "@prisma/client";
+
 import SvgIcons from "../SvgIcons";
+import { Theme } from "@/types/theme";
 
 const ThemeSwitch: FC<{ activeTheme: Theme }> = ({ activeTheme }) => {
-  const { dispatch } = useAppContext();
+  const { dispatch, globalState } = useAppContext();
+  const handleTheme = (theme: Theme) => {
+    localStorage.setItem("theme", theme);
+    dispatch({
+      type: "SWITCH_THEME",
+      payload: theme,
+    });
+  };
   return (
     <>
       <Tooltip title={"Switch Theme"}>
@@ -18,7 +25,7 @@ const ThemeSwitch: FC<{ activeTheme: Theme }> = ({ activeTheme }) => {
           className={styles.switchBtn}
           shape="circle"
           onClick={() => {
-            onChangeTheme(dispatch, true);
+            handleTheme(globalState.theme === "dark" ? "light" : "dark");
           }}
           icon={activeTheme == "dark" ? SvgIcons.sun : SvgIcons.moon}
         />

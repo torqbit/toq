@@ -1,0 +1,55 @@
+import { FC } from "react";
+import styles from "./Blog.module.scss";
+import { IBlogCard, IBlogInfo } from "@/types/landing/blog";
+import Link from "next/link";
+import Avatar from "../Avatar/Avatar";
+import { Button } from "antd";
+import SvgIcons from "@/components/SvgIcons";
+
+const BlogCard: FC<IBlogCard> = ({ img, title, date, slug, cardClass, author }) => (
+  <Link href={`/blog/${slug}`} className={`${styles.blogs__card} ${cardClass}`}>
+    <img alt={title} aria-label={`icon for ${title.toLowerCase()}`} src={img} />
+    <div className={styles.blogs__card__footer}>
+      <h4>{title}</h4>
+      <Avatar name={author.name} picture={author.picture} date={date} />
+    </div>
+  </Link>
+);
+
+const Blogs: FC<IBlogInfo> = ({ blogList, title, description }) => {
+  return (
+    <section className={styles.blog__list__container}>
+      <div>
+        <div className={styles.blog__title}>
+          <div>
+            <h2>{title}</h2>
+          </div>
+          <Button type="link">
+            View all <i>{SvgIcons.arrowRight}</i>
+          </Button>
+        </div>
+        <p>{description}</p>
+
+        <div className={`${styles.blogs} ${blogList.length <= 2 ? styles.blogs__double : styles.blogs__triple}`}>
+          {blogList.map((blogInfo, i) => {
+            return (
+              <BlogCard
+                key={i}
+                img={blogInfo.img}
+                title={blogInfo.title}
+                date={blogInfo.date}
+                slug={blogInfo.slug}
+                cardClass={`${styles[blogList.length <= 2 ? "blog__card__large" : `"blog__card__small"`]} ${
+                  blogInfo.cardClass
+                }`}
+                author={blogInfo.author}
+              />
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default Blogs;

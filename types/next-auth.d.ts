@@ -14,7 +14,6 @@ declare module "next-auth" {
     id: string;
     role: string;
     isActive: boolean;
-    theme: string;
   }
 }
 

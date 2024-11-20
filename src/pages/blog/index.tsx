@@ -1,10 +1,9 @@
 import React, { FC } from "react";
 import { useAppContext } from "@/components/ContextApi/AppContext";
-import { Theme, User } from "@prisma/client";
-import { GetServerSidePropsContext, NextPage } from "next";
-import { useEffect } from "react";
+import { User } from "@prisma/client";
+import { GetServerSidePropsContext } from "next";
 import MarketingLayout from "@/components/Layouts/MarketingLayout";
-import HeroBlog from "@/components/Marketing/Blog/DefaultHero";
+import HeroBlog from "@/components/Marketing/DefaultHero/DefaultHero";
 import { useMediaQuery } from "react-responsive";
 import { getCookieName } from "@/lib/utils";
 import { getToken } from "next-auth/jwt";
@@ -15,12 +14,11 @@ import styles from "@/styles/Marketing/Blog/Blog.module.scss";
 
 import Link from "next/link";
 import { UserOutlined } from "@ant-design/icons";
-import appConstant from "@/services/appConstant";
-import { useThemeConfig } from "@/components/ContextApi/ThemeConfigContext";
-import { PageThemeConfig } from "@/services/themeConstant";
+import { useSiteConfig } from "@/components/ContextApi/SiteConfigContext";
+import { PageSiteConfig } from "@/services/siteConstant";
 interface IProps {
   user: User;
-  themeConfig: PageThemeConfig;
+  siteConfig: PageSiteConfig;
   blogData: {
     title: string;
     id: string;
@@ -31,39 +29,13 @@ interface IProps {
   }[];
 }
 
-const BlogPage: FC<IProps> = ({ user, blogData, themeConfig }) => {
+const BlogPage: FC<IProps> = ({ user, blogData, siteConfig }) => {
   const { dispatch, globalState } = useAppContext();
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
 
-  const setGlobalTheme = (theme: Theme) => {
-    dispatch({
-      type: "SWITCH_THEME",
-      payload: theme,
-    });
-  };
-
-  const onCheckTheme = () => {
-    const currentTheme = localStorage.getItem("theme");
-    if (!currentTheme || currentTheme === "dark") {
-      localStorage.setItem("theme", "dark");
-    } else if (currentTheme === "light") {
-      localStorage.setItem("theme", "light");
-    }
-    setGlobalTheme(localStorage.getItem("theme") as Theme);
-
-    dispatch({
-      type: "SET_LOADER",
-      payload: false,
-    });
-  };
-
-  useEffect(() => {
-    onCheckTheme();
-  }, []);
-
   return (
     <MarketingLayout
-      themeConfig={themeConfig}
+      siteConfig={siteConfig}
       user={user}
       heroSection={<HeroBlog title="Blog" description="Our engineering experience, explained in detail" />}
     >
@@ -184,7 +156,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   });
 
   const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
-  const themeConfig = useThemeConfig();
+  const siteConfig = useSiteConfig();
   if (blog.length > 0) {
     return {
       props: {
@@ -199,11 +171,18 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
             slug: b.slug,
           };
         }),
-        themeConfig: {
-          ...themeConfig,
+        siteConfig: {
+          ...siteConfig,
           navBar: {
-            ...themeConfig.navBar,
-            component: themeConfig.navBar?.component?.name as any,
+            ...siteConfig.navBar,
+            component: siteConfig.navBar?.component?.name as any,
+          },
+          sections: {
+            ...siteConfig.sections,
+            feature: {
+              ...siteConfig.sections.feature,
+              component: siteConfig.sections.feature?.component?.name || null,
+            },
           },
         },
       },
@@ -213,11 +192,18 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
       props: {
         user,
         blogData: [],
-        themeConfig: {
-          ...themeConfig,
+        siteConfig: {
+          ...siteConfig,
           navBar: {
-            ...themeConfig.navBar,
-            component: themeConfig.navBar?.component?.name as any,
+            ...siteConfig.navBar,
+            component: siteConfig.navBar?.component?.name as any,
+          },
+          sections: {
+            ...siteConfig.sections,
+            feature: {
+              ...siteConfig.sections.feature,
+              component: siteConfig.sections.feature?.component?.name || null,
+            },
           },
         },
       },

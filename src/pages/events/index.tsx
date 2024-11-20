@@ -1,57 +1,26 @@
-import { checkDateExpired, convertToDayMonthTime, generateYearAndDayName, getCookieName } from "@/lib/utils";
-import { StateType, Theme, User } from "@prisma/client";
+import { checkDateExpired, convertToDayMonthTime, getCookieName } from "@/lib/utils";
+import { StateType, User } from "@prisma/client";
 import { GetServerSidePropsContext } from "next";
 import { getToken } from "next-auth/jwt";
-import { FC, useEffect } from "react";
+import { FC } from "react";
 import prisma from "@/lib/prisma";
 import { IEventList } from "@/services/EventService";
 import styles from "@/styles/Marketing/Events/Event.module.scss";
 import Events from "@/components/Events/Events";
-import DefaulttHero from "@/components/Marketing/Blog/DefaultHero";
-import appConstant from "@/services/appConstant";
+import DefaulttHero from "@/components/Marketing/DefaultHero/DefaultHero";
 import MarketingLayout from "@/components/Layouts/MarketingLayout";
-import { useAppContext } from "@/components/ContextApi/AppContext";
-import { useThemeConfig } from "@/components/ContextApi/ThemeConfigContext";
-import { PageThemeConfig } from "@/services/themeConstant";
+import { useSiteConfig } from "@/components/ContextApi/SiteConfigContext";
+import { PageSiteConfig } from "@/services/siteConstant";
 
 const EventsPage: FC<{
   user: User;
   eventList: IEventList[];
   totalEventsLength: number;
-  themeConfig: PageThemeConfig;
-}> = ({ user, eventList, totalEventsLength, themeConfig }) => {
-  const { dispatch, globalState } = useAppContext();
-  const setGlobalTheme = (theme: Theme) => {
-    dispatch({
-      type: "SWITCH_THEME",
-      payload: theme,
-    });
-  };
-
-  const onCheckTheme = () => {
-    const currentTheme = localStorage.getItem("theme");
-    if (!currentTheme || currentTheme === "dark") {
-      localStorage.setItem("theme", "dark");
-    } else if (currentTheme === "light") {
-      localStorage.setItem("theme", "light");
-    }
-    setGlobalTheme(localStorage.getItem("theme") as Theme);
-
-    setTimeout(() => {
-      dispatch({
-        type: "SET_LOADER",
-        payload: false,
-      });
-    }, 500);
-  };
-
-  useEffect(() => {
-    onCheckTheme();
-  }, []);
-
+  siteConfig: PageSiteConfig;
+}> = ({ user, eventList, totalEventsLength, siteConfig }) => {
   return (
     <MarketingLayout
-      themeConfig={themeConfig}
+      siteConfig={siteConfig}
       user={user}
       heroSection={<DefaulttHero title="Events" description="Connect, Learn, and Thrive Together!" />}
     >
@@ -63,7 +32,7 @@ const EventsPage: FC<{
 };
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const { req } = ctx;
-  const themeConfig = useThemeConfig();
+  const siteConfig = useSiteConfig();
   let cookieName = getCookieName();
 
   const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
@@ -121,11 +90,18 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
         }),
 
         totalEventsLength: await prisma.events.count({ where: { state: StateType.ACTIVE } }),
-        themeConfig: {
-          ...themeConfig,
+        siteConfig: {
+          ...siteConfig,
           navBar: {
-            ...themeConfig.navBar,
-            component: themeConfig.navBar?.component?.name as any,
+            ...siteConfig.navBar,
+            component: siteConfig.navBar?.component?.name as any,
+          },
+          sections: {
+            ...siteConfig.sections,
+            feature: {
+              ...siteConfig.sections.feature,
+              component: siteConfig.sections.feature?.component?.name || null,
+            },
           },
         },
       },
@@ -135,11 +111,18 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
       props: {
         user,
         eventList: [],
-        themeConfig: {
-          ...themeConfig,
+        siteConfig: {
+          ...siteConfig,
           navBar: {
-            ...themeConfig.navBar,
-            component: themeConfig.navBar?.component?.name as any,
+            ...siteConfig.navBar,
+            component: siteConfig.navBar?.component?.name as any,
+          },
+          sections: {
+            ...siteConfig.sections,
+            feature: {
+              ...siteConfig.sections.feature,
+              component: siteConfig.sections.feature?.component?.name || null,
+            },
           },
         },
       },

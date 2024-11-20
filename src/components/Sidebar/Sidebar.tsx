@@ -23,10 +23,12 @@ import Image from "next/image";
 import { signOut, useSession } from "next-auth/react";
 import SvgIcons from "../SvgIcons";
 import { ISiderMenu, useAppContext } from "../ContextApi/AppContext";
-import { Theme } from "@prisma/client";
+
 import { postFetch } from "@/services/request";
 import appConstant from "@/services/appConstant";
 import Feedback from "../Feedback/Feedback";
+import { useSiteConfig } from "../ContextApi/SiteConfigContext";
+import { Theme } from "@/types/theme";
 
 const { Sider } = Layout;
 
@@ -34,23 +36,22 @@ const Sidebar: FC<{ menu: MenuProps["items"] }> = ({ menu }) => {
   // const [collapsed, setCollapsed] = React.useState(false);
   const { data: user, status, update } = useSession();
   const { globalState, dispatch } = useAppContext();
+  const { brand } = useSiteConfig();
 
   const [modal, contextWrapper] = Modal.useModal();
 
   const updateTheme = async (theme: Theme) => {
+    localStorage.setItem("theme", theme);
+
     dispatch({
       type: "SET_USER",
-      payload: { ...user?.user, theme: theme },
+      payload: { ...user?.user },
     });
 
     dispatch({
       type: "SWITCH_THEME",
       payload: theme,
     });
-    const response = await postFetch({ theme: theme }, "/api/v1/user/theme");
-    if (response.ok) {
-      update({ theme: theme });
-    }
   };
 
   return (
@@ -80,7 +81,7 @@ const Sidebar: FC<{ menu: MenuProps["items"] }> = ({ menu }) => {
             ) : (
               <Flex align="center" gap={5}>
                 <Image src={`/icon/torqbit.png`} alt="torq" width={40} height={40} />
-                <h4 className={styles.logoText}>{appConstant.platformName}</h4>
+                <h4 className={styles.logoText}>{brand.name}</h4>
               </Flex>
             )}
           </Link>
@@ -100,16 +101,16 @@ const Sidebar: FC<{ menu: MenuProps["items"] }> = ({ menu }) => {
           <Flex align="center" justify="space-between" className={styles.actionsWrapper}>
             <Tooltip
               className={styles.actionTooltip}
-              title={`Switch to ${globalState.session?.theme == "dark" ? "light" : "dark"} mode`}
+              title={`Switch to ${globalState?.theme == "dark" ? "light" : "dark"} mode`}
             >
               <Button
                 type="default"
                 shape="circle"
                 onClick={() => {
-                  const newTheme: Theme = globalState.session?.theme == "dark" ? "light" : "dark";
+                  const newTheme: Theme = globalState?.theme == "dark" ? "light" : "dark";
                   updateTheme(newTheme);
                 }}
-                icon={globalState.session?.theme == "dark" ? SvgIcons.sun : SvgIcons.moon}
+                icon={globalState?.theme == "dark" ? SvgIcons.sun : SvgIcons.moon}
               />
             </Tooltip>
 
@@ -120,7 +121,7 @@ const Sidebar: FC<{ menu: MenuProps["items"] }> = ({ menu }) => {
                 <i
                   style={{
                     fill: "none",
-                    stroke: globalState.session?.theme == "dark" ? "#939db8" : "#666",
+                    stroke: globalState?.theme == "dark" ? "#939db8" : "#666",
                     cursor: "pointer",
                   }}
                 >

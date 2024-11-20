@@ -11,6 +11,8 @@ import { authConstants, capitalizeFirstLetter, getCookieName } from "@/lib/utils
 import Image from "next/image";
 import getLoginMethods from "@/lib/auth/loginMethods";
 import SvgIcons from "@/components/SvgIcons";
+import { useSiteConfig } from "@/components/ContextApi/SiteConfigContext";
+
 
 const LoginPage: NextPage<{ loginMethods: { available: string[]; configured: string[] } }> = ({ loginMethods }) => {
   const router = useRouter();
@@ -22,6 +24,8 @@ const LoginPage: NextPage<{ loginMethods: { available: string[]; configured: str
   const [loginForm] = Form.useForm();
   const { data: session, status: sessionStatus } = useSession();
   const [messageApi, contextHolder] = message.useMessage();
+  const { brand } = useSiteConfig();
+
 
   React.useEffect(() => {
     console.log(loginMethods);
@@ -81,7 +85,7 @@ const LoginPage: NextPage<{ loginMethods: { available: string[]; configured: str
       {contextHolder}
       <div className={styles.social_login_container}>
         <Image src={"/icon/torqbit.png"} height={60} width={60} alt={"logo"} />
-        <h3>Welcome back to {appConstant.platformName}</h3>
+                <h3>Welcome back to {brand.name}</h3>
 
         {emailLogin && (
           <Form
@@ -159,6 +163,8 @@ const LoginPage: NextPage<{ loginMethods: { available: string[]; configured: str
               );
             }
           })}
+
+
 
         {loginError && (
           <Alert message='Login Failed!' description={loginError} type='error' showIcon closable className={styles.alertMessage} />

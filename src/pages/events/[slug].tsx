@@ -1,53 +1,25 @@
-import { useAppContext } from "@/components/ContextApi/AppContext";
 import MarketingLayout from "@/components/Layouts/MarketingLayout";
 import { checkDateExpired, convertToDayMonthTime, getCookieName } from "@/lib/utils";
-import appConstant from "@/services/appConstant";
-import { StateType, Theme, User } from "@prisma/client";
+import { StateType, User } from "@prisma/client";
 import { GetServerSidePropsContext } from "next";
 import { getToken } from "next-auth/jwt";
-import { FC, useEffect } from "react";
+import { FC } from "react";
 import prisma from "@/lib/prisma";
 import { IEventInfo } from "@/services/EventService";
 import styles from "@/styles/Marketing/Events/Event.module.scss";
 import EventInfo from "@/components/Events/EventInfo";
-import { useThemeConfig } from "@/components/ContextApi/ThemeConfigContext";
-import { PageThemeConfig } from "@/services/themeConstant";
+import { useSiteConfig } from "@/components/ContextApi/SiteConfigContext";
+import { PageSiteConfig } from "@/services/siteConstant";
 
 const EventInfoPage: FC<{
   user: User;
   eventInfo: IEventInfo;
   registrationExpired: boolean;
-  themeConfig: PageThemeConfig;
-}> = ({ user, eventInfo, registrationExpired, themeConfig }) => {
-  const { dispatch, globalState } = useAppContext();
-  const setGlobalTheme = (theme: Theme) => {
-    dispatch({
-      type: "SWITCH_THEME",
-      payload: theme,
-    });
-  };
-
-  const onCheckTheme = () => {
-    const currentTheme = localStorage.getItem("theme");
-    if (!currentTheme || currentTheme === "dark") {
-      localStorage.setItem("theme", "dark");
-    } else if (currentTheme === "light") {
-      localStorage.setItem("theme", "light");
-    }
-    setGlobalTheme(localStorage.getItem("theme") as Theme);
-
-    dispatch({
-      type: "SET_LOADER",
-      payload: false,
-    });
-  };
-
-  useEffect(() => {
-    onCheckTheme();
-  }, []);
+  siteConfig: PageSiteConfig;
+}> = ({ user, eventInfo, registrationExpired, siteConfig }) => {
   return (
     <MarketingLayout
-      themeConfig={themeConfig}
+      siteConfig={siteConfig}
       user={user}
       heroSection={
         <div className={styles.banner_Wrapper}>
@@ -62,7 +34,7 @@ const EventInfoPage: FC<{
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const { req } = ctx;
   const params = ctx?.params;
-  const themeConfig = useThemeConfig();
+  const siteConfig = useSiteConfig();
   let cookieName = getCookieName();
   const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
   const eventInfo = await prisma.events.findUnique({
@@ -107,11 +79,11 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
             : "",
         },
         registrationExpired,
-        themeConfig: {
-          ...themeConfig,
+        siteConfig: {
+          ...siteConfig,
           navBar: {
-            ...themeConfig.navBar,
-            component: themeConfig.navBar?.component?.name as any,
+            ...siteConfig.navBar,
+            component: siteConfig.navBar?.component?.name as any,
           },
         },
       },
@@ -120,11 +92,11 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
     return {
       props: {
         user,
-        themeConfig: {
-          ...themeConfig,
+        siteConfig: {
+          ...siteConfig,
           navBar: {
-            ...themeConfig.navBar,
-            component: themeConfig.navBar?.component?.name as any,
+            ...siteConfig.navBar,
+            component: siteConfig.navBar?.component?.name as any,
           },
         },
       },

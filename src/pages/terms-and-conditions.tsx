@@ -1,21 +1,19 @@
 import React, { FC } from "react";
-import { useAppContext } from "@/components/ContextApi/AppContext";
-import { Theme, User } from "@prisma/client";
-import { GetServerSidePropsContext, NextPage } from "next";
-import { useEffect } from "react";
+import { User } from "@prisma/client";
+import { GetServerSidePropsContext } from "next";
 import MarketingLayout from "@/components/Layouts/MarketingLayout";
 import { useMediaQuery } from "react-responsive";
 import appConstant from "@/services/appConstant";
 import Link from "next/link";
 
-import DefaulttHero from "@/components/Marketing/Blog/DefaultHero";
+import DefaulttHero from "@/components/Marketing/DefaultHero/DefaultHero";
 import { getCookieName } from "@/lib/utils";
 import { getToken } from "next-auth/jwt";
 import LegalAgreement from "@/components/Marketing/LegalAgreement";
-import { PageThemeConfig } from "@/services/themeConstant";
+import { PageSiteConfig } from "@/services/siteConstant";
+import { useSiteConfig } from "@/components/ContextApi/SiteConfigContext";
 
-const TermAndConditonPage: FC<{ user: User; themeConfig: PageThemeConfig }> = ({ user, themeConfig }) => {
-  const { dispatch } = useAppContext();
+const TermAndConditonPage: FC<{ user: User; siteConfig: PageSiteConfig }> = ({ user, siteConfig }) => {
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
 
   const termAndCondionList = [
@@ -301,35 +299,9 @@ Violate These Terms Or ${appConstant.platformName}'s Then-Current Policies And O
     },
   ];
 
-  const setGlobalTheme = (theme: Theme) => {
-    dispatch({
-      type: "SWITCH_THEME",
-      payload: theme,
-    });
-  };
-
-  const onCheckTheme = () => {
-    const currentTheme = localStorage.getItem("theme");
-    if (!currentTheme || currentTheme === "dark") {
-      localStorage.setItem("theme", "dark");
-    } else if (currentTheme === "light") {
-      localStorage.setItem("theme", "light");
-    }
-    setGlobalTheme(localStorage.getItem("theme") as Theme);
-
-    dispatch({
-      type: "SET_LOADER",
-      payload: false,
-    });
-  };
-
-  useEffect(() => {
-    onCheckTheme();
-  }, []);
-
   return (
     <MarketingLayout
-      themeConfig={themeConfig}
+      siteConfig={siteConfig}
       user={user}
       heroSection={
         <DefaulttHero
@@ -349,8 +321,27 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const { req } = ctx;
 
   let cookieName = getCookieName();
+  const siteConfig = useSiteConfig();
 
   const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
 
-  return { props: { user } };
+  return {
+    props: {
+      user,
+      siteConfig: {
+        ...siteConfig,
+        navBar: {
+          ...siteConfig.navBar,
+          component: siteConfig.navBar?.component?.name as any,
+        },
+        sections: {
+          ...siteConfig.sections,
+          feature: {
+            ...siteConfig.sections.feature,
+            component: siteConfig.sections.feature?.component?.name || null,
+          },
+        },
+      },
+    },
+  };
 };

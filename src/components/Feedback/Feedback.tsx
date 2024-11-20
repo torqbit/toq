@@ -69,7 +69,7 @@ const Feedback = () => {
           }}
         >
           {
-            <i style={{ stroke: globalState.session?.theme == "dark" ? "#939db8" : "#666", cursor: "pointer" }}>
+            <i style={{ stroke: globalState.theme == "dark" ? "#939db8" : "#666", cursor: "pointer" }}>
               {SvgIcons.chat}
             </i>
           }

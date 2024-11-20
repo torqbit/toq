@@ -1,5 +1,6 @@
 import { FC, ReactNode } from "react";
 import { INavBarProps } from "./landing/navbar";
+import { IFeatureInfo } from "./landing/feature";
 export type bannerAlignment = "left" | "right" | "bottom" | "background";
 
 export interface ThemeSchema {
@@ -34,8 +35,6 @@ export interface ThemeSchema {
       lightModePath?: string;
       darkModePath?: string;
       position?: bannerAlignment;
-
-
     };
   };
 
@@ -46,5 +45,11 @@ export interface ThemeSchema {
     twitterLink?: string;
     discordLink?: string;
     tagLine?: String;
+  };
+  sections: {
+    feature?: {
+      component?: React.FC<IFeatureInfo>;
+      featureInfo?: IFeatureInfo;
+    };
   };
 }

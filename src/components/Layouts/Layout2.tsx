@@ -9,7 +9,7 @@ import { Badge, ConfigProvider, Dropdown, Flex, Layout, MenuProps, message } fro
 import SvgIcons from "../SvgIcons";
 import Link from "next/link";
 import { UserSession } from "@/lib/types/user";
-import darkThemConfig from "@/services/darkThemConfig";
+import darkThemeConfig from "@/services/darkThemeConfig";
 import antThemeConfig from "@/services/antThemeConfig";
 import { useRouter } from "next/router";
 import SpinLoader from "../SpinLoader/SpinLoader";
@@ -17,22 +17,24 @@ import NotificationService from "@/services/NotificationService";
 import ConversationService, { IConversationList } from "@/services/ConversationService";
 import { IConversationData } from "@/pages/api/v1/conversation/list";
 import Offline from "../Offline/Offline";
-import { Theme } from "@prisma/client";
+
 import { postFetch } from "@/services/request";
 import { useMediaQuery } from "react-responsive";
-import config from "@/theme.config";
-import { useThemeConfig } from "../ContextApi/ThemeConfigContext";
+
+import { useSiteConfig } from "../ContextApi/SiteConfigContext";
+import { Theme } from "@/types/theme";
 
 const { Content } = Layout;
 
 const Layout2: FC<{ children?: React.ReactNode; className?: string }> = ({ children, className }) => {
   const { data: user, status, update } = useSession();
+  const siteConfig = useSiteConfig();
   const isMobile = useMediaQuery({ query: "(max-width: 933px)" });
 
   const { globalState, dispatch } = useAppContext();
   const [conversationList, setConversationList] = useState<IConversationData[]>();
   const [comment, setComment] = useState<string>("");
-  const { brand } = useThemeConfig();
+  const { brand } = useSiteConfig();
 
   const [conversationLoading, setConversationLoading] = useState<{
     postLoading: boolean;
@@ -188,20 +190,34 @@ const Layout2: FC<{ children?: React.ReactNode; className?: string }> = ({ child
     );
   };
 
+  const setGlobalTheme = (theme: Theme) => {
+    dispatch({
+      type: "SWITCH_THEME",
+      payload: theme,
+    });
+  };
+
+  const onCheckTheme = () => {
+    const currentTheme = localStorage.getItem("theme");
+    if ((!currentTheme || currentTheme === "dark") && siteConfig.darkMode) {
+      localStorage.setItem("theme", "dark");
+    } else if (currentTheme === "light" || !siteConfig.darkMode) {
+      localStorage.setItem("theme", "light");
+    }
+    setGlobalTheme(localStorage.getItem("theme") as Theme);
+  };
+
   const updateTheme = async (theme: Theme) => {
+    localStorage.setItem("theme", theme);
     dispatch({
       type: "SET_USER",
-      payload: { ...user?.user, theme: theme },
+      payload: { ...user?.user },
     });
 
     dispatch({
       type: "SWITCH_THEME",
       payload: theme,
     });
-    const response = await postFetch({ theme: theme }, "/api/v1/user/theme");
-    if (response.ok) {
-      update({ theme: theme });
-    }
   };
 
   const getAllConversation = () => {
@@ -325,12 +341,9 @@ const Layout2: FC<{ children?: React.ReactNode; className?: string }> = ({ child
           payload: userSession,
         });
 
-        dispatch({
-          type: "SWITCH_THEME",
-          payload: userSession.theme || "light",
-        });
         onCollapseChange();
         onLessonCollapseChange();
+        onCheckTheme();
         dispatch({
           type: "SET_LOADER",
           payload: false,
@@ -352,7 +365,7 @@ const Layout2: FC<{ children?: React.ReactNode; className?: string }> = ({ child
         <SpinLoader />
       ) : (
         <>
-          <ConfigProvider theme={globalState.session?.theme == "dark" ? darkThemConfig() : antThemeConfig()}>
+          <ConfigProvider theme={globalState.theme == "dark" ? darkThemeConfig() : antThemeConfig()}>
             <Head>
               <title>Torqbit | Learn to build software products</title>
 
@@ -384,11 +397,11 @@ const Layout2: FC<{ children?: React.ReactNode; className?: string }> = ({ child
                               label: (
                                 <div
                                   onClick={() => {
-                                    const newTheme: Theme = globalState.session?.theme == "dark" ? "light" : "dark";
+                                    const newTheme: Theme = globalState.theme == "dark" ? "light" : "dark";
                                     updateTheme(newTheme);
                                   }}
                                 >
-                                  {globalState.session?.theme !== "dark" ? "Dark mode" : "Light mode"}
+                                  {globalState.theme !== "dark" ? "Dark mode" : "Light mode"}
                                 </div>
                               ),
                             },

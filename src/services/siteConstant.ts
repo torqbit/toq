@@ -1,8 +1,9 @@
 import { ThemeSchema } from "@/types/schema";
 import { lazy } from "react";
-const NavBar = lazy(() => import("@/components/Marketing/LandingPage/NavBar/NavBar"));
+const NavBar = lazy(() => import("@/Templates/Standard/components/NavBar/NavBar"));
+const Features = lazy(() => import("@/Templates/Standard/components/Feature/Features"));
 
-export type PageThemeConfig = ThemeSchema;
+export type PageSiteConfig = ThemeSchema;
 
 export const DEFAULT_THEME = {
   navBar: {
@@ -59,6 +60,50 @@ export const DEFAULT_THEME = {
     githubLink: "https://github.com/torqbit",
     youtubeLink: "https://www.youtube.com/@torqbit",
     tagLine: "Master Skills, Transform Futures",
+  },
+  sections: {
+    feature: {
+      component: Features,
+
+      featureInfo: {
+        featureList: [
+          {
+            img: "/img/landing/auth.png",
+            title: "Authentication",
+            description:
+              "Configure authentication with Google, Github or any other auth provider supported by NextAuth",
+            link: "/docs/auth",
+            cardClass: "steps__card__small",
+          },
+          {
+            img: "/img/landing/auth.png",
+            title: "Authentication",
+            description:
+              "Configure authentication with Google, Github or any other auth provider supported by NextAuth",
+            link: "/docs/auth",
+            cardClass: "steps__card__small",
+          },
+          {
+            img: "/img/landing/auth.png",
+            title: "Authentication",
+            description:
+              "Configure authentication with Google, Github or any other auth provider supported by NextAuth",
+            link: "/docs/auth",
+            cardClass: "steps__card__small",
+          },
+          {
+            img: "/img/landing/auth.png",
+            title: "Authentication",
+            description:
+              "Configure authentication with Google, Github or any other auth provider supported by NextAuth",
+            link: "/docs/auth",
+            cardClass: "steps__card__small",
+          },
+        ],
+        title: "Features",
+        description: "Features for the learning platform",
+      },
+    },
   },
 };
 
