@@ -1,16 +1,16 @@
 import { courseDifficultyType, CourseType } from "@prisma/client";
-
+export type CourseCardSize = "small" | "large";
 export interface ICourseCard {
   title: string;
-  img: string;
+  thumbnail: string;
   duration: string;
   description: string;
   link: string;
   courseType: CourseType;
-  coursePrice: number;
+  price: number;
+  size?: CourseCardSize;
   difficulty: courseDifficultyType;
   cardClass?: string;
-  courseListLength?: number;
 }
 
 export interface ICourseInfo {
