@@ -1,6 +1,6 @@
 import { Button, Tooltip } from "antd";
 import { FC } from "react";
-import styles from "@/components/Marketing/LandingPage/NavBar/NavBar.module.scss";
+import styles from "@/Templates/Standard/components/NavBar/NavBar.module.scss";
 import { useAppContext } from "../ContextApi/AppContext";
 
 import SvgIcons from "../SvgIcons";

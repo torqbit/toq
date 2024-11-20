@@ -1,17 +1,11 @@
 import React, { FC } from "react";
-
-import Hero from "@/components/Marketing/LandingPage/Hero/Hero";
 import { User } from "@prisma/client";
-
-import { useMediaQuery } from "react-responsive";
-import MarketingLayout from "@/components/Layouts/MarketingLayout";
 import { GetServerSidePropsContext } from "next";
 import { getCookieName } from "@/lib/utils";
 import { getToken } from "next-auth/jwt";
-
-import { DEFAULT_THEME, PageSiteConfig } from "@/services/siteConstant";
+import { PageSiteConfig } from "@/services/siteConstant";
 import { useSiteConfig } from "@/components/ContextApi/SiteConfigContext";
-import SetupPlatform from "@/components/Marketing/LandingPage/Setup/SetupPlatform";
+import StandardTemplate from "@/Templates/Standard/StandardTemplate";
 
 interface IProps {
   user: User;
@@ -19,25 +13,7 @@ interface IProps {
 }
 
 const LandingPage: FC<IProps> = ({ user, siteConfig }) => {
-  const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
-  const { sections } = useSiteConfig();
-  let featureInfo = siteConfig?.sections?.feature?.featureInfo ?? DEFAULT_THEME.sections.feature.featureInfo;
-  let FeatureComponent = sections?.feature?.component ?? DEFAULT_THEME.sections.feature.component;
-
-  return (
-    <MarketingLayout
-      user={user}
-      siteConfig={siteConfig}
-      heroSection={<Hero siteConfig={siteConfig} isMobile={isMobile} user={user} />}
-    >
-      <SetupPlatform />
-      <FeatureComponent
-        title={featureInfo?.title}
-        description={featureInfo?.description}
-        featureList={featureInfo?.featureList}
-      />
-    </MarketingLayout>
-  );
+  return <StandardTemplate user={user} siteConfig={siteConfig} />;
 };
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {

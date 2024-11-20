@@ -1,6 +1,6 @@
 import { PageSiteConfig } from "@/services/siteConstant";
-import NavBar from "./components/Marketing/LandingPage/NavBar/NavBar";
-import Features from "./components/Marketing/LandingPage/Feature/Features";
+import NavBar from "./Templates/Standard/components/NavBar/NavBar";
+import Features from "./Templates/Standard/components/Feature/Features";
 
 const config: PageSiteConfig = {
   navBar: {
