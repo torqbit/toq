@@ -2,7 +2,7 @@ import React, { FC } from "react";
 import { User } from "@prisma/client";
 import { GetServerSidePropsContext } from "next";
 import MarketingLayout from "@/components/Layouts/MarketingLayout";
-import HeroBlog from "@/components/Marketing/Blog/DefaultHero";
+import HeroBlog from "@/components/Marketing/DefaultHero/DefaultHero";
 import { useMediaQuery } from "react-responsive";
 import { getCookieName } from "@/lib/utils";
 import { getToken } from "next-auth/jwt";
