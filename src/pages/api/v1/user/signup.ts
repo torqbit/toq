@@ -10,7 +10,7 @@ import { Role } from "@prisma/client";
 const userSchema = z.object({
   name: z.string().min(1, "Name is required"), // Name must be a non-empty string
   email: z.string().email("Invalid email address"), // Email must be a valid email format
-  password: z.string().min(8, "Password must be at least 8 characters long"), // Password must be at least 8 characters
+  password: z.string().min(6, "Password must be at least 6 characters long"), // Password must be at least 8 characters
 });
 
 type SignUpRequest = z.infer<typeof userSchema>;

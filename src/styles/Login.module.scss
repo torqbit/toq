@@ -1,5 +1,8 @@
 .login_page_wrapper {
   background-color: var(--bg-secondary);
+  background: url("/img/landing/hero-bg-light.png");
+  background-size: 150% 150%;
+  background-position: 50% 0%;
   height: 100vh;
   width: 100%;
   display: flex;
@@ -15,8 +18,10 @@
 }
 
 .login_page_wrapper > div {
-  width: 50vw;
-  padding: 20px;
+  padding: 50px 100px;
+  border-radius: 8px;
+  backdrop-filter: blur(10px);
+  background: var(--bg-header);
 }
 
 .login_img {
@@ -53,7 +58,7 @@
 
 .social_login_container .google_btn,
 .social_login_container .github_btn {
-  width: 240px;
+  width: 250px;
   height: 40px;
   display: flex;
   gap: 0 8px;

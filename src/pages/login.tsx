@@ -1,4 +1,4 @@
-import { Alert, Button, Form, Input, Spin, Tooltip } from "antd";
+import { Alert, Button, Form, Input, message, Spin, Tooltip } from "antd";
 import React, { useState } from "react";
 import styles from "@/styles/Login.module.scss";
 import { signIn, useSession } from "next-auth/react";
@@ -10,15 +10,18 @@ import appConstant from "@/services/appConstant";
 import { authConstants, capitalizeFirstLetter, getCookieName } from "@/lib/utils";
 import Image from "next/image";
 import getLoginMethods from "@/lib/auth/loginMethods";
+import SvgIcons from "@/components/SvgIcons";
 
 const LoginPage: NextPage<{ loginMethods: { available: string[]; configured: string[] } }> = ({ loginMethods }) => {
   const router = useRouter();
   const [gitHubLoading, setGitHubLoading] = useState<boolean>(false);
   const [googleLoading, setGoogleLoading] = useState<boolean>(false);
-  const [emailLogin, setLoginWithEmail] = useState(false);
+  const [loading, setLoginProgress] = useState<{ provider?: string }>();
+  const [emailLogin, setLoginWithEmail] = useState(router.query.provider == "email");
   const [loginError, setLoginError] = React.useState("");
   const [loginForm] = Form.useForm();
   const { data: session, status: sessionStatus } = useSession();
+  const [messageApi, contextHolder] = message.useMessage();
 
   React.useEffect(() => {
     console.log(loginMethods);
@@ -45,13 +48,21 @@ const LoginPage: NextPage<{ loginMethods: { available: string[]; configured: str
   }
 
   const handleLogin = () => {
-    loginForm.validateFields().then();
     signIn("credentials", {
-      callbackUrl: router.query.redirect ? `/${router.query.redirect}` : "/dashboard",
+      callbackUrl: router.query.redirect ? `${router.query.redirect}` : "/dashboard",
+      redirect: false,
       password: loginForm.getFieldValue("password"),
       email: loginForm.getFieldValue("email"),
-      rememberMe: false,
+    }).then((response) => {
+      console.log(response);
+      if (response && !response.ok) {
+        messageApi.error(response.error);
+      } else if (response && response.ok && response.url) {
+        messageApi.loading(`You will be redirected to the platform`);
+        router.push(router.query.redirect ? `${router.query.redirect}` : "/dashboard");
+      }
     });
+    loginForm.resetFields();
   };
 
   const validateMessages = {
@@ -67,74 +78,87 @@ const LoginPage: NextPage<{ loginMethods: { available: string[]; configured: str
 
   return (
     <div className={styles.login_page_wrapper}>
+      {contextHolder}
       <div className={styles.social_login_container}>
         <Image src={"/icon/torqbit.png"} height={60} width={60} alt={"logo"} />
         <h3>Welcome back to {appConstant.platformName}</h3>
 
-        {emailLogin && (<Form
-          form={loginForm}
-          onFinish={handleLogin}
-          layout='vertical'
-          requiredMark='optional'
-          autoComplete="off"
-          validateMessages={validateMessages}
-          validateTrigger='onSubmit'>
-          <Form.Item name='email' label='' rules={[{ required: true, message: "Email is required" }, { type: "email" }]}>
-            <Input type='email' placeholder='Enter your email address..' style={{ height: 40, background: "transparent" }} />
-          </Form.Item>
-          <Form.Item name='password' label='' rules={[{ required: true, message: "Password is required" }]}>
-            <Input.Password placeholder='Enter your password' style={{ height: 40, background: "transparent" }} />
-          </Form.Item>
-          <Button
-            onClick={() => {
-              loginForm.submit();
-            }}
-            type='primary'
-            className={styles.google_btn}>
-            Login with Email
-          </Button>
-        </Form>)}
+        {emailLogin && (
+          <Form
+            form={loginForm}
+            onFinish={handleLogin}
+            layout='vertical'
+            requiredMark='optional'
+            autoComplete='off'
+            validateMessages={validateMessages}
+            validateTrigger='onSubmit'>
+            <Form.Item name='email' label='' rules={[{ required: true, message: "Email is required" }, { type: "email" }]}>
+              <Input type='email' placeholder='Enter your email address..' style={{ height: 40, background: "transparent" }} />
+            </Form.Item>
+            <Form.Item name='password' label='' rules={[{ required: true, message: "Password is required" }]}>
+              <Input.Password placeholder='Enter your password' style={{ height: 40, background: "transparent" }} />
+            </Form.Item>
+            <Button
+              onClick={() => {
+                loginForm.submit();
+              }}
+              type='primary'
+              className={styles.google_btn}>
+              Login with Email
+            </Button>
 
+            <Button
+              type='link'
+              icon={SvgIcons.arrowLeft}
+              iconPosition='start'
+              style={{ width: 250, marginTop: 10 }}
+              onClick={(_) => setLoginWithEmail(false)}>
+              Back to Login
+            </Button>
+          </Form>
+        )}
 
-        {!emailLogin && loginMethods.configured.map((provider) => {
-          if (provider === authConstants.CREDENTIALS_AUTH_PROVIDER) {
-            return (
-              <>
-                <Button
-                  onClick={() => {
-                    setLoginWithEmail(true);
-                  }}
-                  type='primary'
-                  className={styles.google_btn}>
-                  Login with Email
-                </Button>
-              </>
-            );
-          } else {
-            return (
-              <>
-                <Tooltip
-                  title={
-                    loginMethods.available.includes(provider)
-                      ? ``
-                      : `Login method disabled for ${capitalizeFirstLetter(provider)} due to missing environment variables`
-                  }>
+        {!emailLogin &&
+          loginMethods.configured.map((provider) => {
+            if (provider === authConstants.CREDENTIALS_AUTH_PROVIDER) {
+              return (
+                <>
                   <Button
-                    style={{ width: 240, height: 40 }}
                     onClick={() => {
-                      signIn(provider, {
-                        callbackUrl: router.query.redirect ? `/${router.query.redirect}` : "/dashboard",
-                      });
+                      setLoginWithEmail(true);
                     }}
-                    type='default'
-                    disabled={!loginMethods.available.includes(provider)}>
-                    Login with {capitalizeFirstLetter(provider)}
+                    type='primary'
+                    className={styles.google_btn}>
+                    Login with Email
                   </Button>
-                </Tooltip>
-              </>
-            );
-          }
-        })}
+                </>
+              );
+            } else {
+              return (
+                <>
+                  <Tooltip
+                    title={
+                      loginMethods.available.includes(provider)
+                        ? ``
+                        : `Login method disabled for ${capitalizeFirstLetter(provider)} due to missing environment variables`
+                    }>
+                    <Button
+                      style={{ width: 250, height: 40 }}
+                      onClick={() => {
+                        signIn(provider, {
+                          callbackUrl: router.query.redirect ? `/${router.query.redirect}` : "/dashboard",
+                        });
+                      }}
+                      type='default'
+                      loading={loading && loading?.provider == provider}
+                      disabled={!loginMethods.available.includes(provider)}>
+                      Login with {capitalizeFirstLetter(provider)}
+                    </Button>
+                  </Tooltip>
+                </>
+              );
+            }
+          })}
 
         {loginError && (
           <Alert message='Login Failed!' description={loginError} type='error' showIcon closable className={styles.alertMessage} />

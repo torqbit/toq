@@ -48,22 +48,19 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Missing credentials");
         }
 
-        const { email, password, rememberMe } = credentials;
+        const { email, password } = credentials;
 
         console.log(credentials);
 
         const user = await getUserByEmail(email);
         if (!user) {
-          //throw new Error("No user found with this email");
-          return null;
+          throw new Error("Email or password is incorrect");
         }
-        console.log("REMEMBER ME", rememberMe);
 
         if (user && (await bcrypt.compare(password, user?.account[0].password))) {
-          const maxAge = rememberMe === "true" ? 30 * 24 * 60 * 60 : 24 * 60 * 60;
-          return { id: user.id, email: user.email, name: user.name, maxAge: maxAge, image: user.image };
+          return { id: user.id, email: user.email, name: user.name, image: user.image };
         } else {
-          throw new Error("Invalid credentials");
+          throw new Error("Email or password is incorrect");
         }
       },
     }),
@@ -111,7 +108,6 @@ export const authOptions: NextAuthOptions = {
         role: dbUser.role,
         phone: dbUser.phone,
         isActive: dbUser.isActive,
-        maxAge: user["maxAge"] as number,
         user: {
           name: dbUser.name,
           email: dbUser?.email,
@@ -125,7 +121,6 @@ export const authOptions: NextAuthOptions = {
         session.role = token.role;
         session.phone = token.phone as string;
         session.isActive = token.isActive;
-        session.expires = new Date(Date.now() + (token.maxAge as number) * 1000).toISOString();
         session.user = token.user as Object;
         session.user.name = token.name;
 
