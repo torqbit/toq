@@ -1,10 +1,23 @@
 import { AppAction, useAppContext } from "@/components/ContextApi/AppContext";
 import { useSiteConfig } from "@/components/ContextApi/SiteConfigContext";
 import SvgIcons from "@/components/SvgIcons";
+
 import appConstant from "@/services/appConstant";
 import { Dispatch } from "react";
 const md5 = require("md5");
 
+export const authConstants = {
+  CREDENTIALS_AUTH_PROVIDER: "credentials",
+  GOOGLE_AUTH_PROVIDER: "google",
+  GITHUB_AUTH_PROVIDER: "github",
+  ENV_GOOGLE_ID: "GOOGLE_ID",
+  ENV_GOOGLE_SECRET: "GOOGLE_SECRET",
+  ENV_GITHUB_ID: "GITHUB_ID",
+  ENV_GITHUB_SECRET: "GITHUB_SECRET",
+};
+export function capitalizeFirstLetter(val: string) {
+  return String(val).charAt(0).toUpperCase() + String(val).slice(1);
+}
 export const getCookieName = () => {
   let cookieName = appConstant.development.cookieName;
   if (process.env.NEXT_PUBLIC_APP_ENV === "production") {
@@ -134,8 +147,7 @@ export const mapToArray = (map: Map<string, string>): [string, string][] => {
 };
 
 export const compareByHash = (existingValue: [string, string][], currentValue: [string, string][]): boolean => {
-  const cleanedMap = (map: [string, string][]) =>
-    new Map(Array.from(map, ([key, value]) => [key, value.replace(/\n/g, " ").trim()]));
+  const cleanedMap = (map: [string, string][]) => new Map(Array.from(map, ([key, value]) => [key, value.replace(/\n/g, " ").trim()]));
 
   const map1Json = mapToArray(cleanedMap(existingValue)).flat().join("").replace(/\s+/g, "").trim();
   const map2Json = mapToArray(cleanedMap(currentValue)).flat().join("").replace(/\s+/g, "").trim();

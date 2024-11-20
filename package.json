@@ -32,6 +32,7 @@
     "antd": "5.20.0",
     "antd-img-crop": "4.23.0",
     "aos": "^3.0.0-beta.6",
+    "bcryptjs": "^2.4.3",
     "canvas": "^2.11.2",
     "cashfree-pg": "^4.2.3",
     "dotenv": "^16.3.1",

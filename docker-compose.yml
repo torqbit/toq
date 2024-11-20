@@ -21,6 +21,9 @@ services:
     env_file:
       - "./docker.env"
 
+    volumes:
+      - .
+
     networks:
       - app-network
 

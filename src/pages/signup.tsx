@@ -10,22 +10,19 @@ import appConstant from "@/services/appConstant";
 import { authConstants, capitalizeFirstLetter, getCookieName } from "@/lib/utils";
 import Image from "next/image";
 import getLoginMethods from "@/lib/auth/loginMethods";
+import Link from "next/link";
 import SvgIcons from "@/components/SvgIcons";
-import { useSiteConfig } from "@/components/ContextApi/SiteConfigContext";
-
+import AuthService from "@/services/auth/AuthService";
 
 const LoginPage: NextPage<{ loginMethods: { available: string[]; configured: string[] } }> = ({ loginMethods }) => {
   const router = useRouter();
   const [gitHubLoading, setGitHubLoading] = useState<boolean>(false);
   const [googleLoading, setGoogleLoading] = useState<boolean>(false);
-  const [loading, setLoginProgress] = useState<{ provider?: string }>();
-  const [emailLogin, setLoginWithEmail] = useState(router.query.provider == "email");
+  const [emailSignup, setSignupWithEmail] = useState(false);
   const [loginError, setLoginError] = React.useState("");
-  const [loginForm] = Form.useForm();
   const { data: session, status: sessionStatus } = useSession();
+  const [signupForm] = Form.useForm();
   const [messageApi, contextHolder] = message.useMessage();
-  const { brand } = useSiteConfig();
-
 
   React.useEffect(() => {
     console.log(loginMethods);
@@ -50,23 +47,20 @@ const LoginPage: NextPage<{ loginMethods: { available: string[]; configured: str
   if (sessionStatus === "loading") {
     return <SpinLoader />;
   }
+  const handleSignup = () => {
+    console.log(signupForm.getFieldsValue());
 
-  const handleLogin = () => {
-    signIn("credentials", {
-      callbackUrl: router.query.redirect ? `${router.query.redirect}` : "/dashboard",
-      redirect: false,
-      password: loginForm.getFieldValue("password"),
-      email: loginForm.getFieldValue("email"),
-    }).then((response) => {
-      console.log(response);
-      if (response && !response.ok) {
-        messageApi.error(response.error);
-      } else if (response && response.ok && response.url) {
-        messageApi.loading(`You will be redirected to the platform`);
-        router.push(router.query.redirect ? `${router.query.redirect}` : "/dashboard");
+    AuthService.signup(
+      { ...signupForm.getFieldsValue() },
+      (r) => {
+        messageApi.success(r.message);
+        router.push("/login?provider=email");
+      },
+      (err) => {
+        console.log(`error: ${err}`);
+        messageApi.error(err);
       }
-    });
-    loginForm.resetFields();
+    );
   };
 
   const validateMessages = {
@@ -85,30 +79,39 @@ const LoginPage: NextPage<{ loginMethods: { available: string[]; configured: str
       {contextHolder}
       <div className={styles.social_login_container}>
         <Image src={"/icon/torqbit.png"} height={60} width={60} alt={"logo"} />
-                <h3>Welcome back to {brand.name}</h3>
+        <h3>Welcome to {appConstant.platformName}</h3>
 
-        {emailLogin && (
+        {emailSignup && (
           <Form
-            form={loginForm}
-            onFinish={handleLogin}
+            form={signupForm}
+            onFinish={handleSignup}
             layout='vertical'
             requiredMark='optional'
             autoComplete='off'
             validateMessages={validateMessages}
             validateTrigger='onSubmit'>
-            <Form.Item name='email' label='' rules={[{ required: true, message: "Email is required" }, { type: "email" }]}>
-              <Input type='email' placeholder='Enter your email address..' style={{ height: 40, background: "transparent" }} />
+            <Form.Item name='name' label='' rules={[{ required: true, message: "Name is required" }]}>
+              <Input placeholder='Enter your name' style={{ height: 40, background: "transparent" }} />
             </Form.Item>
-            <Form.Item name='password' label='' rules={[{ required: true, message: "Password is required" }]}>
+            <Form.Item name='email' label='' rules={[{ required: true, message: "Email is required" }, { type: "email" }]}>
+              <Input type='email' placeholder='Enter your email address' style={{ height: 40, background: "transparent" }} />
+            </Form.Item>
+            <Form.Item
+              name='password'
+              label=''
+              rules={[
+                { required: true, message: "Password is required" },
+                { min: 6, message: "Password must be atleast 6 characters" },
+              ]}>
               <Input.Password placeholder='Enter your password' style={{ height: 40, background: "transparent" }} />
             </Form.Item>
             <Button
               onClick={() => {
-                loginForm.submit();
+                signupForm.submit();
               }}
               type='primary'
               className={styles.google_btn}>
-              Login with Email
+              Signup with Email
             </Button>
 
             <Button
@@ -116,24 +119,24 @@ const LoginPage: NextPage<{ loginMethods: { available: string[]; configured: str
               icon={SvgIcons.arrowLeft}
               iconPosition='start'
               style={{ width: 250, marginTop: 10 }}
-              onClick={(_) => setLoginWithEmail(false)}>
-              Back to Login
+              onClick={(_) => setSignupWithEmail(false)}>
+              Back to Signup
             </Button>
           </Form>
         )}
 
-        {!emailLogin &&
+        {!emailSignup &&
           loginMethods.configured.map((provider) => {
             if (provider === authConstants.CREDENTIALS_AUTH_PROVIDER) {
               return (
                 <>
                   <Button
                     onClick={() => {
-                      setLoginWithEmail(true);
+                      setSignupWithEmail(true);
                     }}
                     type='primary'
                     className={styles.google_btn}>
-                    Login with Email
+                    Signup with Email
                   </Button>
                 </>
               );
@@ -144,7 +147,7 @@ const LoginPage: NextPage<{ loginMethods: { available: string[]; configured: str
                     title={
                       loginMethods.available.includes(provider)
                         ? ``
-                        : `Login method disabled for ${capitalizeFirstLetter(provider)} due to missing environment variables`
+                        : `Signup method disabled for ${capitalizeFirstLetter(provider)} due to missing environment variables`
                     }>
                     <Button
                       style={{ width: 250, height: 40 }}
@@ -154,17 +157,14 @@ const LoginPage: NextPage<{ loginMethods: { available: string[]; configured: str
                         });
                       }}
                       type='default'
-                      loading={loading && loading?.provider == provider}
                       disabled={!loginMethods.available.includes(provider)}>
-                      Login with {capitalizeFirstLetter(provider)}
+                      Continue with {capitalizeFirstLetter(provider)}
                     </Button>
                   </Tooltip>
                 </>
               );
             }
           })}
-
-
 
         {loginError && (
           <Alert message='Login Failed!' description={loginError} type='error' showIcon closable className={styles.alertMessage} />
