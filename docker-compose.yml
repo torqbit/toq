@@ -2,7 +2,7 @@ version: "3"
 
 services:
   web:
-    image: torqbit/torqbit:0.1.2-rc2
+    image: torqbit/torqbit:0.1.2-rc3
     ports:
       - "3000:80"
     build: .
@@ -20,9 +20,6 @@ services:
 
     env_file:
       - "./docker.env"
-
-    volumes:
-      - .
 
     networks:
       - app-network
