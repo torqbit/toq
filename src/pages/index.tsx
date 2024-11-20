@@ -4,7 +4,6 @@ import { GetServerSidePropsContext } from "next";
 import { getCookieName } from "@/lib/utils";
 import { getToken } from "next-auth/jwt";
 import { PageSiteConfig } from "@/services/siteConstant";
-
 import StandardTemplate from "@/Templates/Standard/StandardTemplate";
 import { getSiteConfig } from "@/services/getSiteConfig";
 

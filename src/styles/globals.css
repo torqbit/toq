@@ -631,15 +631,12 @@ a {
 }
 
 .ant-input-affix-wrapper {
-  padding: 0px !important;
-
   outline: none;
   border-radius: 4px;
 }
 
 .ant-input-suffix {
   padding: 0px 10px;
-  border: 1px solid var(--bg-secondary);
   color: var(--font-secondary);
   margin-inline-start: 0px !important;
   border-top-right-radius: 4px;
