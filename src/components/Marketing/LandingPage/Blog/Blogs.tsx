@@ -1,6 +1,6 @@
 import { FC } from "react";
 import styles from "./Blog.module.scss";
-import { IBlogCard, IBlogInfo } from "@/types/blog";
+import { IBlogCard, IBlogInfo } from "@/types/landing/blog";
 import Link from "next/link";
 import Avatar from "../Avatar/Avatar";
 import { Button } from "antd";
