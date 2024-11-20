@@ -1,7 +1,7 @@
 import { ThemeSchema } from "@/types/schema";
 import { lazy } from "react";
-const NavBar = lazy(() => import("@/components/Marketing/LandingPage/NavBar/NavBar"));
-const Features = lazy(() => import("@/components/Marketing/LandingPage/Feature/Features"));
+const NavBar = lazy(() => import("@/Templates/Standard/components/NavBar/NavBar"));
+const Features = lazy(() => import("@/Templates/Standard/components/Feature/Features"));
 
 export type PageSiteConfig = ThemeSchema;
 

@@ -1,6 +1,6 @@
 import { FC, useEffect } from "react";
 import React from "react";
-import styles from "@/components/Marketing/LandingPage/Hero/Hero.module.scss";
+import styles from "@/Templates/Standard/components/Hero/Hero.module.scss";
 import landingPage from "@/styles/Marketing/LandingPage/LandingPage.module.scss";
 import Head from "next/head";
 import { useAppContext } from "../ContextApi/AppContext";
@@ -8,7 +8,7 @@ import { ConfigProvider } from "antd";
 import darkThemeConfig from "@/services/darkThemeConfig";
 import antThemeConfig from "@/services/antThemeConfig";
 import SpinLoader from "../SpinLoader/SpinLoader";
-import Footer from "../Marketing/LandingPage/Footer/Footer";
+import Footer from "../../Templates/Standard/components/Footer/Footer";
 import { useSiteConfig } from "../ContextApi/SiteConfigContext";
 import { DEFAULT_THEME, PageSiteConfig } from "@/services/siteConstant";
 import { useMediaQuery } from "react-responsive";
