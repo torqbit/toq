@@ -11,7 +11,8 @@ import { getCookieName } from "@/lib/utils";
 import { getToken } from "next-auth/jwt";
 import LegalAgreement from "@/components/Marketing/LegalAgreement";
 import { PageSiteConfig } from "@/services/siteConstant";
-import { useSiteConfig } from "@/components/ContextApi/SiteConfigContext";
+
+import { getSiteConfig } from "@/services/getSiteConfig";
 
 const TermAndConditonPage: FC<{ user: User; siteConfig: PageSiteConfig }> = ({ user, siteConfig }) => {
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
@@ -321,27 +322,14 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const { req } = ctx;
 
   let cookieName = getCookieName();
-  const siteConfig = useSiteConfig();
-
+  const { site } = getSiteConfig();
+  const siteConfig = site;
   const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
 
   return {
     props: {
       user,
-      siteConfig: {
-        ...siteConfig,
-        navBar: {
-          ...siteConfig.navBar,
-          component: siteConfig.navBar?.component?.name as any,
-        },
-        sections: {
-          ...siteConfig.sections,
-          feature: {
-            ...siteConfig.sections.feature,
-            component: siteConfig.sections.feature?.component?.name || null,
-          },
-        },
-      },
+      siteConfig,
     },
   };
 };

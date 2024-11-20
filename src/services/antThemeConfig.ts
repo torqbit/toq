@@ -1,8 +1,6 @@
-import { useSiteConfig } from "@/components/ContextApi/SiteConfigContext";
+import { PageSiteConfig } from "./siteConstant";
 
-const antThemeConfig = () => {
-  const siteConfig = useSiteConfig();
-
+const antThemeConfig = (siteConfig: PageSiteConfig) => {
   return {
     token: {
       borderRadius: 4,

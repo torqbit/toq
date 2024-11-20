@@ -1,8 +1,6 @@
-import { useSiteConfig } from "@/components/ContextApi/SiteConfigContext";
+import { PageSiteConfig } from "./siteConstant";
 
-const darkThemeConfig = () => {
-  const siteConfig = useSiteConfig();
-
+const darkThemeConfig = (siteConfig: PageSiteConfig) => {
   return {
     token: {
       borderRadius: 4,

@@ -1,4 +1,4 @@
-import { ThemeSchema } from "@/types/schema";
+import { bannerAlignment, ThemeSchema } from "@/types/schema";
 import { lazy } from "react";
 const NavBar = lazy(() => import("@/Templates/Standard/components/NavBar/NavBar"));
 const Features = lazy(() => import("@/Templates/Standard/components/Feature/Features"));
@@ -7,7 +7,7 @@ export type PageSiteConfig = ThemeSchema;
 
 export const DEFAULT_THEME = {
   navBar: {
-    component: NavBar,
+    templates: "standard",
     navigationLinks: [
       {
         title: "Courses",
@@ -36,6 +36,8 @@ export const DEFAULT_THEME = {
 
   darkMode: false,
   heroSection: {
+    templates: "standard",
+
     title: "Become a Pro Product Builder",
     description:
       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores rerum voluptatum perferendis autem veritatis nostrum. Libero aliquam dignissimos sunt voluptatum!",
@@ -52,7 +54,7 @@ export const DEFAULT_THEME = {
     banner: {
       lightModePath: "/img/macbook-light.png",
       darkModePath: "/img/macbook-dark.png",
-      position: "bottom",
+      position: "bottom" as bannerAlignment,
     },
   },
   footer: {
@@ -63,7 +65,7 @@ export const DEFAULT_THEME = {
   },
   sections: {
     feature: {
-      component: Features,
+      templates: "standard",
 
       featureInfo: {
         featureList: [

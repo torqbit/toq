@@ -5,7 +5,7 @@ export type bannerAlignment = "left" | "right" | "bottom" | "background";
 
 export interface ThemeSchema {
   navBar?: {
-    component?: React.FC<INavBarProps>;
+    templateId?: string;
     navigationLinks?: { title: string; link: string }[];
   };
   brand?: {
@@ -19,6 +19,8 @@ export interface ThemeSchema {
   };
   darkMode?: boolean;
   heroSection?: {
+    templateId?: string;
+
     title?: string;
     description?: string;
     actionButtons?: {
@@ -48,7 +50,8 @@ export interface ThemeSchema {
   };
   sections: {
     feature?: {
-      component?: React.FC<IFeatureInfo>;
+      templateId?: string;
+
       featureInfo?: IFeatureInfo;
     };
   };

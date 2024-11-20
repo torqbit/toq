@@ -16,8 +16,8 @@ import { UserOutlined } from "@ant-design/icons";
 import Head from "next/head";
 import { truncateString } from "@/services/helper";
 import PurifyContent from "@/components/PurifyContent/PurifyContent";
-import { useSiteConfig } from "@/components/ContextApi/SiteConfigContext";
 import { PageSiteConfig } from "@/services/siteConstant";
+import { getSiteConfig } from "@/services/getSiteConfig";
 
 interface IProps {
   user: User;
@@ -107,7 +107,8 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const params = ctx?.params;
   let cookieName = getCookieName();
 
-  const siteConfig = useSiteConfig();
+  const { site } = getSiteConfig();
+  const siteConfig = site;
 
   const protocol = req.headers["x-forwarded-proto"] || "http";
   const host = req.headers["x-forwarded-host"] || req.headers.host;
@@ -151,20 +152,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
           slug: blog.slug,
           contentType: blog.contentType,
         },
-        siteConfig: {
-          ...siteConfig,
-          navBar: {
-            ...siteConfig.navBar,
-            component: siteConfig.navBar?.component?.name as any,
-          },
-          sections: {
-            ...siteConfig.sections,
-            feature: {
-              ...siteConfig.sections.feature,
-              component: siteConfig.sections.feature?.component?.name || null,
-            },
-          },
-        },
+        siteConfig,
       },
     };
   } else {

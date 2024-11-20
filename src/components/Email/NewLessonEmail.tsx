@@ -18,14 +18,15 @@ import {
 } from "@react-email/components";
 
 import * as React from "react";
-import { useSiteConfig } from "../ContextApi/SiteConfigContext";
+
+import { getSiteConfig } from "@/services/getSiteConfig";
 
 interface IProps {
   configData: INewLessonConfig;
 }
 
 export const NewLessonEmail = ({ configData }: IProps) => {
-  const siteConfig = useSiteConfig();
+  const siteConfig = getSiteConfig();
 
   return (
     <Tailwind>

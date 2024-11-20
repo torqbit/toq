@@ -10,15 +10,16 @@ import appConstant from "@/services/appConstant";
 import { getCookieName } from "@/lib/utils";
 
 import Image from "next/image";
-import { useSiteConfig } from "@/components/ContextApi/SiteConfigContext";
+import { getSiteConfig } from "@/services/getSiteConfig";
+import { PageSiteConfig } from "@/services/siteConstant";
 
-const LoginPage: NextPage = () => {
+const LoginPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const router = useRouter();
   const [gitHubLoading, setGitHubLoading] = useState<boolean>(false);
   const [googleLoading, setGoogleLoading] = useState<boolean>(false);
   const [loginError, setLoginError] = React.useState("");
   const { data: session, status: sessionStatus } = useSession();
-  const { brand } = useSiteConfig();
+  const { brand } = siteConfig;
 
   React.useEffect(() => {
     if (router.query.error) {
@@ -47,7 +48,7 @@ const LoginPage: NextPage = () => {
     <div className={styles.login_page_wrapper}>
       <div className={styles.social_login_container}>
         <Image src={"/icon/torqbit.png"} height={60} width={60} alt={"logo"} />
-        <h3>Login to {brand.name}</h3>
+        <h3>Login to {brand?.name}</h3>
 
         <Button
           onClick={() => {
@@ -96,7 +97,8 @@ const LoginPage: NextPage = () => {
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const { req } = ctx;
   let cookieName = getCookieName();
-
+  const { site } = getSiteConfig();
+  const siteConfig = site;
   const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
   if (user) {
     return {
@@ -106,7 +108,11 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
       },
     };
   }
-  return { props: {} };
+  return {
+    props: {
+      siteConfig,
+    },
+  };
 };
 
 export default LoginPage;

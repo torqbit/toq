@@ -14,8 +14,8 @@ import styles from "@/styles/Marketing/Blog/Blog.module.scss";
 
 import Link from "next/link";
 import { UserOutlined } from "@ant-design/icons";
-import { useSiteConfig } from "@/components/ContextApi/SiteConfigContext";
 import { PageSiteConfig } from "@/services/siteConstant";
+import { getSiteConfig } from "@/services/getSiteConfig";
 interface IProps {
   user: User;
   siteConfig: PageSiteConfig;
@@ -156,7 +156,8 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   });
 
   const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
-  const siteConfig = useSiteConfig();
+  const { site } = getSiteConfig();
+  const siteConfig = site;
   if (blog.length > 0) {
     return {
       props: {
@@ -171,20 +172,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
             slug: b.slug,
           };
         }),
-        siteConfig: {
-          ...siteConfig,
-          navBar: {
-            ...siteConfig.navBar,
-            component: siteConfig.navBar?.component?.name as any,
-          },
-          sections: {
-            ...siteConfig.sections,
-            feature: {
-              ...siteConfig.sections.feature,
-              component: siteConfig.sections.feature?.component?.name || null,
-            },
-          },
-        },
+        siteConfig,
       },
     };
   } else {
@@ -192,20 +180,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
       props: {
         user,
         blogData: [],
-        siteConfig: {
-          ...siteConfig,
-          navBar: {
-            ...siteConfig.navBar,
-            component: siteConfig.navBar?.component?.name as any,
-          },
-          sections: {
-            ...siteConfig.sections,
-            feature: {
-              ...siteConfig.sections.feature,
-              component: siteConfig.sections.feature?.component?.name || null,
-            },
-          },
-        },
+        siteConfig,
       },
     };
   }

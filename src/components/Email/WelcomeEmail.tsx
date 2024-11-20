@@ -15,15 +15,16 @@ import {
   Text,
   Tailwind,
 } from "@react-email/components";
-import { Flex } from "antd";
+
 import * as React from "react";
-import { useSiteConfig } from "../ContextApi/SiteConfigContext";
+
+import { getSiteConfig } from "@/services/getSiteConfig";
 interface IProps {
   configData: IWelcomeEmailConfig;
 }
 
 const WelcomeEmailPage = ({ configData }: IProps) => {
-  const siteConfig = useSiteConfig();
+  const siteConfig = getSiteConfig();
 
   return (
     <Tailwind>

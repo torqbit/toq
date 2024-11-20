@@ -4,8 +4,9 @@ import { GetServerSidePropsContext } from "next";
 import { getCookieName } from "@/lib/utils";
 import { getToken } from "next-auth/jwt";
 import { PageSiteConfig } from "@/services/siteConstant";
-import { useSiteConfig } from "@/components/ContextApi/SiteConfigContext";
+
 import StandardTemplate from "@/Templates/Standard/StandardTemplate";
+import { getSiteConfig } from "@/services/getSiteConfig";
 
 interface IProps {
   user: User;
@@ -20,25 +21,13 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const { req } = ctx;
   let cookieName = getCookieName();
   const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
-  const siteConfig = useSiteConfig();
+  const { site } = getSiteConfig();
+  const siteConfig = site;
 
   return {
     props: {
       user,
-      siteConfig: {
-        ...siteConfig,
-        navBar: {
-          ...siteConfig.navBar,
-          component: siteConfig.navBar?.component?.name || null,
-        },
-        sections: {
-          ...siteConfig.sections,
-          feature: {
-            ...siteConfig.sections.feature,
-            component: siteConfig.sections.feature?.component?.name || null,
-          },
-        },
-      },
+      siteConfig,
     },
   };
 };

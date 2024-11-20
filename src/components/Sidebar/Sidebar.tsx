@@ -1,42 +1,25 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC } from "react";
 import styles from "../../styles/Sidebar.module.scss";
-import {
-  Avatar,
-  Button,
-  Dropdown,
-  Flex,
-  Form,
-  Input,
-  Layout,
-  Menu,
-  MenuProps,
-  message,
-  Modal,
-  Popover,
-  Space,
-  Tooltip,
-} from "antd";
+import { Avatar, Button, Dropdown, Flex, Layout, Menu, MenuProps, Modal, Space, Tooltip } from "antd";
 
-import { DashOutlined, UserOutlined } from "@ant-design/icons";
+import { UserOutlined } from "@ant-design/icons";
 import Link from "next/link";
 import Image from "next/image";
 import { signOut, useSession } from "next-auth/react";
 import SvgIcons from "../SvgIcons";
 import { ISiderMenu, useAppContext } from "../ContextApi/AppContext";
 
-import { postFetch } from "@/services/request";
-import appConstant from "@/services/appConstant";
 import Feedback from "../Feedback/Feedback";
-import { useSiteConfig } from "../ContextApi/SiteConfigContext";
+
 import { Theme } from "@/types/theme";
+import { PageSiteConfig } from "@/services/siteConstant";
 
 const { Sider } = Layout;
 
-const Sidebar: FC<{ menu: MenuProps["items"] }> = ({ menu }) => {
-  // const [collapsed, setCollapsed] = React.useState(false);
+const Sidebar: FC<{ menu: MenuProps["items"]; siteConfig: PageSiteConfig }> = ({ menu, siteConfig }) => {
   const { data: user, status, update } = useSession();
   const { globalState, dispatch } = useAppContext();
-  const { brand } = useSiteConfig();
+  const { brand } = siteConfig;
 
   const [modal, contextWrapper] = Modal.useModal();
 
@@ -81,7 +64,7 @@ const Sidebar: FC<{ menu: MenuProps["items"] }> = ({ menu }) => {
             ) : (
               <Flex align="center" gap={5}>
                 <Image src={`/icon/torqbit.png`} alt="torq" width={40} height={40} />
-                <h4 className={styles.logoText}>{brand.name}</h4>
+                <h4 className={styles.logoText}>{brand?.name}</h4>
               </Flex>
             )}
           </Link>

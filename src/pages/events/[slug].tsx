@@ -8,8 +8,8 @@ import prisma from "@/lib/prisma";
 import { IEventInfo } from "@/services/EventService";
 import styles from "@/styles/Marketing/Events/Event.module.scss";
 import EventInfo from "@/components/Events/EventInfo";
-import { useSiteConfig } from "@/components/ContextApi/SiteConfigContext";
 import { PageSiteConfig } from "@/services/siteConstant";
+import { getSiteConfig } from "@/services/getSiteConfig";
 
 const EventInfoPage: FC<{
   user: User;
@@ -34,7 +34,8 @@ const EventInfoPage: FC<{
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const { req } = ctx;
   const params = ctx?.params;
-  const siteConfig = useSiteConfig();
+  const { site } = getSiteConfig();
+  const siteConfig = site;
   let cookieName = getCookieName();
   const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
   const eventInfo = await prisma.events.findUnique({
@@ -79,26 +80,14 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
             : "",
         },
         registrationExpired,
-        siteConfig: {
-          ...siteConfig,
-          navBar: {
-            ...siteConfig.navBar,
-            component: siteConfig.navBar?.component?.name as any,
-          },
-        },
+        siteConfig,
       },
     };
   } else {
     return {
       props: {
         user,
-        siteConfig: {
-          ...siteConfig,
-          navBar: {
-            ...siteConfig.navBar,
-            component: siteConfig.navBar?.component?.name as any,
-          },
-        },
+        siteConfig,
       },
     };
   }

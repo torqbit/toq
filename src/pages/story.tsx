@@ -6,9 +6,9 @@ import HeroBlog from "@/components/Marketing/DefaultHero/DefaultHero";
 import { useMediaQuery } from "react-responsive";
 import { getCookieName } from "@/lib/utils";
 import { getToken } from "next-auth/jwt";
-import { useSiteConfig } from "@/components/ContextApi/SiteConfigContext";
 import { PageSiteConfig } from "@/services/siteConstant";
 import { useAppContext } from "@/components/ContextApi/AppContext";
+import { getSiteConfig } from "@/services/getSiteConfig";
 
 const StoryPage: FC<{ user: User; siteConfig: PageSiteConfig }> = ({ user, siteConfig }) => {
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
@@ -57,25 +57,13 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   let cookieName = getCookieName();
 
   const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
-  const siteConfig = useSiteConfig();
+  const { site } = getSiteConfig();
+  const siteConfig = site;
 
   return {
     props: {
       user,
-      siteConfig: {
-        ...siteConfig,
-        navBar: {
-          ...siteConfig.navBar,
-          component: siteConfig.navBar?.component?.name as any,
-        },
-        sections: {
-          ...siteConfig.sections,
-          feature: {
-            ...siteConfig.sections.feature,
-            component: siteConfig.sections.feature?.component?.name || null,
-          },
-        },
-      },
+      siteConfig,
     },
   };
 };

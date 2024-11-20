@@ -19,13 +19,14 @@ import { Flex } from "antd";
 import * as React from "react";
 import PurifyContent from "../PurifyContent/PurifyContent";
 import { convertToDayMonthTime } from "@/lib/utils";
-import { useSiteConfig } from "../ContextApi/SiteConfigContext";
+
+import { getSiteConfig } from "@/services/getSiteConfig";
 interface IProps {
   configData: IEventAccessMailConfig;
 }
 
 export const EventAccessEmail = ({ configData }: IProps) => {
-  const siteConfig = useSiteConfig();
+  const siteConfig = getSiteConfig();
 
   return (
     <Tailwind>

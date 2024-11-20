@@ -1,6 +1,6 @@
 import { checkDateExpired, convertToDayMonthTime, generateYearAndDayName, getCookieName } from "@/lib/utils";
 
-import { StateType, Theme, User } from "@prisma/client";
+import { StateType, User } from "@prisma/client";
 import { GetServerSidePropsContext } from "next";
 import { getToken } from "next-auth/jwt";
 import { FC, useEffect } from "react";

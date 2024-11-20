@@ -1,5 +1,6 @@
 import { IAssignmentCompletionConfig, ICompletionEmailConfig } from "@/lib/emailConfig";
 import appConstant from "@/services/appConstant";
+import { getSiteConfig } from "@/services/getSiteConfig";
 
 import {
   Body,
@@ -18,14 +19,13 @@ import {
 } from "@react-email/components";
 
 import * as React from "react";
-import { useSiteConfig } from "../ContextApi/SiteConfigContext";
 
 interface IProps {
   configData: IAssignmentCompletionConfig;
 }
 
 export const AssignmentCompletionEmail = ({ configData }: IProps) => {
-  const siteConfig = useSiteConfig();
+  const siteConfig = getSiteConfig();
 
   return (
     <Tailwind>

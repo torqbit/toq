@@ -1,4 +1,5 @@
 import { IAssignmentSubmissionConfig } from "@/lib/emailConfig";
+import { getSiteConfig } from "@/services/getSiteConfig";
 
 import {
   Body,
@@ -17,14 +18,13 @@ import {
 } from "@react-email/components";
 
 import * as React from "react";
-import { useSiteConfig } from "../ContextApi/SiteConfigContext";
 
 interface IProps {
   configData: IAssignmentSubmissionConfig;
 }
 
 export const AssignmentSubmissionEmail = ({ configData }: IProps) => {
-  const siteConfig = useSiteConfig();
+  const siteConfig = getSiteConfig();
 
   return (
     <Tailwind>

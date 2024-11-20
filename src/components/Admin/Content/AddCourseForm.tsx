@@ -9,7 +9,14 @@ import Curriculum from "./Curriculum";
 import { useRouter } from "next/router";
 import Preview from "./Preview";
 import ProgramService from "@/services/ProgramService";
-import { ChapterDetail, CourseData, CourseLessonAPIResponse, IVideoLesson, VideoAPIResponse, VideoInfo } from "@/types/courses/Course";
+import {
+  ChapterDetail,
+  CourseData,
+  CourseLessonAPIResponse,
+  IVideoLesson,
+  VideoAPIResponse,
+  VideoInfo,
+} from "@/types/courses/Course";
 import AddCourseChapter from "@/components/Admin/Content/AddCourseChapter";
 import { $Enums, ResourceContentType, StateType, VideoState } from "@prisma/client";
 import { ResourceDetails } from "@/lib/types/program";
@@ -313,7 +320,10 @@ const AddCourseForm: FC = () => {
   };
 
   const onPublishCourse = (state: string) => {
-    if (courseData.chapters.length > 0 && courseData.chapters[0].resource.filter((r) => r.state === StateType.ACTIVE).length >= 2) {
+    if (
+      courseData.chapters.length > 0 &&
+      courseData.chapters[0].resource.filter((r) => r.state === StateType.ACTIVE).length >= 2
+    ) {
       ProgramService.updateCourseState(
         Number(router.query.id),
         state,
@@ -352,7 +362,11 @@ const AddCourseForm: FC = () => {
     },
     {
       key: "2",
-      label: <span onClick={() => !tabActive && message.error("First fill and  save  the add course form ")}>Curriculum</span>,
+      label: (
+        <span onClick={() => !tabActive && message.error("First fill and  save  the add course form ")}>
+          Curriculum
+        </span>
+      ),
       disabled: (!courseThumbnail && !uploadVideo?.videoUrl) || !tabActive,
 
       children: courseThumbnail && uploadVideo?.videoUrl && (
@@ -372,7 +386,9 @@ const AddCourseForm: FC = () => {
 
     {
       key: "3",
-      label: <span onClick={() => !tabActive && message.error("First fill and  save  the add course form ")}>Preview</span>,
+      label: (
+        <span onClick={() => !tabActive && message.error("First fill and  save  the add course form ")}>Preview</span>
+      ),
       disabled: (!courseThumbnail && !uploadVideo?.videoUrl) || !tabActive,
       children: courseThumbnail && uploadVideo?.videoUrl && (
         <Preview
@@ -422,7 +438,12 @@ const AddCourseForm: FC = () => {
 
   useEffect(() => {
     let intervalId: NodeJS.Timer | undefined;
-    if (checkVideoState && uploadVideo && uploadVideo.state == VideoState.PROCESSING && typeof intervalId === "undefined") {
+    if (
+      checkVideoState &&
+      uploadVideo &&
+      uploadVideo.state == VideoState.PROCESSING &&
+      typeof intervalId === "undefined"
+    ) {
       intervalId = setInterval(() => {
         ProgramService.getCourseDetails(
           Number(router.query.id),
@@ -509,15 +530,17 @@ const AddCourseForm: FC = () => {
       <section className={styles.add_course_page}>
         <div className={styles.add_course_header}>
           <div className={styles.left_icon}>
-            <Link href='/admin/content'>{SvgIcons.xMark}</Link>
-            <Divider type='vertical' style={{ height: "1.2rem" }} />
+            <Link href="/admin/content">{SvgIcons.xMark}</Link>
+            <Divider type="vertical" style={{ height: "1.2rem" }} />
             <h4>Edit Course</h4>
           </div>
           <div>
             <Dropdown.Button
-              type='primary'
+              type="primary"
               onClick={() => {
-                courseData.state === StateType.DRAFT ? onPublishCourse(StateType.ACTIVE) : onPublishCourse(StateType.DRAFT);
+                courseData.state === StateType.DRAFT
+                  ? onPublishCourse(StateType.ACTIVE)
+                  : onPublishCourse(StateType.DRAFT);
               }}
               icon={SvgIcons.chevronDown}
               menu={{
@@ -530,12 +553,19 @@ const AddCourseForm: FC = () => {
                     },
                   },
                 ],
-              }}>
+              }}
+            >
               {courseData.state === StateType.DRAFT ? "  Publish Course" : "Save as Draft"}
             </Dropdown.Button>
           </div>
         </div>
-        <Tabs tabBarGutter={40} activeKey={activeKey} className={styles.add_course_tabs} items={items} onChange={onChange} />
+        <Tabs
+          tabBarGutter={40}
+          activeKey={activeKey}
+          className={styles.add_course_tabs}
+          items={items}
+          onChange={onChange}
+        />
       </section>
       <AddCourseChapter
         courseId={Number(router.query.id)}
