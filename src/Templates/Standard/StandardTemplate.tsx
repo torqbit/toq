@@ -25,11 +25,6 @@ const StandardTemplate: FC<IStandardTemplateProps> = ({ user, siteConfig }) => {
       heroSection={<Hero siteConfig={siteConfig} isMobile={isMobile} user={user} />}
     >
       <SetupPlatform />
-      <FeatureComponent
-        title={featureInfo?.title}
-        description={featureInfo?.description}
-        featureList={featureInfo?.featureList}
-      />
     </MarketingLayout>
   );
 };
