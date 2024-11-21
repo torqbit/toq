@@ -46,9 +46,9 @@ const MarketingLayout: FC<{
 
   const onCheckTheme = () => {
     const currentTheme = localStorage.getItem("theme");
-    if ((!currentTheme || currentTheme === "dark") && siteConfig.darkMode) {
+    if (currentTheme === "dark" && siteConfig.darkMode) {
       localStorage.setItem("theme", "dark");
-    } else if (currentTheme === "light" || !siteConfig.darkMode) {
+    } else if (!currentTheme || currentTheme === "light" || !siteConfig.darkMode) {
       localStorage.setItem("theme", "light");
     }
     setGlobalTheme(localStorage.getItem("theme") as Theme);
