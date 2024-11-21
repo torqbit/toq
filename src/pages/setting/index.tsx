@@ -164,7 +164,7 @@ const Setting: NextPage = () => {
         ...info,
         image: userProfile,
       });
-      dispatch({ type: "SET_USER", payload: { name: info.name, phone: `${info.phone}`, theme: globalState.theme } });
+      dispatch({ type: "SET_USER", payload: { name: info.name, phone: `${info.phone}` } });
       messageApi.success(result.message);
     } else {
       messageApi.error(result.error);

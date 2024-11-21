@@ -1,4 +1,5 @@
 import { IEnrolmentEmailConfig } from "@/lib/emailConfig";
+
 import {
   Body,
   Button,
@@ -17,13 +18,15 @@ import {
 } from "@react-email/components";
 import { Flex } from "antd";
 import * as React from "react";
-import { useSiteConfig } from "../ContextApi/SiteConfigContext";
+import { useAppContext } from "../ContextApi/AppContext";
+
 interface IProps {
   configData: IEnrolmentEmailConfig;
 }
 
 export const CourseEnrolmentEmail = ({ configData }: IProps) => {
-  const siteConfig = useSiteConfig();
+  const { globalState } = useAppContext();
+  const siteConfig = globalState.siteConfig;
 
   return (
     <Tailwind>

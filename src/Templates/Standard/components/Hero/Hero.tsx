@@ -6,7 +6,6 @@ import Link from "next/link";
 import { User } from "@prisma/client";
 import Image from "next/image";
 import { useAppContext } from "@/components/ContextApi/AppContext";
-import { useSiteConfig } from "@/components/ContextApi/SiteConfigContext";
 import { bannerAlignment } from "@/types/schema";
 import { PageSiteConfig } from "@/services/siteConstant";
 

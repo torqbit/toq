@@ -1,4 +1,3 @@
-import { useSiteConfig } from "@/components/ContextApi/SiteConfigContext";
 import MarketingLayout from "@/components/Layouts/MarketingLayout";
 import { DEFAULT_THEME, PageSiteConfig } from "@/services/siteConstant";
 import { User } from "@prisma/client";
@@ -13,9 +12,6 @@ interface IStandardTemplateProps {
 }
 
 const StandardTemplate: FC<IStandardTemplateProps> = ({ user, siteConfig }) => {
-  const { sections } = useSiteConfig();
-  let featureInfo = siteConfig?.sections?.feature?.featureInfo ?? DEFAULT_THEME.sections.feature.featureInfo;
-  let FeatureComponent = sections?.feature?.component ?? DEFAULT_THEME.sections.feature.component;
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
 
   return (

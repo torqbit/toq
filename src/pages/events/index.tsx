@@ -9,8 +9,8 @@ import styles from "@/styles/Marketing/Events/Event.module.scss";
 import Events from "@/components/Events/Events";
 import DefaulttHero from "@/components/Marketing/DefaultHero/DefaultHero";
 import MarketingLayout from "@/components/Layouts/MarketingLayout";
-import { useSiteConfig } from "@/components/ContextApi/SiteConfigContext";
 import { PageSiteConfig } from "@/services/siteConstant";
+import { getSiteConfig } from "@/services/getSiteConfig";
 
 const EventsPage: FC<{
   user: User;
@@ -32,7 +32,8 @@ const EventsPage: FC<{
 };
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const { req } = ctx;
-  const siteConfig = useSiteConfig();
+  const { site } = getSiteConfig();
+  const siteConfig = site;
   let cookieName = getCookieName();
 
   const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
@@ -90,20 +91,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
         }),
 
         totalEventsLength: await prisma.events.count({ where: { state: StateType.ACTIVE } }),
-        siteConfig: {
-          ...siteConfig,
-          navBar: {
-            ...siteConfig.navBar,
-            component: siteConfig.navBar?.component?.name as any,
-          },
-          sections: {
-            ...siteConfig.sections,
-            feature: {
-              ...siteConfig.sections.feature,
-              component: siteConfig.sections.feature?.component?.name || null,
-            },
-          },
-        },
+        siteConfig,
       },
     };
   } else {
@@ -111,20 +99,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
       props: {
         user,
         eventList: [],
-        siteConfig: {
-          ...siteConfig,
-          navBar: {
-            ...siteConfig.navBar,
-            component: siteConfig.navBar?.component?.name as any,
-          },
-          sections: {
-            ...siteConfig.sections,
-            feature: {
-              ...siteConfig.sections.feature,
-              component: siteConfig.sections.feature?.component?.name || null,
-            },
-          },
-        },
+        siteConfig,
       },
     };
   }

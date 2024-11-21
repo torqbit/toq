@@ -10,8 +10,8 @@ import { getToken } from "next-auth/jwt";
 import prisma from "@/lib/prisma";
 import styles from "@/styles/Marketing/Updates/Updates.module.scss";
 import UpdateCard from "@/components/Marketing/Updates/UpdateCard";
-import { useSiteConfig } from "@/components/ContextApi/SiteConfigContext";
 import { PageSiteConfig } from "@/services/siteConstant";
+import { getSiteConfig } from "@/services/getSiteConfig";
 interface IProps {
   user: User;
   siteConfig: PageSiteConfig;
@@ -82,7 +82,8 @@ const updatePage: FC<IProps> = ({ user, updateData, siteConfig }) => {
 };
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const { req } = ctx;
-  const siteConfig = useSiteConfig();
+  const { site } = getSiteConfig();
+  const siteConfig = site;
   let cookieName = getCookieName();
 
   const update = (await prisma.blog.findMany({
@@ -114,20 +115,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
     return {
       props: {
         user,
-        siteConfig: {
-          ...siteConfig,
-          navBar: {
-            ...siteConfig.navBar,
-            component: siteConfig.navBar?.component?.name as any,
-          },
-          sections: {
-            ...siteConfig.sections,
-            feature: {
-              ...siteConfig.sections.feature,
-              component: siteConfig.sections.feature?.component?.name || null,
-            },
-          },
-        },
+        siteConfig,
         updateData: update.map((b: any) => {
           return {
             title: b.title,

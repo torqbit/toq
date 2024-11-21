@@ -8,8 +8,9 @@ import { getToken } from "next-auth/jwt";
 import { Flex, Space } from "antd";
 import styles from "@/styles/Marketing/Contact/ContactUs.module.scss";
 import appConstant from "@/services/appConstant";
-import { useSiteConfig } from "@/components/ContextApi/SiteConfigContext";
+
 import { PageSiteConfig } from "@/services/siteConstant";
+import { getSiteConfig } from "@/services/getSiteConfig";
 
 const ContactUsPage: FC<{ user: User; siteConfig: PageSiteConfig }> = ({ user, siteConfig }) => {
   return (
@@ -49,25 +50,13 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   let cookieName = getCookieName();
 
   const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
-  const siteConfig = useSiteConfig();
+  const { site } = getSiteConfig();
+  const siteConfig = site;
 
   return {
     props: {
       user,
-      siteConfig: {
-        ...siteConfig,
-        navBar: {
-          ...siteConfig.navBar,
-          component: siteConfig.navBar?.component?.name as any,
-        },
-        sections: {
-          ...siteConfig.sections,
-          feature: {
-            ...siteConfig.sections.feature,
-            component: siteConfig.sections.feature?.component?.name || null,
-          },
-        },
-      },
+      siteConfig,
     },
   };
 };

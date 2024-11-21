@@ -2,6 +2,7 @@ import { createContext, Dispatch, useContext, useReducer } from "react";
 import { INotification } from "@/lib/types/discussions";
 import { UserSession } from "@/lib/types/user";
 import { Theme } from "@/types/theme";
+import { DEFAULT_THEME, PageSiteConfig } from "@/services/siteConstant";
 
 export type ISiderMenu =
   | "dashboard"
@@ -28,6 +29,7 @@ type AppState = {
   onlineStatus?: boolean;
   collapsed?: boolean;
   lessonCollapsed?: boolean;
+  siteConfig: PageSiteConfig;
 };
 
 // Define your action type
@@ -41,6 +43,7 @@ export type AppAction =
   | { type: "SET_ONLINE_STATUS"; payload: boolean }
   | { type: "SET_LOADER"; payload: boolean }
   | { type: "SET_LESSON_COLLAPSED"; payload: boolean }
+  | { type: "SET_SITE_CONFIG"; payload: PageSiteConfig }
   | { type: "SET_COLLAPSED"; payload: boolean };
 
 // Define the initial state
@@ -51,6 +54,7 @@ const initialState: AppState = {
   selectedResponsiveMenu: "dashboard",
   collapsed: false,
   lessonCollapsed: false,
+  siteConfig: DEFAULT_THEME,
 };
 
 // Create the context
@@ -82,7 +86,8 @@ export const AppProvider: React.FC<{ children: any }> = ({ children }) => {
         return { ...currentState, collapsed: action.payload };
       case "SET_LESSON_COLLAPSED":
         return { ...currentState, lessonCollapsed: action.payload };
-
+      case "SET_SITE_CONFIG":
+        return { ...currentState, siteConfig: action.payload };
       case "SWITCH_THEME":
         let mainHTML = document.getElementsByTagName("html").item(0);
 

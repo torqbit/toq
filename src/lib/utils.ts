@@ -1,5 +1,3 @@
-import { AppAction, useAppContext } from "@/components/ContextApi/AppContext";
-import { useSiteConfig } from "@/components/ContextApi/SiteConfigContext";
 import SvgIcons from "@/components/SvgIcons";
 
 import appConstant from "@/services/appConstant";

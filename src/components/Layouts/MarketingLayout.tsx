@@ -9,12 +9,12 @@ import darkThemeConfig from "@/services/darkThemeConfig";
 import antThemeConfig from "@/services/antThemeConfig";
 import SpinLoader from "../SpinLoader/SpinLoader";
 import Footer from "../../Templates/Standard/components/Footer/Footer";
-import { useSiteConfig } from "../ContextApi/SiteConfigContext";
 import { DEFAULT_THEME, PageSiteConfig } from "@/services/siteConstant";
 import { useMediaQuery } from "react-responsive";
 import { User } from "@prisma/client";
 import { IBrandInfo } from "@/types/landing/navbar";
 import { Theme } from "@/types/theme";
+import NavBar from "@/Templates/Standard/components/NavBar/NavBar";
 
 const MarketingLayout: FC<{
   children?: React.ReactNode;
@@ -22,17 +22,16 @@ const MarketingLayout: FC<{
   siteConfig: PageSiteConfig;
   user?: User;
 }> = ({ children, heroSection, user, siteConfig }) => {
-  const { navBar } = useSiteConfig();
   const { globalState, dispatch } = useAppContext();
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
 
-  const { brand } = useSiteConfig();
+  const { brand } = siteConfig;
   useEffect(() => {
     const root = document.documentElement;
     root.style.setProperty("--btn-primary", `${brand?.brandColor}`);
   }, []);
 
-  const NavBarComponent = navBar?.component ? navBar.component : null;
+  const NavBarComponent = NavBar;
   let brandInfo: IBrandInfo = {
     logo: siteConfig.brand?.logo ?? DEFAULT_THEME.brand.logo,
     name: siteConfig.brand?.name ?? DEFAULT_THEME.brand.name,
@@ -53,7 +52,10 @@ const MarketingLayout: FC<{
       localStorage.setItem("theme", "light");
     }
     setGlobalTheme(localStorage.getItem("theme") as Theme);
-
+    dispatch({
+      type: "SET_SITE_CONFIG",
+      payload: siteConfig,
+    });
     dispatch({
       type: "SET_LOADER",
       payload: false,
@@ -83,7 +85,7 @@ const MarketingLayout: FC<{
           <SpinLoader className="marketing__spinner" />
         </div>
       }
-      <ConfigProvider theme={globalState.theme == "dark" ? darkThemeConfig() : antThemeConfig()}>
+      <ConfigProvider theme={globalState.theme == "dark" ? darkThemeConfig(siteConfig) : antThemeConfig(siteConfig)}>
         <Head>
           <title>{`${siteConfig.brand?.title} | ${siteConfig.brand?.name}`}</title>
           <meta name="description" content={siteConfig.brand?.description} />
@@ -97,7 +99,7 @@ const MarketingLayout: FC<{
             <NavBarComponent
               user={user}
               isMobile={isMobile}
-              items={siteConfig.navBar?.navigationLinks ?? []}
+              items={siteConfig.navBar?.links ?? []}
               showThemeSwitch={siteConfig.darkMode ?? DEFAULT_THEME.darkMode}
               activeTheme={globalState.theme ?? "light"}
               brand={brandInfo}

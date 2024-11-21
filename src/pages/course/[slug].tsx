@@ -13,8 +13,8 @@ import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import SpinLoader from "@/components/SpinLoader/SpinLoader";
 import getCourseDetail, { extractLessonAndChapterDetail } from "@/actions/getCourseDetail";
-import { useSiteConfig } from "@/components/ContextApi/SiteConfigContext";
 import { PageSiteConfig } from "@/services/siteConstant";
+import { getSiteConfig } from "@/services/getSiteConfig";
 
 interface IProps {
   user: User;
@@ -83,7 +83,8 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
       courseId: true,
     },
   });
-  const siteConfig = useSiteConfig();
+  const { site } = getSiteConfig();
+  const siteConfig = site;
 
   if (courseDetail && courseDetail?.courseId) {
     const detail = await getCourseDetail(Number(courseDetail.courseId), user?.role, user?.id);
@@ -119,20 +120,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
           courseId: courseDetail?.courseId,
           user,
           courseDetails: courseLessonDetail,
-          siteConfig: {
-            ...siteConfig,
-            navBar: {
-              ...siteConfig.navBar,
-              component: siteConfig.navBar?.component?.name as any,
-            },
-            sections: {
-              ...siteConfig.sections,
-              feature: {
-                ...siteConfig.sections.feature,
-                component: siteConfig.sections.feature?.component?.name || null,
-              },
-            },
-          },
+          siteConfig,
         },
       };
     } else {

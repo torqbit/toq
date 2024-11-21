@@ -7,12 +7,12 @@ import { FC } from "react";
 import { PageSiteConfig } from "@/services/siteConstant";
 
 const Footer: FC<{ siteConfig: PageSiteConfig; isMobile: boolean }> = ({ siteConfig, isMobile }) => {
-  const { footer, navBar, brand } = siteConfig;
+  const { navBar, brand } = siteConfig;
 
   const footerContent = [
     {
       title: "Resources",
-      links: navBar?.navigationLinks?.map((nav) => {
+      links: navBar?.links?.map((nav) => {
         return {
           href: nav.link,
           label: nav.title,
@@ -23,23 +23,23 @@ const Footer: FC<{ siteConfig: PageSiteConfig; isMobile: boolean }> = ({ siteCon
       title: "Community",
       links: [
         {
-          href: footer?.discordLink,
+          href: brand?.socialLinks?.discord,
           label: "Discord",
         },
         {
-          href: footer?.githubLink,
+          href: brand?.socialLinks?.github,
           label: "Github",
         },
         {
-          href: footer?.youtubeLink,
+          href: brand?.socialLinks?.youtube,
           label: "Youtube",
         },
         {
-          href: footer?.instagramLink,
+          href: brand?.socialLinks?.instagram,
           label: "Instagram",
         },
         {
-          href: footer?.twitterLink,
+          href: brand?.socialLinks?.twitter,
           label: "Twitter",
         },
       ],
@@ -101,7 +101,7 @@ const Footer: FC<{ siteConfig: PageSiteConfig; isMobile: boolean }> = ({ siteCon
               <h1 className="font-brand">{brand?.name}</h1>
             </Flex>
           </Link>
-          <p>{footer?.tagLine}</p>
+          <p>{brand?.title}</p>
         </div>
 
         <div>

@@ -21,20 +21,20 @@ import Offline from "../Offline/Offline";
 import { postFetch } from "@/services/request";
 import { useMediaQuery } from "react-responsive";
 
-import { useSiteConfig } from "../ContextApi/SiteConfigContext";
 import { Theme } from "@/types/theme";
+import { DEFAULT_THEME, PageSiteConfig } from "@/services/siteConstant";
 
 const { Content } = Layout;
 
 const Layout2: FC<{ children?: React.ReactNode; className?: string }> = ({ children, className }) => {
   const { data: user, status, update } = useSession();
-  const siteConfig = useSiteConfig();
-  const isMobile = useMediaQuery({ query: "(max-width: 933px)" });
 
+  const isMobile = useMediaQuery({ query: "(max-width: 933px)" });
   const { globalState, dispatch } = useAppContext();
   const [conversationList, setConversationList] = useState<IConversationData[]>();
   const [comment, setComment] = useState<string>("");
-  const { brand } = useSiteConfig();
+  const siteConfig = globalState.siteConfig;
+  const { brand } = siteConfig;
 
   const [conversationLoading, setConversationLoading] = useState<{
     postLoading: boolean;
@@ -365,7 +365,9 @@ const Layout2: FC<{ children?: React.ReactNode; className?: string }> = ({ child
         <SpinLoader />
       ) : (
         <>
-          <ConfigProvider theme={globalState.theme == "dark" ? darkThemeConfig() : antThemeConfig()}>
+          <ConfigProvider
+            theme={globalState.theme == "dark" ? darkThemeConfig(DEFAULT_THEME) : antThemeConfig(DEFAULT_THEME)}
+          >
             <Head>
               <title>Torqbit | Learn to build software products</title>
 
@@ -379,6 +381,7 @@ const Layout2: FC<{ children?: React.ReactNode; className?: string }> = ({ child
               <Layout hasSider className="default-container">
                 <Sidebar
                   menu={user?.role == "AUTHOR" || user?.role == "ADMIN" ? usersMenu.concat(authorSiderMenu) : usersMenu}
+                  siteConfig={siteConfig}
                 />
                 <Layout className={`layout2-wrapper ${styles.layout2_wrapper} `}>
                   <Content className={`${styles.sider_content} ${styles.className}`}>

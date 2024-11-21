@@ -9,12 +9,16 @@ import { getToken } from "next-auth/jwt";
 import appConstant from "@/services/appConstant";
 import { authConstants, capitalizeFirstLetter, getCookieName } from "@/lib/utils";
 import Image from "next/image";
+
 import getLoginMethods from "@/lib/auth/loginMethods";
 import SvgIcons from "@/components/SvgIcons";
-import { useSiteConfig } from "@/components/ContextApi/SiteConfigContext";
+import { DEFAULT_THEME, PageSiteConfig } from "@/services/siteConstant";
+import { getSiteConfig } from "@/services/getSiteConfig";
 
-
-const LoginPage: NextPage<{ loginMethods: { available: string[]; configured: string[] } }> = ({ loginMethods }) => {
+const LoginPage: NextPage<{
+  loginMethods: { available: string[]; configured: string[] };
+  siteConfig: PageSiteConfig;
+}> = ({ loginMethods, siteConfig }) => {
   const router = useRouter();
   const [gitHubLoading, setGitHubLoading] = useState<boolean>(false);
   const [googleLoading, setGoogleLoading] = useState<boolean>(false);
@@ -23,9 +27,9 @@ const LoginPage: NextPage<{ loginMethods: { available: string[]; configured: str
   const [loginError, setLoginError] = React.useState("");
   const [loginForm] = Form.useForm();
   const { data: session, status: sessionStatus } = useSession();
-  const [messageApi, contextHolder] = message.useMessage();
-  const { brand } = useSiteConfig();
 
+  const [messageApi, contextHolder] = message.useMessage();
+  const { brand } = siteConfig;
 
   React.useEffect(() => {
     console.log(loginMethods);
@@ -85,38 +89,50 @@ const LoginPage: NextPage<{ loginMethods: { available: string[]; configured: str
       {contextHolder}
       <div className={styles.social_login_container}>
         <Image src={"/icon/torqbit.png"} height={60} width={60} alt={"logo"} />
-                <h3>Welcome back to {brand.name}</h3>
+
+        <h3>Welcome back to {brand?.name}</h3>
 
         {emailLogin && (
           <Form
             form={loginForm}
             onFinish={handleLogin}
-            layout='vertical'
-            requiredMark='optional'
-            autoComplete='off'
+            layout="vertical"
+            requiredMark="optional"
+            autoComplete="off"
             validateMessages={validateMessages}
-            validateTrigger='onSubmit'>
-            <Form.Item name='email' label='' rules={[{ required: true, message: "Email is required" }, { type: "email" }]}>
-              <Input type='email' placeholder='Enter your email address..' style={{ height: 40, background: "transparent" }} />
+            validateTrigger="onSubmit"
+          >
+            <Form.Item
+              name="email"
+              label=""
+              rules={[{ required: true, message: "Email is required" }, { type: "email" }]}
+            >
+              <Input
+                type="email"
+                placeholder="Enter your email address.."
+                style={{ height: 40, background: "transparent" }}
+              />
             </Form.Item>
-            <Form.Item name='password' label='' rules={[{ required: true, message: "Password is required" }]}>
-              <Input.Password placeholder='Enter your password' style={{ height: 40, background: "transparent" }} />
+            <Form.Item name="password" label="" rules={[{ required: true, message: "Password is required" }]}>
+              <Input.Password placeholder="Enter your password" style={{ height: 40, background: "transparent" }} />
             </Form.Item>
             <Button
               onClick={() => {
                 loginForm.submit();
               }}
-              type='primary'
-              className={styles.google_btn}>
+              type="primary"
+              className={styles.google_btn}
+            >
               Login with Email
             </Button>
 
             <Button
-              type='link'
+              type="link"
               icon={SvgIcons.arrowLeft}
-              iconPosition='start'
+              iconPosition="start"
               style={{ width: 250, marginTop: 10 }}
-              onClick={(_) => setLoginWithEmail(false)}>
+              onClick={(_) => setLoginWithEmail(false)}
+            >
               Back to Login
             </Button>
           </Form>
@@ -131,8 +147,9 @@ const LoginPage: NextPage<{ loginMethods: { available: string[]; configured: str
                     onClick={() => {
                       setLoginWithEmail(true);
                     }}
-                    type='primary'
-                    className={styles.google_btn}>
+                    type="primary"
+                    className={styles.google_btn}
+                  >
                     Login with Email
                   </Button>
                 </>
@@ -144,8 +161,11 @@ const LoginPage: NextPage<{ loginMethods: { available: string[]; configured: str
                     title={
                       loginMethods.available.includes(provider)
                         ? ``
-                        : `Login method disabled for ${capitalizeFirstLetter(provider)} due to missing environment variables`
-                    }>
+                        : `Login method disabled for ${capitalizeFirstLetter(
+                            provider
+                          )} due to missing environment variables`
+                    }
+                  >
                     <Button
                       style={{ width: 250, height: 40 }}
                       onClick={() => {
@@ -153,9 +173,10 @@ const LoginPage: NextPage<{ loginMethods: { available: string[]; configured: str
                           callbackUrl: router.query.redirect ? `/${router.query.redirect}` : "/dashboard",
                         });
                       }}
-                      type='default'
+                      type="default"
                       loading={loading && loading?.provider == provider}
-                      disabled={!loginMethods.available.includes(provider)}>
+                      disabled={!loginMethods.available.includes(provider)}
+                    >
                       Login with {capitalizeFirstLetter(provider)}
                     </Button>
                   </Tooltip>
@@ -164,10 +185,15 @@ const LoginPage: NextPage<{ loginMethods: { available: string[]; configured: str
             }
           })}
 
-
-
         {loginError && (
-          <Alert message='Login Failed!' description={loginError} type='error' showIcon closable className={styles.alertMessage} />
+          <Alert
+            message="Login Failed!"
+            description={loginError}
+            type="error"
+            showIcon
+            closable
+            className={styles.alertMessage}
+          />
         )}
       </div>
     </div>
@@ -177,6 +203,9 @@ const LoginPage: NextPage<{ loginMethods: { available: string[]; configured: str
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const { req } = ctx;
   let cookieName = getCookieName();
+
+  const { site } = getSiteConfig();
+  const siteConfig = site;
 
   const loginMethods = getLoginMethods();
 
@@ -189,7 +218,8 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
       },
     };
   }
-  return { props: { loginMethods } };
+
+  return { props: { loginMethods, siteConfig } };
 };
 
 export default LoginPage;

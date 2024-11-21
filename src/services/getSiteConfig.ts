@@ -1,9 +1,12 @@
 import { deepMerge } from "@/lib/utils";
-import { DEEP_OBJECT_KEYS, DEFAULT_THEME, PageSiteConfig } from "@/services/siteConstant";
-import { ReactNode, useRef } from "react";
-import config from "@/site.config";
+import { DEEP_OBJECT_KEYS, DEFAULT_THEME, PageSiteConfig } from "./siteConstant";
+import fs from "fs";
+import YAML from "yaml";
 
-export function useSiteConfig() {
+export const getSiteConfig = () => {
+  const file = fs.readFileSync("./siteConfig.yaml", "utf8");
+  const config = YAML.parse(file);
+
   let configData = {
     ...DEFAULT_THEME,
     ...(config &&
@@ -20,4 +23,4 @@ export function useSiteConfig() {
   };
 
   return configData;
-}
+};
