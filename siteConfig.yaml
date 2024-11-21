@@ -10,14 +10,14 @@ site:
       - title: Blog
         link: /blog
   brand:
-    name: "TORQBIT "
+    name: hkkkjn
     logo: /icon/torqbit.png
     title: "A platform to guide you "
     description: Master the art of product building and turn your ideas into
       successful, scalable products
     ogImage: /icon/torqbit.png
     favicon: /favicon.ico
-    brandColor: "#e12164"
+    brandColor: "#ff00aa"
     socialLinks:
       discord: https://discord.gg/NserMXcx
       github: https://github.com/torqbit

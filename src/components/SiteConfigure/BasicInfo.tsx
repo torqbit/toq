@@ -71,9 +71,9 @@ const BasicInfo: FC<{ title: string; description: string; siteConfig: PageSiteCo
           requiredMark={false}
           className={styles.form__container}
         >
-          <Flex align="center" gap={20}>
-            <Form.Item style={{ width: 250 }} name={"brandName"} label="Brand Name">
-              <Input placeholder="Brand name" />
+          <Flex align="center" gap={20} justify="space-between">
+            <Form.Item name={"brandName"} label="Brand Name">
+              <Input className={styles.name__input} placeholder="Brand name" />
             </Form.Item>
             <Form.Item name={"brandColor"} label="Brand Color">
               <ColorPicker
