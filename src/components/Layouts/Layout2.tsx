@@ -30,11 +30,11 @@ const Layout2: FC<{ children?: React.ReactNode; className?: string }> = ({ child
   const { data: user, status, update } = useSession();
 
   const isMobile = useMediaQuery({ query: "(max-width: 933px)" });
-  const siteConfig = DEFAULT_THEME;
   const { globalState, dispatch } = useAppContext();
   const [conversationList, setConversationList] = useState<IConversationData[]>();
   const [comment, setComment] = useState<string>("");
-  const { brand } = DEFAULT_THEME;
+  const siteConfig = globalState.siteConfig;
+  const { brand } = siteConfig;
 
   const [conversationLoading, setConversationLoading] = useState<{
     postLoading: boolean;

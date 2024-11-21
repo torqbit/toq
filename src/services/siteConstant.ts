@@ -6,9 +6,9 @@ const Features = lazy(() => import("@/Templates/Standard/components/Feature/Feat
 export type PageSiteConfig = ThemeSchema;
 
 export const DEFAULT_THEME = {
+  template: "standard",
   navBar: {
-    templates: "standard",
-    navigationLinks: [
+    links: [
       {
         title: "Courses",
         link: "/#courses",
@@ -32,12 +32,13 @@ export const DEFAULT_THEME = {
     ogImage: "/icon/torqbit.png",
     favicon: "/favicon.ico",
     brandColor: "#5b63d3",
+    discord: "https://discord.gg/NserMXcx",
+    github: "https://github.com/torqbit",
+    youtube: "https://www.youtube.com/@torqbit",
   },
 
   darkMode: false,
   heroSection: {
-    templates: "standard",
-
     title: "Become a Pro Product Builder",
     description:
       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores rerum voluptatum perferendis autem veritatis nostrum. Libero aliquam dignissimos sunt voluptatum!",
@@ -57,16 +58,8 @@ export const DEFAULT_THEME = {
       position: "bottom" as bannerAlignment,
     },
   },
-  footer: {
-    discordLink: "https://discord.gg/NserMXcx",
-    githubLink: "https://github.com/torqbit",
-    youtubeLink: "https://www.youtube.com/@torqbit",
-    tagLine: "Master Skills, Transform Futures",
-  },
   sections: {
     feature: {
-      templates: "standard",
-
       featureInfo: {
         featureList: [
           {

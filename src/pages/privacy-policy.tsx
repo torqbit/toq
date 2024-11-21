@@ -23,7 +23,7 @@ const TermAndConditonPage: FC<{ user: User; siteConfig: PageSiteConfig }> = ({ u
       title: "COLLECTION OF INFORMATION",
       label: "",
       description: [
-        `As a visitor, you can browse through our Website to find out more about ${appConstant.platformName}. You are not required to provide us with
+        `As a visitor, you can browse through our Website to find out more about ${siteConfig.brand?.name}. You are not required to provide us with
          any Personal Data if you are merely a visitor. When you visit the Site, we collect and store certain information in order to
           increase security, analyse developments and administer the Website with a view to help us in making customer experience better.
            We utilise this information to analyse traffic patterns on our Website so as to make it more beneficial for our visitors.
@@ -41,7 +41,7 @@ const TermAndConditonPage: FC<{ user: User; siteConfig: PageSiteConfig }> = ({ u
           <li>Information provided to us through interaction with customer service, surveys or promotions</li>
         </ul>,
         `We collect data about your interactions with us and also the information regarding the device (Laptop, computer, mobile, etc) used
-         to access our service. This information contains your activity on our Website, and search queries; your interactions details with customer service, and if you call us , your contact number and recordings of your calls; device IDs or other unique identifiers, device and software characteristics, connection information, statistics regarding page views, referral URLs, IP address, browser and web server log information, and information collected via the use of cookies. With the aid of back end applications, we strive to provide better services and quality interaction with teachers, depending on your interest. We may also seek this information at other instances, such as when you enter contests or other marketing promotions sponsored by us and/or our partners. If you use a functionality that requires fee payment, options will appear. In case of payments via credit or debit card, we will redirect you to registered payment gateway razorpay or paytm. You may store and save your payment details like card numbers with the gateway. We cannot access this data. All payment transactions are processed through secure payment gateway providers. When you access any of our paid products, we store information about the web pages on our servers. This helps us to track items that have been completed by you, and those that you need to see. The user’s full name and his/her display picture can be publicly displayed on the Website. ${appConstant.platformName} can seek more information regarding billing information, address, certificates, etc depending on what profile and what services they are seeking. ${appConstant.platformName} can use technologies like cookies,
+         to access our service. This information contains your activity on our Website, and search queries; your interactions details with customer service, and if you call us , your contact number and recordings of your calls; device IDs or other unique identifiers, device and software characteristics, connection information, statistics regarding page views, referral URLs, IP address, browser and web server log information, and information collected via the use of cookies. With the aid of back end applications, we strive to provide better services and quality interaction with teachers, depending on your interest. We may also seek this information at other instances, such as when you enter contests or other marketing promotions sponsored by us and/or our partners. If you use a functionality that requires fee payment, options will appear. In case of payments via credit or debit card, we will redirect you to registered payment gateway razorpay or paytm. You may store and save your payment details like card numbers with the gateway. We cannot access this data. All payment transactions are processed through secure payment gateway providers. When you access any of our paid products, we store information about the web pages on our servers. This helps us to track items that have been completed by you, and those that you need to see. The user’s full name and his/her display picture can be publicly displayed on the Website. ${siteConfig.brand?.name} can seek more information regarding billing information, address, certificates, etc depending on what profile and what services they are seeking. ${siteConfig.brand?.name} can use technologies like cookies,
          clear gifs, log files, etc to help understand how you interact with our site and services, so as to render a better experience.`,
       ],
     },
@@ -58,7 +58,7 @@ const TermAndConditonPage: FC<{ user: User; siteConfig: PageSiteConfig }> = ({ u
       label: "",
 
       description: [
-        `${appConstant.platformName} is a community, wherein we offer a number of features that allow members to connect and communicate in public or semi-public spaces, such as Forums and Teams. Please use your judgment before posting in these community spaces or sharing your personal information with others on ${appConstant.platformName}. You should be aware that any personal information you submit there can be read, collected, or used by others, or could be used to send you unsolicited messages.`,
+        `${siteConfig.brand?.name} is a community, wherein we offer a number of features that allow members to connect and communicate in public or semi-public spaces, such as Forums and Teams. Please use your judgment before posting in these community spaces or sharing your personal information with others on ${siteConfig.brand?.name}. You should be aware that any personal information you submit there can be read, collected, or used by others, or could be used to send you unsolicited messages.`,
       ],
     },
     {
@@ -82,7 +82,7 @@ const TermAndConditonPage: FC<{ user: User; siteConfig: PageSiteConfig }> = ({ u
       label: "",
 
       description: [
-        `We shall make an effort to take all precautions to shield the personal information both online and offline. We will try to protect your information using security measures to reduce the risks of loss and misuse of data. We have standard SSL certification which basically helps us create a secure connection between our server and user to render any information or action. Some of the protective measures we use are firewalls and data encryption, physical access controls to our data centres and information access authorization controls. Only user passwords are encrypted in 64-bit encryption and stored because generally users use the same password on multiple sites, to prevent any kind of theft, piracy or unauthorised access. If you think that your ${appConstant.platformName} account has been compromised`,
+        `We shall make an effort to take all precautions to shield the personal information both online and offline. We will try to protect your information using security measures to reduce the risks of loss and misuse of data. We have standard SSL certification which basically helps us create a secure connection between our server and user to render any information or action. Some of the protective measures we use are firewalls and data encryption, physical access controls to our data centres and information access authorization controls. Only user passwords are encrypted in 64-bit encryption and stored because generally users use the same password on multiple sites, to prevent any kind of theft, piracy or unauthorised access. If you think that your ${siteConfig.brand?.name} account has been compromised`,
         <div>
           Email:<Link href={`mailto:${appConstant.supportEmail}`}> {appConstant.supportEmail}</Link>
         </div>,
@@ -93,7 +93,7 @@ const TermAndConditonPage: FC<{ user: User; siteConfig: PageSiteConfig }> = ({ u
       label: "",
 
       description: [
-        `${appConstant.platformName} reserves the right to change this Privacy Policy as we may deem necessary from time to time or as may be required by law. Any changes will be immediately posted on the Web Site and you are deemed to have accepted the terms of the Policy on your first use of the Web Site following the alterations.`,
+        `${siteConfig.brand?.name} reserves the right to change this Privacy Policy as we may deem necessary from time to time or as may be required by law. Any changes will be immediately posted on the Web Site and you are deemed to have accepted the terms of the Policy on your first use of the Web Site following the alterations.`,
       ],
     },
   ];
@@ -114,7 +114,7 @@ const TermAndConditonPage: FC<{ user: User; siteConfig: PageSiteConfig }> = ({ u
         isMobile={isMobile}
         titleDescription={
           <p>
-            This Privacy Policy discloses the privacy practices for {appConstant.platformName} (“We/we” or “Us/us”) with
+            This Privacy Policy discloses the privacy practices for {siteConfig.brand?.name} (“We/we” or “Us/us”) with
             regard to Your (“You/you” or “Your/your”) use of the online platform {process.env.NEXT_PUBLIC_NEXTAUTH_URL}
             (“Website”). This Privacy Policy and Terms of Use describes our current practices regarding, including your
             choices in relation to how we collect, compile, store, use, share and secure your personal information

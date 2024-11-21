@@ -20,14 +20,14 @@ import * as React from "react";
 import PurifyContent from "../PurifyContent/PurifyContent";
 import { convertToDayMonthTime } from "@/lib/utils";
 
-import { getSiteConfig } from "@/services/getSiteConfig";
-import { DEFAULT_THEME } from "@/services/siteConstant";
+import { useAppContext } from "../ContextApi/AppContext";
 interface IProps {
   configData: IEventAccessMailConfig;
 }
 
 export const EventAccessEmail = ({ configData }: IProps) => {
-  const siteConfig = DEFAULT_THEME;
+  const { globalState } = useAppContext();
+  const siteConfig = globalState.siteConfig;
 
   return (
     <Tailwind>

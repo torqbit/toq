@@ -4,9 +4,9 @@ import { IFeatureInfo } from "./landing/feature";
 export type bannerAlignment = "left" | "right" | "bottom" | "background";
 
 export interface ThemeSchema {
+  template?: string;
   navBar?: {
-    templateId?: string;
-    navigationLinks?: { title: string; link: string }[];
+    links?: { title: string; link: string }[];
   };
   brand?: {
     logo?: ReactNode | string;
@@ -16,11 +16,16 @@ export interface ThemeSchema {
     ogImage?: string;
     favicon?: string;
     brandColor?: string;
+    socialLinks?: {
+      github?: string;
+      youtube?: string;
+      instagram?: string;
+      twitter?: string;
+      discord?: string;
+    };
   };
   darkMode?: boolean;
   heroSection?: {
-    templateId?: string;
-
     title?: string;
     description?: string;
     actionButtons?: {
@@ -40,18 +45,8 @@ export interface ThemeSchema {
     };
   };
 
-  footer?: {
-    githubLink?: string;
-    youtubeLink?: string;
-    instagramLink?: string;
-    twitterLink?: string;
-    discordLink?: string;
-    tagLine?: String;
-  };
   sections: {
     feature?: {
-      templateId?: string;
-
       featureInfo?: IFeatureInfo;
     };
   };

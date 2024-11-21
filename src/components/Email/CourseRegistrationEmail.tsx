@@ -1,6 +1,5 @@
 import { IEnrolmentEmailConfig } from "@/lib/emailConfig";
 
-import { DEFAULT_THEME } from "@/services/siteConstant";
 import {
   Body,
   Button,
@@ -19,13 +18,15 @@ import {
 } from "@react-email/components";
 import { Flex } from "antd";
 import * as React from "react";
+import { useAppContext } from "../ContextApi/AppContext";
 
 interface IProps {
   configData: IEnrolmentEmailConfig;
 }
 
 export const CourseEnrolmentEmail = ({ configData }: IProps) => {
-  const siteConfig = DEFAULT_THEME;
+  const { globalState } = useAppContext();
+  const siteConfig = globalState.siteConfig;
 
   return (
     <Tailwind>

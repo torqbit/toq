@@ -18,13 +18,14 @@ import {
 
 import * as React from "react";
 
-import { DEFAULT_THEME } from "@/services/siteConstant";
+import { useAppContext } from "../ContextApi/AppContext";
 interface IProps {
   configData: IWelcomeEmailConfig;
 }
 
 const WelcomeEmailPage = ({ configData }: IProps) => {
-  const siteConfig = DEFAULT_THEME;
+  const { globalState } = useAppContext();
+  const siteConfig = globalState.siteConfig;
 
   return (
     <Tailwind>

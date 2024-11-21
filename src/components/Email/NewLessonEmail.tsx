@@ -1,6 +1,4 @@
 import { INewLessonConfig } from "@/lib/emailConfig";
-import appConstant from "@/services/appConstant";
-import { DEFAULT_THEME } from "@/services/siteConstant";
 
 import {
   Body,
@@ -19,13 +17,15 @@ import {
 } from "@react-email/components";
 
 import * as React from "react";
+import { useAppContext } from "../ContextApi/AppContext";
 
 interface IProps {
   configData: INewLessonConfig;
 }
 
 export const NewLessonEmail = ({ configData }: IProps) => {
-  const siteConfig = DEFAULT_THEME;
+  const { globalState } = useAppContext();
+  const siteConfig = globalState.siteConfig;
 
   return (
     <Tailwind>

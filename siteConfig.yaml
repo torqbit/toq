@@ -1,7 +1,7 @@
 site:
+  template: "standard"
   navBar:
-    templateId: "standard"
-    navigationLinks:
+    links:
       - title: "Courses"
         link: "/#courses"
       - title: "Events"
@@ -17,11 +17,14 @@ site:
     ogImage: "/icon/torqbit.png"
     favicon: "/favicon.ico"
     brandColor: "#6B74EE"
+    socialLinks:
+      discord: "https://discord.gg/NserMXcx"
+      github: "https://github.com/torqbit"
+      youtube: "https://www.youtube.com/@torqbit"
 
   darkMode: true
 
   heroSection:
-    templateId: "standard"
     title: "The Awesomest teaching platform"
     description: >
       Torqbit, an open-source platform, serves as a learning management software
@@ -38,27 +41,18 @@ site:
       darkModePath: "/img/landing/online-learning.png"
       position: "right"
 
-  footer:
-    discordLink: "https://discord.gg/NserMXcx"
-    githubLink: "https://github.com/torqbit"
-    youtubeLink: "https://www.youtube.com/@torqbit"
-    tagLine: "Master Skills, Transform Futures"
-
   sections:
     feature:
-      templateId: "standard"
       featureInfo:
         featureList:
           - img: "/img/landing/auth.png"
             title: "Authentication"
             description: "Configure authentication with Google, Github or any other auth provider supported by NextAuth"
             link: "/docs/auth"
-            cardClass: "steps__card__small"
           - img: "/img/landing/auth.png"
             title: "Authentication"
             description: "Configure authentication with Google, Github or any other auth provider supported by NextAuth"
             link: "/docs/auth"
-            cardClass: "steps__card__small"
           - img: "/img/landing/auth.png"
             title: "Email"
             description: "Configure authentication"

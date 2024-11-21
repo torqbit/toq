@@ -1,7 +1,5 @@
 import { IAssignmentSubmissionConfig } from "@/lib/emailConfig";
 
-import { DEFAULT_THEME } from "@/services/siteConstant";
-
 import {
   Body,
   Container,
@@ -19,13 +17,15 @@ import {
 } from "@react-email/components";
 
 import * as React from "react";
+import { useAppContext } from "../ContextApi/AppContext";
 
 interface IProps {
   configData: IAssignmentSubmissionConfig;
 }
 
 export const AssignmentSubmissionEmail = ({ configData }: IProps) => {
-  const siteConfig = DEFAULT_THEME;
+  const { globalState } = useAppContext();
+  const siteConfig = globalState.siteConfig;
 
   return (
     <Tailwind>

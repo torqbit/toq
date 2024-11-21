@@ -52,7 +52,10 @@ const MarketingLayout: FC<{
       localStorage.setItem("theme", "light");
     }
     setGlobalTheme(localStorage.getItem("theme") as Theme);
-
+    dispatch({
+      type: "SET_SITE_CONFIG",
+      payload: siteConfig,
+    });
     dispatch({
       type: "SET_LOADER",
       payload: false,
@@ -96,7 +99,7 @@ const MarketingLayout: FC<{
             <NavBarComponent
               user={user}
               isMobile={isMobile}
-              items={siteConfig.navBar?.navigationLinks ?? []}
+              items={siteConfig.navBar?.links ?? []}
               showThemeSwitch={siteConfig.darkMode ?? DEFAULT_THEME.darkMode}
               activeTheme={globalState.theme ?? "light"}
               brand={brandInfo}
