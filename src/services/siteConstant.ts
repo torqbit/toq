@@ -7,6 +7,7 @@ export type PageSiteConfig = ThemeSchema;
 
 export const DEFAULT_THEME = {
   template: "standard",
+  updated: false,
   navBar: {
     links: [
       {
@@ -25,7 +26,7 @@ export const DEFAULT_THEME = {
   },
 
   brand: {
-    name: "Torqbit",
+    name: "TORQBIT",
     logo: "/icon/torqbit.png",
     title: "Become a Pro Product Builder",
     description: "Master the art of product building and turn your ideas into successful, scalable products",

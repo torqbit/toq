@@ -5,6 +5,7 @@ export type bannerAlignment = "left" | "right" | "bottom" | "background";
 
 export interface ThemeSchema {
   template?: string;
+  updated?: boolean;
   navBar?: {
     links?: { title: string; link: string }[];
   };
