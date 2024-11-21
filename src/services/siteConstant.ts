@@ -37,7 +37,7 @@ export const DEFAULT_THEME = {
     youtube: "https://www.youtube.com/@torqbit",
   },
 
-  darkMode: false,
+  darkMode: true,
   heroSection: {
     title: "Become a Pro Product Builder",
     description:
