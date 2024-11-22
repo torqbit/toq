@@ -1,25 +1,28 @@
-import { Alert, Button, Form, Input, message, Spin, Tooltip } from "antd";
-import React, { useState } from "react";
+import { Alert, Button, ConfigProvider, Form, Input, message, Tooltip } from "antd";
+import React, { useEffect, useState } from "react";
 import styles from "@/styles/Login.module.scss";
 import { signIn, useSession } from "next-auth/react";
 import { NextPage, GetServerSidePropsContext } from "next";
 import { useRouter } from "next/router";
 import SpinLoader from "@/components/SpinLoader/SpinLoader";
 import { getToken } from "next-auth/jwt";
-import appConstant from "@/services/appConstant";
 import { authConstants, capitalizeFirstLetter, getCookieName } from "@/lib/utils";
 import Image from "next/image";
 
 import getLoginMethods from "@/lib/auth/loginMethods";
 import SvgIcons from "@/components/SvgIcons";
-import { DEFAULT_THEME, PageSiteConfig } from "@/services/siteConstant";
+import { PageSiteConfig } from "@/services/siteConstant";
 import { getSiteConfig } from "@/services/getSiteConfig";
 import prisma from "@/lib/prisma";
+import { useAppContext } from "@/components/ContextApi/AppContext";
+import darkThemeConfig from "@/services/darkThemeConfig";
+import antThemeConfig from "@/services/antThemeConfig";
 
 const LoginPage: NextPage<{
   loginMethods: { available: string[]; configured: string[] };
   siteConfig: PageSiteConfig;
 }> = ({ loginMethods, siteConfig }) => {
+  const { globalState } = useAppContext();
   const router = useRouter();
   const [gitHubLoading, setGitHubLoading] = useState<boolean>(false);
   const [googleLoading, setGoogleLoading] = useState<boolean>(false);
@@ -31,6 +34,11 @@ const LoginPage: NextPage<{
 
   const [messageApi, contextHolder] = message.useMessage();
   const { brand } = siteConfig;
+
+  useEffect(() => {
+    const root = document.documentElement;
+    root.style.setProperty("--btn-primary", `${brand?.brandColor}`);
+  }, []);
 
   React.useEffect(() => {
     console.log(loginMethods);
@@ -86,118 +94,120 @@ const LoginPage: NextPage<{
   };
 
   return (
-    <div className={styles.login_page_wrapper}>
-      {contextHolder}
-      <div className={styles.social_login_container}>
-        <Image src={"/icon/torqbit.png"} height={60} width={60} alt={"logo"} />
+    <ConfigProvider theme={globalState.theme == "dark" ? darkThemeConfig(siteConfig) : antThemeConfig(siteConfig)}>
+      <div className={styles.login_page_wrapper}>
+        {contextHolder}
+        <div className={styles.social_login_container}>
+          <Image src={"/icon/torqbit.png"} height={60} width={60} alt={"logo"} />
 
-        <h3>Welcome back to {brand?.name}</h3>
+          <h3>Welcome back to {brand?.name}</h3>
 
-        {emailLogin && (
-          <Form
-            form={loginForm}
-            onFinish={handleLogin}
-            layout="vertical"
-            requiredMark="optional"
-            autoComplete="off"
-            validateMessages={validateMessages}
-            validateTrigger="onSubmit"
-          >
-            <Form.Item
-              name="email"
-              label=""
-              rules={[{ required: true, message: "Email is required" }, { type: "email" }]}
+          {emailLogin && (
+            <Form
+              form={loginForm}
+              onFinish={handleLogin}
+              layout="vertical"
+              requiredMark="optional"
+              autoComplete="off"
+              validateMessages={validateMessages}
+              validateTrigger="onSubmit"
             >
-              <Input
-                type="email"
-                placeholder="Enter your email address.."
-                style={{ height: 40, background: "transparent" }}
-              />
-            </Form.Item>
-            <Form.Item name="password" label="" rules={[{ required: true, message: "Password is required" }]}>
-              <Input.Password placeholder="Enter your password" style={{ height: 40, background: "transparent" }} />
-            </Form.Item>
-            <Button
-              onClick={() => {
-                loginForm.submit();
-              }}
-              type="primary"
-              className={styles.google_btn}
-            >
-              Login with Email
-            </Button>
+              <Form.Item
+                name="email"
+                label=""
+                rules={[{ required: true, message: "Email is required" }, { type: "email" }]}
+              >
+                <Input
+                  type="email"
+                  placeholder="Enter your email address.."
+                  style={{ height: 40, background: "transparent" }}
+                />
+              </Form.Item>
+              <Form.Item name="password" label="" rules={[{ required: true, message: "Password is required" }]}>
+                <Input.Password placeholder="Enter your password" style={{ height: 40, background: "transparent" }} />
+              </Form.Item>
+              <Button
+                onClick={() => {
+                  loginForm.submit();
+                }}
+                type="primary"
+                className={styles.google_btn}
+              >
+                Login with Email
+              </Button>
 
-            <Button
-              type="link"
-              icon={SvgIcons.arrowLeft}
-              iconPosition="start"
-              style={{ width: 250, marginTop: 10 }}
-              onClick={(_) => setLoginWithEmail(false)}
-            >
-              Back to Login
-            </Button>
-          </Form>
-        )}
+              <Button
+                type="link"
+                icon={SvgIcons.arrowLeft}
+                iconPosition="start"
+                style={{ width: 250, marginTop: 10 }}
+                onClick={(_) => setLoginWithEmail(false)}
+              >
+                Back to Login
+              </Button>
+            </Form>
+          )}
 
-        {!emailLogin &&
-          loginMethods.configured.map((provider) => {
-            if (provider === authConstants.CREDENTIALS_AUTH_PROVIDER) {
-              return (
-                <>
-                  <Button
-                    onClick={() => {
-                      setLoginWithEmail(true);
-                    }}
-                    type="primary"
-                    className={styles.google_btn}
-                  >
-                    Login with Email
-                  </Button>
-                </>
-              );
-            } else {
-              return (
-                <>
-                  <Tooltip
-                    title={
-                      loginMethods.available.includes(provider)
-                        ? ``
-                        : `Login method disabled for ${capitalizeFirstLetter(
-                            provider
-                          )} due to missing environment variables`
-                    }
-                  >
+          {!emailLogin &&
+            loginMethods.configured.map((provider) => {
+              if (provider === authConstants.CREDENTIALS_AUTH_PROVIDER) {
+                return (
+                  <>
                     <Button
-                      style={{ width: 250, height: 40 }}
                       onClick={() => {
-                        signIn(provider, {
-                          callbackUrl: router.query.redirect ? `/${router.query.redirect}` : "/dashboard",
-                        });
+                        setLoginWithEmail(true);
                       }}
-                      type="default"
-                      loading={loading && loading?.provider == provider}
-                      disabled={!loginMethods.available.includes(provider)}
+                      type="primary"
+                      className={styles.google_btn}
                     >
-                      Login with {capitalizeFirstLetter(provider)}
+                      Login with Email
                     </Button>
-                  </Tooltip>
-                </>
-              );
-            }
-          })}
+                  </>
+                );
+              } else {
+                return (
+                  <>
+                    <Tooltip
+                      title={
+                        loginMethods.available.includes(provider)
+                          ? ``
+                          : `Login method disabled for ${capitalizeFirstLetter(
+                              provider
+                            )} due to missing environment variables`
+                      }
+                    >
+                      <Button
+                        style={{ width: 250, height: 40 }}
+                        onClick={() => {
+                          signIn(provider, {
+                            callbackUrl: router.query.redirect ? `/${router.query.redirect}` : "/dashboard",
+                          });
+                        }}
+                        type="default"
+                        loading={loading && loading?.provider == provider}
+                        disabled={!loginMethods.available.includes(provider)}
+                      >
+                        Login with {capitalizeFirstLetter(provider)}
+                      </Button>
+                    </Tooltip>
+                  </>
+                );
+              }
+            })}
 
-        {loginError && (
-          <Alert
-            message="Login Failed!"
-            description={loginError}
-            type="error"
-            showIcon
-            closable
-            className={styles.alertMessage}
-          />
-        )}
+          {loginError && (
+            <Alert
+              message="Login Failed!"
+              description={loginError}
+              type="error"
+              showIcon
+              closable
+              className={styles.alertMessage}
+            />
+          )}
+        </div>
       </div>
-    </div>
+    </ConfigProvider>
   );
 };
 

@@ -1,6 +1,6 @@
 site:
   template: standard
-  updated: false
+  updated: true
   navBar:
     links:
       - title: Courses
@@ -19,8 +19,8 @@ site:
       discord: https://discord.gg/NserMXcx
       github: https://github.com/torqbit
       youtube: https://www.youtube.com/@torqbit
-    name: "ACADEMY NAME"
-    brandColor: "#ec1f59"
+    name: ACADEMY NAME
+    brandColor: "#973268"
     title: "A platform to guide you "
   darkMode: true
   heroSection:
