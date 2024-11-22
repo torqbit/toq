@@ -14,6 +14,7 @@ import getLoginMethods from "@/lib/auth/loginMethods";
 import SvgIcons from "@/components/SvgIcons";
 import { DEFAULT_THEME, PageSiteConfig } from "@/services/siteConstant";
 import { getSiteConfig } from "@/services/getSiteConfig";
+import prisma from "@/lib/prisma";
 
 const LoginPage: NextPage<{
   loginMethods: { available: string[]; configured: string[] };
@@ -208,6 +209,16 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const siteConfig = site;
 
   const loginMethods = getLoginMethods();
+
+  const totalUser = await prisma.account.count();
+  if (totalUser === 0) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/signup",
+      },
+    };
+  }
 
   const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
   if (user) {
