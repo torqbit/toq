@@ -1057,7 +1057,3 @@ a {
 .ant-select .ant-select-arrow {
   color: var(--font-secondary);
 }
-
-.basic_info_color_picker .ant-color-picker-clear::after {
-  background-color: var(--bg-primary) !important;
-}

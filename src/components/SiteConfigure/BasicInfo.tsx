@@ -5,7 +5,7 @@ import { Button, ColorPicker, Flex, Form, Input, message } from "antd";
 import Link from "next/link";
 import Image from "next/image";
 import SvgIcons from "../SvgIcons";
-import { PageSiteConfig } from "@/services/siteConstant";
+import { DEFAULT_THEME, PageSiteConfig } from "@/services/siteConstant";
 import { postFetch } from "@/services/request";
 import { useRouter } from "next/router";
 
@@ -18,7 +18,7 @@ const BasicInfo: FC<{ title: string; description: string; siteConfig: PageSiteCo
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(false);
   const [initialValue, setInitialValue] = useState<{ brandName?: string; brandColor?: string; brandTitle?: string }>({
-    brandColor: siteConfig.brand?.brandColor,
+    brandColor: siteConfig.brand?.brandColor ? siteConfig?.brand?.brandColor : DEFAULT_THEME.brand.brandColor,
     brandName: siteConfig.brand?.name,
     brandTitle: siteConfig.brand?.title,
   });
@@ -81,7 +81,9 @@ const BasicInfo: FC<{ title: string; description: string; siteConfig: PageSiteCo
             >
               <ColorPicker
                 className={`${styles.form__color__picker} basic_info_color_picker`}
-                defaultValue={siteConfig?.brand?.brandColor}
+                defaultValue={
+                  siteConfig?.brand?.brandColor ? siteConfig?.brand?.brandColor : DEFAULT_THEME.brand.brandColor
+                }
                 disabledAlpha
               />
             </Form.Item>
