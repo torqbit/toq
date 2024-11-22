@@ -1,10 +1,10 @@
 import { FC, useState } from "react";
-import styles from "@/components/SiteConfigure/SiteConfigure.module.scss";
+import styles from "@/components/SiteConfigure/BasicInfo/SiteConfigure.module.scss";
 
 import { Button, ColorPicker, Flex, Form, Input, message } from "antd";
 import Link from "next/link";
 import Image from "next/image";
-import SvgIcons from "../SvgIcons";
+import SvgIcons from "../../SvgIcons";
 import { DEFAULT_THEME, PageSiteConfig } from "@/services/siteConstant";
 import { postFetch } from "@/services/request";
 import { useRouter } from "next/router";
