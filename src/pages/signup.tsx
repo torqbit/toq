@@ -13,6 +13,8 @@ import getLoginMethods from "@/lib/auth/loginMethods";
 import Link from "next/link";
 import SvgIcons from "@/components/SvgIcons";
 import AuthService from "@/services/auth/AuthService";
+import { getSiteConfig } from "@/services/getSiteConfig";
+import { PageSiteConfig } from "@/services/siteConstant";
 
 const LoginPage: NextPage<{ loginMethods: { available: string[]; configured: string[] } }> = ({ loginMethods }) => {
   const router = useRouter();
@@ -85,41 +87,53 @@ const LoginPage: NextPage<{ loginMethods: { available: string[]; configured: str
           <Form
             form={signupForm}
             onFinish={handleSignup}
-            layout='vertical'
-            requiredMark='optional'
-            autoComplete='off'
+            layout="vertical"
+            requiredMark="optional"
+            autoComplete="off"
             validateMessages={validateMessages}
-            validateTrigger='onSubmit'>
-            <Form.Item name='name' label='' rules={[{ required: true, message: "Name is required" }]}>
-              <Input placeholder='Enter your name' style={{ height: 40, background: "transparent" }} />
-            </Form.Item>
-            <Form.Item name='email' label='' rules={[{ required: true, message: "Email is required" }, { type: "email" }]}>
-              <Input type='email' placeholder='Enter your email address' style={{ height: 40, background: "transparent" }} />
+            validateTrigger="onSubmit"
+          >
+            <Form.Item name="name" label="" rules={[{ required: true, message: "Name is required" }]}>
+              <Input placeholder="Enter your name" style={{ height: 40, background: "transparent" }} />
             </Form.Item>
             <Form.Item
-              name='password'
-              label=''
+              name="email"
+              label=""
+              rules={[{ required: true, message: "Email is required" }, { type: "email" }]}
+            >
+              <Input
+                type="email"
+                placeholder="Enter your email address"
+                style={{ height: 40, background: "transparent" }}
+              />
+            </Form.Item>
+            <Form.Item
+              name="password"
+              label=""
               rules={[
                 { required: true, message: "Password is required" },
                 { min: 6, message: "Password must be atleast 6 characters" },
-              ]}>
-              <Input.Password placeholder='Enter your password' style={{ height: 40, background: "transparent" }} />
+              ]}
+            >
+              <Input.Password placeholder="Enter your password" style={{ height: 40, background: "transparent" }} />
             </Form.Item>
             <Button
               onClick={() => {
                 signupForm.submit();
               }}
-              type='primary'
-              className={styles.google_btn}>
+              type="primary"
+              className={styles.google_btn}
+            >
               Signup with Email
             </Button>
 
             <Button
-              type='link'
+              type="link"
               icon={SvgIcons.arrowLeft}
-              iconPosition='start'
+              iconPosition="start"
               style={{ width: 250, marginTop: 10 }}
-              onClick={(_) => setSignupWithEmail(false)}>
+              onClick={(_) => setSignupWithEmail(false)}
+            >
               Back to Signup
             </Button>
           </Form>
@@ -134,8 +148,9 @@ const LoginPage: NextPage<{ loginMethods: { available: string[]; configured: str
                     onClick={() => {
                       setSignupWithEmail(true);
                     }}
-                    type='primary'
-                    className={styles.google_btn}>
+                    type="primary"
+                    className={styles.google_btn}
+                  >
                     Signup with Email
                   </Button>
                 </>
@@ -147,8 +162,11 @@ const LoginPage: NextPage<{ loginMethods: { available: string[]; configured: str
                     title={
                       loginMethods.available.includes(provider)
                         ? ``
-                        : `Signup method disabled for ${capitalizeFirstLetter(provider)} due to missing environment variables`
-                    }>
+                        : `Signup method disabled for ${capitalizeFirstLetter(
+                            provider
+                          )} due to missing environment variables`
+                    }
+                  >
                     <Button
                       style={{ width: 250, height: 40 }}
                       onClick={() => {
@@ -156,8 +174,9 @@ const LoginPage: NextPage<{ loginMethods: { available: string[]; configured: str
                           callbackUrl: router.query.redirect ? `/${router.query.redirect}` : "/dashboard",
                         });
                       }}
-                      type='default'
-                      disabled={!loginMethods.available.includes(provider)}>
+                      type="default"
+                      disabled={!loginMethods.available.includes(provider)}
+                    >
                       Continue with {capitalizeFirstLetter(provider)}
                     </Button>
                   </Tooltip>
@@ -167,7 +186,14 @@ const LoginPage: NextPage<{ loginMethods: { available: string[]; configured: str
           })}
 
         {loginError && (
-          <Alert message='Login Failed!' description={loginError} type='error' showIcon closable className={styles.alertMessage} />
+          <Alert
+            message="Login Failed!"
+            description={loginError}
+            type="error"
+            showIcon
+            closable
+            className={styles.alertMessage}
+          />
         )}
       </div>
     </div>
@@ -179,6 +205,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   let cookieName = getCookieName();
 
   const loginMethods = getLoginMethods();
+  const { site } = getSiteConfig();
 
   const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
   if (user) {
@@ -186,6 +213,13 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
       redirect: {
         permanent: false,
         destination: "/dashboard",
+      },
+    };
+  } else if (!user && !site.updated) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/onboard",
       },
     };
   }

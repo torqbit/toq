@@ -1,6 +1,6 @@
 site:
   template: standard
-  updated: true
+  updated: false
   navBar:
     links:
       - title: Courses
@@ -10,18 +10,18 @@ site:
       - title: Blog
         link: /blog
   brand:
-    name: hkkkjn
     logo: /icon/torqbit.png
-    title: "A platform to guide you "
     description: Master the art of product building and turn your ideas into
       successful, scalable products
     ogImage: /icon/torqbit.png
     favicon: /favicon.ico
-    brandColor: "#ff00aa"
     socialLinks:
       discord: https://discord.gg/NserMXcx
       github: https://github.com/torqbit
       youtube: https://www.youtube.com/@torqbit
+    name: "ACADEMY NAME"
+    brandColor: "#ec1f59"
+    title: "A platform to guide you "
   darkMode: true
   heroSection:
     title: The Awesomest teaching platform
