@@ -71,17 +71,17 @@ const BasicInfo: FC<{ title: string; description: string; siteConfig: PageSiteCo
             <Form.Item
               name={"brandName"}
               label="Brand Name"
-              rules={[{ required: true, message: " brand name is required" }]}
+              rules={[{ required: true, message: "Brand name is required" }]}
             >
               <Input className={styles.name__input} placeholder="Brand name " />
             </Form.Item>
             <Form.Item
               name={"brandColor"}
               label="Brand Color"
-              rules={[{ required: true, message: " add brand color" }]}
+              rules={[{ required: true, message: "brand color is required" }]}
             >
               <ColorPicker
-                className={`${styles.form__color__picker} basic_info_color_picker`}
+                className={styles.form__color__picker}
                 defaultValue={
                   siteConfig?.brand?.brandColor ? siteConfig?.brand?.brandColor : DEFAULT_THEME.brand.brandColor
                 }
@@ -92,7 +92,7 @@ const BasicInfo: FC<{ title: string; description: string; siteConfig: PageSiteCo
           <Form.Item
             name={"brandTitle"}
             label="Brand Title"
-            rules={[{ required: true, message: "  brand title is required" }]}
+            rules={[{ required: true, message: "Brand title is required" }]}
           >
             <Input placeholder="Brand title " />
           </Form.Item>
