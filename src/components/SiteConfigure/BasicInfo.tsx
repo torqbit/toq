@@ -17,11 +17,6 @@ const BasicInfo: FC<{ title: string; description: string; siteConfig: PageSiteCo
   const [form] = Form.useForm();
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(false);
-  const [initialValue, setInitialValue] = useState<{ brandName?: string; brandColor?: string; brandTitle?: string }>({
-    brandColor: siteConfig.brand?.brandColor ? siteConfig?.brand?.brandColor : DEFAULT_THEME.brand.brandColor,
-    brandName: siteConfig.brand?.name,
-    brandTitle: siteConfig.brand?.title,
-  });
 
   const [messageApi, contexHolder] = message.useMessage();
 
@@ -42,7 +37,7 @@ const BasicInfo: FC<{ title: string; description: string; siteConfig: PageSiteCo
 
       if (result.success) {
         messageApi.success(result.message);
-        setInitialValue(result.basicInfo);
+
         router.push("/signup");
       } else {
         messageApi.error(result.error);
@@ -63,7 +58,9 @@ const BasicInfo: FC<{ title: string; description: string; siteConfig: PageSiteCo
         <h2>{title}</h2>
         <p>{description}</p>
         <Form
-          initialValues={initialValue}
+          initialValues={{
+            brandColor: DEFAULT_THEME.brand.brandColor,
+          }}
           form={form}
           layout="vertical"
           onFinish={onFinish}
@@ -71,16 +68,20 @@ const BasicInfo: FC<{ title: string; description: string; siteConfig: PageSiteCo
           className={styles.form__container}
         >
           <Flex align="center" gap={20} justify="space-between">
-            <Form.Item name={"brandName"} label="Brand Name" rules={[{ required: true, message: " add brand name" }]}>
-              <Input className={styles.name__input} placeholder="Brand name" />
+            <Form.Item
+              name={"brandName"}
+              label="Brand Name"
+              rules={[{ required: true, message: "Brand name is required" }]}
+            >
+              <Input className={styles.name__input} placeholder="Brand name " />
             </Form.Item>
             <Form.Item
               name={"brandColor"}
               label="Brand Color"
-              rules={[{ required: true, message: " add brand color" }]}
+              rules={[{ required: true, message: "brand color is required" }]}
             >
               <ColorPicker
-                className={`${styles.form__color__picker} basic_info_color_picker`}
+                className={styles.form__color__picker}
                 defaultValue={
                   siteConfig?.brand?.brandColor ? siteConfig?.brand?.brandColor : DEFAULT_THEME.brand.brandColor
                 }
@@ -88,8 +89,12 @@ const BasicInfo: FC<{ title: string; description: string; siteConfig: PageSiteCo
               />
             </Form.Item>
           </Flex>
-          <Form.Item name={"brandTitle"} label="Brand Title" rules={[{ required: true, message: " add brand title" }]}>
-            <Input placeholder="Brand Title" />
+          <Form.Item
+            name={"brandTitle"}
+            label="Brand Title"
+            rules={[{ required: true, message: "Brand title is required" }]}
+          >
+            <Input placeholder="Brand title " />
           </Form.Item>
           <Button loading={loading} htmlType="submit" type="primary">
             Continue <i>{SvgIcons.arrowRight}</i>

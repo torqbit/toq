@@ -1,5 +1,5 @@
-import { Alert, Button, Form, Input, message, Spin, Tooltip } from "antd";
-import React, { useState } from "react";
+import { Alert, Button, ConfigProvider, Form, Input, message, Spin, Tooltip } from "antd";
+import React, { useEffect, useState } from "react";
 import styles from "@/styles/Login.module.scss";
 import { signIn, useSession } from "next-auth/react";
 import { NextPage, GetServerSidePropsContext } from "next";
@@ -15,8 +15,14 @@ import SvgIcons from "@/components/SvgIcons";
 import AuthService from "@/services/auth/AuthService";
 import { getSiteConfig } from "@/services/getSiteConfig";
 import { PageSiteConfig } from "@/services/siteConstant";
+import antThemeConfig from "@/services/antThemeConfig";
+import darkThemeConfig from "@/services/darkThemeConfig";
+import { useAppContext } from "@/components/ContextApi/AppContext";
 
-const LoginPage: NextPage<{ loginMethods: { available: string[]; configured: string[] } }> = ({ loginMethods }) => {
+const LoginPage: NextPage<{
+  loginMethods: { available: string[]; configured: string[] };
+  siteConfig: PageSiteConfig;
+}> = ({ loginMethods, siteConfig }) => {
   const router = useRouter();
   const [gitHubLoading, setGitHubLoading] = useState<boolean>(false);
   const [googleLoading, setGoogleLoading] = useState<boolean>(false);
@@ -25,6 +31,7 @@ const LoginPage: NextPage<{ loginMethods: { available: string[]; configured: str
   const { data: session, status: sessionStatus } = useSession();
   const [signupForm] = Form.useForm();
   const [messageApi, contextHolder] = message.useMessage();
+  const { globalState } = useAppContext();
 
   React.useEffect(() => {
     console.log(loginMethods);
@@ -45,6 +52,11 @@ const LoginPage: NextPage<{ loginMethods: { available: string[]; configured: str
     setGitHubLoading(false);
     setGoogleLoading(false);
   };
+
+  useEffect(() => {
+    const root = document.documentElement;
+    root.style.setProperty("--btn-primary", `${siteConfig.brand?.brandColor}`);
+  }, []);
 
   if (sessionStatus === "loading") {
     return <SpinLoader />;
@@ -77,126 +89,128 @@ const LoginPage: NextPage<{ loginMethods: { available: string[]; configured: str
   };
 
   return (
-    <div className={styles.login_page_wrapper}>
-      {contextHolder}
-      <div className={styles.social_login_container}>
-        <Image src={"/icon/torqbit.png"} height={60} width={60} alt={"logo"} />
-        <h3>Welcome to {appConstant.platformName}</h3>
+    <ConfigProvider theme={globalState.theme == "dark" ? darkThemeConfig(siteConfig) : antThemeConfig(siteConfig)}>
+      <div className={styles.login_page_wrapper}>
+        {contextHolder}
+        <div className={styles.social_login_container}>
+          <Image src={"/icon/torqbit.png"} height={60} width={60} alt={"logo"} />
+          <h3>Welcome to {appConstant.platformName}</h3>
 
-        {emailSignup && (
-          <Form
-            form={signupForm}
-            onFinish={handleSignup}
-            layout="vertical"
-            requiredMark="optional"
-            autoComplete="off"
-            validateMessages={validateMessages}
-            validateTrigger="onSubmit"
-          >
-            <Form.Item name="name" label="" rules={[{ required: true, message: "Name is required" }]}>
-              <Input placeholder="Enter your name" style={{ height: 40, background: "transparent" }} />
-            </Form.Item>
-            <Form.Item
-              name="email"
-              label=""
-              rules={[{ required: true, message: "Email is required" }, { type: "email" }]}
+          {emailSignup && (
+            <Form
+              form={signupForm}
+              onFinish={handleSignup}
+              layout="vertical"
+              requiredMark="optional"
+              autoComplete="off"
+              validateMessages={validateMessages}
+              validateTrigger="onSubmit"
             >
-              <Input
-                type="email"
-                placeholder="Enter your email address"
-                style={{ height: 40, background: "transparent" }}
-              />
-            </Form.Item>
-            <Form.Item
-              name="password"
-              label=""
-              rules={[
-                { required: true, message: "Password is required" },
-                { min: 6, message: "Password must be atleast 6 characters" },
-              ]}
-            >
-              <Input.Password placeholder="Enter your password" style={{ height: 40, background: "transparent" }} />
-            </Form.Item>
-            <Button
-              onClick={() => {
-                signupForm.submit();
-              }}
-              type="primary"
-              className={styles.google_btn}
-            >
-              Signup with Email
-            </Button>
+              <Form.Item name="name" label="" rules={[{ required: true, message: "Name is required" }]}>
+                <Input placeholder="Enter your name" style={{ height: 40, background: "transparent" }} />
+              </Form.Item>
+              <Form.Item
+                name="email"
+                label=""
+                rules={[{ required: true, message: "Email is required" }, { type: "email" }]}
+              >
+                <Input
+                  type="email"
+                  placeholder="Enter your email address"
+                  style={{ height: 40, background: "transparent" }}
+                />
+              </Form.Item>
+              <Form.Item
+                name="password"
+                label=""
+                rules={[
+                  { required: true, message: "Password is required" },
+                  { min: 6, message: "Password must be atleast 6 characters" },
+                ]}
+              >
+                <Input.Password placeholder="Enter your password" style={{ height: 40, background: "transparent" }} />
+              </Form.Item>
+              <Button
+                onClick={() => {
+                  signupForm.submit();
+                }}
+                type="primary"
+                className={styles.google_btn}
+              >
+                Signup with Email
+              </Button>
 
-            <Button
-              type="link"
-              icon={SvgIcons.arrowLeft}
-              iconPosition="start"
-              style={{ width: 250, marginTop: 10 }}
-              onClick={(_) => setSignupWithEmail(false)}
-            >
-              Back to Signup
-            </Button>
-          </Form>
-        )}
+              <Button
+                type="link"
+                icon={SvgIcons.arrowLeft}
+                iconPosition="start"
+                style={{ width: 250, marginTop: 10 }}
+                onClick={(_) => setSignupWithEmail(false)}
+              >
+                Back to Signup
+              </Button>
+            </Form>
+          )}
 
-        {!emailSignup &&
-          loginMethods.configured.map((provider) => {
-            if (provider === authConstants.CREDENTIALS_AUTH_PROVIDER) {
-              return (
-                <>
-                  <Button
-                    onClick={() => {
-                      setSignupWithEmail(true);
-                    }}
-                    type="primary"
-                    className={styles.google_btn}
-                  >
-                    Signup with Email
-                  </Button>
-                </>
-              );
-            } else {
-              return (
-                <>
-                  <Tooltip
-                    title={
-                      loginMethods.available.includes(provider)
-                        ? ``
-                        : `Signup method disabled for ${capitalizeFirstLetter(
-                            provider
-                          )} due to missing environment variables`
-                    }
-                  >
+          {!emailSignup &&
+            loginMethods.configured.map((provider) => {
+              if (provider === authConstants.CREDENTIALS_AUTH_PROVIDER) {
+                return (
+                  <>
                     <Button
-                      style={{ width: 250, height: 40 }}
                       onClick={() => {
-                        signIn(provider, {
-                          callbackUrl: router.query.redirect ? `/${router.query.redirect}` : "/dashboard",
-                        });
+                        setSignupWithEmail(true);
                       }}
-                      type="default"
-                      disabled={!loginMethods.available.includes(provider)}
+                      type="primary"
+                      className={styles.google_btn}
                     >
-                      Continue with {capitalizeFirstLetter(provider)}
+                      Signup with Email
                     </Button>
-                  </Tooltip>
-                </>
-              );
-            }
-          })}
+                  </>
+                );
+              } else {
+                return (
+                  <>
+                    <Tooltip
+                      title={
+                        loginMethods.available.includes(provider)
+                          ? ``
+                          : `Signup method disabled for ${capitalizeFirstLetter(
+                              provider
+                            )} due to missing environment variables`
+                      }
+                    >
+                      <Button
+                        style={{ width: 250, height: 40 }}
+                        onClick={() => {
+                          signIn(provider, {
+                            callbackUrl: router.query.redirect ? `/${router.query.redirect}` : "/dashboard",
+                          });
+                        }}
+                        type="default"
+                        disabled={!loginMethods.available.includes(provider)}
+                      >
+                        Continue with {capitalizeFirstLetter(provider)}
+                      </Button>
+                    </Tooltip>
+                  </>
+                );
+              }
+            })}
 
-        {loginError && (
-          <Alert
-            message="Login Failed!"
-            description={loginError}
-            type="error"
-            showIcon
-            closable
-            className={styles.alertMessage}
-          />
-        )}
+          {loginError && (
+            <Alert
+              message="Login Failed!"
+              description={loginError}
+              type="error"
+              showIcon
+              closable
+              className={styles.alertMessage}
+            />
+          )}
+        </div>
       </div>
-    </div>
+    </ConfigProvider>
   );
 };
 
@@ -223,7 +237,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
       },
     };
   }
-  return { props: { loginMethods } };
+  return { props: { loginMethods, siteConfig: site } };
 };
 
 export default LoginPage;
