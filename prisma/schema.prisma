@@ -641,3 +641,9 @@ model EventRegistration {
   @@index([email])
   @@index([eventId])
 }
+
+model SecretStore {
+  name String @id
+  secret String @db.Text
+  nonce String 
+}
