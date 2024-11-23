@@ -92,7 +92,7 @@ const LoginPage: NextPage<{
         messageApi.error(response.error);
       } else if (response && response.ok && response.url) {
         messageApi.loading(`You will be redirected to the platform`);
-        router.push(await getRedirectUrl());
+        router.push(`/handle-url?redirect=${router.query.redirect}`);
       }
     });
     loginForm.resetFields();
@@ -196,7 +196,7 @@ const LoginPage: NextPage<{
                         style={{ width: 250, height: 40 }}
                         onClick={async () => {
                           signIn(provider, {
-                            callbackUrl: await getRedirectUrl(),
+                            callbackUrl: `/handle-url?redirect=${router.query.redirect}`,
                           });
                         }}
                         type="default"
@@ -228,7 +228,7 @@ const LoginPage: NextPage<{
 };
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const { req, params } = ctx;
+  const { req } = ctx;
   let cookieName = getCookieName();
   const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
 
@@ -238,8 +238,6 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const loginMethods = getLoginMethods();
 
   const totalUser = await prisma.account.count();
-
-  const getRedirectUrl = await checkSiteStatus(params ? (params.redirect as string) : undefined);
 
   if (totalUser === 0) {
     return {
@@ -254,7 +252,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
     return {
       redirect: {
         permanent: false,
-        destination: getRedirectUrl,
+        destination: "/dashboard",
       },
     };
   }
