@@ -1,6 +1,6 @@
 site:
   template: standard
-  updated: true
+  updated: false
   navBar:
     links:
       - title: Courses
