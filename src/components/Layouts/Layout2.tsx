@@ -50,28 +50,33 @@ const Layout2: FC<{ children?: React.ReactNode; className?: string }> = ({ child
     {
       title: "Dashboard",
       icon: SvgIcons.dashboard,
-      link: "/admin/dashboard",
+      link: "admin/dashboard",
+      key: "dashboard",
     },
     {
       title: "Course",
       icon: SvgIcons.courses,
-      link: "/admin/courses",
+      link: "admin/courses",
+      key: "courses",
     },
     {
       title: "Events",
       icon: <i className={styles.events_icon}>{SvgIcons.events}</i>,
-      link: "/admin/events",
+      link: "admin/events",
+      key: "events",
     },
     {
       title: "Settings",
       icon: SvgIcons.setting,
       link: "admin/settings",
+      key: "settings",
     },
     {
       title: "Notifications",
       icon: SvgIcons.nottification,
 
-      link: "/admin/notifications",
+      link: "admin/notifications",
+      key: "notifications",
     },
   ];
 
@@ -131,6 +136,8 @@ const Layout2: FC<{ children?: React.ReactNode; className?: string }> = ({ child
     if (selectedMenu == "admin") {
       selectedMenu = router.pathname.split("/")[2];
     }
+    console.log(selectedMenu, "s");
+
     dispatch({ type: "SET_NAVBAR_MENU", payload: selectedMenu as IResponsiveNavMenu });
   };
   let intervalId: NodeJS.Timer | undefined;
@@ -421,10 +428,10 @@ const Layout2: FC<{ children?: React.ReactNode; className?: string }> = ({ child
                           <div
                             key={i}
                             className={
-                              globalState.selectedResponsiveMenu === nav.link ? styles.selectedNavBar : styles.navBar
+                              globalState.selectedResponsiveMenu === nav.key ? styles.selectedNavBar : styles.navBar
                             }
                             onClick={() =>
-                              dispatch({ type: "SET_NAVBAR_MENU", payload: nav.link as IResponsiveNavMenu })
+                              dispatch({ type: "SET_NAVBAR_MENU", payload: nav.key as IResponsiveNavMenu })
                             }
                           >
                             <Link key={i} href={`/${nav.link}`}>
