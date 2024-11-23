@@ -51,7 +51,7 @@ const SiteSetup: FC<{ siteConfig: PageSiteConfig; setupOptions: ISiteSetupCard[]
         </div>
         <iframe
           loading="lazy"
-          className={styles.site__preview}
+          className={styles.site__preview__iframe}
           src={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}`}
         ></iframe>
       </div>

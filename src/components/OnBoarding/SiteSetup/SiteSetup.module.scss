@@ -94,7 +94,7 @@
         background-color: #05c605;
       }
     }
-    .site__preview {
+    .site__preview__iframe {
       border: 2px solid var(--border-color);
       border-bottom-left-radius: 8px;
 
@@ -102,10 +102,5 @@
       width: calc(100vw - 300px);
       height: calc(100vh - 80px);
     }
-  }
-}
-
-@media only screen and (max-width: 435px) {
-  .site__setup__container {
   }
 }
