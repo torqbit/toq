@@ -1,0 +1,106 @@
+.site__setup__container {
+  position: relative;
+  background-color: var(--bg-secondary);
+
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: right;
+  overflow: hidden;
+
+  .setup__side__bar {
+    width: 275px;
+
+    position: fixed;
+    overflow: auto;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    padding: 15px 30px;
+    backdrop-filter: blur(10px);
+    background: var(--bg-header);
+    .side__bar__header {
+      max-width: 200px;
+      margin-bottom: 20px;
+    }
+
+    .setup__options {
+      margin-top: 20px;
+      display: grid;
+      gap: 20px;
+      grid-template-columns: 1fr;
+    }
+    .setup__card {
+      background-color: var(--bg-primary);
+      padding: 15px;
+      width: 100%;
+
+      gap: 15px;
+      transition: all 0.4s;
+      border: 1px solid var(--bg-primary);
+      border-radius: 15px;
+
+      &:hover {
+        border: 1px solid var(--btn-primary);
+      }
+      p {
+        margin: 0;
+      }
+
+      div:first-child {
+        width: 40px;
+        height: 40px;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background-color: red;
+        padding: 5px;
+        img {
+          width: 25px;
+          height: auto;
+          border-radius: 50%;
+        }
+      }
+    }
+  }
+  .site__preview__container {
+    margin-top: 20px;
+    .site__preview__titlebar {
+      padding: 0px 10px;
+      height: 30px;
+      background-color: var(--bg-primary);
+      border-top-left-radius: 8px;
+
+      border: 2px solid var(--border-color);
+      border-bottom: none;
+      display: flex;
+      align-items: center;
+      justify-content: left;
+      gap: 5px;
+      > div {
+        height: 8px;
+        width: 8px;
+        border-radius: 50%;
+      }
+      > div:first-child {
+        background-color: red;
+      }
+      > div:nth-child(2) {
+        background-color: #eeee3b;
+      }
+      > div:last-child {
+        background-color: #05c605;
+      }
+    }
+    .site__preview__iframe {
+      border: 2px solid var(--border-color);
+      border-bottom-left-radius: 8px;
+
+      overflow-x: hidden;
+      width: calc(100vw - 300px);
+      height: calc(100vh - 80px);
+    }
+  }
+}

@@ -11,6 +11,7 @@ export default {
   state: "Your state",
   country: "Your country",
   privatePath: ["/add-course"],
+  homeDirName: ".torqbit",
   attachmentFileFolder: "discussion-attachment",
   assignmentFileFolder: "assignment-files",
   certificateDirectory: "/courses/certificates/",

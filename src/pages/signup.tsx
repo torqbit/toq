@@ -17,6 +17,7 @@ import { getSiteConfig } from "@/services/getSiteConfig";
 import { PageSiteConfig } from "@/services/siteConstant";
 import antThemeConfig from "@/services/antThemeConfig";
 import darkThemeConfig from "@/services/darkThemeConfig";
+import prisma from "@/lib/prisma";
 import { useAppContext } from "@/components/ContextApi/AppContext";
 
 const LoginPage: NextPage<{
@@ -184,7 +185,7 @@ const LoginPage: NextPage<{
                         style={{ width: 250, height: 40 }}
                         onClick={() => {
                           signIn(provider, {
-                            callbackUrl: router.query.redirect ? `/${router.query.redirect}` : "/dashboard",
+                            callbackUrl: `/login/redirect?redirect=${router.query.redirect}`,
                           });
                         }}
                         type="default"
@@ -220,6 +221,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
 
   const loginMethods = getLoginMethods();
   const { site } = getSiteConfig();
+  const totalUser = await prisma.account.count();
 
   const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
   if (user) {
@@ -229,7 +231,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
         destination: "/dashboard",
       },
     };
-  } else if (!user && !site.updated) {
+  } else if (!user && !site.updated && totalUser === 0) {
     return {
       redirect: {
         permanent: false,
