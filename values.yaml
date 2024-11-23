@@ -34,132 +34,57 @@ containers:
     image: torqbit/torqbit:0.1.2-rc3
     env:
       - name: DATABASE_URL
-        valueFrom:
-          secretKeyRef:
-            name: torqbit-secrets
-            key: DATABASE_URL
+        value: "mysql://kali:kali@mysql-service.default.svc.cluster.local:3306/kali"
       - name: GOOGLE_ID
-        valueFrom:
-          secretKeyRef:
-            name: torqbit-secrets
-            key: GOOGLE_ID
+        value: "***********************************"
       - name: GOOGLE_SECRET
-        valueFrom:
-          secretKeyRef:
-            name: torqbit-secrets
-            key: GOOGLE_SECRET
+        value: "***********************************"
       - name: GITHUB_ID
-        valueFrom:
-          secretKeyRef:
-            name: torqbit-secrets
-            key: GITHUB_ID
+        value: "***********************************"
       - name: GITHUB_SECRET
-        valueFrom:
-          secretKeyRef:
-            name: torqbit-secrets
-            key: GITHUB_SECRET
+        value: "***********************************"
       - name: NEXT_PUBLIC_SECRET
-        valueFrom:
-          secretKeyRef:
-            name: torqbit-secrets
-            key: NEXT_PUBLIC_SECRET
+        value: "1RIpybeRHk21xmtzk2jjPxvayAD8FEtHauQTbx8bShE="
       - name: JWT_SECRET
-        valueFrom:
-          secretKeyRef:
-            name: torqbit-secrets
-            key: JWT_SECRET
+        value: "p1RDeR52CpgHkZQJGFcFFc9Gr1kVTnIjEBxabqkq+Ao="
       - name: NEXTAUTH_URL
-        valueFrom:
-          secretKeyRef:
-            name: torqbit-secrets
-            key: NEXTAUTH_URL
+        value: "http://localhost:3000"
       - name: ADMIN_EMAIL
-        valueFrom:
-          secretKeyRef:
-            name: torqbit-secrets
-            key: ADMIN_EMAIL
+        value: "test@mail.com"
       - name: NEXT_PUBLIC_APP_ENV
-        valueFrom:
-          secretKeyRef:
-            name: torqbit-secrets
-            key: NEXT_PUBLIC_APP_ENV
+        value: "development"
       - name: NODE_ENV
-        valueFrom:
-          secretKeyRef:
-            name: torqbit-secrets
-            key: NODE_ENV
+        value: "production"
       - name: CASHFREE_SECRET_KEY
-        valueFrom:
-          secretKeyRef:
-            name: torqbit-secrets
-            key: CASHFREE_SECRET_KEY
+        value: "***********************************"
       - name: CASHFREE_CLIENT_ID
-        valueFrom:
-          secretKeyRef:
-            name: torqbit-secrets
-            key: CASHFREE_CLIENT_ID
+        value: "***********************************"
       - name: GATEWAY_PROVIDER_NAME
-        valueFrom:
-          secretKeyRef:
-            name: torqbit-secrets
-            key: GATEWAY_PROVIDER_NAME
+        value: "CASHFREE"
       - name: NEXT_SMTP_HOST
-        valueFrom:
-          secretKeyRef:
-            name: torqbit-secrets
-            key: NEXT_SMTP_HOST
+        value: "smtp.resend.com"
       - name: NEXT_SMTP_USER
-        valueFrom:
-          secretKeyRef:
-            name: torqbit-secrets
-            key: NEXT_SMTP_USER
+        value: "resend"
       - name: NEXT_SMTP_PASSWORD
-        valueFrom:
-          secretKeyRef:
-            name: torqbit-secrets
-            key: NEXT_SMTP_PASSWORD
+        value: "***********************************"
       - name: MEDIA_UPLOAD_PATH
-        valueFrom:
-          secretKeyRef:
-            name: torqbit-secrets
-            key: MEDIA_UPLOAD_PATH
+        value: "***********************************"
       - name: INVOICE_UPLOAD_PATH
-        valueFrom:
-          secretKeyRef:
-            name: torqbit-secrets
-            key: INVOICE_UPLOAD_PATH
+        value: "***********************************"
       - name: FROM_SMTP_USER_EMAIL
-        valueFrom:
-          secretKeyRef:
-            name: torqbit-secrets
-            key: FROM_SMTP_USER_EMAIL
+        value: "***********************************"
       - name: VERIFIED_EMAIL
-        valueFrom:
-          secretKeyRef:
-            name: torqbit-secrets
-            key: VERIFIED_EMAIL
+        value: "***********************************"
       - name: FROM_SMTP_SUPPORT_EMAIL
-        valueFrom:
-          secretKeyRef:
-            name: torqbit-secrets
-            key: FROM_SMTP_SUPPORT_EMAIL
+        value: "***********************************"
       - name: NEXT_PUBLIC_NEXTAUTH_URL
-        valueFrom:
-          secretKeyRef:
-            name: torqbit-secrets
-            key: NEXT_PUBLIC_NEXTAUTH_URL
+        value: "http://localhost:3000"
       - name: INVOICE_DIRECTORY
-        valueFrom:
-          secretKeyRef:
-            name: torqbit-secrets
-            key: INVOICE_DIRECTORY
+        value: "***********************************"
     command: ["/bin/sh"]
     args: ["-c", "while true; do echo hello; sleep 10; done"]
     ports:
       - containerPort: 3000
 
-containers:
-  ports:
-    containerPort: 3000
 autoscaling:
   enabled: false
