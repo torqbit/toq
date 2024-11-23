@@ -1,5 +1,5 @@
 import { FC } from "react";
-import styles from "@/components/SiteConfigure/SiteSetup/SiteSetup.module.scss";
+import styles from "./SiteSetup.module.scss";
 import { PageSiteConfig } from "@/services/siteConstant";
 import Link from "next/link";
 import { ISiteSetupCard } from "@/types/setup/siteSetup";

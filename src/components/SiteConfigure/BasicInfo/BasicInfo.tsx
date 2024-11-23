@@ -1,5 +1,5 @@
 import { FC, useState } from "react";
-import styles from "@/components/SiteConfigure/BasicInfo/SiteConfigure.module.scss";
+import styles from "./SiteConfigure.module.scss";
 
 import { Button, ColorPicker, Flex, Form, Input, message } from "antd";
 import Link from "next/link";
