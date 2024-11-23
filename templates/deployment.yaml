@@ -19,56 +19,127 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
-            - containerPort: 3000
+            - containerPort: {{ .Values.containers.ports.containerPort }}
           env:
             - name: DATABASE_URL
-              value: "mysql://kali:kali@mysql-service.default.svc.cluster.local:3306/kali"
+              valueFrom:
+                secretKeyRef:
+                  name: torqbit-secrets
+                  key: DATABASE_URL
             - name: GOOGLE_ID
-              value: "***********************************"
+              valueFrom:
+                secretKeyRef:
+                  name: torqbit-secrets
+                  key: GOOGLE_ID
             - name: GOOGLE_SECRET
-              value: "***********************************"
+              valueFrom:
+                secretKeyRef:
+                  name: torqbit-secrets
+                  key: GOOGLE_SECRET
             - name: GITHUB_ID
-              value: "***********************************"
+              valueFrom:
+                secretKeyRef:
+                  name: torqbit-secrets
+                  key: GITHUB_ID
             - name: GITHUB_SECRET
-              value: "***********************************"
+              valueFrom:
+                secretKeyRef:
+                  name: torqbit-secrets
+                  key: GITHUB_SECRET
             - name: NEXT_PUBLIC_SECRET
-              value: "1RIpybeRHk21xmtzk2jjPxvayAD8FEtHauQTbx8bShE="
+              valueFrom:
+                secretKeyRef:
+                  name: torqbit-secrets
+                  key: NEXT_PUBLIC_SECRET
             - name: JWT_SECRET
-              value: "p1RDeR52CpgHkZQJGFcFFc9Gr1kVTnIjEBxabqkq+Ao="
+              valueFrom:
+                secretKeyRef:
+                  name: torqbit-secrets
+                  key: JWT_SECRET
             - name: NEXTAUTH_URL
-              value: "http://localhost:3000"
+              valueFrom:
+                secretKeyRef:
+                  name: torqbit-secrets
+                  key: NEXTAUTH_URL
             - name: ADMIN_EMAIL
-              value: "test@mail.com"
+              valueFrom:
+                secretKeyRef:
+                  name: torqbit-secrets
+                  key: ADMIN_EMAIL
             - name: NEXT_PUBLIC_APP_ENV
-              value: "development"
+              valueFrom:
+                secretKeyRef:
+                  name: torqbit-secrets
+                  key: NEXT_PUBLIC_APP_ENV
             - name: NODE_ENV
-              value: "production"
+              valueFrom:
+                secretKeyRef:
+                  name: torqbit-secrets
+                  key: NODE_ENV
             - name: CASHFREE_SECRET_KEY
-              value: "***********************************"
+              valueFrom:
+                secretKeyRef:
+                  name: torqbit-secrets
+                  key: CASHFREE_SECRET_KEY
             - name: CASHFREE_CLIENT_ID
-              value: "***********************************"
+              valueFrom:
+                secretKeyRef:
+                  name: torqbit-secrets
+                  key: CASHFREE_CLIENT_ID
             - name: GATEWAY_PROVIDER_NAME
-              value: "CASHFREE"
+              valueFrom:
+                secretKeyRef:
+                  name: torqbit-secrets
+                  key: GATEWAY_PROVIDER_NAME
             - name: NEXT_SMTP_HOST
-              value: "smtp.resend.com"
+              valueFrom:
+                secretKeyRef:
+                  name: torqbit-secrets
+                  key: NEXT_SMTP_HOST
             - name: NEXT_SMTP_USER
-              value: "resend"
+              valueFrom:
+                secretKeyRef:
+                  name: torqbit-secrets
+                  key: NEXT_SMTP_USER
             - name: NEXT_SMTP_PASSWORD
-              value: "***********************************"
+              valueFrom:
+                secretKeyRef:
+                  name: torqbit-secrets
+                  key: NEXT_SMTP_PASSWORD
             - name: MEDIA_UPLOAD_PATH
-              value: "***********************************"
+              valueFrom:
+                secretKeyRef:
+                  name: torqbit-secrets
+                  key: MEDIA_UPLOAD_PATH
             - name: INVOICE_UPLOAD_PATH
-              value: "***********************************"
+              valueFrom:
+                secretKeyRef:
+                  name: torqbit-secrets
+                  key: INVOICE_UPLOAD_PATH
             - name: FROM_SMTP_USER_EMAIL
-              value: "***********************************"
+              valueFrom:
+                secretKeyRef:
+                  name: torqbit-secrets
+                  key: FROM_SMTP_USER_EMAIL
             - name: VERIFIED_EMAIL
-              value: "***********************************"
+              valueFrom:
+                secretKeyRef:
+                  name: torqbit-secrets
+                  key: VERIFIED_EMAIL
             - name: FROM_SMTP_SUPPORT_EMAIL
-              value: "***********************************"
+              valueFrom:
+                secretKeyRef:
+                  name: torqbit-secrets
+                  key: FROM_SMTP_SUPPORT_EMAIL
             - name: NEXT_PUBLIC_NEXTAUTH_URL
-              value: "http://localhost:3000"
+              valueFrom:
+                secretKeyRef:
+                  name: torqbit-secrets
+                  key: NEXT_PUBLIC_NEXTAUTH_URL
             - name: INVOICE_DIRECTORY
-              value: "***********************************"
-          command: ["/bin/sh"]
-          args: ["-c", "while true; do echo hello; sleep 10; done"]
+              valueFrom:
+                secretKeyRef:
+                  name: torqbit-secrets
+                  key: INVOICE_DIRECTORY
+          args: ["sh", "-c", "npx prisma db push --accept-data-loss && yarn start"]
       restartPolicy: Always
