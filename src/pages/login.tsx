@@ -17,8 +17,6 @@ import prisma from "@/lib/prisma";
 import { useAppContext } from "@/components/ContextApi/AppContext";
 import darkThemeConfig from "@/services/darkThemeConfig";
 import antThemeConfig from "@/services/antThemeConfig";
-import { getFetch } from "@/services/request";
-import { checkSiteStatus } from "@/services/siteConfigService/checkStatus";
 
 const LoginPage: NextPage<{
   loginMethods: { available: string[]; configured: string[] };
