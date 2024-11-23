@@ -64,19 +64,19 @@ const LoginPage: NextPage<{
     return <SpinLoader />;
   }
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     signIn("credentials", {
-      callbackUrl: router.query.redirect ? `${router.query.redirect}` : "/dashboard",
+      callbackUrl: "/",
       redirect: false,
       password: loginForm.getFieldValue("password"),
       email: loginForm.getFieldValue("email"),
-    }).then((response) => {
+    }).then(async (response) => {
       console.log(response);
       if (response && !response.ok) {
         messageApi.error(response.error);
       } else if (response && response.ok && response.url) {
         messageApi.loading(`You will be redirected to the platform`);
-        router.push(router.query.redirect ? `${router.query.redirect}` : "/dashboard");
+        router.push(`/login/redirect?redirect=${router.query.redirect}`);
       }
     });
     loginForm.resetFields();
@@ -178,9 +178,9 @@ const LoginPage: NextPage<{
                     >
                       <Button
                         style={{ width: 250, height: 40 }}
-                        onClick={() => {
+                        onClick={async () => {
                           signIn(provider, {
-                            callbackUrl: router.query.redirect ? `/${router.query.redirect}` : "/dashboard",
+                            callbackUrl: `/login/redirect?redirect=${router.query.redirect}`,
                           });
                         }}
                         type="default"
@@ -214,6 +214,7 @@ const LoginPage: NextPage<{
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const { req } = ctx;
   let cookieName = getCookieName();
+  const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
 
   const { site } = getSiteConfig();
   const siteConfig = site;
@@ -221,6 +222,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const loginMethods = getLoginMethods();
 
   const totalUser = await prisma.account.count();
+
   if (totalUser === 0) {
     return {
       redirect: {
@@ -230,7 +232,6 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
     };
   }
 
-  const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
   if (user) {
     return {
       redirect: {

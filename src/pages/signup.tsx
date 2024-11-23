@@ -184,7 +184,7 @@ const LoginPage: NextPage<{
                         style={{ width: 250, height: 40 }}
                         onClick={() => {
                           signIn(provider, {
-                            callbackUrl: router.query.redirect ? `/${router.query.redirect}` : "/dashboard",
+                            callbackUrl: `/login/redirect?redirect=${router.query.redirect}`,
                           });
                         }}
                         type="default"

@@ -1,5 +1,7 @@
 import { AuthAPIResponse } from "@/types/auth/api";
 import { postFetch } from "../request";
+import { Role } from "@prisma/client";
+import prisma from "@/lib/prisma";
 
 const authErrorMessage = "Failed to authenticate";
 class AuthService {
@@ -19,6 +21,23 @@ class AuthService {
         apiResponse.success ? onSuccess(apiResponse) : onFailure(apiResponse.error || authErrorMessage);
       });
     });
+  };
+
+  checkSiteStatus = async (userRole: Role, redirectUrl?: string) => {
+    const isMediaConfig = await prisma.serviceProvider.count({
+      where: {
+        service_type: "media",
+      },
+    });
+    if (userRole === Role.ADMIN) {
+      if (isMediaConfig > 0) {
+        return redirectUrl ? redirectUrl : "/dashboard";
+      } else {
+        return "/admin/onboard/complete";
+      }
+    } else {
+      return redirectUrl ? redirectUrl : "/dashboard";
+    }
   };
 }
 
