@@ -1,4 +1,4 @@
-import BasicInfo from "@/components/SiteConfigure/BasicInfo/BasicInfo";
+import BasicInfo from "@/components/OnBoarding/BasicInfo/BasicInfo";
 import { getSiteConfig } from "@/services/getSiteConfig";
 import { PageSiteConfig } from "@/services/siteConstant";
 import { GetServerSidePropsContext, NextPage } from "next";

@@ -1,5 +1,5 @@
 import { useAppContext } from "@/components/ContextApi/AppContext";
-import SiteSetup from "@/components/SiteConfigure/SiteSetup/SiteSetup";
+import SiteSetup from "@/components/OnBoarding/SiteSetup/SiteSetup";
 import antThemeConfig from "@/services/antThemeConfig";
 import darkThemeConfig from "@/services/darkThemeConfig";
 import { getSiteConfig } from "@/services/getSiteConfig";

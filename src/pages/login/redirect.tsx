@@ -4,11 +4,11 @@ import { Role } from "@prisma/client";
 import { GetServerSidePropsContext, NextPage } from "next";
 import { getToken } from "next-auth/jwt";
 
-const HandleUrlPage: NextPage = () => {
+const RedirectPage: NextPage = () => {
   return <></>;
 };
 
-export default HandleUrlPage;
+export default RedirectPage;
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const { req } = ctx;
