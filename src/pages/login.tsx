@@ -78,7 +78,7 @@ const LoginPage: NextPage<{
         messageApi.error(response.error);
       } else if (response && response.ok && response.url) {
         messageApi.loading(`You will be redirected to the platform`);
-        router.push(`/handle-url?redirect=${router.query.redirect}`);
+        router.push(`/login/redirect?redirect=${router.query.redirect}`);
       }
     });
     loginForm.resetFields();
@@ -182,7 +182,7 @@ const LoginPage: NextPage<{
                         style={{ width: 250, height: 40 }}
                         onClick={async () => {
                           signIn(provider, {
-                            callbackUrl: `/handle-url?redirect=${router.query.redirect}`,
+                            callbackUrl: `/login/redirect?redirect=${router.query.redirect}`,
                           });
                         }}
                         type="default"
