@@ -17,6 +17,8 @@ import prisma from "@/lib/prisma";
 import { useAppContext } from "@/components/ContextApi/AppContext";
 import darkThemeConfig from "@/services/darkThemeConfig";
 import antThemeConfig from "@/services/antThemeConfig";
+import { getFetch } from "@/services/request";
+import { checkSiteStatus } from "@/services/siteConfigService/checkStatus";
 
 const LoginPage: NextPage<{
   loginMethods: { available: string[]; configured: string[] };
@@ -39,6 +41,20 @@ const LoginPage: NextPage<{
     const root = document.documentElement;
     root.style.setProperty("--btn-primary", `${brand?.brandColor}`);
   }, []);
+
+  const getRedirectUrl = async () => {
+    const res = await getFetch(`api/v1/user/redirect?redirectUrl=${router.query.redirect}`);
+    if (res.ok) {
+      const result = await res.json();
+      if (result.success) {
+        return result.redirectUrl;
+      } else {
+        return "./dashboard";
+      }
+    } else {
+      return "/dashboard";
+    }
+  };
 
   React.useEffect(() => {
     console.log(loginMethods);
@@ -64,19 +80,19 @@ const LoginPage: NextPage<{
     return <SpinLoader />;
   }
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     signIn("credentials", {
-      callbackUrl: router.query.redirect ? `${router.query.redirect}` : "/dashboard",
+      callbackUrl: await getRedirectUrl(),
       redirect: false,
       password: loginForm.getFieldValue("password"),
       email: loginForm.getFieldValue("email"),
-    }).then((response) => {
+    }).then(async (response) => {
       console.log(response);
       if (response && !response.ok) {
         messageApi.error(response.error);
       } else if (response && response.ok && response.url) {
         messageApi.loading(`You will be redirected to the platform`);
-        router.push(router.query.redirect ? `${router.query.redirect}` : "/dashboard");
+        router.push(await getRedirectUrl());
       }
     });
     loginForm.resetFields();
@@ -178,9 +194,9 @@ const LoginPage: NextPage<{
                     >
                       <Button
                         style={{ width: 250, height: 40 }}
-                        onClick={() => {
+                        onClick={async () => {
                           signIn(provider, {
-                            callbackUrl: router.query.redirect ? `/${router.query.redirect}` : "/dashboard",
+                            callbackUrl: await getRedirectUrl(),
                           });
                         }}
                         type="default"
@@ -212,8 +228,9 @@ const LoginPage: NextPage<{
 };
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const { req } = ctx;
+  const { req, params } = ctx;
   let cookieName = getCookieName();
+  const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
 
   const { site } = getSiteConfig();
   const siteConfig = site;
@@ -221,6 +238,9 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const loginMethods = getLoginMethods();
 
   const totalUser = await prisma.account.count();
+
+  const getRedirectUrl = await checkSiteStatus(params ? (params.redirect as string) : undefined);
+
   if (totalUser === 0) {
     return {
       redirect: {
@@ -230,12 +250,11 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
     };
   }
 
-  const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
   if (user) {
     return {
       redirect: {
         permanent: false,
-        destination: "/dashboard",
+        destination: getRedirectUrl,
       },
     };
   }
