@@ -42,20 +42,6 @@ const LoginPage: NextPage<{
     root.style.setProperty("--btn-primary", `${brand?.brandColor}`);
   }, []);
 
-  const getRedirectUrl = async () => {
-    const res = await getFetch(`api/v1/user/redirect?redirectUrl=${router.query.redirect}`);
-    if (res.ok) {
-      const result = await res.json();
-      if (result.success) {
-        return result.redirectUrl;
-      } else {
-        return "./dashboard";
-      }
-    } else {
-      return "/dashboard";
-    }
-  };
-
   React.useEffect(() => {
     console.log(loginMethods);
     if (router.query.error) {
@@ -82,7 +68,7 @@ const LoginPage: NextPage<{
 
   const handleLogin = async () => {
     signIn("credentials", {
-      callbackUrl: await getRedirectUrl(),
+      callbackUrl: "/",
       redirect: false,
       password: loginForm.getFieldValue("password"),
       email: loginForm.getFieldValue("email"),
