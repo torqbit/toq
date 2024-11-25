@@ -57,7 +57,7 @@ p {
   --marketing-container-width: 1200px;
 
   --container-width: 1000px;
-
+  --bg-content-form: #f5f5f5;
   --icon-color: #b7b4b4;
   --bg-code: #eee;
   --font-trainer-secondary: #d4d4d4;
@@ -120,6 +120,7 @@ p {
 :root[data-theme="dark"] {
   --bg-secondary: #202433;
   --bg-primary: #283040;
+  --bg-content-form: #202433;
   --font-mktg-secondary: #c8cddd;
   --segment-bg: #151823;
   --strike: #caa3ae;

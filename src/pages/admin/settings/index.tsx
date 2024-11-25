@@ -1,12 +1,8 @@
-import Config from "@/components/Admin/Config/Config";
+import ConfigurationSettings from "@/components/Configuration/ConfigurationSettings";
 import { NextPage } from "next";
 
 const ConfigurationPage: NextPage = () => {
-  return (
-    <>
-      <Config />
-    </>
-  );
+  return <ConfigurationSettings />;
 };
 
 export default ConfigurationPage;
