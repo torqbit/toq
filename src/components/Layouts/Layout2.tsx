@@ -50,102 +50,65 @@ const Layout2: FC<{ children?: React.ReactNode; className?: string }> = ({ child
     {
       title: "Dashboard",
       icon: SvgIcons.dashboard,
-      link: "dashboard",
+      link: "admin/dashboard",
+      key: "dashboard",
     },
     {
       title: "Course",
       icon: SvgIcons.courses,
-      link: "courses",
+      link: "admin/courses",
+      key: "courses",
     },
     {
       title: "Events",
       icon: <i className={styles.events_icon}>{SvgIcons.events}</i>,
-      link: "events-list",
+      link: "admin/events",
+      key: "events",
     },
     {
       title: "Settings",
       icon: SvgIcons.setting,
-      link: "setting",
+      link: "admin/settings",
+      key: "settings",
     },
     {
       title: "Notifications",
       icon: SvgIcons.nottification,
 
-      link: "notifications",
+      link: "admin/notifications",
+      key: "notifications",
     },
   ];
 
-  const authorSiderMenu: MenuProps["items"] = [
+  const adminMenu: MenuProps["items"] = [
     {
-      type: "group",
-      label: "ADMINISTRATION",
-      key: "administration",
-
-      children: [
-        {
-          label: <Link href="/admin/users">Users</Link>,
-          key: "users",
-          icon: SvgIcons.userGroup,
-        },
-        {
-          label: <Link href="/admin/content">Content</Link>,
-          key: "content",
-          icon: SvgIcons.content,
-        },
-        {
-          label: <Link href="/admin/config">Configurations</Link>,
-
-          key: "config",
-          icon: SvgIcons.configuration,
-        },
-        // {
-        //   label: <Link href="/admin/conversations">Conversations</Link>,
-
-        //   key: "conversations",
-        //   icon: SvgIcons.message,
-        // },
-      ],
-    },
-  ];
-  const usersMenu: MenuProps["items"] = [
-    {
-      type: "group",
-      label: "LEARN",
-      key: "group1",
-    },
-    {
-      label: <Link href="/dashboard">Dashboard</Link>,
+      label: <Link href="/admin/dashboard">Dashboard</Link>,
       key: "dashboard",
       icon: SvgIcons.dashboard,
     },
     {
-      label: <Link href="/courses">Courses</Link>,
+      label: <Link href="/admin/site">Site Design</Link>,
+      key: "site",
+      icon: <i style={{ fontSize: 18 }}>{SvgIcons.site}</i>,
+    },
+    {
+      label: <Link href="/admin/settings">Settings</Link>,
+      key: "settings",
+      icon: SvgIcons.setting,
+    },
+    {
+      label: <Link href="/admin/courses">Courses</Link>,
       key: "courses",
       icon: SvgIcons.courses,
     },
     {
-      label: <Link href="/events-list">Events</Link>,
-      key: "events-list",
+      label: <Link href="/admin/events">Events</Link>,
+      key: "events",
       icon: <i style={{ fontSize: 18 }}>{SvgIcons.events}</i>,
-    },
-    {
-      label: <Link href="/quizzes">Quizzes</Link>,
-      key: "quizzes",
-      icon: SvgIcons.quiz,
-    },
-    {
-      type: "group",
-      label: "ACCOUNT",
-      key: "group",
     },
 
     {
-      label: <Link href="/setting">Setting</Link>,
-      key: "setting",
-      icon: SvgIcons.setting,
-    },
-    {
-      label: <Link href="/notifications">Notifications</Link>,
+      label: <Link href="/admin/notifications">Notifications</Link>,
       key: "notifications",
       icon: (
         <Badge
@@ -173,6 +136,8 @@ const Layout2: FC<{ children?: React.ReactNode; className?: string }> = ({ child
     if (selectedMenu == "admin") {
       selectedMenu = router.pathname.split("/")[2];
     }
+    console.log(selectedMenu, "s");
+
     dispatch({ type: "SET_NAVBAR_MENU", payload: selectedMenu as IResponsiveNavMenu });
   };
   let intervalId: NodeJS.Timer | undefined;
@@ -379,10 +344,7 @@ const Layout2: FC<{ children?: React.ReactNode; className?: string }> = ({ child
 
             {globalState.onlineStatus ? (
               <Layout hasSider className="default-container">
-                <Sidebar
-                  menu={user?.role == "AUTHOR" || user?.role == "ADMIN" ? usersMenu.concat(authorSiderMenu) : usersMenu}
-                  siteConfig={siteConfig}
-                />
+                <Sidebar menu={adminMenu} siteConfig={siteConfig} />
                 <Layout className={`layout2-wrapper ${styles.layout2_wrapper} `}>
                   <Content className={`${styles.sider_content} ${styles.className}`}>
                     <Flex
@@ -466,10 +428,10 @@ const Layout2: FC<{ children?: React.ReactNode; className?: string }> = ({ child
                           <div
                             key={i}
                             className={
-                              globalState.selectedResponsiveMenu === nav.link ? styles.selectedNavBar : styles.navBar
+                              globalState.selectedResponsiveMenu === nav.key ? styles.selectedNavBar : styles.navBar
                             }
                             onClick={() =>
-                              dispatch({ type: "SET_NAVBAR_MENU", payload: nav.link as IResponsiveNavMenu })
+                              dispatch({ type: "SET_NAVBAR_MENU", payload: nav.key as IResponsiveNavMenu })
                             }
                           >
                             <Link key={i} href={`/${nav.link}`}>

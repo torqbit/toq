@@ -42,7 +42,7 @@ export const convertSecToHourandMin = (seconds: number) => {
   return result;
 };
 
-const EnrolledCourseList: FC<{
+export const EnrolledCourseList: FC<{
   allCourses: any[] | undefined;
   handleCourseStatusUpdate: (courseId: number, newState: string) => void;
   handleCourseDelete: (courseId: number) => void;
