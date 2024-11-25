@@ -1,5 +1,5 @@
 import Preview from "@/components/Admin/Content/Preview";
-import Layout2 from "@/components/Layouts/Layout2";
+
 import SpinLoader from "@/components/SpinLoader/SpinLoader";
 import ProgramService from "@/services/ProgramService";
 import { getFetch, IResponse, postFetch } from "@/services/request";
@@ -15,6 +15,7 @@ import { useAppContext } from "@/components/ContextApi/AppContext";
 import { useSession } from "next-auth/react";
 import appConstant from "@/services/appConstant";
 import AddPhone from "@/components/AddPhone/AddPhone";
+import AppLayout from "@/components/Layouts/AppLayout";
 
 const LearnCoursesPage: NextPage = () => {
   const router = useRouter();
@@ -196,7 +197,7 @@ const LearnCoursesPage: NextPage = () => {
     }
   };
   return (
-    <Layout2>
+    <AppLayout>
       {contextMessageHolder}
       {contextModalHolder}
 
@@ -226,7 +227,7 @@ const LearnCoursesPage: NextPage = () => {
       )}
 
       <AddPhone title={enableModal.message} open={enableModal.active} onCloseModal={onCloseModal} />
-    </Layout2>
+    </AppLayout>
   );
 };
 

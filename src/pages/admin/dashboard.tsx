@@ -1,7 +1,7 @@
 import React from "react";
 import styles from "@/styles/Dashboard.module.scss";
 
-import Layout2 from "@/components/Layouts/Layout2";
+import AppLayoutfrom "@/components/Layouts/Layout2";
 import { NextPage } from "next";
 
 const Dashboard: NextPage = () => {

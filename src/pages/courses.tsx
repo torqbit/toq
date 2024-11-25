@@ -4,10 +4,11 @@ import React, { useEffect, useState } from "react";
 import { Course } from "@prisma/client";
 import Courses from "@/components/Courses/Courses";
 import { Spin, message } from "antd";
-import Layout2 from "@/components/Layouts/Layout2";
+
 import ProgramService from "@/services/ProgramService";
 import { LoadingOutlined } from "@ant-design/icons";
 import SpinLoader from "@/components/SpinLoader/SpinLoader";
+import AppLayout from "@/components/Layouts/AppLayout";
 
 const CoursesPage: NextPage = () => {
   const [allCourses, setAllCourses] = useState<Course[] | undefined>([]);
@@ -30,7 +31,7 @@ const CoursesPage: NextPage = () => {
   }, []);
 
   return (
-    <Layout2>
+    <AppLayout>
       {contextMessageHolder}
       <section>
         <div className={styles.courseContainer}>
@@ -54,7 +55,7 @@ const CoursesPage: NextPage = () => {
           <SpinLoader className="course__spinner" />
         )}
       </section>
-    </Layout2>
+    </AppLayout>
   );
 };
 

@@ -26,7 +26,7 @@ import { DEFAULT_THEME, PageSiteConfig } from "@/services/siteConstant";
 
 const { Content } = Layout;
 
-const Layout2: FC<{ children?: React.ReactNode; className?: string }> = ({ children, className }) => {
+const AppLayout: FC<{ children?: React.ReactNode; className?: string }> = ({ children, className }) => {
   const { data: user, status, update } = useSession();
 
   const isMobile = useMediaQuery({ query: "(max-width: 933px)" });
@@ -458,4 +458,4 @@ const Layout2: FC<{ children?: React.ReactNode; className?: string }> = ({ child
   );
 };
 
-export default Layout2;
+export default AppLayout;

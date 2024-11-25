@@ -1,14 +1,15 @@
 import React from "react";
 import styles from "@/styles/Dashboard.module.scss";
-import Layout2 from "@/components/Layouts/Layout2";
+
 import { useSession } from "next-auth/react";
 import { Space, Tag } from "antd";
+import AppLayout from "@/components/Layouts/AppLayout";
 
 const GuidesPage = () => {
   const { data: user } = useSession();
 
   return (
-    <Layout2>
+    <AppLayout>
       <section className={styles.dashboard_content}>
         <div className={styles.guide_wrapper}>
           <Space style={{ marginBottom: 10 }}>
@@ -20,7 +21,7 @@ const GuidesPage = () => {
           <img height={400} src="/img/guides/guide-illustration.svg" alt="" style={{ display: "block" }} />
         </div>
       </section>
-    </Layout2>
+    </AppLayout>
   );
 };
 

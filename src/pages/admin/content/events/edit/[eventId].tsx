@@ -1,11 +1,12 @@
 import BlogForm from "@/components/Admin/Content/BlogForm";
-import Layout2 from "@/components/Layouts/Layout2";
+
 import { GetServerSidePropsContext, NextPage } from "next";
 import prisma from "@/lib/prisma";
 
 import { FC } from "react";
 import { Events, StateType } from "@prisma/client";
 import EventForm from "@/components/Events/EventForm";
+import AppLayout from "@/components/Layouts/AppLayout";
 
 interface IProps {
   eventDetails: Events;
@@ -13,9 +14,9 @@ interface IProps {
 const EventFormPage: FC<IProps> = ({ eventDetails }) => {
   return (
     <>
-      <Layout2>
+      <AppLayout>
         <EventForm details={eventDetails} />
-      </Layout2>
+      </AppLayout>
     </>
   );
 };

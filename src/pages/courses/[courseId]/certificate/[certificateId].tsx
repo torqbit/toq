@@ -1,4 +1,3 @@
-import Layout2 from "@/components/Layouts/Layout2";
 import SvgIcons from "@/components/SvgIcons";
 import { getCookieName } from "@/lib/utils";
 import ProgramService from "@/services/ProgramService";
@@ -12,6 +11,7 @@ import { useEffect, useState } from "react";
 import styles from "@/styles/Certificate.module.scss";
 import prisma from "@/lib/prisma";
 import SpinLoader from "@/components/SpinLoader/SpinLoader";
+import AppLayout from "@/components/Layouts/AppLayout";
 
 const ShowCertificate = () => {
   const [certificateData, setCertificateData] = useState<{ pdfPath: string; imgPath: string; courseName: string }>();
@@ -36,7 +36,7 @@ const ShowCertificate = () => {
   }, [router.query.courseId]);
 
   return (
-    <Layout2>
+    <AppLayout>
       {loading ? (
         <SpinLoader />
       ) : (
@@ -77,7 +77,7 @@ const ShowCertificate = () => {
           </div>
         </Space>
       )}
-    </Layout2>
+    </AppLayout>
   );
 };
 

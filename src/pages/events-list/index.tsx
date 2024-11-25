@@ -10,7 +10,7 @@ import { IEventList } from "@/services/EventService";
 import styles from "@/styles/Marketing/Events/Event.module.scss";
 
 import Events from "@/components/Events/Events";
-import Layout2 from "@/components/Layouts/Layout2";
+import AppLayout from "@/components/Layouts/AppLayout";
 
 const EventsList: FC<{ user: User; eventList: IEventList[]; totalEventsLength: number }> = ({
   user,
@@ -18,14 +18,14 @@ const EventsList: FC<{ user: User; eventList: IEventList[]; totalEventsLength: n
   totalEventsLength,
 }) => {
   return (
-    <Layout2>
+    <AppLayout>
       <div className={styles.events_list_wrapper}>
         <div className={styles.event_header}>
           <h3>Events</h3>
         </div>
         <Events user={user} eventList={eventList} totalEventsLength={totalEventsLength} eventLink="events-list" />
       </div>
-    </Layout2>
+    </AppLayout>
   );
 };
 

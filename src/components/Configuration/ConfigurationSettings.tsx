@@ -1,4 +1,4 @@
-import Layout2 from "@/components/Layouts/Layout2";
+import AppLayout from "@/components/Layouts/AppLayout";
 import { Tabs, TabsProps } from "antd";
 
 import ContentManagementSystem from "@/components/Configuration/CMS/ContentManagementSystem";
@@ -21,7 +21,7 @@ const ConfigurationSettings = () => {
     },
   ];
   return (
-    <Layout2>
+    <AppLayout>
       <div style={{ padding: "20px 40px" }}>
         <Tabs
           tabBarGutter={60}
@@ -32,7 +32,7 @@ const ConfigurationSettings = () => {
           items={items}
         />
       </div>
-    </Layout2>
+    </AppLayout>
   );
 };
 

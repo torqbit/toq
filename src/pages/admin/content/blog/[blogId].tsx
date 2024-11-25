@@ -1,10 +1,10 @@
 import BlogForm from "@/components/Admin/Content/BlogForm";
-import Layout2 from "@/components/Layouts/Layout2";
 import { GetServerSidePropsContext } from "next";
 import prisma from "@/lib/prisma";
 
 import { FC } from "react";
 import { StateType } from "@prisma/client";
+import AppLayout from "@/components/Layouts/AppLayout";
 interface IProps {
   htmlData: string;
   bannerImage: string;
@@ -16,9 +16,9 @@ interface IProps {
 const BlogFormPage: FC<IProps> = ({ htmlData, bannerImage, title, state, contentType }) => {
   return (
     <>
-      <Layout2>
+      <AppLayout>
         <BlogForm contentType={contentType} htmlData={htmlData} bannerImage={bannerImage} title={title} state={state} />
-      </Layout2>
+      </AppLayout>
     </>
   );
 };

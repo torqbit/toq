@@ -1,4 +1,4 @@
-import Layout2 from "@/components/Layouts/Layout2";
+import AppLayoutfrom "@/components/Layouts/Layout2";
 import ConversationService, { IConversationList } from "@/services/ConversationService";
 import { truncateString } from "@/services/helper";
 import { UserOutlined } from "@ant-design/icons";

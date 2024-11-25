@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from "react";
 
-import Layout2 from "@/components/Layouts/Layout2";
+import AppLayout from "@/components/Layouts/AppLayout";
 
 import styles from "@/styles/Config.module.scss";
 
@@ -88,7 +88,7 @@ const Config: FC = () => {
   ];
 
   return (
-    <Layout2>
+    <AppLayout>
       <section className={styles.config_page}>
         <h3>{activeTab}</h3>
 
@@ -100,7 +100,7 @@ const Config: FC = () => {
           onChange={onChange}
         />
       </section>
-    </Layout2>
+    </AppLayout>
   );
 };
 

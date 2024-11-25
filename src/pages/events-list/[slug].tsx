@@ -1,6 +1,6 @@
 import { useAppContext } from "@/components/ContextApi/AppContext";
 import { checkDateExpired, convertToDayMonthTime, generateYearAndDayName, getCookieName } from "@/lib/utils";
-import { StateType, Theme, User } from "@prisma/client";
+import { StateType, User } from "@prisma/client";
 import { GetServerSidePropsContext } from "next";
 import { getToken } from "next-auth/jwt";
 import { FC, useEffect } from "react";
@@ -10,8 +10,9 @@ import styles from "@/styles/Marketing/Events/Event.module.scss";
 import { Breadcrumb } from "antd";
 
 import EventInfo from "@/components/Events/EventInfo";
-import Layout2 from "@/components/Layouts/Layout2";
+
 import { truncateString } from "@/services/helper";
+import AppLayout from "@/components/Layouts/AppLayout";
 
 const EventInfoPage: FC<{ user: User; eventInfo: IEventInfo; registrationExpired: boolean }> = ({
   user,
@@ -19,7 +20,7 @@ const EventInfoPage: FC<{ user: User; eventInfo: IEventInfo; registrationExpired
   registrationExpired,
 }) => {
   return (
-    <Layout2>
+    <AppLayout>
       <div className={styles.event_list_info_wrapper}>
         <Breadcrumb
           className={styles.breadcrumb}
@@ -44,7 +45,7 @@ const EventInfoPage: FC<{ user: User; eventInfo: IEventInfo; registrationExpired
           classNames="events_content_wrapper"
         />
       </div>
-    </Layout2>
+    </AppLayout>
   );
 };
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {

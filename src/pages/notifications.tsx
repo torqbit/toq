@@ -2,7 +2,7 @@ import React, { FC, useState } from "react";
 import styles from "@/styles/Dashboard.module.scss";
 import { useSession } from "next-auth/react";
 import { Avatar, Badge, Button, Flex, List, Skeleton } from "antd";
-import Layout2 from "@/components/Layouts/Layout2";
+
 import Link from "next/link";
 import { truncateString } from "@/services/helper";
 import moment from "moment";
@@ -13,6 +13,7 @@ import { useRouter } from "next/router";
 import { getFetch } from "@/services/request";
 import { UserOutlined } from "@ant-design/icons";
 import PurifyContent from "@/components/PurifyContent/PurifyContent";
+import AppLayout from "@/components/Layouts/AppLayout";
 
 const NotificationList: FC = () => {
   const router = useRouter();
@@ -176,13 +177,13 @@ const NotificationList: FC = () => {
 
 const Dashboard: FC = () => {
   return (
-    <Layout2>
+    <AppLayout>
       <section className={styles.dashboard_content}>
         <h3>Notification</h3>
 
         <NotificationList />
       </section>
-    </Layout2>
+    </AppLayout>
   );
 };
 

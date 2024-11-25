@@ -1,4 +1,3 @@
-import Layout2 from "@/components/Layouts/Layout2";
 import SpinLoader from "@/components/SpinLoader/SpinLoader";
 import AssignmentService, { ISubmissionDetail } from "@/services/AssignmentService";
 import { Breadcrumb, Button, Drawer, Flex, Form, InputNumber, message, Modal, Segmented, Space } from "antd";
@@ -18,6 +17,7 @@ import { useAppContext } from "@/components/ContextApi/AppContext";
 import ViewResult from "@/components/Assignment/Submissions/ViewResult";
 import AssignmentCodeEditor from "@/components/Assignment/Submissions/AssignmentCodeEditor";
 import { submissionStatus } from "@prisma/client";
+import AppLayout from "@/components/Layouts/AppLayout";
 
 const EvaluatePage: NextPage = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -123,7 +123,7 @@ const EvaluatePage: NextPage = () => {
     }
   }, [router.query.id, refresh]);
   return (
-    <Layout2>
+    <AppLayout>
       {contextHolder}
       {!loading ? (
         <section className={style.evaluationWrapper}>
@@ -237,7 +237,7 @@ const EvaluatePage: NextPage = () => {
       ) : (
         <SpinLoader />
       )}
-    </Layout2>
+    </AppLayout>
   );
 };
 

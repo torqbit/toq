@@ -9,7 +9,7 @@ import moment from "moment";
 import appConstant from "@/services/appConstant";
 import { NextPage } from "next";
 import type { DatePickerProps, RangePickerProps } from "antd/es/date-picker";
-import Layout2 from "@/components/Layouts/Layout2";
+import AppLayoutfrom "@/components/Layouts/Layout2";
 
 type FieldType = {
   name?: string;

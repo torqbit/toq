@@ -18,7 +18,7 @@ import {
   message,
 } from "antd";
 import SvgIcons from "@/components/SvgIcons";
-import Layout2 from "@/components/Layouts/Layout2";
+import AppLayout from "@/components/Layouts/AppLayout";
 import { useSession } from "next-auth/react";
 import { IResponse, getFetch, postFetch } from "@/services/request";
 import { Course, User } from "@prisma/client";
@@ -365,7 +365,7 @@ const Users: FC = () => {
   };
 
   return (
-    <Layout2>
+    <AppLayout>
       <section className={styles.dashboard_content}>
         <h3>Users</h3>
         <Tabs
@@ -413,7 +413,7 @@ const Users: FC = () => {
           </Form>
         </Modal>
       </section>
-    </Layout2>
+    </AppLayout>
   );
 };
 

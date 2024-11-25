@@ -1,6 +1,6 @@
 import { NextPage } from "next";
 import { EnrolledCourseList } from "./content";
-import Layout2 from "@/components/Layouts/Layout2";
+import AppLayoutfrom "@/components/Layouts/Layout2";
 
 const CoursesPage: NextPage = () => {
   return (

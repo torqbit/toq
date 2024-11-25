@@ -1,5 +1,5 @@
 import { Button, Collapse, Flex, Skeleton, Space, Spin, Tabs, TabsProps, Tag, message } from "antd";
-import Layout2 from "../Layouts/Layout2";
+
 import styles from "@/styles/LearnCourses.module.scss";
 import { FC, ReactNode, useEffect, useState } from "react";
 import SvgIcons from "../SvgIcons";
@@ -16,6 +16,7 @@ import appConstant from "@/services/appConstant";
 import { convertSecToHourandMin } from "@/pages/admin/content";
 import QADiscssionTab from "./AboutCourse/CourseDiscussion/CourseDiscussion";
 import SpinLoader from "../SpinLoader/SpinLoader";
+import AppLayout from "../Layouts/AppLayout";
 
 const Label: FC<{
   title: string;
@@ -348,7 +349,7 @@ const LearnCourse: FC<{}> = () => {
       );
   }, [router.query.courseId]);
   return (
-    <Layout2>
+    <AppLayout>
       {contextMessageHolder}
       {!loading ? (
         <section className={styles.learn_course_page}>
@@ -467,7 +468,7 @@ const LearnCourse: FC<{}> = () => {
       ) : (
         <SpinLoader />
       )}
-    </Layout2>
+    </AppLayout>
   );
 };
 

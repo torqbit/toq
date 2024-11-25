@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useState } from "react";
 import styles from "@/styles/Dashboard.module.scss";
 import { Breadcrumb, Form, Tabs, TabsProps, message } from "antd";
-import Layout2 from "@/components/Layouts/Layout2";
+
 import { GetServerSidePropsContext, NextPage } from "next";
 import { useRouter } from "next/router";
 import AttendeesList from "@/components/Events/AttendeesList";
@@ -11,6 +11,7 @@ import { getCookieName } from "@/lib/utils";
 import prisma from "@/lib/prisma";
 import { getToken } from "next-auth/jwt";
 import { EventAccess, Role } from "@prisma/client";
+import AppLayout from "@/components/Layouts/AppLayout";
 
 const EventDetailPage: FC<{ eventName: string }> = ({ eventName }) => {
   const [messageApi, contextMessageHolder] = message.useMessage();
@@ -199,7 +200,7 @@ const EventDetailPage: FC<{ eventName: string }> = ({ eventName }) => {
   }, [router.query.eventId]);
 
   return (
-    <Layout2>
+    <AppLayout>
       {contextMessageHolder}
       <section className={styles.dashboard_content}>
         <Breadcrumb
@@ -223,7 +224,7 @@ const EventDetailPage: FC<{ eventName: string }> = ({ eventName }) => {
           }}
         />
       </section>
-    </Layout2>
+    </AppLayout>
   );
 };
 

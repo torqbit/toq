@@ -1,13 +1,13 @@
-import Layout2 from "@/components/Layouts/Layout2";
 import EventForm from "@/components/Events/EventForm";
+import AppLayout from "@/components/Layouts/AppLayout";
 import { NextPage } from "next";
 
 const EventFormPage: NextPage = () => {
   return (
     <>
-      <Layout2>
+      <AppLayout>
         <EventForm />
-      </Layout2>
+      </AppLayout>
     </>
   );
 };

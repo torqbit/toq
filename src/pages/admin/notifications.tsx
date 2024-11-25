@@ -1,4 +1,4 @@
-import Layout2 from "@/components/Layouts/Layout2";
+import AppLayoutfrom "@/components/Layouts/Layout2";
 import { NextPage } from "next";
 
 const NotificationPage: NextPage = () => {
