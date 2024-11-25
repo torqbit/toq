@@ -1,6 +1,6 @@
 import { Button, Flex, Form, Input, Steps } from "antd";
 import ConfigFormLayout from "@/components/Configuration/ConfigFormLayout";
-import ContentConfigForm from "@/components/Configuration/Cmss/ContentConfigForm";
+import ContentConfigForm from "@/components/Configuration/CMS/ContentConfigForm";
 import { ReactNode } from "react";
 import Image from "next/image";
 export interface ICmsForm {
@@ -98,6 +98,7 @@ const ContentManagementSystem = () => {
                         "Provide access key for Bunny.net that will be used to configure video stream, image CND and file storage"
                       }
                       divider={false}
+                      inputName={""}
                     />
                   </Form.Item>
                 </ConfigFormLayout>
@@ -114,6 +115,7 @@ const ContentManagementSystem = () => {
                           title={item.title}
                           description={item.description}
                           divider={i === videoItems.length - 1 ? false : true}
+                          inputName={""}
                         />
                       </Form.Item>
                     );
@@ -133,6 +135,7 @@ const ContentManagementSystem = () => {
                           description={item.description}
                           divider={i === cdnItems.length - 1 ? false : true}
                           optional={item.optional}
+                          inputName={""}
                         />
                       </Form.Item>
                     );
