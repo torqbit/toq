@@ -2,8 +2,10 @@ import AppLayout from "@/components/Layouts/AppLayout";
 import { Tabs, TabsProps } from "antd";
 
 import ContentManagementSystem from "@/components/Configuration/CMS/ContentManagementSystem";
+import { FC } from "react";
+import { PageSiteConfig } from "@/services/siteConstant";
 
-const ConfigurationSettings = () => {
+const ConfigurationSettings: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const items: TabsProps["items"] = [
     {
       key: "CMS",
@@ -21,7 +23,7 @@ const ConfigurationSettings = () => {
     },
   ];
   return (
-    <AppLayout>
+    <AppLayout siteConfig={siteConfig}>
       <div style={{ padding: "20px 40px" }}>
         <Tabs
           tabBarGutter={60}

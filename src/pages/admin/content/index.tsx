@@ -6,7 +6,7 @@ import SvgIcons from "@/components/SvgIcons";
 import { useSession } from "next-auth/react";
 import ProgramService from "@/services/ProgramService";
 import { useRouter } from "next/router";
-import { NextPage } from "next";
+import { GetServerSidePropsContext, NextPage } from "next";
 import { Course } from "@prisma/client";
 import BlogList from "@/components/Admin/Content/BlogList";
 import BlogService from "@/services/BlogService";
@@ -15,6 +15,8 @@ import EventList from "@/components/Events/EventList";
 import EventService from "@/services/EventService";
 import { IContentTabType } from "@/types/courses/Course";
 import AppLayout from "@/components/Layouts/AppLayout";
+import { getSiteConfig } from "@/services/getSiteConfig";
+import { PageSiteConfig } from "@/services/siteConstant";
 
 export const convertSecToHourandMin = (seconds: number) => {
   let result = "";
@@ -171,7 +173,7 @@ export const EnrolledCourseList: FC<{
   );
 };
 
-const Content: NextPage = () => {
+const Content: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const { data: user } = useSession();
   const [modal, contextWrapper] = Modal.useModal();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -441,7 +443,7 @@ const Content: NextPage = () => {
   };
 
   return (
-    <AppLayout>
+    <AppLayout siteConfig={siteConfig}>
       {contextMessageHolder}
       <section className={styles.dashboard_content}>
         <h3>Content</h3>
@@ -473,3 +475,13 @@ const Content: NextPage = () => {
 };
 
 export default Content;
+
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+  const siteConfig = getSiteConfig();
+  const { site } = siteConfig;
+  return {
+    props: {
+      siteConfig: site,
+    },
+  };
+};

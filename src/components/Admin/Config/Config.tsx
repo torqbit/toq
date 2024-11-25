@@ -8,8 +8,9 @@ import { Breadcrumb, Form, Tabs, TabsProps, message } from "antd";
 import MediaStorage from "./MediaStorage";
 import ProgramService from "@/services/ProgramService";
 import CertificateTemplates from "./Certificate";
+import { PageSiteConfig } from "@/services/siteConstant";
 
-const Config: FC = () => {
+const Config: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingBtn, setLoadingBtn] = useState<boolean>(false);
 
@@ -88,7 +89,7 @@ const Config: FC = () => {
   ];
 
   return (
-    <AppLayout>
+    <AppLayout siteConfig={siteConfig}>
       <section className={styles.config_page}>
         <h3>{activeTab}</h3>
 

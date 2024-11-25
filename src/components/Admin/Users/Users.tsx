@@ -24,6 +24,7 @@ import { IResponse, getFetch, postFetch } from "@/services/request";
 import { Course, User } from "@prisma/client";
 import moment from "moment";
 import appConstant from "@/services/appConstant";
+import { PageSiteConfig } from "@/services/siteConstant";
 
 const UserList: FC = () => {
   const [allUsers, setAllUsers] = React.useState<User[]>([]);
@@ -306,7 +307,7 @@ const UserList: FC = () => {
   );
 };
 
-const Users: FC = () => {
+const Users: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const { data: user } = useSession();
   const [onModal, setModal] = useState(false);
 
@@ -365,7 +366,7 @@ const Users: FC = () => {
   };
 
   return (
-    <AppLayout>
+    <AppLayout siteConfig={siteConfig}>
       <section className={styles.dashboard_content}>
         <h3>Users</h3>
         <Tabs

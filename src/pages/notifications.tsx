@@ -14,6 +14,9 @@ import { getFetch } from "@/services/request";
 import { UserOutlined } from "@ant-design/icons";
 import PurifyContent from "@/components/PurifyContent/PurifyContent";
 import AppLayout from "@/components/Layouts/AppLayout";
+import { getSiteConfig } from "@/services/getSiteConfig";
+import { GetServerSidePropsContext } from "next";
+import { PageSiteConfig } from "@/services/siteConstant";
 
 const NotificationList: FC = () => {
   const router = useRouter();
@@ -175,9 +178,9 @@ const NotificationList: FC = () => {
   );
 };
 
-const Dashboard: FC = () => {
+const Dashboard: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   return (
-    <AppLayout>
+    <AppLayout siteConfig={siteConfig}>
       <section className={styles.dashboard_content}>
         <h3>Notification</h3>
 
@@ -188,3 +191,13 @@ const Dashboard: FC = () => {
 };
 
 export default Dashboard;
+
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+  const siteConfig = getSiteConfig();
+  const { site } = siteConfig;
+  return {
+    props: {
+      siteConfig: site,
+    },
+  };
+};

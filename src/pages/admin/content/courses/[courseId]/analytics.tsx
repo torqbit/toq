@@ -1,4 +1,4 @@
-import { NextPage } from "next";
+import { GetServerSidePropsContext, NextPage } from "next";
 import { useSession } from "next-auth/react";
 import styles from "@/styles/Analytics.module.scss";
 import { Flex, Spin } from "antd";
@@ -15,8 +15,10 @@ import ProgramService from "@/services/ProgramService";
 import { LoadingOutlined } from "@ant-design/icons";
 import SpinLoader from "@/components/SpinLoader/SpinLoader";
 import AppLayout from "@/components/Layouts/AppLayout";
+import { PageSiteConfig } from "@/services/siteConstant";
+import { getSiteConfig } from "@/services/getSiteConfig";
 
-const AnalyticsPage: NextPage = () => {
+const AnalyticsPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const { data: session } = useSession();
   const router = useRouter();
   const [overallMembers, setOverallmember] = useState<{
@@ -101,7 +103,7 @@ const AnalyticsPage: NextPage = () => {
   }, [router.query.courseId]);
 
   return (
-    <AppLayout>
+    <AppLayout siteConfig={siteConfig}>
       <>
         {loading ? (
           <SpinLoader />
@@ -125,3 +127,13 @@ const AnalyticsPage: NextPage = () => {
 };
 
 export default AnalyticsPage;
+
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+  const siteConfig = getSiteConfig();
+  const { site } = siteConfig;
+  return {
+    props: {
+      siteConfig: site,
+    },
+  };
+};

@@ -24,8 +24,9 @@ import { RcFile } from "antd/es/upload";
 import { postWithFile } from "@/services/request";
 
 import AddLesson from "./AddLesson";
+import { PageSiteConfig } from "@/services/siteConstant";
 
-const AddCourseForm: FC = () => {
+const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const [courseBannerUploading, setCourseBannerUploading] = useState<boolean>(false);
   const [courseTrailerUploading, setCourseTrailerUploading] = useState<boolean>(false);
   const [messageApi, contextHolder] = message.useMessage();
@@ -525,7 +526,7 @@ const AddCourseForm: FC = () => {
   }, [router.query.id, refresh]);
 
   return (
-    <AppLayout>
+    <AppLayout siteConfig={siteConfig}>
       {contextHolder}
       <section className={styles.add_course_page}>
         <div className={styles.add_course_header}>

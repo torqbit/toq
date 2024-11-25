@@ -1,16 +1,19 @@
-import AppLayoutfrom "@/components/Layouts/Layout2";
+import AppLayout from "@/components/Layouts/AppLayout";
+
 import SvgIcons from "@/components/SvgIcons";
 import { Button, Flex, Space } from "antd";
-import { NextPage } from "next";
+import { GetServerSidePropsContext, NextPage } from "next";
 import { useRouter } from "next/router";
 import { useMediaQuery } from "react-responsive";
+import { getSiteConfig } from "@/services/getSiteConfig";
+import { PageSiteConfig } from "@/services/siteConstant";
 
-const UnAuthorized: NextPage = () => {
+const UnAuthorized: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const router = useRouter();
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
 
   return (
-    <Layout2>
+    <AppLayout siteConfig={siteConfig}>
       <section
         style={{ height: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}
       >
@@ -31,8 +34,18 @@ const UnAuthorized: NextPage = () => {
           </Flex>
         </Space>
       </section>
-    </Layout2>
+    </AppLayout>
   );
 };
 
 export default UnAuthorized;
+
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+  const siteConfig = getSiteConfig();
+  const { site } = siteConfig;
+  return {
+    props: {
+      siteConfig: site,
+    },
+  };
+};

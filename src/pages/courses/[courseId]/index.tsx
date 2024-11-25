@@ -5,7 +5,7 @@ import ProgramService from "@/services/ProgramService";
 import { getFetch, IResponse, postFetch } from "@/services/request";
 import { CourseLessonAPIResponse } from "@/types/courses/Course";
 import { Alert, AlertProps, Button, Form, InputNumber, Modal, message } from "antd";
-import { NextPage } from "next";
+import { GetServerSidePropsContext, NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { load } from "@cashfreepayments/cashfree-js";
@@ -16,8 +16,10 @@ import { useSession } from "next-auth/react";
 import appConstant from "@/services/appConstant";
 import AddPhone from "@/components/AddPhone/AddPhone";
 import AppLayout from "@/components/Layouts/AppLayout";
+import { getSiteConfig } from "@/services/getSiteConfig";
+import { PageSiteConfig } from "@/services/siteConstant";
 
-const LearnCoursesPage: NextPage = () => {
+const LearnCoursesPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const router = useRouter();
   const [form] = Form.useForm();
   const { data: user, update } = useSession();
@@ -197,7 +199,7 @@ const LearnCoursesPage: NextPage = () => {
     }
   };
   return (
-    <AppLayout>
+    <AppLayout siteConfig={siteConfig}>
       {contextMessageHolder}
       {contextModalHolder}
 
@@ -232,3 +234,13 @@ const LearnCoursesPage: NextPage = () => {
 };
 
 export default LearnCoursesPage;
+
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+  const siteConfig = getSiteConfig();
+  const { site } = siteConfig;
+  return {
+    props: {
+      siteConfig: site,
+    },
+  };
+};

@@ -4,12 +4,15 @@ import styles from "@/styles/Dashboard.module.scss";
 import { useSession } from "next-auth/react";
 import { Space, Tag } from "antd";
 import AppLayout from "@/components/Layouts/AppLayout";
+import { GetServerSidePropsContext, NextPage } from "next";
+import { getSiteConfig } from "@/services/getSiteConfig";
+import { PageSiteConfig } from "@/services/siteConstant";
 
-const GuidesPage = () => {
+const GuidesPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const { data: user } = useSession();
 
   return (
-    <AppLayout>
+    <AppLayout siteConfig={siteConfig}>
       <section className={styles.dashboard_content}>
         <div className={styles.guide_wrapper}>
           <Space style={{ marginBottom: 10 }}>
@@ -26,3 +29,13 @@ const GuidesPage = () => {
 };
 
 export default GuidesPage;
+
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+  const siteConfig = getSiteConfig();
+  const { site } = siteConfig;
+  return {
+    props: {
+      siteConfig: site,
+    },
+  };
+};

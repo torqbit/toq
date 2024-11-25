@@ -11,14 +11,17 @@ import styles from "@/styles/Marketing/Events/Event.module.scss";
 
 import Events from "@/components/Events/Events";
 import AppLayout from "@/components/Layouts/AppLayout";
+import { getSiteConfig } from "@/services/getSiteConfig";
+import { PageSiteConfig } from "@/services/siteConstant";
 
-const EventsList: FC<{ user: User; eventList: IEventList[]; totalEventsLength: number }> = ({
-  user,
-  eventList,
-  totalEventsLength,
-}) => {
+const EventsList: FC<{
+  user: User;
+  eventList: IEventList[];
+  totalEventsLength: number;
+  siteConfig: PageSiteConfig;
+}> = ({ user, eventList, totalEventsLength, siteConfig }) => {
   return (
-    <AppLayout>
+    <AppLayout siteConfig={siteConfig}>
       <div className={styles.events_list_wrapper}>
         <div className={styles.event_header}>
           <h3>Events</h3>
@@ -33,6 +36,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const { req } = ctx;
 
   let cookieName = getCookieName();
+  const { site } = getSiteConfig();
 
   const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
 
@@ -89,6 +93,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
         }),
 
         totalEventsLength: await prisma.events.count({ where: { state: StateType.ACTIVE } }),
+        siteConfig: site,
       },
     };
   } else {
@@ -96,6 +101,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
       props: {
         user,
         eventList: [],
+        siteConfig: site,
       },
     };
   }

@@ -1,4 +1,4 @@
-import type { NextPage } from "next";
+import type { GetServerSidePropsContext, NextPage } from "next";
 import styles from "@/styles/Dashboard.module.scss";
 import React, { useEffect, useState } from "react";
 import { Course } from "@prisma/client";
@@ -9,8 +9,10 @@ import ProgramService from "@/services/ProgramService";
 import { LoadingOutlined } from "@ant-design/icons";
 import SpinLoader from "@/components/SpinLoader/SpinLoader";
 import AppLayout from "@/components/Layouts/AppLayout";
+import { getSiteConfig } from "@/services/getSiteConfig";
+import { PageSiteConfig } from "@/services/siteConstant";
 
-const CoursesPage: NextPage = () => {
+const CoursesPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const [allCourses, setAllCourses] = useState<Course[] | undefined>([]);
   const [messageApi, contextMessageHolder] = message.useMessage();
   const [loading, setLoading] = useState<boolean>(false);
@@ -31,7 +33,7 @@ const CoursesPage: NextPage = () => {
   }, []);
 
   return (
-    <AppLayout>
+    <AppLayout siteConfig={siteConfig}>
       {contextMessageHolder}
       <section>
         <div className={styles.courseContainer}>
@@ -60,3 +62,13 @@ const CoursesPage: NextPage = () => {
 };
 
 export default CoursesPage;
+
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+  const siteConfig = getSiteConfig();
+  const { site } = siteConfig;
+  return {
+    props: {
+      siteConfig: site,
+    },
+  };
+};
