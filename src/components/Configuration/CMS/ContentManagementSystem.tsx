@@ -64,12 +64,7 @@ const ContentManagementSystem = () => {
 
   return (
     <section>
-      <h3>
-        <Flex align="center" gap={5}>
-          Content Management System
-          <Image height={25} width={25} src={"/config/bunny.png"} alt="bunny icon" />
-        </Flex>
-      </h3>
+      <h3>Content Management System</h3>
       <Form>
         <Steps
           current={0}
@@ -95,7 +90,7 @@ const ContentManagementSystem = () => {
                       input={<Input placeholder="Add access key" />}
                       title={"Bunny.net Access Key"}
                       description={
-                        "Provide access key for Bunny.net that will be used to configure video stream, image CND and file storage"
+                        "Provide access key for Bunny.net that will be used to configure video stream, image CDN and file storage"
                       }
                       divider={false}
                       inputName={""}
