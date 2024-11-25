@@ -13,9 +13,9 @@ const ContentConfigForm: FC<{
   return (
     <div className={styles.cms__form} style={{ borderBottom: !divider ? "none" : "" }}>
       <div>
-        <h4>
+        <h5>
           {title} {optional && <p>Optional</p>}
-        </h4>
+        </h5>
         <p>{description}</p>
       </div>
       <div>{input}</div>

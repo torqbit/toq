@@ -11,7 +11,7 @@ const ConfigFormLayout: FC<{
   return (
     <section className={styles.cms__container}>
       <div className={styles.cms__form__header}>
-        <h3>{formTitle}</h3>
+        <h4>{formTitle}</h4>
         {extraContent}
       </div>
       <div>{children}</div>

@@ -2,8 +2,9 @@ import Layout2 from "@/components/Layouts/Layout2";
 import { Button, Flex, Form, Input, Steps } from "antd";
 import styles from "./Cms.module.scss";
 import ConfigFormLayout from "@/components/Configuration/ConfigFormLayout";
-import ContentConfigForm from "@/components/Configuration/Cms/ContentConfigForm";
+import ContentConfigForm from "@/components/Configuration/CMS/ContentConfigForm";
 import { ReactNode } from "react";
+import Image from "next/image";
 export interface ICmsForm {
   title: string;
   description: string;
@@ -65,10 +66,16 @@ const ContentManagementSystem = () => {
 
   return (
     <section>
-      <h3>Content Management System</h3>
+      <h3>
+        <Flex align="center" gap={5}>
+          Content Management System
+          <Image height={25} width={25} src={"/config/bunny.png"} alt="bunny icon" />
+        </Flex>
+      </h3>
       <Form>
         <Steps
           current={0}
+          status="finish"
           size="small"
           progressDot
           direction="vertical"
