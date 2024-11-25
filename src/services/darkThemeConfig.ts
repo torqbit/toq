@@ -20,6 +20,9 @@ const darkThemeConfig = (siteConfig: PageSiteConfig) => {
       Layout: {
         bodyBg: "#202433",
       },
+      Steps: {
+        colorSplit: "#2f3647",
+      },
       Statistic: {
         contentFontSize: 12,
         titleFontSize: 12,

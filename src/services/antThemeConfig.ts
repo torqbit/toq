@@ -13,6 +13,10 @@ const antThemeConfig = (siteConfig: PageSiteConfig) => {
       Layout: {
         bodyBg: "#f5f5f5",
       },
+      Steps: {
+        colorTextDisabled: "#666",
+        colorSplit: "#d9d9d9",
+      },
 
       Badge: {
         colorInfo: `${siteConfig.brand?.brandColor}`,
