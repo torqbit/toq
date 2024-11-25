@@ -1,7 +1,6 @@
 import { FC } from "react";
 
-import styles from "./Cms.module.scss";
-import { Form, Input, Segmented } from "antd";
+import styles from "./CMS.module.scss";
 
 const ContentConfigForm: FC<{
   input?: React.ReactNode;

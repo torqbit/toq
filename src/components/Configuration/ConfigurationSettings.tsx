@@ -1,7 +1,7 @@
 import Layout2 from "@/components/Layouts/Layout2";
 import { Tabs, TabsProps } from "antd";
 
-import ContentManagementSystem from "@/components/Configuration/Cmss/ContentManagementSystem";
+import ContentManagementSystem from "@/components/Configuration/CMS/ContentManagementSystem";
 
 const ConfigurationSettings = () => {
   const items: TabsProps["items"] = [

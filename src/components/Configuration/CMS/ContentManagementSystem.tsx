@@ -1,6 +1,4 @@
-import Layout2 from "@/components/Layouts/Layout2";
 import { Button, Flex, Form, Input, Steps } from "antd";
-import styles from "./Cms.module.scss";
 import ConfigFormLayout from "@/components/Configuration/ConfigFormLayout";
 import ContentConfigForm from "@/components/Configuration/Cmss/ContentConfigForm";
 import { ReactNode } from "react";

@@ -1,6 +1,6 @@
 import { FC } from "react";
 
-import styles from "./Cms/Cms.module.scss";
+import styles from "./CMS/Cms.module.scss";
 import { Button, Flex, Form, Input, Segmented } from "antd";
 
 const ConfigFormLayout: FC<{
