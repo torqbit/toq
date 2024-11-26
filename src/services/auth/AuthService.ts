@@ -31,12 +31,12 @@ class AuthService {
     });
     if (userRole === Role.ADMIN) {
       if (isMediaConfig > 0) {
-        return redirectUrl ? redirectUrl : "/dashboard";
+        return redirectUrl !== "undefined" ? redirectUrl : "/dashboard";
       } else {
         return "/admin/onboard/complete";
       }
     } else {
-      return redirectUrl ? redirectUrl : "/dashboard";
+      return redirectUrl !== "undefined" ? redirectUrl : "/dashboard";
     }
   };
 }

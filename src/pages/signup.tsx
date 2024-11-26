@@ -6,7 +6,6 @@ import { NextPage, GetServerSidePropsContext } from "next";
 import { useRouter } from "next/router";
 import SpinLoader from "@/components/SpinLoader/SpinLoader";
 import { getToken } from "next-auth/jwt";
-import appConstant from "@/services/appConstant";
 import { authConstants, capitalizeFirstLetter, getCookieName } from "@/lib/utils";
 import Image from "next/image";
 import getLoginMethods from "@/lib/auth/loginMethods";
@@ -95,7 +94,7 @@ const LoginPage: NextPage<{
         {contextHolder}
         <div className={styles.social_login_container}>
           <Image src={"/icon/torqbit.png"} height={60} width={60} alt={"logo"} />
-          <h3>Welcome to {appConstant.platformName}</h3>
+          <h3>Welcome to {siteConfig.brand?.name}</h3>
 
           {emailSignup && (
             <Form

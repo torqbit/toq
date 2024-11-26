@@ -51,14 +51,7 @@ export default SiteSetupPage;
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const { site } = getSiteConfig();
   const siteConfig = site;
-  if (siteConfig.updated) {
-    return {
-      redirect: {
-        permanent: false,
-        destination: "/signup",
-      },
-    };
-  }
+
   return {
     props: {
       siteConfig,
