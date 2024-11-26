@@ -201,7 +201,7 @@ const ContentManagementSystem = () => {
     try {
       setLoading(true);
       cmsClient.listReplicationRegions(
-        "211000f1-8749-42d0-bf05-c128bccb6b4409d8dc1a-7071-450f-a137-31ae8240355c",
+        "ACCESS_KEY",
         "bunny.net",
         (result) => {
           setCurrent(1);
