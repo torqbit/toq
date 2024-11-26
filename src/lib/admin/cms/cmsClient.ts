@@ -18,7 +18,6 @@ class cmsClient {
     onFailure: (message: string) => void
   ) => {
     postFetch({ accessKey, provider }, `/api/v1/admin/config/cms/test`).then((result) => {
-      console.log(result, "first restult");
       if (result.status == 200) {
         result.json().then((r) => {
           const apiResponse = r as ApiResponse;
@@ -41,7 +40,6 @@ class cmsClient {
     postFetch({ accessKey, provider }, `/api/v1/admin/config/cms/regions`).then((result) => {
       if (result.status == 200) {
         result.json().then((r) => {
-          console.log(r, "sdf");
           const apiResponse = r as ApiResponse;
           onSuccess(apiResponse);
         });

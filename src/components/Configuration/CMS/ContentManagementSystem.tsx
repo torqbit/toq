@@ -36,7 +36,6 @@ const ContentManagementSystem = () => {
       return;
     }
     const file = info.fileList[0].originFileObj;
-    console.log(file, "d");
 
     if (file) {
       const reader = new FileReader();
@@ -51,7 +50,8 @@ const ContentManagementSystem = () => {
     {
       title: "Choose Replication Regions",
       description: "Choose regions from where the video will be accessed and streamed to the users",
-      required: true,
+      optional: false,
+
       input: (
         <Select
           labelInValue
@@ -74,7 +74,7 @@ const ContentManagementSystem = () => {
 
     {
       title: "Allowed Domain names",
-      required: false,
+      optional: true,
 
       description:
         "The list of domains that are allowed to access the videos. If no hostnames are listed all requests will be allowed.",
@@ -85,7 +85,7 @@ const ContentManagementSystem = () => {
     },
     {
       title: "Upload Watermark",
-      required: false,
+      optional: true,
 
       description:
         "Automatically watermark uploaded videos. The watermark is encoded into the video itself and cannot be removed after encoding.",
@@ -122,7 +122,7 @@ const ContentManagementSystem = () => {
     },
     {
       title: "Set Resolutions",
-      required: true,
+      optional: false,
 
       description:
         "Select te enabled resolutions that will be encoded. Only resolutions smaller than or equal to the original video resolutions will be used during encoding.",
@@ -149,20 +149,51 @@ const ContentManagementSystem = () => {
 
   const cdnItems: ICmsForm[] = [
     {
-      title: "Image CDN Name",
+      title: "Main Storage Region",
       description:
         "Give a name to the storage zone that will be storing all the static images for courses, events and users",
-      input: <Input placeholder="Add cdn name" />,
+      input: <Input placeholder="Add main storage name" />,
 
-      inputName: "cdnName",
+      inputName: "mainStorageName",
     },
-
+    {
+      title: "Choose Replication Regions",
+      description: "Choose regions from where the video will be accessed and streamed to the users",
+      input: (
+        <Select
+          labelInValue
+          optionLabelProp="label"
+          style={{ width: 250 }}
+          mode="tags"
+          placeholder="Choose replication regions"
+        >
+          {replicationRegions.map((region, i) => {
+            return (
+              <Select.Option key={i} value={`${region.code}`}>
+                {region.name}
+              </Select.Option>
+            );
+          })}
+        </Select>
+      ),
+      inputName: "replicationRegion",
+    },
     {
       title: "Custom Domain",
       description: "Use a custom domain that will be used to access images",
       input: <Input placeholder="Add custom domain" />,
       inputName: "domainNames",
       optional: true,
+    },
+
+    {
+      title: "Allowed hostnames",
+      optional: true,
+
+      description:
+        "The list of hostnames that are allowed to access the images. If no hostnames are listed all requests will be allowed.",
+      input: <Select mode="tags" suffixIcon={<></>} placeholder="Add hostnames" open={false} style={{ width: 250 }} />,
+      inputName: "hostNames",
     },
   ];
 
@@ -175,7 +206,7 @@ const ContentManagementSystem = () => {
         (result) => {
           setCurrent(1);
           setRegions(result.regions);
-          // messageApi.success(result.message);
+
           setLoading(false);
         },
         (error) => {
@@ -222,7 +253,6 @@ const ContentManagementSystem = () => {
       replicationRegion: videoForm.getFieldsValue().replicationRegion.map((r: any) => r.value),
       resolution: videoForm.getFieldsValue().resolution.map((r: any) => r.value),
     };
-    console.log(data, "sf");
   };
 
   return (
@@ -294,7 +324,7 @@ const ContentManagementSystem = () => {
                         input={
                           <Form.Item
                             name={item.inputName}
-                            rules={[{ required: item.required, message: `Field is required!` }]}
+                            rules={[{ required: !item.optional, message: `Field is required!` }]}
                             key={i}
                           >
                             {item.input}
@@ -304,23 +334,39 @@ const ContentManagementSystem = () => {
                         description={item.description}
                         divider={i === videoItems.length - 1 ? false : true}
                         inputName={""}
+                        optional={item.optional}
                       />
                     );
                   })}
-                  {/* {current < 1 && <FormDisableOverlay />} */}
+                  {current < 1 && <FormDisableOverlay />}
                 </Form>
               </ConfigFormLayout>
             ),
           },
           {
             title: (
-              <ConfigFormLayout formTitle={"Content Delivery Network-Images"}>
-                <>
+              <ConfigFormLayout
+                extraContent={
+                  <Flex align="center" gap={10}>
+                    {<Button onClick={() => cdnForm.resetFields()}>Reset</Button>}
+
+                    <Button onClick={() => cdnForm.submit()} type="primary">
+                      Save
+                    </Button>
+                  </Flex>
+                }
+                formTitle={"Content Delivery Network-Images"}
+              >
+                <Form form={cdnForm}>
                   {cdnItems.map((item, i) => {
                     return (
                       <ContentConfigForm
                         input={
-                          <Form.Item name={item.inputName} key={i}>
+                          <Form.Item
+                            rules={[{ required: !item.optional, message: `Field is required!` }]}
+                            name={item.inputName}
+                            key={i}
+                          >
                             {item.input}
                           </Form.Item>
                         }
@@ -332,8 +378,8 @@ const ContentManagementSystem = () => {
                       />
                     );
                   })}
-                  {current < 2 && <FormDisableOverlay />}
-                </>
+                  {/* {current < 2 && <FormDisableOverlay />} */}
+                </Form>
               </ConfigFormLayout>
             ),
           },

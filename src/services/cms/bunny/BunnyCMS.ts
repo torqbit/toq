@@ -15,9 +15,9 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig> {
   async saveConfiguration(config: BunnyCMSConfig): Promise<boolean> {
     //based on the config object values, save in the database
     let configId;
-    let state: ConfigurationState = ConfigurationState.AUTHENTICATED;
+    let configState: ConfigurationState = ConfigurationState.AUTHENTICATED;
     if (config.vodConfig) {
-      state = ConfigurationState.VOD_CONFIGURED;
+      configState = ConfigurationState.VOD_CONFIGURED;
     }
 
     const existingSP = await prisma?.serviceProvider.findUnique({
@@ -31,7 +31,7 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig> {
         data: {
           provider_name: this.provider,
           providerDetail: config,
-          state: ConfigurationState.VOD_CONFIGURED,
+          state: configState,
         },
         where: {
           service_type: this.serviceType,
@@ -44,7 +44,7 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig> {
           service_type: "cms",
           provider_name: this.provider,
           providerDetail: config,
-          state: ConfigurationState.VOD_CONFIGURED,
+          state: configState,
         },
       });
       configId = result?.id;
