@@ -40,12 +40,10 @@
       align-items: center;
       gap: 20px;
       color: var(--font-primary);
-      p {
-        margin: 0;
-        padding: 0;
-        font-size: 14px;
-        color: var(--font-secondary);
-      }
+    }
+    p {
+      padding: 0;
+      margin-bottom: 8px;
     }
     input {
       width: 250px;
