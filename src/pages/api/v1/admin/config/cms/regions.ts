@@ -24,7 +24,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     return res.status(200).json({
       success: true,
-      messsage: "Fetched the replicated regions successfully",
+      message: "Fetched the replicated regions successfully",
       regions: result,
     });
   } catch (error) {
