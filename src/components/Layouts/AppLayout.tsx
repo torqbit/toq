@@ -140,7 +140,6 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
     if (selectedMenu == "admin") {
       selectedMenu = router.pathname.split("/")[2];
     }
-    console.log(selectedMenu, "s");
 
     dispatch({ type: "SET_NAVBAR_MENU", payload: selectedMenu as IResponsiveNavMenu });
   };

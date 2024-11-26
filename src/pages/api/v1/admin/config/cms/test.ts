@@ -20,14 +20,16 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const cms = new ContentManagementService().getCMS(accessConfig.provider);
     const result = await cms.testConfiguration({ accessKey: accessConfig.accessKey });
     console.log(result);
+
     if (result instanceof Boolean && result.valueOf()) {
-      return res.status(200).json({ success: true, messsage: "Connection has been tested successfully" });
+      return res.status(200).json({ success: true, message: "Connection has been tested successfully" });
     } else if (result instanceof Boolean && !result.valueOf()) {
-      return res.status(200).json({ success: false, messsage: "Unable to connect with the service" });
+      return res.status(200).json({ success: false, message: "Unable to connect with the service" });
     } else if (result instanceof APIServerError) {
-      return res.status(result.status).json({ success: false, messsage: result.error });
+      return res.status(result.status).json({ success: false, error: result.error });
     }
   } catch (error) {
+    console.log(error);
     return errorHandler(error, res);
   }
 };
