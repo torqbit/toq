@@ -2,10 +2,10 @@ import React, { FC, useEffect, useState } from "react";
 import styleLayout from "@/styles/Dashboard.module.scss";
 import styles from "@/styles/Profile.module.scss";
 import { useSession } from "next-auth/react";
-import Layout2 from "@/components/Layouts/Layout2";
+
 import { Button, Form, Input, Tabs, TabsProps, message, Tooltip, Upload, InputNumber } from "antd";
 import { postFetch, IResponse, postWithFile } from "@/services/request";
-import { NextPage } from "next";
+import { GetServerSidePropsContext, NextPage } from "next";
 import { Session } from "next-auth";
 import SpinLoader from "@/components/SpinLoader/SpinLoader";
 import { useAppContext } from "@/components/ContextApi/AppContext";
@@ -13,6 +13,9 @@ import { LoadingOutlined, UserOutlined } from "@ant-design/icons";
 import SvgIcons from "@/components/SvgIcons";
 import ImgCrop from "antd-img-crop";
 import PaymentHistory from "@/components/Admin/Users/PaymentHistory";
+import AppLayout from "@/components/Layouts/AppLayout";
+import { getSiteConfig } from "@/services/getSiteConfig";
+import { PageSiteConfig } from "@/services/siteConstant";
 
 const ProfileSetting: FC<{
   user: Session;
@@ -149,7 +152,7 @@ const ProfileSetting: FC<{
   );
 };
 
-const Setting: NextPage = () => {
+const Setting: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const { data: user, update } = useSession();
   const [messageApi, contextMessageHolder] = message.useMessage();
   const [userProfile, setUserProfile] = useState<string>();
@@ -192,15 +195,25 @@ const Setting: NextPage = () => {
   ];
 
   return (
-    <Layout2>
+    <AppLayout siteConfig={siteConfig}>
       {contextMessageHolder}
 
       <section className={styleLayout.setting_content}>
         <h3>Setting</h3>
         <Tabs defaultActiveKey="1" className="content_tab" items={items} onChange={onChange} />
       </section>
-    </Layout2>
+    </AppLayout>
   );
 };
 
 export default Setting;
+
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+  const siteConfig = getSiteConfig();
+  const { site } = siteConfig;
+  return {
+    props: {
+      siteConfig: site,
+    },
+  };
+};

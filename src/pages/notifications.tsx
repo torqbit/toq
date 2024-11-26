@@ -2,7 +2,7 @@ import React, { FC, useState } from "react";
 import styles from "@/styles/Dashboard.module.scss";
 import { useSession } from "next-auth/react";
 import { Avatar, Badge, Button, Flex, List, Skeleton } from "antd";
-import Layout2 from "@/components/Layouts/Layout2";
+
 import Link from "next/link";
 import { truncateString } from "@/services/helper";
 import moment from "moment";
@@ -13,6 +13,10 @@ import { useRouter } from "next/router";
 import { getFetch } from "@/services/request";
 import { UserOutlined } from "@ant-design/icons";
 import PurifyContent from "@/components/PurifyContent/PurifyContent";
+import AppLayout from "@/components/Layouts/AppLayout";
+import { getSiteConfig } from "@/services/getSiteConfig";
+import { GetServerSidePropsContext } from "next";
+import { PageSiteConfig } from "@/services/siteConstant";
 
 const NotificationList: FC = () => {
   const router = useRouter();
@@ -174,16 +178,26 @@ const NotificationList: FC = () => {
   );
 };
 
-const Dashboard: FC = () => {
+const Dashboard: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   return (
-    <Layout2>
+    <AppLayout siteConfig={siteConfig}>
       <section className={styles.dashboard_content}>
         <h3>Notification</h3>
 
         <NotificationList />
       </section>
-    </Layout2>
+    </AppLayout>
   );
 };
 
 export default Dashboard;
+
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+  const siteConfig = getSiteConfig();
+  const { site } = siteConfig;
+  return {
+    props: {
+      siteConfig: site,
+    },
+  };
+};

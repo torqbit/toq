@@ -26,14 +26,18 @@ import { DEFAULT_THEME, PageSiteConfig } from "@/services/siteConstant";
 
 const { Content } = Layout;
 
-const Layout2: FC<{ children?: React.ReactNode; className?: string }> = ({ children, className }) => {
+const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig: PageSiteConfig }> = ({
+  children,
+  className,
+  siteConfig,
+}) => {
   const { data: user, status, update } = useSession();
 
   const isMobile = useMediaQuery({ query: "(max-width: 933px)" });
   const { globalState, dispatch } = useAppContext();
   const [conversationList, setConversationList] = useState<IConversationData[]>();
   const [comment, setComment] = useState<string>("");
-  const siteConfig = globalState.siteConfig;
+
   const { brand } = siteConfig;
 
   const [conversationLoading, setConversationLoading] = useState<{
@@ -174,6 +178,10 @@ const Layout2: FC<{ children?: React.ReactNode; className?: string }> = ({ child
 
   const updateTheme = async (theme: Theme) => {
     localStorage.setItem("theme", theme);
+    dispatch({
+      type: "SET_SITE_CONFIG",
+      payload: siteConfig,
+    });
     dispatch({
       type: "SET_USER",
       payload: { ...user?.user },
@@ -331,7 +339,7 @@ const Layout2: FC<{ children?: React.ReactNode; className?: string }> = ({ child
       ) : (
         <>
           <ConfigProvider
-            theme={globalState.theme == "dark" ? darkThemeConfig(DEFAULT_THEME) : antThemeConfig(DEFAULT_THEME)}
+            theme={globalState.theme == "dark" ? darkThemeConfig(siteConfig) : antThemeConfig(siteConfig)}
           >
             <Head>
               <title>Torqbit | Learn to build software products</title>
@@ -458,4 +466,4 @@ const Layout2: FC<{ children?: React.ReactNode; className?: string }> = ({ child
   );
 };
 
-export default Layout2;
+export default AppLayout;

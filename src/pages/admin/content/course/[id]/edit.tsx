@@ -5,11 +5,13 @@ import { Role } from "@prisma/client";
 import { GetServerSidePropsContext, NextPage } from "next";
 import { getToken } from "next-auth/jwt";
 import prisma from "@/lib/prisma";
+import { PageSiteConfig } from "@/services/siteConstant";
+import { getSiteConfig } from "@/services/getSiteConfig";
 
-const SettingPage: NextPage = () => {
+const SettingPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   return (
     <>
-      <AddCourseForm />
+      <AddCourseForm siteConfig={siteConfig} />
     </>
   );
 };
@@ -19,6 +21,7 @@ export default SettingPage;
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const { req } = ctx;
   const params = ctx?.params;
+  const { site } = getSiteConfig();
   let cookieName = getCookieName();
   const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
 
@@ -35,7 +38,11 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
         },
       });
       if (courseDetail?.authorId === user.id) {
-        return { props: {} };
+        return {
+          props: {
+            siteConfig: site,
+          },
+        };
       } else {
         return {
           redirect: {
@@ -55,5 +62,9 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
       };
     }
   }
-  return { props: {} };
+  return {
+    props: {
+      siteConfig: site,
+    },
+  };
 };

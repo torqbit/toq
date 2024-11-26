@@ -1,28 +1,32 @@
 import BlogForm from "@/components/Admin/Content/BlogForm";
-import Layout2 from "@/components/Layouts/Layout2";
+
 import { GetServerSidePropsContext, NextPage } from "next";
 import prisma from "@/lib/prisma";
 
 import { FC } from "react";
 import { Events, StateType } from "@prisma/client";
 import EventForm from "@/components/Events/EventForm";
+import AppLayout from "@/components/Layouts/AppLayout";
+import { PageSiteConfig } from "@/services/siteConstant";
+import { getSiteConfig } from "@/services/getSiteConfig";
 
 interface IProps {
   eventDetails: Events;
+  siteConfig: PageSiteConfig;
 }
-const EventFormPage: FC<IProps> = ({ eventDetails }) => {
+const EventFormPage: FC<IProps> = ({ eventDetails, siteConfig }) => {
   return (
     <>
-      <Layout2>
+      <AppLayout siteConfig={siteConfig}>
         <EventForm details={eventDetails} />
-      </Layout2>
+      </AppLayout>
     </>
   );
 };
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const params = ctx?.params;
-
+  const { site } = getSiteConfig();
   const eventDetails = await prisma.events.findUnique({
     where: {
       id: Number(params?.eventId),
@@ -56,6 +60,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
           endTime: String(eventDetails.endTime),
           registrationEndDate: String(eventDetails.registrationEndDate),
         },
+        siteConfig: site,
       },
     };
   } else {

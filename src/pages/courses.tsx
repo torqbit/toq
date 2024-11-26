@@ -1,15 +1,18 @@
-import type { NextPage } from "next";
+import type { GetServerSidePropsContext, NextPage } from "next";
 import styles from "@/styles/Dashboard.module.scss";
 import React, { useEffect, useState } from "react";
 import { Course } from "@prisma/client";
 import Courses from "@/components/Courses/Courses";
 import { Spin, message } from "antd";
-import Layout2 from "@/components/Layouts/Layout2";
+
 import ProgramService from "@/services/ProgramService";
 import { LoadingOutlined } from "@ant-design/icons";
 import SpinLoader from "@/components/SpinLoader/SpinLoader";
+import AppLayout from "@/components/Layouts/AppLayout";
+import { getSiteConfig } from "@/services/getSiteConfig";
+import { PageSiteConfig } from "@/services/siteConstant";
 
-const CoursesPage: NextPage = () => {
+const CoursesPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const [allCourses, setAllCourses] = useState<Course[] | undefined>([]);
   const [messageApi, contextMessageHolder] = message.useMessage();
   const [loading, setLoading] = useState<boolean>(false);
@@ -30,7 +33,7 @@ const CoursesPage: NextPage = () => {
   }, []);
 
   return (
-    <Layout2>
+    <AppLayout siteConfig={siteConfig}>
       {contextMessageHolder}
       <section>
         <div className={styles.courseContainer}>
@@ -54,8 +57,18 @@ const CoursesPage: NextPage = () => {
           <SpinLoader className="course__spinner" />
         )}
       </section>
-    </Layout2>
+    </AppLayout>
   );
 };
 
 export default CoursesPage;
+
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+  const siteConfig = getSiteConfig();
+  const { site } = siteConfig;
+  return {
+    props: {
+      siteConfig: site,
+    },
+  };
+};

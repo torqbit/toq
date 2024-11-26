@@ -3,13 +3,14 @@ import styles from "../styles/Dashboard.module.scss";
 import { useSession } from "next-auth/react";
 import { List, Space, Spin, Tabs, TabsProps } from "antd";
 import SvgIcons from "@/components/SvgIcons";
-import Layout2 from "@/components/Layouts/Layout2";
 import ProgramService from "@/services/ProgramService";
 import Link from "next/link";
-import { NextPage } from "next";
-import { LoadingOutlined } from "@ant-design/icons";
-import { ISiderMenu, useAppContext } from "@/components/ContextApi/AppContext";
+import { GetServerSidePropsContext, NextPage } from "next";
+
 import SpinLoader from "@/components/SpinLoader/SpinLoader";
+import AppLayout from "@/components/Layouts/AppLayout";
+import { getSiteConfig } from "@/services/getSiteConfig";
+import { PageSiteConfig } from "@/services/siteConstant";
 
 const EnrolledCourseList: FC<{
   courseData: { courseName: string; progress: string; courseId: number }[];
@@ -45,7 +46,7 @@ const EnrolledCourseList: FC<{
   );
 };
 
-const Dashboard: NextPage = () => {
+const Dashboard: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const { data: user } = useSession();
   const [pageLoading, setPageLoading] = useState<boolean>(false);
 
@@ -78,14 +79,24 @@ const Dashboard: NextPage = () => {
   }, []);
 
   return (
-    <Layout2>
+    <AppLayout siteConfig={siteConfig}>
       <section className={styles.dashboard_content}>
         <h3>Dashboard</h3>
 
         <Tabs defaultActiveKey="1" className="content_tab" items={items} onChange={onChange} />
       </section>
-    </Layout2>
+    </AppLayout>
   );
 };
 
 export default Dashboard;
+
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+  const siteConfig = getSiteConfig();
+  const { site } = siteConfig;
+  return {
+    props: {
+      siteConfig: site,
+    },
+  };
+};

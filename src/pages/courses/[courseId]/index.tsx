@@ -1,11 +1,11 @@
 import Preview from "@/components/Admin/Content/Preview";
-import Layout2 from "@/components/Layouts/Layout2";
+
 import SpinLoader from "@/components/SpinLoader/SpinLoader";
 import ProgramService from "@/services/ProgramService";
 import { getFetch, IResponse, postFetch } from "@/services/request";
 import { CourseLessonAPIResponse } from "@/types/courses/Course";
 import { Alert, AlertProps, Button, Form, InputNumber, Modal, message } from "antd";
-import { NextPage } from "next";
+import { GetServerSidePropsContext, NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { load } from "@cashfreepayments/cashfree-js";
@@ -15,8 +15,11 @@ import { useAppContext } from "@/components/ContextApi/AppContext";
 import { useSession } from "next-auth/react";
 import appConstant from "@/services/appConstant";
 import AddPhone from "@/components/AddPhone/AddPhone";
+import AppLayout from "@/components/Layouts/AppLayout";
+import { getSiteConfig } from "@/services/getSiteConfig";
+import { PageSiteConfig } from "@/services/siteConstant";
 
-const LearnCoursesPage: NextPage = () => {
+const LearnCoursesPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const router = useRouter();
   const [form] = Form.useForm();
   const { data: user, update } = useSession();
@@ -196,7 +199,7 @@ const LearnCoursesPage: NextPage = () => {
     }
   };
   return (
-    <Layout2>
+    <AppLayout siteConfig={siteConfig}>
       {contextMessageHolder}
       {contextModalHolder}
 
@@ -226,8 +229,18 @@ const LearnCoursesPage: NextPage = () => {
       )}
 
       <AddPhone title={enableModal.message} open={enableModal.active} onCloseModal={onCloseModal} />
-    </Layout2>
+    </AppLayout>
   );
 };
 
 export default LearnCoursesPage;
+
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+  const siteConfig = getSiteConfig();
+  const { site } = siteConfig;
+  return {
+    props: {
+      siteConfig: site,
+    },
+  };
+};

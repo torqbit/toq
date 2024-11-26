@@ -29,7 +29,7 @@ import { convertSecToHourandMin } from "@/pages/admin/content";
 import QADiscssionTab from "@/components/LearnCourse/AboutCourse/CourseDiscussion/CourseDiscussion";
 import { postFetch } from "@/services/request";
 import appConstant from "@/services/appConstant";
-import Layout2 from "@/components/Layouts/Layout2";
+
 import { ICourseProgressUpdateResponse } from "@/lib/types/program";
 import { getUserEnrolledCoursesId } from "@/actions/getEnrollCourses";
 import { generateDayAndYear, getCookieName, getExtension } from "@/lib/utils";
@@ -42,6 +42,9 @@ import prisma from "@/lib/prisma";
 import AssignmentService from "@/services/AssignmentService";
 import { useAppContext } from "@/components/ContextApi/AppContext";
 import LessonListSideBar from "@/components/Lessons/LessonListSideBar";
+import AppLayout from "@/components/Layouts/AppLayout";
+import { PageSiteConfig } from "@/services/siteConstant";
+import { getSiteConfig } from "@/services/getSiteConfig";
 
 export interface ICertficateData {
   loading: boolean;
@@ -89,7 +92,7 @@ const LessonItem: FC<{
   );
 };
 
-const LessonPage: NextPage = () => {
+const LessonPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const router = useRouter();
   const isMobile = useMediaQuery({ query: "(max-width: 933px)" });
   const { globalState } = useAppContext();
@@ -489,7 +492,7 @@ const LessonPage: NextPage = () => {
   };
 
   return (
-    <Layout2>
+    <AppLayout siteConfig={siteConfig}>
       {contextMessageHolder}
       {!loading ? (
         <section className={styles.learn_course_page}>
@@ -691,7 +694,7 @@ const LessonPage: NextPage = () => {
       ) : (
         <SpinLoader className="course__spinner" />
       )}
-    </Layout2>
+    </AppLayout>
   );
 };
 
@@ -701,6 +704,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const { req } = ctx;
   const params = ctx?.params;
   let cookieName = getCookieName();
+  const { site } = getSiteConfig();
   const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
 
   if (user && params) {
@@ -723,5 +727,9 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
       };
     }
   }
-  return { props: {} };
+  return {
+    props: {
+      siteConfig: site,
+    },
+  };
 };

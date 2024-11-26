@@ -1,4 +1,3 @@
-import Layout2 from "@/components/Layouts/Layout2";
 import SpinLoader from "@/components/SpinLoader/SpinLoader";
 import AssignmentService, { ISubmissionDetail } from "@/services/AssignmentService";
 import { Breadcrumb, Button, Drawer, Flex, Form, InputNumber, message, Modal, Segmented, Space } from "antd";
@@ -18,8 +17,11 @@ import { useAppContext } from "@/components/ContextApi/AppContext";
 import ViewResult from "@/components/Assignment/Submissions/ViewResult";
 import AssignmentCodeEditor from "@/components/Assignment/Submissions/AssignmentCodeEditor";
 import { submissionStatus } from "@prisma/client";
+import AppLayout from "@/components/Layouts/AppLayout";
+import { PageSiteConfig } from "@/services/siteConstant";
+import { getSiteConfig } from "@/services/getSiteConfig";
 
-const EvaluatePage: NextPage = () => {
+const EvaluatePage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [evaluationLoading, setEvaluationLoading] = useState<boolean>(false);
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
@@ -123,7 +125,7 @@ const EvaluatePage: NextPage = () => {
     }
   }, [router.query.id, refresh]);
   return (
-    <Layout2>
+    <AppLayout siteConfig={siteConfig}>
       {contextHolder}
       {!loading ? (
         <section className={style.evaluationWrapper}>
@@ -237,7 +239,7 @@ const EvaluatePage: NextPage = () => {
       ) : (
         <SpinLoader />
       )}
-    </Layout2>
+    </AppLayout>
   );
 };
 
@@ -246,7 +248,7 @@ export default EvaluatePage;
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const { req } = ctx;
   const params = ctx?.params;
-
+  const { site } = getSiteConfig();
   let cookieName = getCookieName();
 
   const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
@@ -280,7 +282,11 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   });
 
   if (user?.id === findAuthor?.assignment.lesson.chapter.course.authorId) {
-    return { props: {} };
+    return {
+      props: {
+        siteConfig: site,
+      },
+    };
   } else {
     return {
       redirect: {

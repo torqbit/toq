@@ -18,12 +18,13 @@ import {
   message,
 } from "antd";
 import SvgIcons from "@/components/SvgIcons";
-import Layout2 from "@/components/Layouts/Layout2";
+import AppLayout from "@/components/Layouts/AppLayout";
 import { useSession } from "next-auth/react";
 import { IResponse, getFetch, postFetch } from "@/services/request";
 import { Course, User } from "@prisma/client";
 import moment from "moment";
 import appConstant from "@/services/appConstant";
+import { PageSiteConfig } from "@/services/siteConstant";
 
 const UserList: FC = () => {
   const [allUsers, setAllUsers] = React.useState<User[]>([]);
@@ -306,7 +307,7 @@ const UserList: FC = () => {
   );
 };
 
-const Users: FC = () => {
+const Users: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const { data: user } = useSession();
   const [onModal, setModal] = useState(false);
 
@@ -365,7 +366,7 @@ const Users: FC = () => {
   };
 
   return (
-    <Layout2>
+    <AppLayout siteConfig={siteConfig}>
       <section className={styles.dashboard_content}>
         <h3>Users</h3>
         <Tabs
@@ -413,7 +414,7 @@ const Users: FC = () => {
           </Form>
         </Modal>
       </section>
-    </Layout2>
+    </AppLayout>
   );
 };
 

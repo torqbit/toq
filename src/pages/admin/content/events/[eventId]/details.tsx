@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useState } from "react";
 import styles from "@/styles/Dashboard.module.scss";
 import { Breadcrumb, Form, Tabs, TabsProps, message } from "antd";
-import Layout2 from "@/components/Layouts/Layout2";
+
 import { GetServerSidePropsContext, NextPage } from "next";
 import { useRouter } from "next/router";
 import AttendeesList from "@/components/Events/AttendeesList";
@@ -11,8 +11,11 @@ import { getCookieName } from "@/lib/utils";
 import prisma from "@/lib/prisma";
 import { getToken } from "next-auth/jwt";
 import { EventAccess, Role } from "@prisma/client";
+import AppLayout from "@/components/Layouts/AppLayout";
+import { getSiteConfig } from "@/services/getSiteConfig";
+import { PageSiteConfig } from "@/services/siteConstant";
 
-const EventDetailPage: FC<{ eventName: string }> = ({ eventName }) => {
+const EventDetailPage: FC<{ eventName: string; siteConfig: PageSiteConfig }> = ({ eventName, siteConfig }) => {
   const [messageApi, contextMessageHolder] = message.useMessage();
   const [activeTab, setActiveTab] = useState<string>("registered");
   const [attendeesList, setAttendessList] = useState<IAttendessInfo[]>([]);
@@ -199,7 +202,7 @@ const EventDetailPage: FC<{ eventName: string }> = ({ eventName }) => {
   }, [router.query.eventId]);
 
   return (
-    <Layout2>
+    <AppLayout siteConfig={siteConfig}>
       {contextMessageHolder}
       <section className={styles.dashboard_content}>
         <Breadcrumb
@@ -223,7 +226,7 @@ const EventDetailPage: FC<{ eventName: string }> = ({ eventName }) => {
           }}
         />
       </section>
-    </Layout2>
+    </AppLayout>
   );
 };
 
@@ -231,6 +234,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   try {
     const { req } = ctx;
     const params = ctx?.params;
+    const { site } = getSiteConfig();
     if (params?.eventId && isNaN(Number(params?.eventId))) {
       return {
         props: {
@@ -255,6 +259,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
       return {
         props: {
           eventName: eventInfo?.title,
+          siteConfig: site,
         },
       };
     } else {

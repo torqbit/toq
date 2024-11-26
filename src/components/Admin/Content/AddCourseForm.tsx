@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from "react";
-import Layout2 from "@/components/Layouts/Layout2";
+import AppLayout from "@/components/Layouts/AppLayout";
 import Link from "next/link";
 import Setting from "./Setting";
 import styles from "@/styles/Dashboard.module.scss";
@@ -24,8 +24,9 @@ import { RcFile } from "antd/es/upload";
 import { postWithFile } from "@/services/request";
 
 import AddLesson from "./AddLesson";
+import { PageSiteConfig } from "@/services/siteConstant";
 
-const AddCourseForm: FC = () => {
+const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const [courseBannerUploading, setCourseBannerUploading] = useState<boolean>(false);
   const [courseTrailerUploading, setCourseTrailerUploading] = useState<boolean>(false);
   const [messageApi, contextHolder] = message.useMessage();
@@ -525,7 +526,7 @@ const AddCourseForm: FC = () => {
   }, [router.query.id, refresh]);
 
   return (
-    <Layout2>
+    <AppLayout siteConfig={siteConfig}>
       {contextHolder}
       <section className={styles.add_course_page}>
         <div className={styles.add_course_header}>
@@ -597,7 +598,7 @@ const AddCourseForm: FC = () => {
           setEdit={setEdit}
         />
       )}
-    </Layout2>
+    </AppLayout>
   );
 };
 

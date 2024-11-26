@@ -1,14 +1,16 @@
 import React from "react";
 import styles from "@/styles/Dashboard.module.scss";
-import Layout2 from "@/components/Layouts/Layout2";
+
 import { useSession } from "next-auth/react";
 import { Space, Tag } from "antd";
+import AppLayout from "@/components/Layouts/AppLayout";
+import { DEFAULT_THEME } from "@/services/siteConstant";
 
 const QuizzesPage = () => {
   const { data: user } = useSession();
 
   return (
-    <Layout2>
+    <AppLayout siteConfig={DEFAULT_THEME}>
       <section className={styles.dashboard_content}>
         <div className={styles.guide_wrapper}>
           <Space style={{ marginBottom: 10 }}>
@@ -19,7 +21,7 @@ const QuizzesPage = () => {
           <img height={400} src="/img/quiz/quiz-illustration.svg" alt="" style={{ display: "block" }} />
         </div>
       </section>
-    </Layout2>
+    </AppLayout>
   );
 };
 

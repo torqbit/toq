@@ -7,9 +7,11 @@ import { Role, User } from "@prisma/client";
 import { EditOutlined } from "@ant-design/icons";
 import moment from "moment";
 import appConstant from "@/services/appConstant";
-import { NextPage } from "next";
+import { GetServerSidePropsContext, NextPage } from "next";
 import type { DatePickerProps, RangePickerProps } from "antd/es/date-picker";
-import Layout2 from "@/components/Layouts/Layout2";
+import AppLayout from "@/components/Layouts/AppLayout";
+import { getSiteConfig } from "@/services/getSiteConfig";
+import { PageSiteConfig } from "@/services/siteConstant";
 
 type FieldType = {
   name?: string;
@@ -214,7 +216,7 @@ const UserTab: FC = () => {
   );
 };
 
-const AdminDashboard: NextPage = () => {
+const AdminDashboard: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const [onModal, setModal] = useState(false);
   const [modal, contextholder] = Modal.useModal();
   const [loading, setLoading] = useState<boolean>(false);
@@ -251,7 +253,7 @@ const AdminDashboard: NextPage = () => {
   };
 
   return (
-    <Layout2 className={styles.admin_dashboard_page}>
+    <AppLayout siteConfig={siteConfig} className={styles.admin_dashboard_page}>
       <div className={styles.center_content}>
         {contextholder}
         <div className={styles.adminHeader}>
@@ -301,8 +303,18 @@ const AdminDashboard: NextPage = () => {
           ]}
         />
       </div>
-    </Layout2>
+    </AppLayout>
   );
 };
 
 export default AdminDashboard;
+
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+  const siteConfig = getSiteConfig();
+  const { site } = siteConfig;
+  return {
+    props: {
+      siteConfig: site,
+    },
+  };
+};

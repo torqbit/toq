@@ -1,15 +1,27 @@
-import Layout2 from "@/components/Layouts/Layout2";
 import EventForm from "@/components/Events/EventForm";
-import { NextPage } from "next";
+import AppLayout from "@/components/Layouts/AppLayout";
+import { getSiteConfig } from "@/services/getSiteConfig";
+import { PageSiteConfig } from "@/services/siteConstant";
+import { GetServerSidePropsContext, NextPage } from "next";
 
-const EventFormPage: NextPage = () => {
+const EventFormPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   return (
     <>
-      <Layout2>
+      <AppLayout siteConfig={siteConfig}>
         <EventForm />
-      </Layout2>
+      </AppLayout>
     </>
   );
 };
 
 export default EventFormPage;
+
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+  const siteConfig = getSiteConfig();
+  const { site } = siteConfig;
+  return {
+    props: {
+      siteConfig: site,
+    },
+  };
+};

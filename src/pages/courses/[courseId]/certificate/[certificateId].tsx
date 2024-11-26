@@ -1,4 +1,3 @@
-import Layout2 from "@/components/Layouts/Layout2";
 import SvgIcons from "@/components/SvgIcons";
 import { getCookieName } from "@/lib/utils";
 import ProgramService from "@/services/ProgramService";
@@ -8,12 +7,15 @@ import { getToken } from "next-auth/jwt";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import styles from "@/styles/Certificate.module.scss";
 import prisma from "@/lib/prisma";
 import SpinLoader from "@/components/SpinLoader/SpinLoader";
+import AppLayout from "@/components/Layouts/AppLayout";
+import { PageSiteConfig } from "@/services/siteConstant";
+import { getSiteConfig } from "@/services/getSiteConfig";
 
-const ShowCertificate = () => {
+const ShowCertificate: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const [certificateData, setCertificateData] = useState<{ pdfPath: string; imgPath: string; courseName: string }>();
   const { data: session } = useSession();
   const [loading, setLoading] = useState<boolean>();
@@ -36,7 +38,7 @@ const ShowCertificate = () => {
   }, [router.query.courseId]);
 
   return (
-    <Layout2>
+    <AppLayout siteConfig={siteConfig}>
       {loading ? (
         <SpinLoader />
       ) : (
@@ -77,7 +79,7 @@ const ShowCertificate = () => {
           </div>
         </Space>
       )}
-    </Layout2>
+    </AppLayout>
   );
 };
 
@@ -86,6 +88,7 @@ export default ShowCertificate;
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const { req } = ctx;
   const params = ctx?.params;
+  const { site } = getSiteConfig();
   let cookieName = getCookieName();
   const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
 
@@ -109,5 +112,9 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
       };
     }
   }
-  return { props: {} };
+  return {
+    props: {
+      siteConfig: site,
+    },
+  };
 };

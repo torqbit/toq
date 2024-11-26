@@ -1,18 +1,30 @@
 import React from "react";
 
-import Layout2 from "@/components/Layouts/Layout2";
-import { NextPage } from "next";
+import { GetServerSidePropsContext, NextPage } from "next";
 import EventList from "@/components/Events/EventList";
+import AppLayout from "@/components/Layouts/AppLayout";
+import { getSiteConfig } from "@/services/getSiteConfig";
+import { PageSiteConfig } from "@/services/siteConstant";
 
-const Dashboard: NextPage = () => {
+const Dashboard: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   return (
-    <Layout2>
+    <AppLayout siteConfig={siteConfig}>
       <div style={{ padding: "20px 40px 0px 40px" }}>
         <h3>Events</h3>
         <EventList />
       </div>
-    </Layout2>
+    </AppLayout>
   );
 };
 
 export default Dashboard;
+
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+  const siteConfig = getSiteConfig();
+  const { site } = siteConfig;
+  return {
+    props: {
+      siteConfig: site,
+    },
+  };
+};

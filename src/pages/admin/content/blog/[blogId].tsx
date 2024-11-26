@@ -1,31 +1,34 @@
 import BlogForm from "@/components/Admin/Content/BlogForm";
-import Layout2 from "@/components/Layouts/Layout2";
 import { GetServerSidePropsContext } from "next";
 import prisma from "@/lib/prisma";
 
 import { FC } from "react";
 import { StateType } from "@prisma/client";
+import AppLayout from "@/components/Layouts/AppLayout";
+import { PageSiteConfig } from "@/services/siteConstant";
+import { getSiteConfig } from "@/services/getSiteConfig";
 interface IProps {
   htmlData: string;
   bannerImage: string;
   title: string;
   state: StateType;
+  siteConfig: PageSiteConfig;
   contentType: string;
 }
 
-const BlogFormPage: FC<IProps> = ({ htmlData, bannerImage, title, state, contentType }) => {
+const BlogFormPage: FC<IProps> = ({ htmlData, bannerImage, title, state, contentType, siteConfig }) => {
   return (
     <>
-      <Layout2>
+      <AppLayout siteConfig={siteConfig}>
         <BlogForm contentType={contentType} htmlData={htmlData} bannerImage={bannerImage} title={title} state={state} />
-      </Layout2>
+      </AppLayout>
     </>
   );
 };
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const params = ctx?.params;
-
+  const { site } = getSiteConfig();
   const blogContentData = await prisma.blog.findUnique({
     where: {
       id: String(params?.blogId),
@@ -46,6 +49,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
         title: blogContentData?.title,
         state: blogContentData.state,
         contentType: blogContentData.contentType,
+        siteConfig: site,
       },
     };
   } else {

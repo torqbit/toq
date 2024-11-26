@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from "react";
 
-import Layout2 from "@/components/Layouts/Layout2";
+import AppLayout from "@/components/Layouts/AppLayout";
 
 import styles from "@/styles/Config.module.scss";
 
@@ -8,8 +8,9 @@ import { Breadcrumb, Form, Tabs, TabsProps, message } from "antd";
 import MediaStorage from "./MediaStorage";
 import ProgramService from "@/services/ProgramService";
 import CertificateTemplates from "./Certificate";
+import { PageSiteConfig } from "@/services/siteConstant";
 
-const Config: FC = () => {
+const Config: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingBtn, setLoadingBtn] = useState<boolean>(false);
 
@@ -88,7 +89,7 @@ const Config: FC = () => {
   ];
 
   return (
-    <Layout2>
+    <AppLayout siteConfig={siteConfig}>
       <section className={styles.config_page}>
         <h3>{activeTab}</h3>
 
@@ -100,7 +101,7 @@ const Config: FC = () => {
           onChange={onChange}
         />
       </section>
-    </Layout2>
+    </AppLayout>
   );
 };
 

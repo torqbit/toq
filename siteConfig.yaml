@@ -20,8 +20,8 @@ site:
       github: https://github.com/torqbit
       youtube: https://www.youtube.com/@torqbit
     name: ACADEMY NAME
-    brandColor: "#973268"
-    title: "A platform to guide you "
+    brandColor: "#f29379"
+    title: title for brand
   darkMode: true
   heroSection:
     title: The Awesomest teaching platform
