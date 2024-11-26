@@ -14,61 +14,32 @@ spec:
       labels:
         app: {{ include "torqbit.name" . }}
     spec:
+      initContainers:
+      - name: wait-for-mysql
+        image: mysql:8.0.12
+        command:
+        - sh
+        - -c
+        - |
+          echo "Waiting for MySQL...";
+          while ! mysqladmin ping -h mysql-service.default.svc.cluster.local -u $$MYSQL_USER --password=$$MYSQL_PASSWORD; do
+            echo "Still waiting...";
+            sleep 5;
+          done;
       containers:
-        - name: {{ .Chart.Name }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
-          ports:
-            - containerPort: 3000
-          env:
-            - name: DATABASE_URL
-              value: "mysql://kali:kali@mysql-service.default.svc.cluster.local:3306/kali"
-            - name: GOOGLE_ID
-              value: "***********************************"
-            - name: GOOGLE_SECRET
-              value: "***********************************"
-            - name: GITHUB_ID
-              value: "***********************************"
-            - name: GITHUB_SECRET
-              value: "***********************************"
-            - name: NEXT_PUBLIC_SECRET
-              value: "1RIpybeRHk21xmtzk2jjPxvayAD8FEtHauQTbx8bShE="
-            - name: JWT_SECRET
-              value: "p1RDeR52CpgHkZQJGFcFFc9Gr1kVTnIjEBxabqkq+Ao="
-            - name: NEXTAUTH_URL
-              value: "http://localhost:3000"
-            - name: ADMIN_EMAIL
-              value: "test@mail.com"
-            - name: NEXT_PUBLIC_APP_ENV
-              value: "development"
-            - name: NODE_ENV
-              value: "production"
-            - name: CASHFREE_SECRET_KEY
-              value: "***********************************"
-            - name: CASHFREE_CLIENT_ID
-              value: "***********************************"
-            - name: GATEWAY_PROVIDER_NAME
-              value: "CASHFREE"
-            - name: NEXT_SMTP_HOST
-              value: "smtp.resend.com"
-            - name: NEXT_SMTP_USER
-              value: "resend"
-            - name: NEXT_SMTP_PASSWORD
-              value: "***********************************"
-            - name: MEDIA_UPLOAD_PATH
-              value: "***********************************"
-            - name: INVOICE_UPLOAD_PATH
-              value: "***********************************"
-            - name: FROM_SMTP_USER_EMAIL
-              value: "***********************************"
-            - name: VERIFIED_EMAIL
-              value: "***********************************"
-            - name: FROM_SMTP_SUPPORT_EMAIL
-              value: "***********************************"
-            - name: NEXT_PUBLIC_NEXTAUTH_URL
-              value: "http://localhost:3000"
-            - name: INVOICE_DIRECTORY
-              value: "***********************************"
-          command: ["/bin/sh"]
-          args: ["-c", "while true; do echo hello; sleep 10; done"]
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+          - containerPort: {{ .Values.containers.ports.containerPort }}
+        envFrom:
+        - secretRef:
+            name: torqbit-secrets
+        readinessProbe:
+          httpGet:
+            path: /
+            port: {{ .Values.containers.ports.containerPort }}
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        args: ["sh", "-c", "npx prisma db push --accept-data-loss && yarn start"]
       restartPolicy: Always
