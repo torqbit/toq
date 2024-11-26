@@ -1,89 +1,45 @@
-export type VideoLibrary {
-    {
-        "Id": 227219,
-        "Name": "torq-videos",
-        "VideoCount": 78,
-        "TrafficUsage": 113430450,
-        "StorageUsage": 8355766422,
-        "DateCreated": "2024-04-03T11:23:15",
-        "ReplicationRegions": [
-          "SG"
-        ],
-        "ApiKey": "4747ea0e-8d6b-4b51-8e323c2bdcef-347c-4940",
-        "ReadOnlyApiKey": "a3e4dd13-5151-435c-96c0ddfc3968-e89d-4e86",
-        "HasWatermark": false,
-        "WatermarkPositionLeft": 0,
-        "WatermarkPositionTop": 0,
-        "WatermarkWidth": 0,
-        "PullZoneId": 2123021,
-        "StorageZoneId": 632317,
-        "WatermarkHeight": 0,
-        "EnabledResolutions": "360p,480p,720p,1080p",
-        "ViAiPublisherId": null,
-        "VastTagUrl": null,
-        "WebhookUrl": null,
-        "CaptionsFontSize": 20,
-        "CaptionsFontColor": "#fff",
-        "CaptionsBackground": "#000",
-        "UILanguage": "en",
-        "AllowEarlyPlay": false,
-        "PlayerTokenAuthenticationEnabled": false,
-        "AllowedReferrers": [
-          "*.torqbit.com"
-        ],
-        "BlockedReferrers": [],
-        "BlockNoneReferrer": false,
-        "EnableMP4Fallback": true,
-        "KeepOriginalFiles": true,
-        "AllowDirectPlay": true,
-        "EnableDRM": false,
-        "DrmVersion": 0,
-        "AppleFairPlayDrm": {
-          "Enabled": false,
-          "CertificateId": null,
-          "CertificateExpirationDate": null,
-          "Provider": null
-        },
-        "GoogleWidevineDrm": {
-          "Enabled": false,
-          "CertificateId": null,
-          "CertificateExpirationDate": null,
-          "Provider": null,
-          "SdOnlyForL3": false,
-          "MinClientSecurityLevel": null
-        },
-        "Bitrate240p": 600,
-        "Bitrate360p": 800,
-        "Bitrate480p": 1400,
-        "Bitrate720p": 2800,
-        "Bitrate1080p": 5000,
-        "Bitrate1440p": 8000,
-        "Bitrate2160p": 25000,
-        "ApiAccessKey": null,
-        "ShowHeatmap": false,
-        "EnableContentTagging": true,
-        "PullZoneType": 0,
-        "CustomHTML": null,
-        "Controls": "play-large,captions,current-time,fullscreen,mute,pip,play,progress,settings,volume",
-        "PlayerKeyColor": "#5b63d3",
-        "FontFamily": "rubik",
-        "WatermarkVersion": 0,
-        "EnableTranscribing": false,
-        "EnableTranscribingTitleGeneration": false,
-        "EnableTranscribingDescriptionGeneration": false,
-        "TranscribingCaptionLanguages": [],
-        "RememberPlayerPosition": false,
-        "EnableMultiAudioTrackSupport": false,
-        "UseSeparateAudioStream": false,
-        "JitEncodingEnabled": false,
-        "EncodingTier": 0,
-        "OutputCodecs": "x264",
-        "DrmBasePriceOverride": 99,
-        "DrmCostPerLicenseOverride": null,
-        "TranscribingPriceOverride": null,
-        "PremiumEncodingPriceOverride": null,
-        "MonthlyChargesTranscribing": 0,
-        "MonthlyChargesPremiumEncoding": 0,
-        "MonthlyChargesEnterpriseDrm": 0
-      },
+export type VideoLibrary = {
+  Id: number;
+  Name: string,
+  VideoCount: number,
+  TrafficUsage: number,
+  StorageUsage: number,
+  DateCreated: string,
+  ReplicationRegions: string[],
+  ApiKey: string,
+  ReadOnlyApiKey: string,
+  HasWatermark: boolean,
+  PullZoneId: number,
+  StorageZoneId: number,
+  EnabledResolutions: string,
+  AllowedReferrers: string[],
+  BlockedReferrers: string[],
+}
+
+export type VideoLibraryResponse = {
+  status: 200,
+  items: VideoLibrary[]
+}
+
+export type UnAuthorizedRequest = {
+  Message: string;
+}
+export type Region = {
+  Id: number,
+  Name: string,
+  PricePerGigabyte: number,
+  RegionCode: string,
+  ContinentCode: string,
+  CountryCode: string,
+  Latitude: 44.30588,
+  Longitude: 25.723294,
+  AllowLatencyRouting: boolean
+}
+
+export class BunnyServerError {
+  error: string;
+  status: number = 500;
+  constructor(error: string) {
+    this.error = error;
+  }
 }

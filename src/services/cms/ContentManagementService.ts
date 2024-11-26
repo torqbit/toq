@@ -8,6 +8,8 @@ import {
 import { BunnyConfig, BunnyMediaProvider } from "./BunnyMediaProvider";
 import prisma from "@/lib/prisma";
 import { VideoState } from "@prisma/client";
+import { ICMSConfig, IContentProvider } from "./IContentProvider";
+import { BunnyCMS } from "./bunny/BunnyCMS";
 
 export interface ContentServiceProvider {
   name: string;
@@ -21,6 +23,9 @@ export interface ContentServiceProvider {
 }
 
 export class ContentManagementService {
+  getCMS = (name: string): IContentProvider<any> => {
+    return new BunnyCMS();
+  }
   getServiceProvider = (name: string, config: any): ContentServiceProvider => {
     switch (name) {
       case "bunny":
