@@ -377,11 +377,23 @@ model UserJoinWaiting {
 
 //****** UserJoinWaiting Schema End******//
 
+enum ConfigurationState {
+  INITIATED
+  AUTHENTICATED
+  VOD_CONFIGURED
+  CDN_CONFIGURED
+  STORAGE_CONFIGURED
+  CMS_CONFIGURED
+  PAYMENT_CONFIGURED
+  EMAIL_CONFIGURED
+}
+
 model ServiceProvider {
-  id             Int      @default(autoincrement()) @db.Int()
-  service_type   String   @unique @db.VarChar(20)
-  provider_name  String   @db.Text()
+  id             Int                      @default(autoincrement()) @db.Int()
+  service_type   String                   @unique @db.VarChar(20)
+  provider_name  String                   @db.Text()
   providerDetail Json?
+  state          ConfigurationState       @default(INITIATED)
   dt_added       DateTime @default(now())
 
   @@unique([id])

@@ -1,5 +1,6 @@
+import { createSlug } from "@/lib/utils";
 import { APIServerError } from "@/types/cms/apis";
-import { BunnyServerError, UnAuthorizedRequest, VideoLibrary, VideoLibraryResponse } from "@/types/cms/bunny";
+import { BunnyRequestError, BunnyServerError, UnAuthorizedRequest, VideoLibrary, VideoLibraryResponse } from "@/types/cms/bunny";
 
 export class BunnyClient {
   accessKey: string;
@@ -23,6 +24,35 @@ export class BunnyClient {
       if (result.status == 200) {
         const vidLibs = (await result.json()) as VideoLibrary[];
         return { status: result.status, items: vidLibs } as VideoLibraryResponse;
+      } else if (result.status == 400) {
+        const reqError = (await result.json()) as BunnyRequestError;
+        return new APIServerError(reqError.Message, result.status);
+      } else {
+        return new APIServerError("Failed to get response from Bunny Server");
+      }
+    } catch (err: any) {
+      return new APIServerError(err);
+    }
+  };
+
+  createVideoLibrary = async (brandName: string, replicatedRegions: string[]): Promise<VideoLibrary | APIServerError> => {
+    const url = "https://api.bunny.net/videolibrary";
+    const options = {
+      method: "POST",
+      headers: {
+        accept: "application/json",
+        "content-type": "application/json",
+        AccessKey: this.accessKey,
+      },
+      body: JSON.stringify({ Name: `${createSlug(brandName)}--videos`, ReplicationRegions: replicatedRegions }),
+    };
+    try {
+      const result = await fetch(url, options);
+
+      if (result.status == 200) {
+        const vidLib = (await result.json()) as VideoLibrary;
+
+        return vidLib;
       } else if (result.status == 401) {
         const authError = (await result.json()) as UnAuthorizedRequest;
         return new APIServerError(authError.Message, result.status);

@@ -26,10 +26,10 @@ export const BunnyConstants = {
 export type BunnyCMSConfig = {
   accessKeyRef: string;
   vodAccessKeyRef: string;
-  cdnStoragePasswordKeyRef: string;
+  cdnStoragePasswordRef: string;
   fileStoragePasswordRef: string;
-  vodConfig: {
-    replicatedRegions: { name: string; code: string }[];
+  vodConfig?: {
+    replicatedRegions: string[];
     allowedDomains: string[];
     videoResolutions: string[];
     watermarkFile?: Buffer;
@@ -39,6 +39,12 @@ export type BunnyCMSConfig = {
 export type VideoLibraryResponse = {
   status: 200;
   items: VideoLibrary[];
+};
+
+export type BunnyRequestError = {
+  ErrorKey: string;
+  Field: string;
+  Message: string;
 };
 
 export type UnAuthorizedRequest = {

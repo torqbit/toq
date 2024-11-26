@@ -9,9 +9,10 @@ export interface IContentProvider<T extends ICMSConfig> {
   listReplicationRegions(): Promise<{ name: string; code: string }[]>;
   saveVODConfig(
     authConfig: T,
-    replicatedRegions: { name: string; code: string }[],
+    replicatedRegions: string[],
     allowedDomains: string[],
     videoResolutions: string[],
+    playerColor?: string,
     watermarkFile?: Buffer
   ): Promise<Boolean | APIServerError>;
 }
