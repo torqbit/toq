@@ -1,26 +1,81 @@
 import { BunnyClient } from "./BunnyClient";
-import { BunnyServerError } from "@/types/cms/bunny";
+import { BunnyCMSConfig, BunnyConstants, BunnyServerError } from "@/types/cms/bunny";
 import { APIServerError } from "@/types/cms/apis";
 import { ICMSConfig, IContentProvider } from "../IContentProvider";
+import { ConfigurationState } from "@prisma/client";
+import SecretsManager from "@/services/secrets/SecretsManager";
 
-export interface BunnyConfig extends ICMSConfig {
+export interface BunnyAuthConfig extends ICMSConfig {
   accessKey: string;
-  secretKey: string;
 }
-export class BunnyCMS implements IContentProvider<BunnyConfig> {
+export class BunnyCMS implements IContentProvider<BunnyAuthConfig> {
   provider: string = "bunny.net";
+  serviceType: string = "cms";
+
+  async saveConfiguration(config: BunnyCMSConfig): Promise<boolean> {
+    //based on the config object values, save in the database
+    let configId;
+    let state: ConfigurationState = ConfigurationState.AUTHENTICATED;
+    if (config.vodConfig) {
+      state = ConfigurationState.VOD_CONFIGURED;
+    }
+
+    const existingSP = await prisma?.serviceProvider.findUnique({
+      where: {
+        service_type: this.serviceType,
+      },
+    });
+
+    if (existingSP) {
+      const result = await prisma?.serviceProvider.update({
+        data: {
+          provider_name: this.provider,
+          providerDetail: config,
+          state: ConfigurationState.VOD_CONFIGURED,
+        },
+        where: {
+          service_type: this.serviceType,
+        },
+      });
+      configId = result?.id;
+    } else {
+      const result = await prisma?.serviceProvider.create({
+        data: {
+          service_type: "cms",
+          provider_name: this.provider,
+          providerDetail: config,
+          state: ConfigurationState.VOD_CONFIGURED,
+        },
+      });
+      configId = result?.id;
+    }
+
+    return typeof configId != "undefined";
+  }
 
   /**
    *
    * @param config
    * @returns true if Access Key is valid, throws error if it fails
    */
-  testConfiguration(config: BunnyConfig): Promise<Boolean | APIServerError> {
+  testConfiguration(config: BunnyAuthConfig): Promise<Boolean | APIServerError> {
     const bunny = new BunnyClient(config.accessKey);
     return bunny
       .listVideoLibraries()
-      .then((r) => {
+      .then(async (r) => {
         if (r.status == 200) {
+          //save the configuration in database
+          const bunnyConfig: BunnyCMSConfig = {
+            accessKeyRef: BunnyConstants.accessKey,
+            vodAccessKeyRef: BunnyConstants.vodAccessKey,
+            cdnStoragePasswordRef: BunnyConstants.cdnStoragePassword,
+            fileStoragePasswordRef: BunnyConstants.fileStoragePassword,
+          };
+
+          const secretsStore = SecretsManager.getSecretsProvider();
+          secretsStore.put(bunnyConfig.accessKeyRef, config.accessKey);
+          this.saveConfiguration(bunnyConfig);
+
           return new Boolean(true);
         } else {
           return r as APIServerError;
@@ -54,10 +109,11 @@ export class BunnyCMS implements IContentProvider<BunnyConfig> {
    * @param watermarkFile
    */
   saveVODConfig(
-    authConfig: BunnyConfig,
-    replicatedRegions: { name: string; code: string }[],
+    authConfig: BunnyAuthConfig,
+    replicatedRegions: string[],
     allowedDomains: string[],
     videoResolutions: string[],
+    playerColor?: string,
     watermarkFile?: Buffer
   ): Promise<Boolean | APIServerError> {
     //create a Bunny client and create a video library with the above settings
