@@ -15,31 +15,35 @@ spec:
         app: {{ include "torqbit.name" . }}
     spec:
       initContainers:
-      - name: wait-for-mysql
-        image: mysql:8.0.12
-        command:
-        - sh
-        - -c
-        - |
-          echo "Waiting for MySQL...";
-          while ! mysqladmin ping -h mysql-service.default.svc.cluster.local -u $$MYSQL_USER --password=$$MYSQL_PASSWORD; do
-            echo "Still waiting...";
-            sleep 5;
-          done;
+        - name: wait-for-mysql
+          image: mysql:8.0.12
+          command:
+            - sh
+            - -c
+            - |
+              echo "Waiting for MySQL...";
+              while ! mysqladmin ping -h mysql-service.default.svc.cluster.local -u $$MYSQL_USER --password=$$MYSQL_PASSWORD; do
+                echo "Still waiting...";
+                sleep 5;
+              done;
       containers:
-      - name: {{ .Chart.Name }}
-        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
-        ports:
-          - containerPort: {{ .Values.containers.ports.containerPort }}
-        envFrom:
-        - secretRef:
-            name: torqbit-secrets
-        readinessProbe:
-          httpGet:
-            path: /
-            port: {{ .Values.containers.ports.containerPort }}
-          initialDelaySeconds: 10
-          periodSeconds: 5
-        args: ["sh", "-c", "npx prisma db push --accept-data-loss && yarn start"]
+        - name: torqbit
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ index .Values.containers 0 "ports" 0 "containerPort" }}
+          envFrom:
+            - secretRef:
+                name: torqbit-secrets
+          readinessProbe:
+            httpGet:
+              path: /
+              port: {{ index .Values.containers 0 "ports" 0 "containerPort" }}
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          command:
+            - "/bin/sh"
+          args:
+            - "-c"
+            - "npx prisma db push --accept-data-loss && yarn start"
       restartPolicy: Always
