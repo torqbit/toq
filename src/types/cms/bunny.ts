@@ -1,4 +1,4 @@
-export type VideoLibrary = {
+export interface VideoLibrary {
   Id: number;
   Name: string;
   VideoCount: number;
@@ -14,13 +14,20 @@ export type VideoLibrary = {
   EnabledResolutions: string;
   AllowedReferrers: string[];
   BlockedReferrers: string[];
-};
+}
 
 export const BunnyConstants = {
   accessKey: "BUNNY_API_ACCESS_KEY",
   vodAccessKey: "BUNNY_STREAM_ACCESS_KEY",
   cdnStoragePassword: "BUNNY_CDN_STORAGE_PASSWORD",
   fileStoragePassword: "BUNNY_FILE_STORAGE_PASSWORD",
+};
+
+export const baseBunnyConfig: BunnyCMSConfig = {
+  accessKeyRef: BunnyConstants.accessKey,
+  vodAccessKeyRef: BunnyConstants.vodAccessKey,
+  cdnStoragePasswordRef: BunnyConstants.cdnStoragePassword,
+  fileStoragePasswordRef: BunnyConstants.fileStoragePassword,
 };
 
 export type BunnyCMSConfig = {
@@ -32,7 +39,7 @@ export type BunnyCMSConfig = {
     replicatedRegions: string[];
     allowedDomains: string[];
     videoResolutions: string[];
-    watermarkFile?: Buffer;
+    watermarkUrl?: string;
   };
 };
 
@@ -57,9 +64,6 @@ export type Region = {
   RegionCode: string;
   ContinentCode: string;
   CountryCode: string;
-  Latitude: 44.30588;
-  Longitude: 25.723294;
-  AllowLatencyRouting: boolean;
 };
 
 export class BunnyServerError {
