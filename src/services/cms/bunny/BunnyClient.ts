@@ -45,11 +45,11 @@ export class BunnyClient {
 
     try {
       const result = await fetch(url, options);
-
+      console.log(result);
       if (result.status == 200) {
         const vidLibs = (await result.json()) as VideoLibrary[];
         return { status: result.status, items: vidLibs } as VideoLibraryResponse;
-      } else if (result.status == 400) {
+      } else if (result.status >= 400) {
         const reqError = (await result.json()) as BunnyRequestError;
         return new APIServerError(reqError.Message, result.status);
       } else {

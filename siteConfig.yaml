@@ -19,8 +19,8 @@ site:
       discord: https://discord.gg/NserMXcx
       github: https://github.com/torqbit
       youtube: https://www.youtube.com/@torqbit
-    name: ACADEMY NAME
-    brandColor: "#f29379"
+    name: My Academy
+    brandColor: "orange"
     title: title for brand
   darkMode: true
   heroSection:
