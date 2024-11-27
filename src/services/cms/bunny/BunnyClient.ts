@@ -1,6 +1,7 @@
 import { createSlug } from "@/lib/utils";
 import { apiConstants, APIResponse, APIServerError } from "@/types/cms/apis";
 import { BunnyRequestError, VideoLibrary, VideoLibraryResponse } from "@/types/cms/bunny";
+import sharp from "sharp";
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 export class BunnyClient {
@@ -46,7 +47,6 @@ export class BunnyClient {
 
     try {
       const result = await fetch(url, options);
-      console.log(result);
       if (result.status == 200) {
         const vidLibs = (await result.json()) as VideoLibrary[];
         return { status: result.status, items: vidLibs } as VideoLibraryResponse;
@@ -85,13 +85,43 @@ export class BunnyClient {
     libraryId: number,
     playerColor: string,
     resolutions: string[],
-    hasWaterMark: boolean
+    watermarkUrl?: string
   ): Promise<APIResponse<void>> => {
     const url = `https://api.bunny.net/videolibrary/${libraryId}`;
+    let objectParams: any = {
+      PlayerKeyColor: playerColor,
+      EnabledResolutions: resolutions.join(","),
+      EnableDRM: true
+    }
+    if (watermarkUrl) {
+      const downloadImg = await fetch(watermarkUrl);
+      if (downloadImg.ok) {
+        const file = await downloadImg.arrayBuffer();
+        const fileBuffer = Buffer.from(file);
+        const metadata = await sharp(file).metadata()
+        if (metadata.height && metadata.width) {
+          // width = 1600 height = 900
+          // height =>  1/(width/height)
+          const heightInPercent = 10 / (metadata.width / metadata.height)
+          const widthInPercent = 10
+
+          objectParams = {
+            ...objectParams,
+            WatermarkWidth: widthInPercent,
+            WatermarkHeight: heightInPercent,
+            WatermarkPositionLeft: 95 - widthInPercent,
+            WatermarkPositionTop: 95 - heightInPercent
+          }
+
+        }
+
+      }
+    }
+
     const options = {
       method: "POST",
       headers: this.getClientHeaders(),
-      body: JSON.stringify({ PlayerKeyColor: playerColor, EnabledResolutions: resolutions.join(","), EnableDRM: true }),
+      body: JSON.stringify(objectParams),
     };
     try {
       const result = await fetch(url, options);
@@ -105,27 +135,21 @@ export class BunnyClient {
     }
   };
 
-  addAllowedDomainsVOD = async (libraryId: number, allowedDomains: string[]): Promise<APIResponse<void>> => {
+  addAllowedDomainsVOD = async (libraryId: number, domain: string): Promise<APIResponse<void>> => {
     const url = `https://api.bunny.net/videolibrary/${libraryId}/addAllowedReferrer`;
-    let results: boolean[] = [];
-    const promises = allowedDomains.map((domain) => {
-      const options = {
-        method: "POST",
-        headers: this.getClientHeaders(),
-        body: JSON.stringify({ Hostname: domain }),
-      };
 
-      return fetch(url, options).then((result) => {
-        console.log(`${new Date().toISOString()} status for ${domain} - ${result.status}`);
+    const options = {
+      method: "POST",
+      headers: this.getClientHeaders(),
+      body: JSON.stringify({ Hostname: domain }),
+    };
 
-        return result.ok;
-      });
+    return fetch(url, options).then((result) => {
+      return new APIResponse<void>(result.ok, result.status, "Added the requested domain name in bunny.net video library")
+    }).catch(err => {
+      return new APIResponse(false, 500, err)
     });
-    for (let promise of promises) {
-      let r = await delay(2000).then(() => promise);
-      results.push(r);
-    }
-    return new APIResponse(results.filter((r) => !r).length > 0, 200);
+
   };
 
   uploadWatermark = async (watermarkUrl: string, videoId: number): Promise<APIResponse<void>> => {
