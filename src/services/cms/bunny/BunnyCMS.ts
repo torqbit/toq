@@ -1,16 +1,32 @@
 import { BunnyClient } from "./BunnyClient";
 import { baseBunnyConfig, BunnyCMSConfig, BunnyConstants, VideoLibrary } from "@/types/cms/bunny";
 import { apiConstants, APIResponse, APIServerError } from "@/types/cms/apis";
-import { ICMSConfig, IContentProvider } from "../IContentProvider";
+import { ICMSAuthConfig, IContentProvider } from "../IContentProvider";
 import { ConfigurationState } from "@prisma/client";
 import SecretsManager from "@/services/secrets/SecretsManager";
 
-export interface BunnyAuthConfig extends ICMSConfig {
+export interface BunnyAuthConfig extends ICMSAuthConfig {
   accessKey: string;
 }
 const secretsStore = SecretsManager.getSecretsProvider();
 
-export class BunnyCMS implements IContentProvider<BunnyAuthConfig> {
+export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfig> {
+  async getCMSConfig(): Promise<APIResponse<BunnyCMSConfig>> {
+    const result = await prisma?.serviceProvider.findUnique({
+      select: {
+        providerDetail: true,
+      },
+      where: {
+        provider_name: this.provider,
+        service_type: this.serviceType,
+      },
+    });
+    if (result && result.providerDetail) {
+      return new APIResponse(true, 200, apiConstants.successMessage, result.providerDetail as BunnyCMSConfig);
+    } else {
+      return new APIResponse(false, 400, "Failed to fetch the CMS config");
+    }
+  }
   provider: string = "bunny.net";
   serviceType: string = "cms";
 
@@ -123,37 +139,86 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig> {
   ): Promise<APIResponse<void>> {
     //create a Bunny client and create a video library with the above settings
     const bunny = new BunnyClient(authConfig.accessKey);
-    return bunny.createVideoLibrary(brandName, replicatedRegions).then((result) => {
-      if (result.success && result.body) {
-        //upload the watermark url
-        if (watermarkUrl && watermarkUrl.startsWith("http")) {
-          bunny.uploadWatermark(watermarkUrl, result.body.Id);
+
+    //get the bunny cms config with status set as VOD_CONFIGURED
+    const result = prisma?.serviceProvider
+      .findUnique({
+        select: {
+          providerDetail: true,
+        },
+        where: {
+          provider_name: this.provider,
+          service_type: this.serviceType,
+          state: ConfigurationState.VOD_CONFIGURED,
+        },
+      })
+      .then(async (dbConfig) => {
+        if (dbConfig && dbConfig.providerDetail) {
+          const bunnyConfig = dbConfig.providerDetail as BunnyCMSConfig;
+          if (bunnyConfig.vodConfig) {
+            if (watermarkUrl && watermarkUrl.startsWith("http")) {
+              await bunny.uploadWatermark(watermarkUrl, bunnyConfig.vodConfig.vidLibraryId);
+            }
+
+            //update the resolutions and player color and watermark
+            await bunny.updateVideoLibrary(
+              bunnyConfig.vodConfig.vidLibraryId,
+              playerColor,
+              videoResolutions,
+              typeof watermarkUrl !== "undefined"
+            );
+
+            //update the allowed domains
+            await bunny.addAllowedDomainsVOD(bunnyConfig.vodConfig.vidLibraryId, allowedDomains);
+            return new APIResponse<void>(true);
+          } else {
+            return new APIResponse<void>(false, 400, "Failed to find VOD configuration in the database");
+          }
+        } else {
+          //Unable to find the VOD Config. Create a new VOD configuration
+          return bunny.createVideoLibrary(brandName, replicatedRegions).then((result) => {
+            if (result.success && result.body) {
+              //upload the watermark url
+              if (watermarkUrl && watermarkUrl.startsWith("http")) {
+                bunny.uploadWatermark(watermarkUrl, result.body.Id);
+              }
+
+              //update the resolutions and the alowed domains
+              bunny.updateVideoLibrary(result.body.Id, playerColor, videoResolutions, typeof watermarkUrl !== "undefined");
+
+              //update the allowed domains
+              bunny.addAllowedDomainsVOD(result.body.Id, allowedDomains);
+
+              //add the VOD access key
+              secretsStore.put(BunnyConstants.vodAccessKey, result.body.ApiKey);
+
+              //save the bunny config
+              const bunnyConfig: BunnyCMSConfig = {
+                ...baseBunnyConfig,
+                vodConfig: {
+                  vidLibraryId: result.body.Id,
+                  replicatedRegions: replicatedRegions,
+                  allowedDomains: allowedDomains,
+                  videoResolutions: videoResolutions,
+                  watermarkUrl: watermarkUrl,
+                },
+              };
+              this.saveConfiguration(bunnyConfig);
+              return new APIResponse<void>(result.success, result.status, result.message);
+            } else {
+              return new APIResponse<void>(result.success, result.status, result.message);
+            }
+          });
         }
-
-        //update the resolutions and the alowed domains
-        bunny.updateVideoLibrary(result.body.Id, playerColor, videoResolutions, typeof watermarkUrl !== "undefined");
-
-        //update the allowed domains
-        bunny.addAllowedDomainsVOD(result.body.Id, allowedDomains);
-
-        //add the VOD access key
-        secretsStore.put(BunnyConstants.vodAccessKey, result.body.ApiKey);
-
-        //save the bunny config
-        const bunnyConfig: BunnyCMSConfig = {
-          ...baseBunnyConfig,
-          vodConfig: {
-            replicatedRegions: replicatedRegions,
-            allowedDomains: allowedDomains,
-            videoResolutions: videoResolutions,
-            watermarkUrl: watermarkUrl,
-          },
-        };
-        this.saveConfiguration(bunnyConfig);
-        return new APIResponse<void>(result.success, result.status, result.message);
-      } else {
-        return new APIResponse<void>(result.success, result.status, result.message);
-      }
-    });
+      })
+      .catch((err) => {
+        return new APIResponse<void>(false, 500, err);
+      });
+    return (
+      result ||
+      new Promise((resolve, _) => {
+        resolve(new APIResponse<void>(false, 500, "Failed to create prisma client"));
+      })
+    );
   }
 }
