@@ -1,10 +1,10 @@
 import { FC } from "react";
 
-import styles from "./CMS.module.scss";
-import { ICmsForm } from "./ContentManagementSystem";
+import styles from "./CMS/CMS.module.scss";
+import { IConfigForm } from "./CMS/ContentManagementSystem";
 import { Flex } from "antd";
 
-const ContentConfigForm: FC<ICmsForm> = ({ title, description, input, divider, optional }) => {
+const ContentConfigForm: FC<IConfigForm> = ({ title, description, input, divider, optional }) => {
   return (
     <div className={styles.cms__form} style={{ borderBottom: !divider ? "none" : "" }}>
       <div>

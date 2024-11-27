@@ -1,6 +1,6 @@
 import { createSlug } from "@/lib/utils";
 import { apiConstants, APIResponse, APIServerError } from "@/types/cms/apis";
-import { BunnyRequestError, BunnyServerError, UnAuthorizedRequest, VideoLibrary, VideoLibraryResponse } from "@/types/cms/bunny";
+import { BunnyRequestError, VideoLibrary, VideoLibraryResponse } from "@/types/cms/bunny";
 
 export class BunnyClient {
   accessKey: string;

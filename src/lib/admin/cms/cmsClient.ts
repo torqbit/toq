@@ -1,3 +1,4 @@
+import { VODConfig } from "@/pages/api/v1/admin/config/cms/vod";
 import { postFetch } from "@/services/request";
 
 interface ApiResponse {
@@ -31,6 +32,23 @@ class cmsClient {
       }
     });
   };
+
+  addVod = (data: VODConfig, onSuccess: (response: ApiResponse) => void, onFailure: (message: string) => void) => {
+    postFetch(data, `/api/v1/admin/config/cms/vod`).then((result) => {
+      if (result.status == 200 || result.status == 201) {
+        result.json().then((r) => {
+          const apiResponse = r as ApiResponse;
+          onSuccess(apiResponse);
+        });
+      } else {
+        result.json().then((r) => {
+          const failedResponse = r as FailedApiResponse;
+          onFailure(failedResponse.error);
+        });
+      }
+    });
+  };
+
   listReplicationRegions = (
     accessKey: string,
     provider: string,

@@ -1,16 +1,15 @@
-import { Button, Flex, Form, Input, message, Select, Steps, Tag, Upload } from "antd";
+import { Button, Flex, Form, Input, message, Select, Steps } from "antd";
 import ConfigFormLayout from "@/components/Configuration/ConfigFormLayout";
-import ContentConfigForm from "@/components/Configuration/CMS/ContentConfigForm";
-import { ReactNode, useState } from "react";
+import { FC, ReactNode, useState } from "react";
 import cmsClient from "@/lib/admin/cms/cmsClient";
 import styles from "./CMS.module.scss";
 import FormDisableOverlay from "../FormDisableOverlay";
-import SvgIcons from "@/components/SvgIcons";
-import Image from "next/image";
-import ImgCrop from "antd-img-crop";
-import cmsConstant from "@/lib/admin/cms/cmsConstant";
 
-export interface ICmsForm {
+import cmsConstant from "@/lib/admin/cms/cmsConstant";
+import { PageSiteConfig } from "@/services/siteConstant";
+import ConfigForm from "@/components/Configuration/ConfigForm";
+
+export interface IConfigForm {
   title: string;
   description: string;
   input: ReactNode;
@@ -19,32 +18,22 @@ export interface ICmsForm {
   divider?: boolean;
 }
 
-const ContentManagementSystem = () => {
+const ContentManagementSystem: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const [messageApi, contextHolder] = message.useMessage();
   const [accessKeyForm] = Form.useForm();
   const [waterMarkUrl, setIWaterMarkUrl] = useState<string | null>(null);
+  const [selectedWatermark, setWatermark] = useState<string | null>(null);
+
   const [replicationRegions, setRegions] = useState<{ name: string; code: string }[]>([]);
   const [videoForm] = Form.useForm();
   const [cdnForm] = Form.useForm();
 
   const [loading, setLoading] = useState<boolean>(false);
+  const [vodLoading, setVodLoading] = useState<boolean>(false);
 
   const [current, setCurrent] = useState<number>(0);
-
-  const handleChange = (info: any) => {
-    if (info.fileList.length > 1) {
-      return;
-    }
-    const file = info.fileList[0].originFileObj;
-
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setIWaterMarkUrl(reader.result as string); // Convert to Base64
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+  let logoUrl = `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/${siteConfig.brand?.logo}`;
+  let iconUrl = `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/img/logo.png`;
 
   const videoItems = [
     {
@@ -69,7 +58,7 @@ const ContentManagementSystem = () => {
           })}
         </Select>
       ),
-      inputName: "replicationRegion",
+      inputName: "replicatedRegions",
     },
 
     {
@@ -81,7 +70,7 @@ const ContentManagementSystem = () => {
       input: (
         <Select mode="tags" suffixIcon={<></>} placeholder="Add domain names" open={false} style={{ width: 250 }} />
       ),
-      inputName: "domainNames",
+      inputName: "allowedDomains",
     },
     {
       title: "Upload Watermark",
@@ -90,35 +79,34 @@ const ContentManagementSystem = () => {
       description:
         "Automatically watermark uploaded videos. The watermark is encoded into the video itself and cannot be removed after encoding.",
       input: (
-        <ImgCrop rotationSlider aspect={1 / 1}>
-          <Upload
-            accept="image/*"
-            listType="picture-card"
-            showUploadList={false}
-            name="avatar"
-            maxCount={1}
-            className={styles.upload__watermark}
-            multiple={false}
-            beforeUpload={() => false} // Prevent automatic upload
-            onChange={handleChange}
+        <Flex className={styles.watermark__options} align="center" gap={20}>
+          <div
+            onClick={() => {
+              if (iconUrl === selectedWatermark) {
+                setWatermark(null);
+              } else {
+                setWatermark(iconUrl);
+              }
+            }}
+            className={iconUrl === selectedWatermark ? styles.selected__watermark : ""}
           >
-            {waterMarkUrl ? (
-              <div className={styles.img__preview}>
-                <Image src={waterMarkUrl} height={100} width={100} alt="water mark" />
-                <div className={styles.icon}>
-                  <i>{SvgIcons.camera}</i>
-                </div>
-              </div>
-            ) : (
-              <Flex vertical>
-                <i>{SvgIcons.camera}</i>
-                upload
-              </Flex>
-            )}
-          </Upload>
-        </ImgCrop>
+            <img src={iconUrl} alt="torqbit icon" />
+          </div>
+          <div
+            onClick={() => {
+              if (logoUrl === selectedWatermark) {
+                setWatermark(null);
+              } else {
+                setWatermark(logoUrl);
+              }
+            }}
+            className={logoUrl === selectedWatermark ? styles.selected__watermark : ""}
+          >
+            <img src={logoUrl} alt="torqbit logo" />
+          </div>
+        </Flex>
       ),
-      inputName: "waterMark",
+      inputName: "watermarkUrl",
     },
     {
       title: "Set Resolutions",
@@ -143,11 +131,11 @@ const ContentManagementSystem = () => {
           })}
         </Select>
       ),
-      inputName: "resolution",
+      inputName: "videoResolutions",
     },
   ];
 
-  const cdnItems: ICmsForm[] = [
+  const cdnItems: IConfigForm[] = [
     {
       title: "Main Storage Region",
       description:
@@ -248,11 +236,29 @@ const ContentManagementSystem = () => {
   };
 
   const onSubmitVideoInfo = () => {
+    setVodLoading(true);
     let data = {
       ...videoForm.getFieldsValue(),
-      replicationRegion: videoForm.getFieldsValue().replicationRegion.map((r: any) => r.value),
-      resolution: videoForm.getFieldsValue().resolution.map((r: any) => r.value),
+      replicatedRegions: videoForm.getFieldsValue().replicatedRegions.map((r: any) => r.value),
+      videoResolutions: videoForm.getFieldsValue().videoResolutions.map((r: any) => r.value),
+      watermarkUrl: selectedWatermark,
+      brandName: siteConfig.brand?.name,
+      playerColor: siteConfig.brand?.brandColor,
+      provider: "bunny.net",
     };
+
+    cmsClient.addVod(
+      data,
+      (result) => {
+        messageApi.success(result.message);
+        setCurrent(2);
+        setVodLoading(false);
+      },
+      (error) => {
+        messageApi.error(error);
+        setVodLoading(false);
+      }
+    );
   };
 
   return (
@@ -282,7 +288,7 @@ const ContentManagementSystem = () => {
                 }
               >
                 <Form form={accessKeyForm} onFinish={onTestAccessKey} requiredMark={false}>
-                  <ContentConfigForm
+                  <ConfigForm
                     input={
                       <Form.Item
                         style={{ width: 250 }}
@@ -308,7 +314,16 @@ const ContentManagementSystem = () => {
               <ConfigFormLayout
                 extraContent={
                   <Flex align="center" gap={10}>
-                    {<Button onClick={() => videoForm.resetFields()}>Reset</Button>}
+                    {
+                      <Button
+                        onClick={() => {
+                          videoForm.resetFields();
+                          setWatermark(null);
+                        }}
+                      >
+                        Reset
+                      </Button>
+                    }
 
                     <Button onClick={() => videoForm.submit()} type="primary">
                       Save
@@ -320,7 +335,7 @@ const ContentManagementSystem = () => {
                 <Form form={videoForm} onFinish={onSubmitVideoInfo} requiredMark={false}>
                   {videoItems.map((item, i) => {
                     return (
-                      <ContentConfigForm
+                      <ConfigForm
                         input={
                           <Form.Item
                             name={item.inputName}
@@ -360,7 +375,7 @@ const ContentManagementSystem = () => {
                 <Form form={cdnForm}>
                   {cdnItems.map((item, i) => {
                     return (
-                      <ContentConfigForm
+                      <ConfigForm
                         input={
                           <Form.Item
                             rules={[{ required: !item.optional, message: `Field is required!` }]}
@@ -378,7 +393,7 @@ const ContentManagementSystem = () => {
                       />
                     );
                   })}
-                  {/* {current < 2 && <FormDisableOverlay />} */}
+                  {current < 2 && <FormDisableOverlay />}
                 </Form>
               </ConfigFormLayout>
             ),
