@@ -19,7 +19,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const accessConfig: CMSConfig = cmsAccess.parse(body);
     const cms = new ContentManagementService().getCMS(accessConfig.provider);
     const result = await cms.testConfiguration({ accessKey: accessConfig.accessKey });
-    console.log(result);
 
     if (result instanceof Boolean && result.valueOf()) {
       return res.status(200).json({ success: true, message: "Connection has been tested successfully" });
