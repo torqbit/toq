@@ -4,22 +4,19 @@ import { Tabs, TabsProps } from "antd";
 import ContentManagementSystem from "@/components/Configuration/CMS/ContentManagementSystem";
 import { FC } from "react";
 import { PageSiteConfig } from "@/services/siteConstant";
+import PaymentManagementSystem from "./Payment/PaymentManagementSystem";
 
 const ConfigurationSettings: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const items: TabsProps["items"] = [
     {
       key: "CMS",
       label: "Content Management System",
-      children: <ContentManagementSystem />,
+      children: <ContentManagementSystem siteConfig={siteConfig} />,
     },
     {
       key: "PMS",
       label: "Payment Management System",
-      children: (
-        <>
-          <h3>Payment Management System</h3>
-        </>
-      ),
+      children: <PaymentManagementSystem />,
     },
   ];
   return (

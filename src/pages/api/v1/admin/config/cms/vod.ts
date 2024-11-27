@@ -16,7 +16,7 @@ const vodConfig = z.object({
   watermarkUrl: z.string(),
 });
 
-type VODConfig = z.infer<typeof vodConfig>;
+export type VODConfig = z.infer<typeof vodConfig>;
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {

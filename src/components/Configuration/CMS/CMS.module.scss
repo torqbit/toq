@@ -5,7 +5,7 @@
   border: 1px solid var(--border-color);
   border-radius: 8px;
   > div:last-child {
-    padding: 0px 20px 20px 20px;
+    padding: 0px 20px;
   }
   .cms__form__header {
     padding: 10px 15px;
@@ -28,13 +28,33 @@
     }
   }
   .cms__form {
-    position: relative;
-    padding: 20px;
     background-color: var(--bg-primary);
+    padding: 20px 0px;
     width: 100%;
     display: flex;
     justify-content: space-between;
     border-bottom: 1px solid var(--border-color);
+    .watermark__options {
+      > div {
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+        cursor: pointer;
+        transition: all 0.4s ease;
+        &:hover {
+          border: 1px solid var(--btn-primary);
+          background-color: var(--bg-content-form);
+        }
+      }
+      .selected__watermark {
+        border: 1px solid var(--btn-primary);
+        background-color: var(--bg-content-form);
+      }
+      img {
+        height: 40px;
+        width: auto;
+      }
+    }
     h5 {
       display: flex;
       align-items: center;
@@ -42,8 +62,8 @@
       color: var(--font-primary);
     }
     p {
-      padding: 0;
       margin-bottom: 8px;
+      padding: 0;
     }
     input {
       width: 250px;
@@ -52,46 +72,6 @@
       max-width: 400px;
     }
   }
-  .upload__watermark {
-    border-radius: 4px;
-    .img__preview {
-      img {
-        border-radius: 4px;
-      }
-      position: relative;
-
-      i {
-        position: absolute;
-        padding: 5px;
-        top: 35px;
-        left: 35px;
-        backdrop-filter: blur(4px);
-
-        border-radius: 4px;
-
-        background-color: var(--bg-header);
-        line-height: 0;
-        font-size: 20px;
-        color: var(--font-primary);
-      }
-
-      &:hover {
-        i {
-          color: var(--font-secondary);
-        }
-      }
-    }
-
-    i {
-      line-height: 0;
-      font-size: 20px;
-    }
-    transition: all 0.4s ease-in-out;
-    &:hover {
-      color: var(--font-primary);
-    }
-  }
-
   .form__disabled__overlay {
     position: absolute;
     top: 0;
