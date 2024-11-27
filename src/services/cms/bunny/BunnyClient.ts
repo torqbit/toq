@@ -2,6 +2,7 @@ import { createSlug } from "@/lib/utils";
 import { apiConstants, APIResponse, APIServerError } from "@/types/cms/apis";
 import { BunnyRequestError, VideoLibrary, VideoLibraryResponse } from "@/types/cms/bunny";
 
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 export class BunnyClient {
   accessKey: string;
   constructor(accessKey: string) {
@@ -106,33 +107,25 @@ export class BunnyClient {
 
   addAllowedDomainsVOD = async (libraryId: number, allowedDomains: string[]): Promise<APIResponse<void>> => {
     const url = `https://api.bunny.net/videolibrary/${libraryId}/addAllowedReferrer`;
-    const addDomainResponses = allowedDomains.map(async (domain) => {
+    let results: boolean[] = [];
+    const promises = allowedDomains.map((domain) => {
       const options = {
         method: "POST",
         headers: this.getClientHeaders(),
         body: JSON.stringify({ Hostname: domain }),
       };
-      try {
-        const result = await fetch(url, options);
-        if (result.status == 200) {
-          return new APIResponse<void>(true, result.status, apiConstants.successMessage);
-        } else {
-          return this.handleError<void>(result);
-        }
-      } catch (err: any) {
-        return new APIResponse<void>(false, err);
-      }
-    });
-    const failedResponses = addDomainResponses.filter(async (result) => {
-      const awaitResult = await result;
-      return !awaitResult.success;
-    });
 
-    if (failedResponses.length > 0) {
-      return await failedResponses[0];
-    } else {
-      return await addDomainResponses[0];
+      return fetch(url, options).then((result) => {
+        console.log(`${new Date().toISOString()} status for ${domain} - ${result.status}`);
+
+        return result.ok;
+      });
+    });
+    for (let promise of promises) {
+      let r = await delay(2000).then(() => promise);
+      results.push(r);
     }
+    return new APIResponse(results.filter((r) => !r).length > 0, 200);
   };
 
   uploadWatermark = async (watermarkUrl: string, videoId: number): Promise<APIResponse<void>> => {
