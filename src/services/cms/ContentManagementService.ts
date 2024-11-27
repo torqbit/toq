@@ -1,14 +1,8 @@
-import {
-  BasicAPIResponse,
-  FileUploadResponse,
-  UploadVideoObjectType,
-  VideoAPIResponse,
-  VideoInfo,
-} from "@/types/courses/Course";
+import { BasicAPIResponse, FileUploadResponse, UploadVideoObjectType, VideoAPIResponse, VideoInfo } from "@/types/courses/Course";
 import { BunnyConfig, BunnyMediaProvider } from "./BunnyMediaProvider";
 import prisma from "@/lib/prisma";
 import { VideoState } from "@prisma/client";
-import { ICMSConfig, IContentProvider } from "./IContentProvider";
+import { IContentProvider } from "./IContentProvider";
 import { BunnyCMS } from "./bunny/BunnyCMS";
 
 export interface ContentServiceProvider {
@@ -23,9 +17,9 @@ export interface ContentServiceProvider {
 }
 
 export class ContentManagementService {
-  getCMS = (name: string): IContentProvider<any> => {
+  getCMS = (name: string): IContentProvider<any, any> => {
     return new BunnyCMS();
-  }
+  };
   getServiceProvider = (name: string, config: any): ContentServiceProvider => {
     switch (name) {
       case "bunny":
@@ -49,11 +43,7 @@ export class ContentManagementService {
     return csp.uploadThumbnailToCdn(thumbnail);
   };
 
-  uploadVideoThumbnail = async (
-    thumbnail: string,
-    videoId: string,
-    csp: ContentServiceProvider
-  ): Promise<BasicAPIResponse> => {
+  uploadVideoThumbnail = async (thumbnail: string, videoId: string, csp: ContentServiceProvider): Promise<BasicAPIResponse> => {
     return csp.uploadVideoThumbnail(thumbnail, videoId);
   };
 
@@ -146,12 +136,7 @@ export class ContentManagementService {
     return csp.uploadFile(fileName, file, path);
   };
 
-  deleteVideo = async (
-    videoProviderId: string,
-    objectId: number,
-    objectType: UploadVideoObjectType,
-    csp: ContentServiceProvider
-  ) => {
+  deleteVideo = async (videoProviderId: string, objectId: number, objectType: UploadVideoObjectType, csp: ContentServiceProvider) => {
     const deleteResponse = await csp.deleteVideo(videoProviderId);
     if ((deleteResponse.success || deleteResponse.statusCode === 404) && objectType == "lesson") {
       const videoDel = await prisma.video.delete({

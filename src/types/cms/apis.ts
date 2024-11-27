@@ -7,10 +7,6 @@ export class APIServerError {
   }
 }
 
-export const apiConstants = {
-  successMessage: "Successfully received the response",
-};
-
 export class APIResponse<T> {
   message: string;
   status: number;
@@ -25,3 +21,8 @@ export class APIResponse<T> {
     }
   }
 }
+
+export const apiConstants = {
+  successMessage: "Successfully received the response",
+  failedResponse: new APIResponse<void>(false, 400, "Failed to connect with the service"),
+};
