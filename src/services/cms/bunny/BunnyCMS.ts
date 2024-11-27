@@ -1,5 +1,5 @@
 import { BunnyClient } from "./BunnyClient";
-import { BunnyCMSConfig, BunnyConstants, BunnyServerError } from "@/types/cms/bunny";
+import { BunnyCMSConfig, BunnyConstants, VideoLibrary } from "@/types/cms/bunny";
 import { APIServerError } from "@/types/cms/apis";
 import { ICMSConfig, IContentProvider } from "../IContentProvider";
 import { ConfigurationState } from "@prisma/client";
@@ -110,6 +110,7 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig> {
    */
   saveVODConfig(
     authConfig: BunnyAuthConfig,
+    brandName: string,
     replicatedRegions: string[],
     allowedDomains: string[],
     videoResolutions: string[],
@@ -117,7 +118,16 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig> {
     watermarkFile?: Buffer
   ): Promise<Boolean | APIServerError> {
     //create a Bunny client and create a video library with the above settings
+    const bunny = new BunnyClient(authConfig.accessKey);
+    bunny.createVideoLibrary(brandName, replicatedRegions)
+      .then(result => {
+        if (result instanceof APIServerError) {
+          return result;
+        } else {
+          const vidLib = result as VideoLibrary;
 
+        }
+      })
     //Update the video library based on the above configuration
 
     //Save the video library and accessKey in the database

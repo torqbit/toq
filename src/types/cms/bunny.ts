@@ -1,4 +1,4 @@
-export type VideoLibrary = {
+export interface VideoLibrary {
   Id: number;
   Name: string;
   VideoCount: number;
@@ -57,9 +57,6 @@ export type Region = {
   RegionCode: string;
   ContinentCode: string;
   CountryCode: string;
-  Latitude: 44.30588;
-  Longitude: 25.723294;
-  AllowLatencyRouting: boolean;
 };
 
 export class BunnyServerError {

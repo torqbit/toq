@@ -9,6 +9,7 @@ export interface IContentProvider<T extends ICMSConfig> {
   listReplicationRegions(): Promise<{ name: string; code: string }[]>;
   saveVODConfig(
     authConfig: T,
+    brandName: string,
     replicatedRegions: string[],
     allowedDomains: string[],
     videoResolutions: string[],

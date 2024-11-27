@@ -8,6 +8,31 @@ export class BunnyClient {
     this.accessKey = accessKey;
   }
 
+  getClientHeaders = () => {
+    return {
+      accept: "application/json",
+      "content-type": "application/json",
+      AccessKey: this.accessKey,
+    }
+  }
+
+  getClientFileOptions = (file: Buffer) => {
+    return {
+      method: "PUT",
+      headers: { accept: "application/json", AccessKey: this.accessKey },
+      body: file,
+    }
+  }
+
+  handleError = async (response: Response): Promise<APIServerError> => {
+    if (response.status == 400) {
+      const reqError = (await response.json()) as BunnyRequestError;
+      return new APIServerError(reqError.Message, response.status);
+    } else {
+      return new APIServerError("Failed to get response from Bunny Server");
+    }
+  }
+
   listVideoLibraries = async () => {
     const url = "https://api.bunny.net/videolibrary?page=1&perPage=1000&includeAccessKey=false";
     const options = {
@@ -51,7 +76,6 @@ export class BunnyClient {
 
       if (result.status == 200) {
         const vidLib = (await result.json()) as VideoLibrary;
-
         return vidLib;
       } else if (result.status == 401) {
         const authError = (await result.json()) as UnAuthorizedRequest;
@@ -63,4 +87,15 @@ export class BunnyClient {
       return new APIServerError(err);
     }
   };
+
+  uploadWatermark = async (file: Buffer, videoId: string): Promise<boolean | APIServerError> => {
+    const url = `https://api.bunny.net/videolibrary/${videoId}/watermark`
+    const result = await fetch(url, this.getClientFileOptions(file))
+    if (result.status == 200) {
+      return true
+    } else {
+      return await this.handleError(result)
+    }
+
+  }
 }
