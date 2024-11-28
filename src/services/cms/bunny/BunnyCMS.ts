@@ -9,6 +9,7 @@ export interface BunnyAuthConfig extends ICMSAuthConfig {
   accessKey: string;
 }
 const secretsStore = SecretsManager.getSecretsProvider();
+const hostURL = new URL(process.env.NEXTAUTH_URL || "https://torqbit.com");
 
 export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfig> {
   async getCMSConfig(): Promise<APIResponse<BunnyCMSConfig>> {
@@ -136,7 +137,6 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
     authConfig: BunnyAuthConfig,
     brandName: string,
     replicatedRegions: string[],
-    allowedDomains: string[],
     videoResolutions: string[],
     playerColor: string,
     watermarkUrl?: string,
@@ -169,15 +169,10 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
             }
 
             //update the resolutions and player color and watermark
-            await bunny.updateVideoLibrary(
-              bunnyConfig.vodConfig.vidLibraryId,
-              playerColor,
-              videoResolutions,
-              typeof watermarkUrl !== "undefined"
-            );
+            await bunny.updateVideoLibrary(bunnyConfig.vodConfig.vidLibraryId, playerColor, videoResolutions, watermarkUrl);
 
             //update the allowed domains
-            await bunny.addAllowedDomainsVOD(bunnyConfig.vodConfig.vidLibraryId, allowedDomains);
+            await bunny.addAllowedDomainsVOD(bunnyConfig.vodConfig.vidLibraryId, hostURL.hostname);
             return new APIResponse<void>(true);
           } else {
             return new APIResponse<void>(false, 400, "Failed to find VOD configuration in the database");
@@ -192,15 +187,12 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
               }
 
               //update the resolutions and the alowed domains
-              bunny.updateVideoLibrary(
-                result.body.Id,
-                playerColor,
-                videoResolutions,
-                typeof watermarkUrl !== "undefined"
-              );
+
+              bunny.updateVideoLibrary(result.body.Id, playerColor, videoResolutions, watermarkUrl);
+
 
               //update the allowed domains
-              bunny.addAllowedDomainsVOD(result.body.Id, allowedDomains);
+              bunny.addAllowedDomainsVOD(result.body.Id, hostURL.hostname);
 
               //add the VOD access key
               secretsStore.put(BunnyConstants.vodAccessKey, result.body.ApiKey);
@@ -211,7 +203,6 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
                 vodConfig: {
                   vidLibraryId: result.body.Id,
                   replicatedRegions: replicatedRegions,
-                  allowedDomains: allowedDomains,
                   videoResolutions: videoResolutions,
                   watermarkUrl: watermarkUrl,
                 },
