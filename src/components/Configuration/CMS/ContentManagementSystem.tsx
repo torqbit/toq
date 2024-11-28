@@ -24,13 +24,6 @@ const ContentManagementSystem: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfi
   const [messageApi, contextHolder] = message.useMessage();
   const [accessKeyForm] = Form.useForm();
   const [selectedWatermark, setWatermark] = useState<string | null>(null);
-  const [initialValue, setInitialValue] = useState<{
-    vod: {
-      replicatedRegions?: string[];
-      allowedDomains?: string[];
-      videoResolutions?: string[];
-    };
-  }>();
 
   const [replicationRegions, setRegions] = useState<{ name: string; code: string }[]>([]);
   const [videoForm] = Form.useForm();
@@ -259,45 +252,6 @@ const ContentManagementSystem: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfi
       }
     );
   };
-
-  const getCurrentStep = (status: ConfigurationState) => {
-    switch (status) {
-      case ConfigurationState.AUTHENTICATED:
-        return setCurrent(1);
-      case ConfigurationState.VOD_CONFIGURED:
-        return setCurrent(2);
-      case ConfigurationState.CDN_CONFIGURED:
-        return setCurrent(3);
-      default:
-        return setCurrent(0);
-    }
-  };
-  const getDetail = () => {
-    cmsClient.getConfigDetail(
-      "bunny.net",
-      (result) => {
-        listRegions();
-        setInitialValue({
-          ...initialValue,
-          vod: {
-            replicatedRegions: result.config.vodConfig?.replicatedRegions,
-            allowedDomains: result.config.vodConfig?.allowedDomains,
-            videoResolutions: result.config.vodConfig?.videoResolutions,
-          },
-        });
-        setWatermark(result.config.vodConfig?.watermarkUrl as string);
-        getCurrentStep(result.config.state as ConfigurationState);
-        videoForm.setFieldsValue({
-          replicatedRegions: result.config.vodConfig?.replicatedRegions,
-          videoResolutions: result.config.vodConfig?.videoResolutions,
-        });
-      },
-      (error) => {}
-    );
-  };
-  useEffect(() => {
-    getDetail();
-  }, []);
 
   return (
     <section>
