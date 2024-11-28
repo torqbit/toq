@@ -161,7 +161,10 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
           const bunnyConfig = dbConfig.providerDetail as BunnyCMSConfig;
           if (bunnyConfig.vodConfig) {
             if (watermarkUrl && watermarkUrl.startsWith("http")) {
-              await bunny.uploadWatermark(watermarkUrl, bunnyConfig.vodConfig.vidLibraryId);
+              await bunny.uploadWatermark(watermarkUrl, bunnyConfig.vodConfig.vidLibraryId, true);
+            } else if (bunnyConfig.vodConfig.watermarkUrl && typeof watermarkUrl == "undefined") {
+              //delete the water mark
+              await bunny.deleteWatermark(bunnyConfig.vodConfig.vidLibraryId);
             }
 
             //update the resolutions and player color and watermark
@@ -169,6 +172,15 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
 
             //update the allowed domains
             await bunny.addAllowedDomainsVOD(bunnyConfig.vodConfig.vidLibraryId, hostURL.hostname);
+            const updatedBunnyConfig = {
+              ...bunnyConfig,
+              vodConfig: {
+                ...bunnyConfig.vodConfig,
+                videoResolutions: videoResolutions,
+                watermarkUrl: watermarkUrl,
+              },
+            };
+            this.saveConfiguration(updatedBunnyConfig);
             return new APIResponse<void>(true);
           } else {
             return new APIResponse<void>(false, 400, "Failed to find VOD configuration in the database");
