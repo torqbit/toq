@@ -1,6 +1,6 @@
 import { Button, Flex, Form, Input, message, Select, Steps } from "antd";
 import ConfigFormLayout from "@/components/Configuration/ConfigFormLayout";
-import { FC, ReactNode, useState } from "react";
+import { FC, ReactNode, useEffect, useState } from "react";
 import cmsClient from "@/lib/admin/cms/cmsClient";
 import styles from "./CMS.module.scss";
 import FormDisableOverlay from "../FormDisableOverlay";
@@ -8,6 +8,8 @@ import FormDisableOverlay from "../FormDisableOverlay";
 import cmsConstant from "@/lib/admin/cms/cmsConstant";
 import { PageSiteConfig } from "@/services/siteConstant";
 import ConfigForm from "@/components/Configuration/ConfigForm";
+import { ConfigurationState } from "@prisma/client";
+import SvgIcons from "@/components/SvgIcons";
 
 export interface IConfigForm {
   title: string;
@@ -21,8 +23,14 @@ export interface IConfigForm {
 const ContentManagementSystem: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const [messageApi, contextHolder] = message.useMessage();
   const [accessKeyForm] = Form.useForm();
-  const [waterMarkUrl, setIWaterMarkUrl] = useState<string | null>(null);
   const [selectedWatermark, setWatermark] = useState<string | null>(null);
+  const [initialValue, setInitialValue] = useState<{
+    vod: {
+      replicatedRegions?: string[];
+      allowedDomains?: string[];
+      videoResolutions?: string[];
+    };
+  }>();
 
   const [replicationRegions, setRegions] = useState<{ name: string; code: string }[]>([]);
   const [videoForm] = Form.useForm();
@@ -61,17 +69,6 @@ const ContentManagementSystem: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfi
       inputName: "replicatedRegions",
     },
 
-    {
-      title: "Allowed Domain names",
-      optional: true,
-
-      description:
-        "The list of domains that are allowed to access the videos. If no hostnames are listed all requests will be allowed.",
-      input: (
-        <Select mode="tags" suffixIcon={<></>} placeholder="Add domain names" open={false} style={{ width: 250 }} />
-      ),
-      inputName: "allowedDomains",
-    },
     {
       title: "Upload Watermark",
       optional: true,
@@ -187,12 +184,10 @@ const ContentManagementSystem: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfi
 
   const listRegions = () => {
     try {
-      setLoading(true);
       cmsClient.listReplicationRegions(
         "ACCESS_KEY",
         "bunny.net",
         (result) => {
-          setCurrent(1);
           setRegions(result.regions);
 
           setLoading(false);
@@ -218,9 +213,8 @@ const ContentManagementSystem: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfi
         "bunny.net",
         (result) => {
           listRegions();
-          // setCurrent(1);
+          setCurrent(1);
           messageApi.success(result.message);
-          // setLoading(false);
         },
         (error) => {
           setCurrent(0);
@@ -237,11 +231,16 @@ const ContentManagementSystem: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfi
 
   const onSubmitVideoInfo = () => {
     setVodLoading(true);
+
     let data = {
       ...videoForm.getFieldsValue(),
-      replicatedRegions: videoForm.getFieldsValue().replicatedRegions.map((r: any) => r.value),
-      videoResolutions: videoForm.getFieldsValue().videoResolutions.map((r: any) => r.value),
-      watermarkUrl: selectedWatermark,
+      replicatedRegions: videoForm
+        .getFieldsValue()
+        .replicatedRegions.map((r: any) => (typeof r === "object" ? r.value : r)),
+      videoResolutions: videoForm
+        .getFieldsValue()
+        .videoResolutions.map((r: any) => (typeof r === "object" ? r.value : r)),
+      watermarkUrl: selectedWatermark || undefined,
       brandName: siteConfig.brand?.name,
       playerColor: siteConfig.brand?.brandColor,
       provider: "bunny.net",
@@ -261,6 +260,45 @@ const ContentManagementSystem: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfi
     );
   };
 
+  const getCurrentStep = (status: ConfigurationState) => {
+    switch (status) {
+      case ConfigurationState.AUTHENTICATED:
+        return setCurrent(1);
+      case ConfigurationState.VOD_CONFIGURED:
+        return setCurrent(2);
+      case ConfigurationState.CDN_CONFIGURED:
+        return setCurrent(3);
+      default:
+        return setCurrent(0);
+    }
+  };
+  const getDetail = () => {
+    cmsClient.getConfigDetail(
+      "bunny.net",
+      (result) => {
+        listRegions();
+        setInitialValue({
+          ...initialValue,
+          vod: {
+            replicatedRegions: result.config.vodConfig?.replicatedRegions,
+            allowedDomains: result.config.vodConfig?.allowedDomains,
+            videoResolutions: result.config.vodConfig?.videoResolutions,
+          },
+        });
+        setWatermark(result.config.vodConfig?.watermarkUrl as string);
+        getCurrentStep(result.config.state as ConfigurationState);
+        videoForm.setFieldsValue({
+          replicatedRegions: result.config.vodConfig?.replicatedRegions,
+          videoResolutions: result.config.vodConfig?.videoResolutions,
+        });
+      },
+      (error) => {}
+    );
+  };
+  useEffect(() => {
+    getDetail();
+  }, []);
+
   return (
     <section>
       {contextHolder}
@@ -279,10 +317,22 @@ const ContentManagementSystem: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfi
                 formTitle={"Configure Bunny.net"}
                 extraContent={
                   <Flex align="center" gap={10}>
-                    {<Button onClick={() => accessKeyForm.resetFields()}>Reset</Button>}
+                    {current < 0 && <Button onClick={() => accessKeyForm.resetFields()}>Reset</Button>}
 
-                    <Button loading={loading} onClick={() => accessKeyForm.submit()} type="primary">
-                      Connect
+                    <Button
+                      loading={loading}
+                      disabled={current > 0}
+                      onClick={() => accessKeyForm.submit()}
+                      type="primary"
+                    >
+                      {current > 0 ? (
+                        <Flex align="center" gap={5}>
+                          <i style={{ lineHeight: 0 }}>{SvgIcons.checkFilled}</i>
+                          Connected
+                        </Flex>
+                      ) : (
+                        "Connect"
+                      )}
                     </Button>
                   </Flex>
                 }
@@ -295,7 +345,7 @@ const ContentManagementSystem: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfi
                         name={"accessKey"}
                         rules={[{ required: true, message: "Access key is required!" }]}
                       >
-                        <Input.Password placeholder="Add access key" />
+                        {current < 0 && <Input.Password placeholder="Add access key" />}
                       </Form.Item>
                     }
                     title={"Bunny.net Access Key"}

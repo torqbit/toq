@@ -1,3 +1,5 @@
+import { ConfigurationState } from "@prisma/client";
+
 export interface VideoLibrary {
   Id: number;
   Name: string;
@@ -35,6 +37,7 @@ export type BunnyCMSConfig = {
   vodAccessKeyRef: string;
   cdnStoragePasswordRef: string;
   fileStoragePasswordRef: string;
+  state?: ConfigurationState;
   vodConfig?: {
     vidLibraryId: number;
     replicatedRegions: string[];

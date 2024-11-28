@@ -8,12 +8,12 @@ import { withUserAuthorized } from "@/lib/api-middlewares/with-authorized";
 
 const vodConfig = z.object({
   provider: z.string().min(2, "Provider is required"),
-  brandName: z.string().min(2, "Brand name is required"),
-  replicatedRegions: z.array(z.string()).min(1, "Atleast one region must be specified"),
-  allowedDomains: z.array(z.string()),
-  videoResolutions: z.array(z.string()),
-  playerColor: z.string(),
-  watermarkUrl: z.string(),
+  // brandName: z.string().min(2, "Brand name is required"),
+  // replicatedRegions: z.array(z.string()).min(1, "Atleast one region must be specified"),
+  // allowedDomains: z.array(z.string()),
+  // videoResolutions: z.array(z.string()),
+  // playerColor: z.string(),
+  // watermarkUrl: z.string(),
 });
 
 type VODConfig = z.infer<typeof vodConfig>;
@@ -24,7 +24,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const config: VODConfig = vodConfig.parse(body);
     const cms = new ContentManagementService().getCMS(config.provider);
     const response = await cms.getCMSConfig();
-    return res.status(response.status).json({ success: response.success, message: response.message, config: response.body });
+    return res
+      .status(response.status)
+      .json({ success: response.success, message: response.message, config: response.body });
   } catch (error) {
     return errorHandler(error, res);
   }
