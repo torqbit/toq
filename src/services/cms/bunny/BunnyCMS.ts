@@ -5,10 +5,12 @@ import { ICMSAuthConfig, IContentProvider } from "../IContentProvider";
 import { ConfigurationState } from "@prisma/client";
 import SecretsManager from "@/services/secrets/SecretsManager";
 
+
 export interface BunnyAuthConfig extends ICMSAuthConfig {
   accessKey: string;
 }
 const secretsStore = SecretsManager.getSecretsProvider();
+const hostURL = new URL(process.env.NEXTAUTH_URL || "https://torqbit.com")
 
 export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfig> {
   async getCMSConfig(): Promise<APIResponse<BunnyCMSConfig>> {
@@ -165,11 +167,11 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
               bunnyConfig.vodConfig.vidLibraryId,
               playerColor,
               videoResolutions,
-              typeof watermarkUrl !== "undefined"
+              watermarkUrl
             );
 
             //update the allowed domains
-            await bunny.addAllowedDomainsVOD(bunnyConfig.vodConfig.vidLibraryId, allowedDomains);
+            await bunny.addAllowedDomainsVOD(bunnyConfig.vodConfig.vidLibraryId, hostURL.hostname);
             return new APIResponse<void>(true);
           } else {
             return new APIResponse<void>(false, 400, "Failed to find VOD configuration in the database");
@@ -184,10 +186,10 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
               }
 
               //update the resolutions and the alowed domains
-              bunny.updateVideoLibrary(result.body.Id, playerColor, videoResolutions, typeof watermarkUrl !== "undefined");
+              bunny.updateVideoLibrary(result.body.Id, playerColor, videoResolutions, watermarkUrl);
 
               //update the allowed domains
-              bunny.addAllowedDomainsVOD(result.body.Id, allowedDomains);
+              bunny.addAllowedDomainsVOD(result.body.Id, hostURL.hostname);
 
               //add the VOD access key
               secretsStore.put(BunnyConstants.vodAccessKey, result.body.ApiKey);

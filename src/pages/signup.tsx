@@ -34,7 +34,6 @@ const LoginPage: NextPage<{
   const { globalState } = useAppContext();
 
   React.useEffect(() => {
-    console.log(loginMethods);
     if (router.query.error) {
       if (router.query.error === "OAuthAccountNotLinked") {
         closeLoading();
@@ -176,8 +175,8 @@ const LoginPage: NextPage<{
                         loginMethods.available.includes(provider)
                           ? ``
                           : `Signup method disabled for ${capitalizeFirstLetter(
-                              provider
-                            )} due to missing environment variables`
+                            provider
+                          )} due to missing environment variables`
                       }
                     >
                       <Button
