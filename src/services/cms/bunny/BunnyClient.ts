@@ -150,6 +150,25 @@ export class BunnyClient {
       });
   };
 
+  createStorageZone = async (
+    brandName: string,
+    mainStorageRegion: string,
+    replicatedRegions: string[],
+    isCDN: boolean
+  ): Promise<APIResponse<void>> => {
+    const url = "https://api.bunny.net/storagezone";
+    const options = {
+      method: "POST",
+      headers: this.getClientHeaders(),
+      body: JSON.stringify({
+        Name: `${createSlug(brandName)}--${isCDN ? "cdn" : "files"}`,
+        Region: mainStorageRegion,
+        ReplicationRegions: replicatedRegions,
+        ZoneTier: isCDN ? 1 : 0,
+      }),
+    };
+  };
+
   uploadWatermark = async (watermarkUrl: string, videoLibId: number, update: boolean = false): Promise<APIResponse<void>> => {
     const downloadImg = await fetch(watermarkUrl);
     if (downloadImg.ok) {

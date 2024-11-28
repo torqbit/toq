@@ -42,6 +42,23 @@ export type BunnyCMSConfig = {
     watermarkUrl?: string;
   };
 };
+export type PullZone = {
+  Id: number;
+  Name: string;
+  OriginUrl: string;
+  Enabled: boolean;
+  storageZoneId: number;
+  AllowedReferrers: string[];
+};
+export type StorageZone = {
+  Id: number;
+  UserId: string;
+  Name: string;
+  Password: string;
+  StorageUsed: number;
+  Region: string;
+  PullZones: PullZone[];
+};
 
 export type VideoLibraryResponse = {
   status: 200;
