@@ -1,6 +1,6 @@
-import { Button, Flex, Form, Input, message, Select, Steps } from "antd";
+import { Button, Flex, Form, Input, message, Select, Steps, Tag } from "antd";
 import ConfigFormLayout from "@/components/Configuration/ConfigFormLayout";
-import { FC, ReactNode, useState } from "react";
+import { FC, ReactNode, useEffect, useState } from "react";
 import cmsClient from "@/lib/admin/cms/cmsClient";
 import styles from "./CMS.module.scss";
 import FormDisableOverlay from "../FormDisableOverlay";
@@ -8,6 +8,9 @@ import FormDisableOverlay from "../FormDisableOverlay";
 import cmsConstant from "@/lib/admin/cms/cmsConstant";
 import { PageSiteConfig } from "@/services/siteConstant";
 import ConfigForm from "@/components/Configuration/ConfigForm";
+import { ConfigurationState } from "@prisma/client";
+import SvgIcons from "@/components/SvgIcons";
+import SpinLoader from "@/components/SpinLoader/SpinLoader";
 
 export interface IConfigForm {
   title: string;
@@ -21,15 +24,14 @@ export interface IConfigForm {
 const ContentManagementSystem: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const [messageApi, contextHolder] = message.useMessage();
   const [accessKeyForm] = Form.useForm();
-  const [waterMarkUrl, setIWaterMarkUrl] = useState<string | null>(null);
   const [selectedWatermark, setWatermark] = useState<string | null>(null);
-
   const [replicationRegions, setRegions] = useState<{ name: string; code: string }[]>([]);
   const [videoForm] = Form.useForm();
   const [cdnForm] = Form.useForm();
 
   const [loading, setLoading] = useState<boolean>(false);
   const [vodLoading, setVodLoading] = useState<boolean>(false);
+  const [pageLoading, setPageLoading] = useState<boolean>(true);
 
   const [current, setCurrent] = useState<number>(0);
   let logoUrl = `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/${siteConfig.brand?.logo}`;
@@ -61,17 +63,6 @@ const ContentManagementSystem: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfi
       inputName: "replicatedRegions",
     },
 
-    {
-      title: "Allowed Domain names",
-      optional: true,
-
-      description:
-        "The list of domains that are allowed to access the videos. If no hostnames are listed all requests will be allowed.",
-      input: (
-        <Select mode="tags" suffixIcon={<></>} placeholder="Add domain names" open={false} style={{ width: 250 }} />
-      ),
-      inputName: "allowedDomains",
-    },
     {
       title: "Upload Watermark",
       optional: true,
@@ -187,12 +178,10 @@ const ContentManagementSystem: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfi
 
   const listRegions = () => {
     try {
-      setLoading(true);
       cmsClient.listReplicationRegions(
         "ACCESS_KEY",
         "bunny.net",
         (result) => {
-          setCurrent(1);
           setRegions(result.regions);
 
           setLoading(false);
@@ -218,9 +207,8 @@ const ContentManagementSystem: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfi
         "bunny.net",
         (result) => {
           listRegions();
-          // setCurrent(1);
+          setCurrent(1);
           messageApi.success(result.message);
-          // setLoading(false);
         },
         (error) => {
           setCurrent(0);
@@ -239,8 +227,12 @@ const ContentManagementSystem: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfi
     setVodLoading(true);
     let data = {
       ...videoForm.getFieldsValue(),
-      replicatedRegions: videoForm.getFieldsValue().replicatedRegions.map((r: any) => r.value),
-      videoResolutions: videoForm.getFieldsValue().videoResolutions.map((r: any) => r.value),
+      replicatedRegions: videoForm
+        .getFieldsValue()
+        .replicatedRegions.map((r: any) => (typeof r !== "object" ? r : r.value)),
+      videoResolutions: videoForm
+        .getFieldsValue()
+        .videoResolutions.map((r: any) => (typeof r !== "object" ? r : r.value)),
       watermarkUrl: selectedWatermark,
       brandName: siteConfig.brand?.name,
       playerColor: siteConfig.brand?.brandColor,
@@ -261,146 +253,201 @@ const ContentManagementSystem: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfi
     );
   };
 
+  const getCurrentStep = (status: ConfigurationState) => {
+    switch (status) {
+      case ConfigurationState.AUTHENTICATED:
+        return setCurrent(1);
+      case ConfigurationState.VOD_CONFIGURED:
+        return setCurrent(2);
+      case ConfigurationState.CDN_CONFIGURED:
+        return setCurrent(3);
+      default:
+        return setCurrent(0);
+    }
+  };
+  const getDetail = () => {
+    cmsClient.getConfigDetail(
+      "bunny.net",
+      (result) => {
+        listRegions();
+        setWatermark(result.config.config.vodConfig?.watermarkUrl as string);
+        getCurrentStep(result.config.state);
+        videoForm.setFieldsValue({
+          replicatedRegions: result.config.config.vodConfig?.replicatedRegions,
+          videoResolutions: result.config.config.vodConfig?.videoResolutions,
+        });
+        setPageLoading(false);
+      },
+      (error) => {
+        messageApi.error(error);
+        setPageLoading(false);
+      }
+    );
+  };
+  useEffect(() => {
+    getDetail();
+  }, []);
+
   return (
-    <section>
-      {contextHolder}
-      <h3>Content Management System</h3>
+    <>
+      {pageLoading ? (
+        <SpinLoader className="settings__spinner" />
+      ) : (
+        <section>
+          {contextHolder}
+          <h3>Content Management System</h3>
 
-      <Steps
-        current={current}
-        status="finish"
-        size="small"
-        progressDot
-        direction="vertical"
-        items={[
-          {
-            title: (
-              <ConfigFormLayout
-                formTitle={"Configure Bunny.net"}
-                extraContent={
-                  <Flex align="center" gap={10}>
-                    {<Button onClick={() => accessKeyForm.resetFields()}>Reset</Button>}
+          <Steps
+            current={current}
+            status="finish"
+            size="small"
+            progressDot
+            direction="vertical"
+            items={[
+              {
+                title: (
+                  <ConfigFormLayout
+                    formTitle={"Configure Bunny.net"}
+                    extraContent={
+                      <Flex align="center" gap={10}>
+                        {current < 0 && <Button onClick={() => accessKeyForm.resetFields()}>Reset</Button>}
 
-                    <Button loading={loading} onClick={() => accessKeyForm.submit()} type="primary">
-                      Connect
-                    </Button>
-                  </Flex>
-                }
-              >
-                <Form form={accessKeyForm} onFinish={onTestAccessKey} requiredMark={false}>
-                  <ConfigForm
-                    input={
-                      <Form.Item
-                        style={{ width: 250 }}
-                        name={"accessKey"}
-                        rules={[{ required: true, message: "Access key is required!" }]}
-                      >
-                        <Input.Password placeholder="Add access key" />
-                      </Form.Item>
+                        {current > 0 ? (
+                          <Tag style={{ padding: "5px 10px" }}>
+                            <Flex align="center" gap={5}>
+                              <i style={{ lineHeight: 0, fontSize: 15 }}>{SvgIcons.checkFilled}</i>
+                              <span>Connected</span>
+                            </Flex>
+                          </Tag>
+                        ) : (
+                          <Button loading={loading} onClick={() => accessKeyForm.submit()} type="primary">
+                            Connect
+                          </Button>
+                        )}
+                      </Flex>
                     }
-                    title={"Bunny.net Access Key"}
-                    description={
-                      "Provide access key for Bunny.net that will be used to configure video stream, image CDN and file storage"
-                    }
-                    divider={false}
-                    inputName={""}
-                  />
-                </Form>
-              </ConfigFormLayout>
-            ),
-          },
-          {
-            title: (
-              <ConfigFormLayout
-                extraContent={
-                  <Flex align="center" gap={10}>
-                    {
-                      <Button
-                        onClick={() => {
-                          videoForm.resetFields();
-                          setWatermark(null);
-                        }}
-                      >
-                        Reset
-                      </Button>
-                    }
-
-                    <Button onClick={() => videoForm.submit()} type="primary">
-                      Save
-                    </Button>
-                  </Flex>
-                }
-                formTitle={"Video On Demand"}
-              >
-                <Form form={videoForm} onFinish={onSubmitVideoInfo} requiredMark={false}>
-                  {videoItems.map((item, i) => {
-                    return (
+                  >
+                    <Form form={accessKeyForm} onFinish={onTestAccessKey} requiredMark={false}>
                       <ConfigForm
                         input={
                           <Form.Item
-                            name={item.inputName}
-                            rules={[{ required: !item.optional, message: `Field is required!` }]}
-                            key={i}
+                            style={{ width: 250 }}
+                            name={"accessKey"}
+                            rules={[{ required: true, message: "Access key is required!" }]}
                           >
-                            {item.input}
+                            {
+                              <Input.Password
+                                disabled={current > 1}
+                                placeholder={current > 0 ? "****************************" : "Add access key"}
+                              />
+                            }
                           </Form.Item>
                         }
-                        title={item.title}
-                        description={item.description}
-                        divider={i === videoItems.length - 1 ? false : true}
+                        title={"Bunny.net Access Key"}
+                        description={
+                          "Provide access key for Bunny.net that will be used to configure video stream, image CDN and file storage"
+                        }
+                        divider={false}
                         inputName={""}
-                        optional={item.optional}
                       />
-                    );
-                  })}
-                  {current < 1 && <FormDisableOverlay />}
-                </Form>
-              </ConfigFormLayout>
-            ),
-          },
-          {
-            title: (
-              <ConfigFormLayout
-                extraContent={
-                  <Flex align="center" gap={10}>
-                    {<Button onClick={() => cdnForm.resetFields()}>Reset</Button>}
+                    </Form>
+                  </ConfigFormLayout>
+                ),
+              },
+              {
+                title: (
+                  <ConfigFormLayout
+                    extraContent={
+                      <Flex align="center" gap={10}>
+                        {
+                          <Button
+                            onClick={() => {
+                              videoForm.resetFields();
+                              setWatermark(null);
+                            }}
+                          >
+                            Reset
+                          </Button>
+                        }
 
-                    <Button onClick={() => cdnForm.submit()} type="primary">
-                      Save
-                    </Button>
-                  </Flex>
-                }
-                formTitle={"Content Delivery Network-Images"}
-              >
-                <Form form={cdnForm}>
-                  {cdnItems.map((item, i) => {
-                    return (
-                      <ConfigForm
-                        input={
-                          <Form.Item
-                            rules={[{ required: !item.optional, message: `Field is required!` }]}
-                            name={item.inputName}
-                            key={i}
-                          >
-                            {item.input}
-                          </Form.Item>
-                        }
-                        title={item.title}
-                        description={item.description}
-                        divider={i === cdnItems.length - 1 ? false : true}
-                        optional={item.optional}
-                        inputName={""}
-                      />
-                    );
-                  })}
-                  {current < 2 && <FormDisableOverlay />}
-                </Form>
-              </ConfigFormLayout>
-            ),
-          },
-        ]}
-      />
-    </section>
+                        <Button loading={vodLoading} onClick={() => videoForm.submit()} type="primary">
+                          Save
+                        </Button>
+                      </Flex>
+                    }
+                    formTitle={"Video On Demand"}
+                  >
+                    <Form form={videoForm} onFinish={onSubmitVideoInfo} requiredMark={false}>
+                      {videoItems.map((item, i) => {
+                        return (
+                          <ConfigForm
+                            input={
+                              <Form.Item
+                                name={item.inputName}
+                                rules={[{ required: !item.optional, message: `Field is required!` }]}
+                                key={i}
+                              >
+                                {item.input}
+                              </Form.Item>
+                            }
+                            title={item.title}
+                            description={item.description}
+                            divider={i === videoItems.length - 1 ? false : true}
+                            inputName={""}
+                            optional={item.optional}
+                          />
+                        );
+                      })}
+                      {current < 1 && <FormDisableOverlay />}
+                    </Form>
+                  </ConfigFormLayout>
+                ),
+              },
+              {
+                title: (
+                  <ConfigFormLayout
+                    extraContent={
+                      <Flex align="center" gap={10}>
+                        {<Button onClick={() => cdnForm.resetFields()}>Reset</Button>}
+
+                        <Button onClick={() => cdnForm.submit()} type="primary">
+                          Save
+                        </Button>
+                      </Flex>
+                    }
+                    formTitle={"Content Delivery Network-Images"}
+                  >
+                    <Form form={cdnForm}>
+                      {cdnItems.map((item, i) => {
+                        return (
+                          <ConfigForm
+                            input={
+                              <Form.Item
+                                rules={[{ required: !item.optional, message: `Field is required!` }]}
+                                name={item.inputName}
+                                key={i}
+                              >
+                                {item.input}
+                              </Form.Item>
+                            }
+                            title={item.title}
+                            description={item.description}
+                            divider={i === cdnItems.length - 1 ? false : true}
+                            optional={item.optional}
+                            inputName={""}
+                          />
+                        );
+                      })}
+                      {current < 2 && <FormDisableOverlay />}
+                    </Form>
+                  </ConfigFormLayout>
+                ),
+              },
+            ]}
+          />
+        </section>
+      )}
+    </>
   );
 };
 

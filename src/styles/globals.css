@@ -521,6 +521,19 @@ a {
   border-right-color: var(--btn-primary);
   animation: spinner-d3wgkg 1s infinite linear;
 }
+.spinner_container > .settings__spinner {
+  position: absolute;
+  top: 40%;
+  left: 45%;
+  width: 56px;
+  height: 56px;
+
+  border-radius: 50%;
+  border: 9px solid;
+  border-color: #dbdcef;
+  border-right-color: var(--btn-primary);
+  animation: spinner-d3wgkg 1s infinite linear;
+}
 
 .spinner_container > .discussions_list_loader {
   position: absolute;
@@ -618,6 +631,7 @@ a {
     max-height: 500px;
   }
   .spinner_container > .spinner,
+  .spinner_container > .settings__spinner,
   .spinner_container > .course__spinner,
   .spinner_container > .marketing__spinner {
     top: calc(50vh - 28px);
