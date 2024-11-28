@@ -38,7 +38,6 @@ export type BunnyCMSConfig = {
   vodConfig?: {
     vidLibraryId: number;
     replicatedRegions: string[];
-    allowedDomains: string[];
     videoResolutions: string[];
     watermarkUrl?: string;
   };

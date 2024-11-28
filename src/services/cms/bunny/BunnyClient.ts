@@ -91,30 +91,27 @@ export class BunnyClient {
     let objectParams: any = {
       PlayerKeyColor: playerColor,
       EnabledResolutions: resolutions.join(","),
-      EnableDRM: true
-    }
+      EnableDRM: true,
+    };
     if (watermarkUrl) {
       const downloadImg = await fetch(watermarkUrl);
       if (downloadImg.ok) {
         const file = await downloadImg.arrayBuffer();
-        const fileBuffer = Buffer.from(file);
-        const metadata = await sharp(file).metadata()
+        const metadata = await sharp(file).metadata();
         if (metadata.height && metadata.width) {
           // width = 1600 height = 900
           // height =>  1/(width/height)
-          const heightInPercent = 10 / (metadata.width / metadata.height)
-          const widthInPercent = 10
+          const heightInPercent = 10 / (metadata.width / metadata.height);
+          const widthInPercent = 10;
 
           objectParams = {
             ...objectParams,
             WatermarkWidth: widthInPercent,
             WatermarkHeight: heightInPercent,
             WatermarkPositionLeft: 95 - widthInPercent,
-            WatermarkPositionTop: 95 - heightInPercent
-          }
-
+            WatermarkPositionTop: 95 - heightInPercent,
+          };
         }
-
       }
     }
 
@@ -144,12 +141,13 @@ export class BunnyClient {
       body: JSON.stringify({ Hostname: domain }),
     };
 
-    return fetch(url, options).then((result) => {
-      return new APIResponse<void>(result.ok, result.status, "Added the requested domain name in bunny.net video library")
-    }).catch(err => {
-      return new APIResponse(false, 500, err)
-    });
-
+    return fetch(url, options)
+      .then((result) => {
+        return new APIResponse<void>(result.ok, result.status, "Added the requested domain name in bunny.net video library");
+      })
+      .catch((err) => {
+        return new APIResponse(false, 500, err);
+      });
   };
 
   uploadWatermark = async (watermarkUrl: string, videoId: number): Promise<APIResponse<void>> => {

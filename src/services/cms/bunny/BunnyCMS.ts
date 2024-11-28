@@ -5,12 +5,11 @@ import { ICMSAuthConfig, IContentProvider } from "../IContentProvider";
 import { ConfigurationState } from "@prisma/client";
 import SecretsManager from "@/services/secrets/SecretsManager";
 
-
 export interface BunnyAuthConfig extends ICMSAuthConfig {
   accessKey: string;
 }
 const secretsStore = SecretsManager.getSecretsProvider();
-const hostURL = new URL(process.env.NEXTAUTH_URL || "https://torqbit.com")
+const hostURL = new URL(process.env.NEXTAUTH_URL || "https://torqbit.com");
 
 export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfig> {
   async getCMSConfig(): Promise<APIResponse<BunnyCMSConfig>> {
@@ -134,7 +133,6 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
     authConfig: BunnyAuthConfig,
     brandName: string,
     replicatedRegions: string[],
-    allowedDomains: string[],
     videoResolutions: string[],
     playerColor: string,
     watermarkUrl?: string
@@ -163,12 +161,7 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
             }
 
             //update the resolutions and player color and watermark
-            await bunny.updateVideoLibrary(
-              bunnyConfig.vodConfig.vidLibraryId,
-              playerColor,
-              videoResolutions,
-              watermarkUrl
-            );
+            await bunny.updateVideoLibrary(bunnyConfig.vodConfig.vidLibraryId, playerColor, videoResolutions, watermarkUrl);
 
             //update the allowed domains
             await bunny.addAllowedDomainsVOD(bunnyConfig.vodConfig.vidLibraryId, hostURL.hostname);
@@ -200,7 +193,6 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
                 vodConfig: {
                   vidLibraryId: result.body.Id,
                   replicatedRegions: replicatedRegions,
-                  allowedDomains: allowedDomains,
                   videoResolutions: videoResolutions,
                   watermarkUrl: watermarkUrl,
                 },
