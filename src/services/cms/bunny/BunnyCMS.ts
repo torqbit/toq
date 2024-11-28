@@ -12,10 +12,11 @@ const secretsStore = SecretsManager.getSecretsProvider();
 const hostURL = new URL(process.env.NEXTAUTH_URL || "https://torqbit.com");
 
 export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfig> {
-  async getCMSConfig(): Promise<APIResponse<BunnyCMSConfig>> {
+  async getCMSConfig(): Promise<APIResponse<{ config: BunnyCMSConfig; state: ConfigurationState }>> {
     const result = await prisma?.serviceProvider.findUnique({
       select: {
         providerDetail: true,
+        state: true,
       },
       where: {
         provider_name: this.provider,
@@ -23,7 +24,10 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
       },
     });
     if (result && result.providerDetail) {
-      return new APIResponse(true, 200, apiConstants.successMessage, result.providerDetail as BunnyCMSConfig);
+      return new APIResponse(true, 200, apiConstants.successMessage, {
+        config: result.providerDetail as BunnyCMSConfig,
+        state: result.state,
+      });
     } else {
       return new APIResponse(false, 400, "Failed to fetch the CMS config");
     }
