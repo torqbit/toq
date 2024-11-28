@@ -41,7 +41,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
     return res.status(response.status).json({ success: response.success, message: response.message });
   } catch (error) {
-    console.log(error);
     return errorHandler(error, res);
   }
 };

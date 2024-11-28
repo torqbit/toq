@@ -15,7 +15,6 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
     const result = await prisma?.serviceProvider.findUnique({
       select: {
         providerDetail: true,
-        state: true,
       },
       where: {
         provider_name: this.provider,
@@ -23,10 +22,7 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
       },
     });
     if (result && result.providerDetail) {
-      return new APIResponse(true, 200, apiConstants.successMessage, {
-        ...(result.providerDetail as BunnyCMSConfig),
-        state: result.state,
-      });
+      return new APIResponse(true, 200, apiConstants.successMessage, result.providerDetail as BunnyCMSConfig);
     } else {
       return new APIResponse(false, 400, "Failed to fetch the CMS config");
     }
@@ -139,11 +135,7 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
     allowedDomains: string[],
     videoResolutions: string[],
     playerColor: string,
-    watermarkUrl?: string,
-    watermerkDimension?: {
-      width: number;
-      height: number;
-    }
+    watermarkUrl?: string
   ): Promise<APIResponse<void>> {
     //create a Bunny client and create a video library with the above settings
     const bunny = new BunnyClient(authConfig.accessKey);

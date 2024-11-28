@@ -37,7 +37,6 @@ export type BunnyCMSConfig = {
   vodAccessKeyRef: string;
   cdnStoragePasswordRef: string;
   fileStoragePasswordRef: string;
-  state?: ConfigurationState;
   vodConfig?: {
     vidLibraryId: number;
     replicatedRegions: string[];
