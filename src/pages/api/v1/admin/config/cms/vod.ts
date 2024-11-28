@@ -10,7 +10,6 @@ const vodConfig = z.object({
   provider: z.string().min(2, "Provider is required"),
   brandName: z.string().min(2, "Brand name is required"),
   replicatedRegions: z.array(z.string()).min(1, "Atleast one region must be specified"),
-  allowedDomains: z.array(z.string()),
   videoResolutions: z.array(z.string()),
   playerColor: z.string(),
   watermarkUrl: z.string(),
@@ -31,7 +30,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         authConfig.body,
         config.brandName,
         config.replicatedRegions,
-        config.allowedDomains,
         config.videoResolutions,
         config.playerColor,
         config.watermarkUrl

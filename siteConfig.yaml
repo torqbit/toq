@@ -1,6 +1,6 @@
 site:
   template: standard
-  updated: false
+  updated: true
   navBar:
     links:
       - title: Courses
@@ -19,9 +19,9 @@ site:
       discord: https://discord.gg/NserMXcx
       github: https://github.com/torqbit
       youtube: https://www.youtube.com/@torqbit
-    name: ACADEMY NAME
-    brandColor: "#f29379"
-    title: title for brand
+    name: Peace School
+    brandColor: "#86d78c"
+    title: Spreads peace and harmony
   darkMode: true
   heroSection:
     title: The Awesomest teaching platform

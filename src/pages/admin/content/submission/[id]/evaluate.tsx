@@ -63,7 +63,6 @@ const EvaluatePage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) 
         }
       );
     } catch (error: any) {
-      console.log(error);
       messageApi.error(error);
       setLoading(false);
     }
@@ -179,7 +178,7 @@ const EvaluatePage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) 
                       <AssignmentCodeEditor
                         assignmentFiles={submissionDetail?.assignmentFiles as string[]}
                         fileMap={submissionDetail?.content as Map<string, string>}
-                        updateAssignmentMap={() => {}}
+                        updateAssignmentMap={() => { }}
                         readOnly={true}
                       />
                     )}
