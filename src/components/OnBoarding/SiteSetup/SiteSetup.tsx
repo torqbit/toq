@@ -25,8 +25,8 @@ const SiteSetup: FC<{ siteConfig: PageSiteConfig; setupOptions: ISiteSetupCard[]
         <div className={styles.side__bar__header}>
           <h2>All done!</h2>
           <p>Your brand new publication is set up and ready to go.</p>
+          <h4>What do you want to do first?</h4>
         </div>
-        <h4>What do you want to do first?</h4>
 
         <div className={styles.setup__options}>
           {setupOptions.map((setup, i) => {
