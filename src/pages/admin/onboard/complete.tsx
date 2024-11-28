@@ -15,21 +15,21 @@ const SiteSetupPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig })
   const setupOptions: ISiteSetupCard[] = [
     {
       icon: "/img/landing/auth.png",
-      title: "Authentication",
+      title: "Site Configuration",
       description: "Configure authentication with Google, Github or any other",
       link: "#",
       iconBgColor: "red",
     },
     {
       icon: "/img/landing/auth.png",
-      title: "Authentication",
+      title: "Content Configuration",
       description: "Configure authentication with Google, Github or any other",
       link: "#",
       iconBgColor: "blue",
     },
     {
       icon: "/img/landing/auth.png",
-      title: "Authentication",
+      title: "Payment Configuration",
       description: "Configure authentication with Google, Github or any other",
       link: "#",
       iconBgColor: "green",
