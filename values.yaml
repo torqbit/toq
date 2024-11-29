@@ -35,6 +35,8 @@ containers:
     envFrom:
       - secretRef:
           name: torqbit-secrets
+      - secretRef:
+          name: mysql-secrets
     command: ["/bin/sh"]
     args: ["-c", "while true; do echo hello; sleep 10; done"]
     ports:

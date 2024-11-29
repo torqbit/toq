@@ -2,6 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "torqbit.fullname" . }}
+  annotations:
+    helm.sh/hook-weight: "0"
   labels:
     app: {{ include "torqbit.name" . }}
 spec:
@@ -14,18 +16,6 @@ spec:
       labels:
         app: {{ include "torqbit.name" . }}
     spec:
-      initContainers:
-        - name: wait-for-mysql
-          image: mysql:8.0.12
-          command:
-            - sh
-            - -c
-            - |
-              echo "Waiting for MySQL...";
-              while ! mysqladmin ping -h mysql-service.default.svc.cluster.local -u $$MYSQL_USER --password=$$MYSQL_PASSWORD; do
-                echo "Still waiting...";
-                sleep 5;
-              done;
       containers:
         - name: torqbit
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -35,6 +25,8 @@ spec:
           envFrom:
             - secretRef:
                 name: torqbit-secrets
+            - secretRef:
+                name: mysql-secret
           readinessProbe:
             httpGet:
               path: /
