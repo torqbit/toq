@@ -7,7 +7,7 @@ import { useMediaQuery } from "react-responsive";
 import SetupPlatform from "./components/Setup/SetupPlatform";
 import Hero from "./components/Hero/Hero";
 interface IStandardTemplateProps {
-  user: User;
+  user?: User;
   siteConfig: PageSiteConfig;
 }
 
@@ -15,11 +15,7 @@ const StandardTemplate: FC<IStandardTemplateProps> = ({ user, siteConfig }) => {
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
 
   return (
-    <MarketingLayout
-      user={user}
-      siteConfig={siteConfig}
-      heroSection={<Hero siteConfig={siteConfig} isMobile={isMobile} user={user} />}
-    >
+    <MarketingLayout user={user} siteConfig={siteConfig} heroSection={<Hero siteConfig={siteConfig} isMobile={isMobile} user={user} />}>
       <SetupPlatform />
     </MarketingLayout>
   );
