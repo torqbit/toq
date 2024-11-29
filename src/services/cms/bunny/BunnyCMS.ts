@@ -12,6 +12,9 @@ const secretsStore = SecretsManager.getSecretsProvider();
 const hostURL = new URL(process.env.NEXTAUTH_URL || "https://torqbit.com");
 
 export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfig> {
+
+
+
   async getCMSConfig(): Promise<APIResponse<{ config: BunnyCMSConfig; state: ConfigurationState }>> {
     const result = await prisma?.serviceProvider.findUnique({
       select: {
@@ -161,7 +164,10 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
           const bunnyConfig = dbConfig.providerDetail as BunnyCMSConfig;
           if (bunnyConfig.vodConfig) {
             if (watermarkUrl && watermarkUrl.startsWith("http")) {
-              await bunny.uploadWatermark(watermarkUrl, bunnyConfig.vodConfig.vidLibraryId);
+              await bunny.uploadWatermark(watermarkUrl, bunnyConfig.vodConfig.vidLibraryId, true);
+            } else if (bunnyConfig.vodConfig.watermarkUrl && typeof watermarkUrl == "undefined") {
+              //delete the water mark
+              await bunny.deleteWatermark(bunnyConfig.vodConfig.vidLibraryId);
             }
 
             //update the resolutions and player color and watermark
@@ -169,6 +175,15 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
 
             //update the allowed domains
             await bunny.addAllowedDomainsVOD(bunnyConfig.vodConfig.vidLibraryId, hostURL.hostname);
+            const updatedBunnyConfig = {
+              ...bunnyConfig,
+              vodConfig: {
+                ...bunnyConfig.vodConfig,
+                videoResolutions: videoResolutions,
+                watermarkUrl: watermarkUrl,
+              },
+            };
+            this.saveConfiguration(updatedBunnyConfig);
             return new APIResponse<void>(true);
           } else {
             return new APIResponse<void>(false, 400, "Failed to find VOD configuration in the database");
@@ -218,5 +233,107 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
         resolve(new APIResponse<void>(false, 500, "Failed to create prisma client"));
       })
     );
+  }
+
+  async saveCDNConfig(authConfig: BunnyAuthConfig, brandName: string, mainStorageRegion: string, replicatedRegions: string[]): Promise<APIResponse<void>> {
+    const bunny = new BunnyClient(authConfig.accessKey);
+
+    //get the bunny cms config with status set as VOD_CONFIGURED
+    const result = await prisma?.serviceProvider
+      .findUnique({
+        select: {
+          providerDetail: true,
+          state: true
+        },
+        where: {
+          provider_name: this.provider,
+          service_type: this.serviceType,
+        },
+      });
+    if (result && result.providerDetail &&
+      (result.state == ConfigurationState.CDN_CONFIGURED || result.state == ConfigurationState.STORAGE_CONFIGURED)) {
+      //no work
+      return new APIResponse(false, 400, "CDN Configuration can't be updated")
+    } else if (result && result.providerDetail) {
+      //create the cdn storage zone
+      const cdnStorageZone = await bunny.createStorageZone(brandName, mainStorageRegion, replicatedRegions, true);
+      if (cdnStorageZone.success && cdnStorageZone.body) {
+        const cdnPullZone = await bunny.createPullZone(brandName, cdnStorageZone.body.Id);
+        if (cdnPullZone.body) {
+          //save the cdn storage zone passsword
+          await secretsStore.put(BunnyConstants.cdnStoragePassword, cdnStorageZone.body.Password);
+
+          //save the cdn pullzone
+          const existingConfig = result.providerDetail as BunnyCMSConfig;
+          const updatedConfig = {
+            ...existingConfig,
+            cdnConfig: {
+              cdnStorageZoneId: cdnStorageZone.body.Id,
+              cdnPullZoneId: cdnPullZone.body.Id,
+              linkedHostname: cdnPullZone.body.Hostnames[0].Value
+            }
+          }
+
+          await prisma?.serviceProvider.update({
+            data: {
+              providerDetail: updatedConfig,
+              state: ConfigurationState.CDN_CONFIGURED
+            }, where: {
+              service_type: this.provider
+            }
+          })
+        }
+      }
+      return new APIResponse(true, 200, "Successfully saved the CDN configuration")
+    } else {
+      return new APIResponse(false, 404, "No Configuration found for the CMS")
+    }
+
+  }
+
+  async configureObjectStorage(authConfig: BunnyAuthConfig, brandName: string, mainStorageRegion: string, replicatedRegions: string[]): Promise<APIResponse<void>> {
+    const bunny = new BunnyClient(authConfig.accessKey);
+
+    //get the bunny cms config with status set as VOD_CONFIGURED
+    const result = await prisma?.serviceProvider
+      .findUnique({
+        select: {
+          providerDetail: true,
+          state: true
+        },
+        where: {
+          provider_name: this.provider,
+          service_type: this.serviceType,
+        },
+      });
+    if (result && result.providerDetail &&
+      (result.state == ConfigurationState.CDN_CONFIGURED || result.state == ConfigurationState.STORAGE_CONFIGURED)) {
+      //no work
+      return new APIResponse(false, 400, "CDN Configuration can't be updated")
+    } else if (result && result.providerDetail) {
+      const objectStorageZone = await bunny.createStorageZone(brandName, mainStorageRegion, replicatedRegions, true);
+      if (objectStorageZone.success && objectStorageZone.body) {
+        await secretsStore.put(BunnyConstants.fileStoragePassword, objectStorageZone.body.Password);
+
+        //save the cdn pullzone
+        const existingConfig = result.providerDetail as BunnyCMSConfig;
+        const updatedConfig = {
+          ...existingConfig,
+          storageConfig: {
+            storageZoneId: objectStorageZone.body.Id,
+          }
+        }
+
+        await prisma?.serviceProvider.update({
+          data: {
+            providerDetail: updatedConfig,
+            state: ConfigurationState.STORAGE_CONFIGURED
+          }, where: {
+            service_type: this.provider
+          }
+        })
+      }
+    }
+    throw new Error("Method not implemented.");
   }
 }

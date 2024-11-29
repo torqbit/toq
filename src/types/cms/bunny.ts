@@ -41,6 +41,39 @@ export type BunnyCMSConfig = {
     videoResolutions: string[];
     watermarkUrl?: string;
   };
+  cdnConfig?: {
+    cdnStorageZoneId: number;
+    cdnPullZoneId: number;
+    linkedHostname: string;
+  };
+  storageConfig?: {
+    storageZoneId: number;
+  }
+};
+export type Hostname = {
+  Id: number;
+  Value: string;
+  ForceSSL: boolean;
+  IsSystemHostname: boolean;
+  HasCertificate: boolean;
+}
+export type PullZone = {
+  Id: number;
+  Name: string;
+  OriginUrl: string;
+  Enabled: boolean;
+  storageZoneId: number;
+  AllowedReferrers: string[];
+  Hostnames: Hostname[];
+};
+export type StorageZone = {
+  Id: number;
+  UserId: string;
+  Name: string;
+  Password: string;
+  StorageUsed: number;
+  Region: string;
+  PullZones: PullZone[];
 };
 
 export type VideoLibraryResponse = {

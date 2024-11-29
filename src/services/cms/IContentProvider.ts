@@ -20,4 +20,10 @@ export interface IContentProvider<T extends ICMSAuthConfig, U> {
     playerColor?: string,
     watermarkUrl?: string
   ): Promise<APIResponse<void>>;
+
+  saveCDNConfig(authConfig: T, brandName: string,
+    mainStorageRegion: string, replicatedRegions: string[]): Promise<APIResponse<void>>;
+
+  configureObjectStorage(authConfig: T, brandName: string,
+    mainStorageRegion: string, replicatedRegions: string[]): Promise<APIResponse<void>>;
 }

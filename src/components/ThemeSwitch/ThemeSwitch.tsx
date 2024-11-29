@@ -1,6 +1,6 @@
 import { Button, Tooltip } from "antd";
 import { FC } from "react";
-import styles from "@/Templates/Standard/components/NavBar/NavBar.module.scss";
+import styles from "@/templates/standard/components/NavBar/NavBar.module.scss";
 import { useAppContext } from "../ContextApi/AppContext";
 
 import SvgIcons from "../SvgIcons";
@@ -19,11 +19,11 @@ const ThemeSwitch: FC<{ activeTheme: Theme }> = ({ activeTheme }) => {
     <>
       <Tooltip title={"Switch Theme"}>
         <Button
-          type="default"
-          name="theme button"
-          aria-label="Theme Switch"
+          type='default'
+          name='theme button'
+          aria-label='Theme Switch'
           className={styles.switchBtn}
-          shape="circle"
+          shape='circle'
           onClick={() => {
             handleTheme(globalState.theme === "dark" ? "light" : "dark");
           }}
