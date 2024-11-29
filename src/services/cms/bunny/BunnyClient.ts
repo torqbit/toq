@@ -1,6 +1,6 @@
 import { createSlug } from "@/lib/utils";
 import { apiConstants, APIResponse, APIServerError } from "@/types/cms/apis";
-import { BunnyRequestError, VideoLibrary, VideoLibraryResponse } from "@/types/cms/bunny";
+import { BunnyRequestError, PullZone, StorageZone, VideoLibrary, VideoLibraryResponse } from "@/types/cms/bunny";
 import sharp from "sharp";
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -155,7 +155,7 @@ export class BunnyClient {
     mainStorageRegion: string,
     replicatedRegions: string[],
     isCDN: boolean
-  ): Promise<APIResponse<void>> => {
+  ): Promise<APIResponse<StorageZone>> => {
     const url = "https://api.bunny.net/storagezone";
     const options = {
       method: "POST",
@@ -167,7 +167,48 @@ export class BunnyClient {
         ZoneTier: isCDN ? 1 : 0,
       }),
     };
+    try {
+      const result = await fetch(url, options);
+      if (result.status == 201) {
+        const body = await result.json() as StorageZone;
+        return new APIResponse(true, result.status, apiConstants.successMessage, body);
+      } else {
+        return this.handleError(result);
+      }
+    } catch (err: any) {
+      return new APIResponse(false, err);
+    }
   };
+
+  createPullZone = async (
+    brandName: string,
+    storageZoneId: number,
+  ): Promise<APIResponse<PullZone>> => {
+    const url = "https://api.bunny.net/pullzone";
+    const options = {
+      method: "POST",
+      headers: this.getClientHeaders(),
+      body: JSON.stringify({
+        Name: `${createSlug(brandName)}--cdn}`,
+        StorageZoneId: storageZoneId,
+        OriginType: 2,
+      }),
+    };
+    try {
+      const result = await fetch(url, options);
+      if (result.status == 201) {
+        const body = await result.json() as PullZone;
+        return new APIResponse(true, result.status, apiConstants.successMessage, body);
+      } else {
+        return this.handleError(result);
+      }
+    } catch (err: any) {
+      return new APIResponse(false, err);
+    }
+  };
+
+
+
 
   uploadWatermark = async (watermarkUrl: string, videoLibId: number, update: boolean = false): Promise<APIResponse<void>> => {
     const downloadImg = await fetch(watermarkUrl);

@@ -41,7 +41,22 @@ export type BunnyCMSConfig = {
     videoResolutions: string[];
     watermarkUrl?: string;
   };
+  cdnConfig?: {
+    cdnStorageZoneId: number;
+    cdnPullZoneId: number;
+    linkedHostname: string;
+  };
+  storageConfig?: {
+    storageZoneId: number;
+  }
 };
+export type Hostname = {
+  Id: number;
+  Value: string;
+  ForceSSL: boolean;
+  IsSystemHostname: boolean;
+  HasCertificate: boolean;
+}
 export type PullZone = {
   Id: number;
   Name: string;
@@ -49,6 +64,7 @@ export type PullZone = {
   Enabled: boolean;
   storageZoneId: number;
   AllowedReferrers: string[];
+  Hostnames: Hostname[];
 };
 export type StorageZone = {
   Id: number;
