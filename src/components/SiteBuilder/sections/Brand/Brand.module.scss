@@ -1,0 +1,19 @@
+.brand__wrapper {
+  background-color: var(--bg-content-form);
+  padding: 20px;
+  h4 {
+    margin: 0;
+  }
+
+  .form__color__picker {
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100px;
+    > div:first-child {
+      width: 90px;
+      margin: 0 auto;
+    }
+  }
+}

@@ -254,7 +254,7 @@ const AdminDashboard: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }
 
   return (
     <AppLayout siteConfig={siteConfig} className={styles.admin_dashboard_page}>
-      <div className={styles.center_content}>
+      <div className={styles.center_content} style={{ padding: 40 }}>
         {contextholder}
         <div className={styles.adminHeader}>
           <h2>Admin Dashboard</h2>
