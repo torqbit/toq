@@ -11,7 +11,7 @@ import ConfigForm from "@/components/Configuration/ConfigForm";
 import { ConfigurationState } from "@prisma/client";
 import SvgIcons from "@/components/SvgIcons";
 import SpinLoader from "@/components/SpinLoader/SpinLoader";
-import { StorageConfig } from "@/pages/api/v1/admin/config/cms/storage";
+import { StorageConfig } from "@/types/cms/bunny";
 
 export interface IConfigForm {
   title: string;
@@ -228,7 +228,6 @@ const ContentManagementSystem: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfi
   const onSubmitStorageForm = () => {
     setStorageLoading(true);
     const formData = storageForm.getFieldsValue();
-    console.log(formData);
     let data: StorageConfig = {
       ...storageForm.getFieldsValue(),
       replicatedRegions: formData.replicatedRegions.map((r: any) => (typeof r !== "object" ? r : r.value)),
@@ -267,7 +266,6 @@ const ContentManagementSystem: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfi
       "bunny.net",
       (result) => {
         listRegions();
-        console.log(result, "get config details");
         setWatermark(result.config.config.vodConfig?.watermarkUrl as string);
         getCurrentStep(result.config.state);
         videoForm.setFieldsValue({

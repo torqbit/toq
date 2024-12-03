@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 export interface VideoLibrary {
   Id: number;
   Name: string;
@@ -108,3 +110,12 @@ export class BunnyServerError {
     this.error = error;
   }
 }
+
+export const storeConfig = z.object({
+  provider: z.string().min(2, "Provider is required"),
+  brandName: z.string().min(2, "Brand name is required"),
+  replicatedRegions: z.array(z.string()).min(1, "Atleast one region must be specified"),
+  mainStorageRegion: z.string().min(2, "Storage region name is required"),
+});
+
+export type StorageConfig = z.infer<typeof storeConfig>;

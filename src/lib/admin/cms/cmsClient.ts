@@ -1,8 +1,6 @@
-import { StorageConfig } from "@/pages/api/v1/admin/config/cms/storage";
-import { VODConfig } from "@/pages/api/v1/admin/config/cms/vod";
 import { postFetch } from "@/services/request";
 import { APIResponse } from "@/types/cms/apis";
-import { BunnyCMSConfig } from "@/types/cms/bunny";
+import { BunnyCMSConfig, StorageConfig } from "@/types/cms/bunny";
 import { ConfigurationState } from "@prisma/client";
 
 interface ApiResponse {
