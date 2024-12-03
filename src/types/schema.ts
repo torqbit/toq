@@ -3,60 +3,53 @@ import { INavBarProps } from "./landing/navbar";
 import { IFeatureInfo } from "./landing/feature";
 export type bannerAlignment = "left" | "right" | "bottom" | "background";
 export interface IBrandConfig {
-  name: string;
-  logo: string;
-  title: string;
-  description: string;
-  ogImage: string;
-  favicon: string;
-  brandColor: string;
-  discord: string;
-  github: string;
-  youtube: string;
+  logo?: ReactNode | string;
+  name?: string;
+  title?: string;
+  description?: string;
+  ogImage?: string;
+  favicon?: string;
+  brandColor?: string;
+  socialLinks?: {
+    github?: string;
+    youtube?: string;
+    instagram?: string;
+    twitter?: string;
+    discord?: string;
+  };
+}
+
+export interface INavBarConfig {
+  links?: { title: string; link: string }[];
+}
+
+export interface IHeroConfig {
+  title?: string;
+  description?: string;
+  actionButtons?: {
+    primary?: {
+      label?: string;
+      link?: string;
+    };
+    secondary?: {
+      label?: string;
+      link?: string;
+    };
+  };
+  banner?: {
+    lightModePath?: string;
+    darkModePath?: string;
+    position?: bannerAlignment;
+  };
 }
 
 export interface ThemeSchema {
   template?: string;
   updated?: boolean;
-  navBar?: {
-    links?: { title: string; link: string }[];
-  };
-  brand?: {
-    logo?: ReactNode | string;
-    name?: string;
-    title?: string;
-    description?: string;
-    ogImage?: string;
-    favicon?: string;
-    brandColor?: string;
-    socialLinks?: {
-      github?: string;
-      youtube?: string;
-      instagram?: string;
-      twitter?: string;
-      discord?: string;
-    };
-  };
+  navBar?: INavBarConfig;
+  brand?: IBrandConfig;
   darkMode?: boolean;
-  heroSection?: {
-    title?: string;
-    description?: string;
-    actionButtons?: {
-      primary?: {
-        label?: string;
-        link?: string;
-      };
-      secondary?: {
-        label?: string;
-        link?: string;
-      };
-    };
-    banner?: {
-      lightModePath?: string;
-      darkModePath?: string;
-      position?: bannerAlignment;
-    };
-  };
+  heroSection?: IHeroConfig;
 
   sections?: {
     feature?: {

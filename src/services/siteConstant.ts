@@ -1,7 +1,4 @@
 import { bannerAlignment, ThemeSchema } from "@/types/schema";
-import { lazy } from "react";
-const NavBar = lazy(() => import("@/templates/standard/components/NavBar/NavBar"));
-const Features = lazy(() => import("@/templates/standard/components/Feature/Features"));
 
 export type PageSiteConfig = ThemeSchema;
 
@@ -66,28 +63,32 @@ export const DEFAULT_THEME = {
           {
             img: "/img/landing/auth.png",
             title: "Authentication",
-            description: "Configure authentication with Google, Github or any other auth provider supported by NextAuth",
+            description:
+              "Configure authentication with Google, Github or any other auth provider supported by NextAuth",
             link: "/docs/auth",
             cardClass: "steps__card__small",
           },
           {
             img: "/img/landing/auth.png",
             title: "Authentication",
-            description: "Configure authentication with Google, Github or any other auth provider supported by NextAuth",
+            description:
+              "Configure authentication with Google, Github or any other auth provider supported by NextAuth",
             link: "/docs/auth",
             cardClass: "steps__card__small",
           },
           {
             img: "/img/landing/auth.png",
             title: "Authentication",
-            description: "Configure authentication with Google, Github or any other auth provider supported by NextAuth",
+            description:
+              "Configure authentication with Google, Github or any other auth provider supported by NextAuth",
             link: "/docs/auth",
             cardClass: "steps__card__small",
           },
           {
             img: "/img/landing/auth.png",
             title: "Authentication",
-            description: "Configure authentication with Google, Github or any other auth provider supported by NextAuth",
+            description:
+              "Configure authentication with Google, Github or any other auth provider supported by NextAuth",
             link: "/docs/auth",
             cardClass: "steps__card__small",
           },

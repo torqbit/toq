@@ -4,7 +4,7 @@ import SiteBuilderSideBar from "@/components/SiteBuilder/SiteBuilderSideBar";
 import { getSiteConfig } from "@/services/getSiteConfig";
 import { DEFAULT_THEME, PageSiteConfig } from "@/services/siteConstant";
 import { GetServerSidePropsContext, NextPage } from "next";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const SiteDesign: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -19,35 +19,26 @@ const SiteDesign: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) =>
     },
   });
 
-  const sendMessageToIframe = (info: string, key: string) => {
+  const sendMessageToIframe = () => {
     if (iframeRef.current && iframeRef.current.contentWindow) {
       iframeRef.current.contentWindow.postMessage(
         {
           type: "SITE_CONFIG",
-          payload: {
-            ...config,
-            brand: {
-              ...config.brand,
-              [key]: info,
-            },
-          },
+          payload: config,
         },
         `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}`
       );
-      setConfig({
-        ...config,
-        brand: {
-          ...config.brand,
-          [key]: info,
-        },
-      });
     }
   };
+
+  useEffect(() => {
+    sendMessageToIframe();
+  }, [config]);
 
   return (
     <SiteBuilderLayout
       siteConfig={config}
-      sideBar={<SiteBuilderSideBar config={config} OnUpdateConfig={sendMessageToIframe} />}
+      sideBar={<SiteBuilderSideBar config={config} updateSiteConfig={setConfig} />}
     >
       <PreviewSite ref={iframeRef} />
     </SiteBuilderLayout>
