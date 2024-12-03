@@ -1,0 +1,7 @@
+.site__builder__layout {
+  > div:last-child {
+    display: flex;
+    justify-content: right;
+    padding: 20px;
+  }
+}

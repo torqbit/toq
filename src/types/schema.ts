@@ -2,6 +2,18 @@ import { FC, ReactNode } from "react";
 import { INavBarProps } from "./landing/navbar";
 import { IFeatureInfo } from "./landing/feature";
 export type bannerAlignment = "left" | "right" | "bottom" | "background";
+export interface IBrandConfig {
+  name: string;
+  logo: string;
+  title: string;
+  description: string;
+  ogImage: string;
+  favicon: string;
+  brandColor: string;
+  discord: string;
+  github: string;
+  youtube: string;
+}
 
 export interface ThemeSchema {
   template?: string;
@@ -46,7 +58,7 @@ export interface ThemeSchema {
     };
   };
 
-  sections: {
+  sections?: {
     feature?: {
       featureInfo?: IFeatureInfo;
     };

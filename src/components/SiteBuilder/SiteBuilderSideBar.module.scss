@@ -1,0 +1,27 @@
+.side__bar__container {
+  position: fixed;
+  border-right: 1px solid var(--border-color);
+  left: 0;
+  bottom: 0;
+  top: 0;
+  background-color: var(--bg-primary);
+  width: 300px;
+  .side__bar__breadcrumb {
+    padding: 15px;
+  }
+  .config__sections {
+    padding-top: 20px;
+    .collapse__header {
+      padding: 5px 0px;
+      i {
+        line-height: 0;
+      }
+    }
+
+    .collapse__wrapper {
+      height: 100%;
+      border: none;
+      border-radius: 0px;
+    }
+  }
+}

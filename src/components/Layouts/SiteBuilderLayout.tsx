@@ -1,27 +1,26 @@
-import { FC, ReactNode, useEffect, useState } from "react";
+import { FC, useEffect, useRef } from "react";
 import React from "react";
-import styles from "@/templates/standard/components/Hero/Hero.module.scss";
-import landingPage from "@/styles/Marketing/LandingPage/LandingPage.module.scss";
 import Head from "next/head";
 import { useAppContext } from "../ContextApi/AppContext";
 import { ConfigProvider } from "antd";
 import darkThemeConfig from "@/services/darkThemeConfig";
 import antThemeConfig from "@/services/antThemeConfig";
 import SpinLoader from "../SpinLoader/SpinLoader";
-import Footer from "@/templates/standard/components/Footer/Footer";
 import { DEFAULT_THEME, PageSiteConfig } from "@/services/siteConstant";
 import { useMediaQuery } from "react-responsive";
 import { User } from "@prisma/client";
 import { IBrandInfo } from "@/types/landing/navbar";
-import { Theme } from "@/types/theme";
-import NavBar from "@/templates/standard/components/NavBar/NavBar";
 
-const MarketingLayout: FC<{
+import { Theme } from "@/types/theme";
+import NavBar from "@/Templates/Standard/components/NavBar/NavBar";
+import styles from "./SiteBuilder.module.scss";
+
+const SiteBuilderLayout: FC<{
   children?: React.ReactNode;
-  heroSection?: React.ReactNode;
+  sideBar?: React.ReactNode;
   siteConfig: PageSiteConfig;
   user?: User;
-}> = ({ children, heroSection, user, siteConfig }) => {
+}> = ({ children, sideBar, user, siteConfig }) => {
   const { globalState, dispatch } = useAppContext();
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
 
@@ -80,39 +79,26 @@ const MarketingLayout: FC<{
             width: "100%",
             background: "#fff",
             zIndex: 10,
-          }}>
-          <SpinLoader className='marketing__spinner' />
+          }}
+        >
+          <SpinLoader className="marketing__spinner" />
         </div>
       }
       <ConfigProvider theme={globalState.theme == "dark" ? darkThemeConfig(siteConfig) : antThemeConfig(siteConfig)}>
         <Head>
           <title>{`${siteConfig.brand?.title} | ${siteConfig.brand?.name}`}</title>
-          <meta name='description' content={siteConfig.brand?.description} />
-          <meta property='og:image' content={siteConfig.brand?.ogImage} />
-          <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
-          <link rel='icon' href={siteConfig.brand?.favicon} />
+          <meta name="description" content={siteConfig.brand?.description} />
+          <meta property="og:image" content={siteConfig.brand?.ogImage} />
+          <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+          <link rel="icon" href={siteConfig.brand?.favicon} />
         </Head>
-
-        <section className={styles.heroWrapper}>
-          {NavBarComponent && (
-            <NavBarComponent
-              user={user}
-              isMobile={isMobile}
-              items={siteConfig.navBar?.links ?? []}
-              showThemeSwitch={siteConfig.darkMode ?? DEFAULT_THEME.darkMode}
-              activeTheme={globalState.theme ?? "light"}
-              brand={brandInfo}
-            />
-          )}
-
-          {heroSection}
-        </section>
-        <div className={landingPage.children_wrapper}>{children}</div>
-
-        <Footer siteConfig={siteConfig} isMobile={isMobile} />
+        <div className={styles.site__builder__layout}>
+          {sideBar}
+          <div>{children}</div>
+        </div>
       </ConfigProvider>
     </>
   );
 };
 
-export default MarketingLayout;
+export default SiteBuilderLayout;

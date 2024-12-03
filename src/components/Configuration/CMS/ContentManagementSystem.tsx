@@ -19,6 +19,7 @@ export interface IConfigForm {
   inputName: string;
   optional?: boolean;
   divider?: boolean;
+  layout?: "vertical" | "horizontal";
 }
 
 const ContentManagementSystem: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
