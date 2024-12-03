@@ -1,16 +1,14 @@
 import { FC } from "react";
-import styles from "./SiteBuilderSideBar.module.scss";
+import styles from "./SiteBuilder.module.scss";
 import { Breadcrumb, Collapse, CollapseProps, Flex, Form, Switch } from "antd";
 import Link from "next/link";
-
 import SvgIcons from "../SvgIcons";
-import Brand from "./sections/Brand/Brand";
 import { Scrollbars } from "react-custom-scrollbars";
 import { PageSiteConfig } from "@/services/siteConstant";
-import AddNav from "./sections/Nav/AddNav";
-import AddHero from "./sections/Hero/AddHero";
+import BrandForm from "./sections/Brand/BrandForm";
+import HeroForm from "./sections/Hero/HeroForm";
 
-const SiteBuilderSideBar: FC<{
+const SiteBuilder: FC<{
   config: PageSiteConfig;
   updateSiteConfig: (config: PageSiteConfig) => void;
 }> = ({ config, updateSiteConfig }) => {
@@ -49,21 +47,13 @@ const SiteBuilderSideBar: FC<{
       key: "2",
       className: styles.collapse__header,
       label: collapseHeader("Brand Configuration", SvgIcons.pencilEdit),
-      children: <Brand config={config} form={brandForm} updateSiteConfig={updateSiteConfig} />,
+      children: <BrandForm config={config} form={brandForm} updateSiteConfig={updateSiteConfig} />,
       showArrow: false,
     },
-    // {
-    //   key: "3",
-    //   className: styles.collapse__header,
-    //   children: <AddNav config={config} form={brandForm} updateSiteConfig={updateSiteConfig} />,
-    //   showArrow: false,
-
-    //   label: collapseHeader("Nav Configuration", SvgIcons.pencilEdit),
-    // },
     {
       key: "4",
       className: styles.collapse__header,
-      children: <AddHero config={config} form={brandForm} updateSiteConfig={updateSiteConfig} />,
+      children: <HeroForm config={config} form={brandForm} updateSiteConfig={updateSiteConfig} />,
       showArrow: false,
 
       label: collapseHeader("Hero", SvgIcons.pencilEdit),
@@ -99,4 +89,4 @@ const SiteBuilderSideBar: FC<{
   );
 };
 
-export default SiteBuilderSideBar;
+export default SiteBuilder;

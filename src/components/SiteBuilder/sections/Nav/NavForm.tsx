@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from "react";
-import styles from "./AddNav.module.scss";
+import styles from "./NavForm.module.scss";
 import { Button, ColorPicker, Divider, Flex, Form, FormInstance, Input, Upload } from "antd";
 import ConfigForm from "@/components/Configuration/ConfigForm";
 import { IConfigForm } from "@/components/Configuration/CMS/ContentManagementSystem";
@@ -7,7 +7,7 @@ import { UploadOutlined } from "@ant-design/icons";
 import { DEFAULT_THEME, PageSiteConfig } from "@/services/siteConstant";
 import { INavBarConfig } from "@/types/schema";
 
-const AddNav: FC<{
+const NavForm: FC<{
   config: PageSiteConfig;
   form: FormInstance;
   updateSiteConfig: (config: PageSiteConfig) => void;
@@ -111,4 +111,4 @@ const AddNav: FC<{
   );
 };
 
-export default AddNav;
+export default NavForm;

@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from "react";
-import styles from "./AddHero.module.scss";
+import styles from "./HeroForm.module.scss";
 import { Button, ColorPicker, Divider, Flex, Form, FormInstance, Input, Upload } from "antd";
 import ConfigForm from "@/components/Configuration/ConfigForm";
 import { IConfigForm } from "@/components/Configuration/CMS/ContentManagementSystem";
@@ -7,7 +7,7 @@ import { UploadOutlined } from "@ant-design/icons";
 import { DEFAULT_THEME, PageSiteConfig } from "@/services/siteConstant";
 import { IHeroConfig } from "@/types/schema";
 
-const AddHero: FC<{
+const HeroForm: FC<{
   config: PageSiteConfig;
   form: FormInstance;
   updateSiteConfig: (config: PageSiteConfig) => void;
@@ -171,4 +171,4 @@ const AddHero: FC<{
   );
 };
 
-export default AddHero;
+export default HeroForm;

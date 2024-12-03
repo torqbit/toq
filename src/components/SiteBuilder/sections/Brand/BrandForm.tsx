@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from "react";
-import styles from "./Brand.module.scss";
+import styles from "./BrandForm.module.scss";
 import { Button, ColorPicker, Divider, Flex, Form, FormInstance, Input, Upload } from "antd";
 import ConfigForm from "@/components/Configuration/ConfigForm";
 import { IConfigForm } from "@/components/Configuration/CMS/ContentManagementSystem";
@@ -7,7 +7,7 @@ import { UploadOutlined } from "@ant-design/icons";
 import { DEFAULT_THEME, PageSiteConfig } from "@/services/siteConstant";
 import { IBrandConfig } from "@/types/schema";
 
-const Brand: FC<{
+const BrandForm: FC<{
   config: PageSiteConfig;
   form: FormInstance;
   updateSiteConfig: (config: PageSiteConfig) => void;
@@ -209,4 +209,4 @@ const Brand: FC<{
   );
 };
 
-export default Brand;
+export default BrandForm;

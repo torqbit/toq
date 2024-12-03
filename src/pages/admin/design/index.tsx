@@ -1,6 +1,6 @@
 import SiteBuilderLayout from "@/components/Layouts/SiteBuilderLayout";
 import PreviewSite from "@/components/PreviewCode/PreviewSite";
-import SiteBuilderSideBar from "@/components/SiteBuilder/SiteBuilderSideBar";
+import SiteBuilder from "@/components/SiteBuilder/SiteBuilder";
 import { getSiteConfig } from "@/services/getSiteConfig";
 import { DEFAULT_THEME, PageSiteConfig } from "@/services/siteConstant";
 import { GetServerSidePropsContext, NextPage } from "next";
@@ -36,10 +36,7 @@ const SiteDesign: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) =>
   }, [config]);
 
   return (
-    <SiteBuilderLayout
-      siteConfig={config}
-      sideBar={<SiteBuilderSideBar config={config} updateSiteConfig={setConfig} />}
-    >
+    <SiteBuilderLayout siteConfig={config} sideBar={<SiteBuilder config={config} updateSiteConfig={setConfig} />}>
       <PreviewSite ref={iframeRef} />
     </SiteBuilderLayout>
   );
