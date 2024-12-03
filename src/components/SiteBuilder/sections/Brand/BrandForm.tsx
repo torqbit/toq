@@ -1,16 +1,31 @@
-import { FC } from "react";
-import styles from "./Brand.module.scss";
+import { FC, useEffect, useState } from "react";
+import styles from "./BrandForm.module.scss";
 import { Button, ColorPicker, Divider, Flex, Form, FormInstance, Input, Upload } from "antd";
 import ConfigForm from "@/components/Configuration/ConfigForm";
 import { IConfigForm } from "@/components/Configuration/CMS/ContentManagementSystem";
 import { UploadOutlined } from "@ant-design/icons";
 import { DEFAULT_THEME, PageSiteConfig } from "@/services/siteConstant";
+import { IBrandConfig } from "@/types/schema";
 
-const Brand: FC<{
+const BrandForm: FC<{
   config: PageSiteConfig;
   form: FormInstance;
-  onUpdateBrandInfo: (info: string, key: string) => void;
-}> = ({ form, onUpdateBrandInfo, config }) => {
+  updateSiteConfig: (config: PageSiteConfig) => void;
+}> = ({ form, updateSiteConfig, config }) => {
+  const [brandConfig, setBrandConfig] = useState<IBrandConfig | undefined>(config.brand);
+
+  const onUpdateBrandConfig = (value: string, key: string) => {
+    if (key.startsWith("socialLinks")) {
+      const linkKey = key.split(".")[1];
+      setBrandConfig({ ...brandConfig, socialLinks: { ...brandConfig?.socialLinks, [linkKey]: value } });
+    } else {
+      setBrandConfig({ ...brandConfig, [key]: value });
+    }
+  };
+
+  useEffect(() => {
+    updateSiteConfig({ ...config, brand: brandConfig });
+  }, [brandConfig]);
   const brandItems: IConfigForm[] = [
     {
       title: "Brand name",
@@ -19,7 +34,7 @@ const Brand: FC<{
       input: (
         <Input
           onChange={(e) => {
-            onUpdateBrandInfo(e.currentTarget.value, "name");
+            onUpdateBrandConfig(e.currentTarget.value, "name");
           }}
           placeholder="Add brand name"
         />
@@ -33,7 +48,7 @@ const Brand: FC<{
       input: (
         <Input
           onChange={(e) => {
-            onUpdateBrandInfo(e.currentTarget.value, "title");
+            onUpdateBrandConfig(e.currentTarget.value, "title");
           }}
           placeholder="Add title"
         />
@@ -47,7 +62,7 @@ const Brand: FC<{
       input: (
         <Input
           onChange={(e) => {
-            onUpdateBrandInfo(e.currentTarget.value, "description");
+            onUpdateBrandConfig(e.currentTarget.value, "description");
           }}
           placeholder="Add description"
         />
@@ -62,7 +77,7 @@ const Brand: FC<{
       input: (
         <ColorPicker
           onChange={(e) => {
-            onUpdateBrandInfo(e.toHexString(), "brandColor");
+            onUpdateBrandConfig(e.toHexString(), "brandColor");
           }}
           className={styles.form__color__picker}
           defaultValue={DEFAULT_THEME.brand.brandColor}
@@ -107,9 +122,47 @@ const Brand: FC<{
       layout: "vertical",
       input: (
         <Flex vertical gap={10}>
-          <Input placeholder="Discord link" />
-          <Input placeholder="Github link" />
-          <Input placeholder="Youtube link" />
+          <Input
+            addonBefore="https://"
+            type="url"
+            onChange={(e) => {
+              onUpdateBrandConfig(e.currentTarget.value, "socialLinks.discord");
+            }}
+            placeholder="Discord link"
+          />
+          <Input
+            addonBefore="https://"
+            type="url"
+            onChange={(e) => {
+              onUpdateBrandConfig(e.currentTarget.value, "socialLinks.github");
+            }}
+            placeholder="Github link"
+          />
+          <Input
+            addonBefore="https://"
+            type="url"
+            onChange={(e) => {
+              onUpdateBrandConfig(e.currentTarget.value, "socialLinks.youtube");
+            }}
+            placeholder="Youtube link"
+          />
+
+          <Input
+            addonBefore="https://"
+            type="url"
+            onChange={(e) => {
+              onUpdateBrandConfig(e.currentTarget.value, "socialLinks.instagram");
+            }}
+            placeholder="Instagram link"
+          />
+          <Input
+            addonBefore="https://"
+            type="url"
+            onChange={(e) => {
+              onUpdateBrandConfig(e.currentTarget.value, "socialLinks.twitter");
+            }}
+            placeholder="Twitter link"
+          />
         </Flex>
       ),
       inputName: "social",
@@ -156,4 +209,4 @@ const Brand: FC<{
   );
 };
 
-export default Brand;
+export default BrandForm;

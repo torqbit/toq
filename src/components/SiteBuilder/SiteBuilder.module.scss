@@ -11,6 +11,15 @@
   }
   .config__sections {
     padding-top: 20px;
+    .darkmode__switch {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0px;
+      p {
+        margin: 0;
+      }
+    }
     .collapse__header {
       padding: 5px 0px;
       i {

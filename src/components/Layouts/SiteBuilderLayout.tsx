@@ -12,7 +12,7 @@ import { User } from "@prisma/client";
 import { IBrandInfo } from "@/types/landing/navbar";
 
 import { Theme } from "@/types/theme";
-import NavBar from "@/Templates/Standard/components/NavBar/NavBar";
+
 import styles from "./SiteBuilder.module.scss";
 
 const SiteBuilderLayout: FC<{
@@ -29,12 +29,6 @@ const SiteBuilderLayout: FC<{
     const root = document.documentElement;
     root.style.setProperty("--btn-primary", `${brand?.brandColor}`);
   }, []);
-
-  const NavBarComponent = NavBar;
-  let brandInfo: IBrandInfo = {
-    logo: siteConfig.brand?.logo ?? DEFAULT_THEME.brand.logo,
-    name: siteConfig.brand?.name ?? DEFAULT_THEME.brand.name,
-  };
 
   const setGlobalTheme = (theme: Theme) => {
     dispatch({
