@@ -210,7 +210,7 @@ const BrandForm: FC<{
             type="url"
             onChange={(e) => {
               onUpdateBrandConfig(
-                `https://${selectedSegment}.com/${e.currentTarget.value}`,
+                e.currentTarget.value === "" ? "" : `https://${selectedSegment}.com/${e.currentTarget.value}`,
                 `socialLinks.${selectedSegment}`
               );
             }}
