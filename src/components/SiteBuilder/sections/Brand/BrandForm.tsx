@@ -162,52 +162,11 @@ const BrandForm: FC<{
 
     {
       title: "Social links",
-
+      optional: true,
       description: "Add social links ",
       layout: "vertical",
       input: (
         <Flex vertical gap={10}>
-          {/* <Input
-            addonBefore="https://"
-            type="url"
-            onChange={(e) => {
-              onUpdateBrandConfig(e.currentTarget.value, "socialLinks.discord");
-            }}
-            placeholder="Discord link"
-          />
-          <Input
-            addonBefore="https://"
-            type="url"
-            onChange={(e) => {
-              onUpdateBrandConfig(e.currentTarget.value, "socialLinks.github");
-            }}
-            placeholder="Github link"
-          />
-          <Input
-            addonBefore="https://"
-            type="url"
-            onChange={(e) => {
-              onUpdateBrandConfig(e.currentTarget.value, "socialLinks.youtube");
-            }}
-            placeholder="Youtube link"
-          />
-
-          <Input
-            addonBefore="https://"
-            type="url"
-            onChange={(e) => {
-              onUpdateBrandConfig(e.currentTarget.value, "socialLinks.instagram");
-            }}
-            placeholder="Instagram link"
-          />
-          <Input
-            addonBefore="https://"
-            type="url"
-            onChange={(e) => {
-              onUpdateBrandConfig(e.currentTarget.value, "socialLinks.twitter");
-            }}
-            placeholder="Twitter link"
-          /> */}
           <Segmented
             className={styles.segment}
             onChange={(value) => setSelectedSegment(value)}
