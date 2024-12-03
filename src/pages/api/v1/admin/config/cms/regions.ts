@@ -19,9 +19,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const accessConfig: CMSConfig = cmsAccess.parse(body);
     const cms = new ContentManagementService().getCMS(accessConfig.provider);
     const result = await cms.listReplicationRegions();
-
-    console.log(result);
-
     return res.status(200).json({
       success: true,
       message: "Fetched the replicated regions successfully",
