@@ -48,7 +48,9 @@ export type BunnyCMSConfig = {
   };
   storageConfig?: {
     storageZoneId: number;
-  }
+    mainStorageRegion: string;
+    replicatedRegions: string[];
+  };
 };
 export type Hostname = {
   Id: number;
@@ -56,7 +58,7 @@ export type Hostname = {
   ForceSSL: boolean;
   IsSystemHostname: boolean;
   HasCertificate: boolean;
-}
+};
 export type PullZone = {
   Id: number;
   Name: string;

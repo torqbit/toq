@@ -12,12 +12,18 @@ export class APIResponse<T> {
   status: number;
   success: boolean;
   body?: T;
-  constructor(success: boolean, status: number = 200, message: string = apiConstants.successMessage, body?: T) {
+  error?: string;
+  constructor(success: boolean, status: number = 200, message: string = apiConstants.successMessage, body?: T, error?: string) {
     this.message = message;
     this.success = success;
     this.status = status;
+
     if (body) {
       this.body = body;
+    }
+    if (!success) {
+      console.log(`success: ${success} error: ${message}`);
+      this.error = message;
     }
   }
 }

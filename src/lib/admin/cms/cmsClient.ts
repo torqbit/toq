@@ -1,5 +1,7 @@
+import { StorageConfig } from "@/pages/api/v1/admin/config/cms/storage";
 import { VODConfig } from "@/pages/api/v1/admin/config/cms/vod";
 import { postFetch } from "@/services/request";
+import { APIResponse } from "@/types/cms/apis";
 import { BunnyCMSConfig } from "@/types/cms/bunny";
 import { ConfigurationState } from "@prisma/client";
 
@@ -23,6 +25,7 @@ type VODClientConfig = {
   playerColor: string;
   watermarkUrl?: string;
 };
+
 class cmsClient {
   testAccessKey = (
     accessKey: string,
@@ -45,11 +48,7 @@ class cmsClient {
     });
   };
 
-  addVod = (
-    data: VODClientConfig,
-    onSuccess: (response: ApiResponse) => void,
-    onFailure: (message: string) => void
-  ) => {
+  addVod = (data: VODClientConfig, onSuccess: (response: ApiResponse) => void, onFailure: (message: string) => void) => {
     postFetch(data, `/api/v1/admin/config/cms/vod`).then((result) => {
       if (result.status == 200 || result.status == 201) {
         result.json().then((r) => {
@@ -65,11 +64,23 @@ class cmsClient {
     });
   };
 
-  getConfigDetail = (
-    provider: string,
-    onSuccess: (response: ApiResponse) => void,
-    onFailure: (message: string) => void
-  ) => {
+  addStorage = (config: StorageConfig, onSuccess: (response: APIResponse<any>) => void, onFailure: (message: string) => void) => {
+    postFetch(config, `/api/v1/admin/config/cms/storage`).then((result) => {
+      if (result.ok) {
+        result.json().then((r) => {
+          const apiResponse = r as APIResponse<void>;
+          onSuccess(apiResponse);
+        });
+      } else {
+        result.json().then((r) => {
+          const failedResponse = r as APIResponse<void>;
+          onFailure(failedResponse.error || "Failed to execute the service");
+        });
+      }
+    });
+  };
+
+  getConfigDetail = (provider: string, onSuccess: (response: ApiResponse) => void, onFailure: (message: string) => void) => {
     postFetch({ provider }, `/api/v1/admin/config/cms/get`).then((result) => {
       if (result.status == 200 || result.status == 201) {
         result.json().then((r) => {

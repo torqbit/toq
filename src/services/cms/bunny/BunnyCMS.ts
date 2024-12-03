@@ -12,9 +12,6 @@ const secretsStore = SecretsManager.getSecretsProvider();
 const hostURL = new URL(process.env.NEXTAUTH_URL || "https://torqbit.com");
 
 export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfig> {
-
-
-
   async getCMSConfig(): Promise<APIResponse<{ config: BunnyCMSConfig; state: ConfigurationState }>> {
     const result = await prisma?.serviceProvider.findUnique({
       select: {
@@ -235,31 +232,39 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
     );
   }
 
-  async saveCDNConfig(authConfig: BunnyAuthConfig, brandName: string, mainStorageRegion: string, replicatedRegions: string[]): Promise<APIResponse<void>> {
+  async saveCDNConfig(
+    authConfig: BunnyAuthConfig,
+    brandName: string,
+    mainStorageRegion: string,
+    replicatedRegions: string[]
+  ): Promise<APIResponse<void>> {
     const bunny = new BunnyClient(authConfig.accessKey);
 
     //get the bunny cms config with status set as VOD_CONFIGURED
-    const result = await prisma?.serviceProvider
-      .findUnique({
-        select: {
-          providerDetail: true,
-          state: true
-        },
-        where: {
-          provider_name: this.provider,
-          service_type: this.serviceType,
-        },
-      });
-    if (result && result.providerDetail &&
-      (result.state == ConfigurationState.CDN_CONFIGURED || result.state == ConfigurationState.STORAGE_CONFIGURED)) {
+    const result = await prisma?.serviceProvider.findUnique({
+      select: {
+        providerDetail: true,
+        state: true,
+        id: true,
+      },
+      where: {
+        provider_name: this.provider,
+        service_type: this.serviceType,
+      },
+    });
+    if (
+      result &&
+      result.providerDetail &&
+      (result.state == ConfigurationState.CDN_CONFIGURED || result.state == ConfigurationState.STORAGE_CONFIGURED)
+    ) {
       //no work
-      return new APIResponse(false, 400, "CDN Configuration can't be updated")
+      return new APIResponse(false, 400, "CDN Configuration can't be updated");
     } else if (result && result.providerDetail) {
       //create the cdn storage zone
       const cdnStorageZone = await bunny.createStorageZone(brandName, mainStorageRegion, replicatedRegions, true);
       if (cdnStorageZone.success && cdnStorageZone.body) {
         const cdnPullZone = await bunny.createPullZone(brandName, cdnStorageZone.body.Id);
-        if (cdnPullZone.body) {
+        if (cdnPullZone.success && cdnPullZone.body) {
           //save the cdn storage zone passsword
           await secretsStore.put(BunnyConstants.cdnStoragePassword, cdnStorageZone.body.Password);
 
@@ -270,48 +275,53 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
             cdnConfig: {
               cdnStorageZoneId: cdnStorageZone.body.Id,
               cdnPullZoneId: cdnPullZone.body.Id,
-              linkedHostname: cdnPullZone.body.Hostnames[0].Value
-            }
-          }
-
+              linkedHostname: cdnPullZone.body.Hostnames[0].Value,
+            },
+          };
           await prisma?.serviceProvider.update({
             data: {
               providerDetail: updatedConfig,
-              state: ConfigurationState.CDN_CONFIGURED
-            }, where: {
-              service_type: this.provider
-            }
-          })
+              state: ConfigurationState.CDN_CONFIGURED,
+            },
+            where: {
+              id: result.id,
+            },
+          });
         }
+        return new APIResponse(cdnPullZone.success, cdnPullZone.status, cdnPullZone.message);
       }
-      return new APIResponse(true, 200, "Successfully saved the CDN configuration")
-    } else {
-      return new APIResponse(false, 404, "No Configuration found for the CMS")
-    }
 
+      return new APIResponse(cdnStorageZone.success, cdnStorageZone.status, cdnStorageZone.message);
+    } else {
+      return new APIResponse(false, 404, "No Configuration found for the CMS");
+    }
   }
 
-  async configureObjectStorage(authConfig: BunnyAuthConfig, brandName: string, mainStorageRegion: string, replicatedRegions: string[]): Promise<APIResponse<void>> {
+  async configureObjectStorage(
+    authConfig: BunnyAuthConfig,
+    brandName: string,
+    mainStorageRegion: string,
+    replicatedRegions: string[]
+  ): Promise<APIResponse<void>> {
     const bunny = new BunnyClient(authConfig.accessKey);
 
     //get the bunny cms config with status set as VOD_CONFIGURED
-    const result = await prisma?.serviceProvider
-      .findUnique({
-        select: {
-          providerDetail: true,
-          state: true
-        },
-        where: {
-          provider_name: this.provider,
-          service_type: this.serviceType,
-        },
-      });
-    if (result && result.providerDetail &&
-      (result.state == ConfigurationState.CDN_CONFIGURED || result.state == ConfigurationState.STORAGE_CONFIGURED)) {
+    const result = await prisma?.serviceProvider.findUnique({
+      select: {
+        providerDetail: true,
+        state: true,
+        id: true,
+      },
+      where: {
+        provider_name: this.provider,
+        service_type: this.serviceType,
+      },
+    });
+    if (result && result.providerDetail && result.state == ConfigurationState.STORAGE_CONFIGURED) {
       //no work
-      return new APIResponse(false, 400, "CDN Configuration can't be updated")
+      return new APIResponse(false, 400, "Storage Configuration can't be updated");
     } else if (result && result.providerDetail) {
-      const objectStorageZone = await bunny.createStorageZone(brandName, mainStorageRegion, replicatedRegions, true);
+      const objectStorageZone = await bunny.createStorageZone(brandName, mainStorageRegion, replicatedRegions, false);
       if (objectStorageZone.success && objectStorageZone.body) {
         await secretsStore.put(BunnyConstants.fileStoragePassword, objectStorageZone.body.Password);
 
@@ -321,19 +331,24 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
           ...existingConfig,
           storageConfig: {
             storageZoneId: objectStorageZone.body.Id,
-          }
-        }
+            mainStorageRegion: mainStorageRegion,
+            replicatedRegions: replicatedRegions,
+          },
+        };
 
         await prisma?.serviceProvider.update({
           data: {
             providerDetail: updatedConfig,
-            state: ConfigurationState.STORAGE_CONFIGURED
-          }, where: {
-            service_type: this.provider
-          }
-        })
+            state: ConfigurationState.STORAGE_CONFIGURED,
+          },
+          where: {
+            id: result.id,
+          },
+        });
       }
+      return new APIResponse(objectStorageZone.success, objectStorageZone.status, objectStorageZone.message);
+    } else {
+      return new APIResponse(false, 400, "No configuration found for the content management system");
     }
-    throw new Error("Method not implemented.");
   }
 }

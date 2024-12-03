@@ -11,6 +11,7 @@ import ConfigForm from "@/components/Configuration/ConfigForm";
 import { ConfigurationState } from "@prisma/client";
 import SvgIcons from "@/components/SvgIcons";
 import SpinLoader from "@/components/SpinLoader/SpinLoader";
+import { StorageConfig } from "@/pages/api/v1/admin/config/cms/storage";
 
 export interface IConfigForm {
   title: string;
@@ -28,11 +29,13 @@ const ContentManagementSystem: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfi
   const [selectedWatermark, setWatermark] = useState<string | null>(null);
   const [replicationRegions, setRegions] = useState<{ name: string; code: string }[]>([]);
   const [videoForm] = Form.useForm();
-  const [cdnForm] = Form.useForm();
+  const [storageForm] = Form.useForm();
 
   const [loading, setLoading] = useState<boolean>(false);
   const [vodLoading, setVodLoading] = useState<boolean>(false);
+  const [storageLoading, setStorageLoading] = useState<boolean>(false);
   const [pageLoading, setPageLoading] = useState<boolean>(true);
+  const [configState, setConfigState] = useState<ConfigurationState>(ConfigurationState.INITIATED);
 
   const [current, setCurrent] = useState<number>(0);
   let logoUrl = `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/${siteConfig.brand?.logo}`;
@@ -117,9 +120,19 @@ const ContentManagementSystem: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfi
     {
       title: "Main Storage Region",
       description: "Give a name to the storage zone that will be storing all the static images for courses, events and users",
-      input: <Input placeholder='Add main storage name' />,
+      input: (
+        <Select labelInValue style={{ width: 250 }} placeholder='Choose the main region'>
+          {replicationRegions.map((region, i) => {
+            return (
+              <Select.Option key={i} value={`${region.code}`}>
+                {region.name}
+              </Select.Option>
+            );
+          })}
+        </Select>
+      ),
 
-      inputName: "mainStorageName",
+      inputName: "mainStorageRegion",
     },
     {
       title: "Choose Replication Regions",
@@ -135,7 +148,7 @@ const ContentManagementSystem: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfi
           })}
         </Select>
       ),
-      inputName: "replicationRegion",
+      inputName: "replicatedRegions",
     },
   ];
 
@@ -212,6 +225,31 @@ const ContentManagementSystem: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfi
     );
   };
 
+  const onSubmitStorageForm = () => {
+    setStorageLoading(true);
+    const formData = storageForm.getFieldsValue();
+    console.log(formData);
+    let data: StorageConfig = {
+      ...storageForm.getFieldsValue(),
+      replicatedRegions: formData.replicatedRegions.map((r: any) => (typeof r !== "object" ? r : r.value)),
+      mainStorageRegion: formData.mainStorageRegion.value,
+      brandName: siteConfig.brand?.name,
+      provider: "bunny.net",
+    };
+
+    cmsClient.addStorage(
+      data,
+      (result) => {
+        messageApi.success(result.message);
+        setStorageLoading(false);
+      },
+      (error) => {
+        messageApi.error(error);
+        setStorageLoading(false);
+      }
+    );
+  };
+
   const getCurrentStep = (status: ConfigurationState) => {
     switch (status) {
       case ConfigurationState.AUTHENTICATED:
@@ -229,13 +267,19 @@ const ContentManagementSystem: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfi
       "bunny.net",
       (result) => {
         listRegions();
+        console.log(result, "get config details");
         setWatermark(result.config.config.vodConfig?.watermarkUrl as string);
         getCurrentStep(result.config.state);
         videoForm.setFieldsValue({
           replicatedRegions: result.config.config.vodConfig?.replicatedRegions,
           videoResolutions: result.config.config.vodConfig?.videoResolutions,
         });
+        storageForm.setFieldsValue({
+          mainStorageRegion: result.config.config.storageConfig?.mainStorageRegion,
+          replicatedRegions: result.config.config.storageConfig?.replicatedRegions,
+        });
         setPageLoading(false);
+        setConfigState(result.config.state);
       },
       (error) => {
         messageApi.error(error);
@@ -350,15 +394,17 @@ const ContentManagementSystem: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfi
                   <ConfigFormLayout
                     extraContent={
                       <Flex align='center' gap={10}>
-                        {<Button onClick={() => cdnForm.resetFields()}>Reset</Button>}
-
-                        <Button onClick={() => cdnForm.submit()} type='primary'>
+                        <Button
+                          onClick={() => storageForm.submit()}
+                          type='primary'
+                          loading={storageLoading}
+                          disabled={configState == ConfigurationState.STORAGE_CONFIGURED}>
                           Save
                         </Button>
                       </Flex>
                     }
                     formTitle={"File Storage"}>
-                    <Form form={cdnForm}>
+                    <Form form={storageForm} onFinish={onSubmitStorageForm}>
                       {cdnItems.map((item, i) => {
                         return (
                           <ConfigForm
