@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from "react";
 import styles from "./BrandForm.module.scss";
-import { Button, ColorPicker, Divider, Flex, Form, FormInstance, Input, message, Upload } from "antd";
+import { Button, ColorPicker, Divider, Flex, Form, FormInstance, Input, message, Segmented, Upload } from "antd";
 import ConfigForm from "@/components/Configuration/ConfigForm";
 import { IConfigForm } from "@/components/Configuration/CMS/ContentManagementSystem";
 import { UploadOutlined } from "@ant-design/icons";
@@ -9,6 +9,7 @@ import { IBrandConfig } from "@/types/schema";
 import { RcFile } from "antd/es/upload";
 import Image from "next/image";
 import ImgCrop from "antd-img-crop";
+import SvgIcons from "@/components/SvgIcons";
 
 const BrandForm: FC<{
   config: PageSiteConfig;
@@ -17,6 +18,7 @@ const BrandForm: FC<{
 }> = ({ form, updateSiteConfig, config }) => {
   const [brandConfig, setBrandConfig] = useState<IBrandConfig | undefined>(config.brand);
   const [base64Images, setBase64Images] = useState<{ logo: string; icon: string }>({ logo: "", icon: "" });
+  const [selectedSegment, setSelectedSegment] = useState<string>("discord");
 
   // Convert file to Base64
   const getBase64 = (file: File): Promise<string> => {
@@ -165,7 +167,7 @@ const BrandForm: FC<{
       layout: "vertical",
       input: (
         <Flex vertical gap={10}>
-          <Input
+          {/* <Input
             addonBefore="https://"
             type="url"
             onChange={(e) => {
@@ -205,6 +207,55 @@ const BrandForm: FC<{
               onUpdateBrandConfig(e.currentTarget.value, "socialLinks.twitter");
             }}
             placeholder="Twitter link"
+          /> */}
+          <Segmented
+            className={styles.segment}
+            onChange={(value) => setSelectedSegment(value)}
+            style={{ lineHeight: 0 }}
+            options={[
+              {
+                label: (
+                  <Flex align="center" justify="center">
+                    <i>{SvgIcons.discord}</i>
+                  </Flex>
+                ),
+                className: styles.segment__labels,
+
+                value: "discord",
+              },
+              {
+                label: <i>{SvgIcons.github}</i>,
+                value: "github",
+                className: styles.segment__labels,
+              },
+              {
+                label: <i>{SvgIcons.youtube}</i>,
+                value: "youtube",
+                className: styles.segment__labels,
+              },
+              {
+                label: <i>{SvgIcons.instagram}</i>,
+                value: "instagram",
+                className: styles.segment__labels,
+              },
+              {
+                label: <i>{SvgIcons.twitter}</i>,
+                value: "twitter",
+                className: styles.segment__labels,
+              },
+            ]}
+          />
+
+          <Input
+            addonBefore={`https://${selectedSegment}.com`}
+            type="url"
+            onChange={(e) => {
+              onUpdateBrandConfig(
+                `https://${selectedSegment}.com/${e.currentTarget.value}`,
+                `socialLinks.${selectedSegment}`
+              );
+            }}
+            placeholder={`Add ${selectedSegment} link`}
           />
         </Flex>
       ),
