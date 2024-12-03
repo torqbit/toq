@@ -3,7 +3,9 @@ import { INavBarProps } from "./landing/navbar";
 import { IFeatureInfo } from "./landing/feature";
 export type bannerAlignment = "left" | "right" | "bottom" | "background";
 export interface IBrandConfig {
-  logo?: ReactNode | string;
+  logo?: string | ReactNode;
+  icon?: string | ReactNode;
+
   name?: string;
   title?: string;
   description?: string;

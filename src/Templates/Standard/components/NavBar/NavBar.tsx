@@ -24,11 +24,11 @@ const NavBar: FC<INavBarProps> = ({ user, items, brand, showThemeSwitch, activeT
             <Link href={"/"} aria-label="Go back to landing page">
               <Flex align="center" gap={5}>
                 {typeof brand.logo === "string" ? (
-                  <Image src={brand.logo} height={40} width={40} alt={"logo"} />
+                  <Image src={brand.logo} height={40} width={40} style={{ width: "auto" }} alt={"logo"} />
                 ) : (
                   brand.logo
                 )}
-                <h1 className="font-brand">{brand.name}</h1>
+                {!brand.logo && <h1 className="font-brand">{brand.name}</h1>}
               </Flex>
             </Link>
             <div className={styles.link_wrapper}>

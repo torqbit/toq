@@ -28,22 +28,6 @@ const SiteBuilder: FC<{
   };
   const items: CollapseProps["items"] = [
     {
-      key: "1",
-      collapsible: "header",
-      children: false,
-      label: (
-        <div className={styles.darkmode__switch}>
-          <p>Enabel Dark mode</p>
-          <Switch
-            checked={config.darkMode}
-            onChange={() => updateSiteConfig({ ...config, darkMode: !config.darkMode })}
-          />
-        </div>
-      ),
-
-      showArrow: false,
-    },
-    {
       key: "2",
       className: styles.collapse__header,
       label: collapseHeader("Brand Configuration", SvgIcons.pencilEdit),
@@ -75,6 +59,13 @@ const SiteBuilder: FC<{
           ]}
         />
         <div className={styles.config__sections}>
+          <div className={styles.darkmode__switch}>
+            <p>Enabel Dark mode</p>
+            <Switch
+              checked={config.darkMode}
+              onChange={() => updateSiteConfig({ ...config, darkMode: !config.darkMode })}
+            />
+          </div>
           <Collapse
             accordion
             className={styles.collapse__wrapper}
