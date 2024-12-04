@@ -7,8 +7,6 @@ import { Scrollbars } from "react-custom-scrollbars";
 import { PageSiteConfig } from "@/services/siteConstant";
 import BrandForm from "./sections/Brand/BrandForm";
 import HeroForm from "./sections/Hero/HeroForm";
-import ThemeSwitch from "../ThemeSwitch/ThemeSwitch";
-import { Theme } from "@/types/theme";
 
 const SiteBuilder: FC<{
   config: PageSiteConfig;
@@ -60,7 +58,6 @@ const SiteBuilder: FC<{
             },
           ]}
         />
-        <ThemeSwitch activeTheme={"light"} />
         <div className={styles.config__sections}>
           <div className={styles.darkmode__switch}>
             <p>Enabel Dark mode</p>
