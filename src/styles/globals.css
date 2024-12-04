@@ -53,6 +53,8 @@ p {
   --bg-tag: #eee;
   --font-tag: #666;
   --offline-bg: #f7f8fd;
+  --bg-segment: #f0f2fa;
+  --bg-selected-segment: #fff;
 
   --marketing-container-width: 1200px;
 
@@ -120,6 +122,8 @@ p {
 :root[data-theme="dark"] {
   --bg-secondary: #202433;
   --bg-primary: #283040;
+  --bg-segment: #202124f5;
+  --bg-selected-segment: #202433;
   --bg-content-form: #202433;
   --font-mktg-secondary: #c8cddd;
   --segment-bg: #151823;

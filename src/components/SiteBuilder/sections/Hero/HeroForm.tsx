@@ -1,11 +1,13 @@
 import { FC, useEffect, useState } from "react";
 import styles from "./HeroForm.module.scss";
-import { Button, ColorPicker, Divider, Flex, Form, FormInstance, Input, Upload } from "antd";
+import { Button, ColorPicker, Divider, Flex, Form, FormInstance, Input, message, Upload } from "antd";
 import ConfigForm from "@/components/Configuration/ConfigForm";
 import { IConfigForm } from "@/components/Configuration/CMS/ContentManagementSystem";
 import { UploadOutlined } from "@ant-design/icons";
-import { DEFAULT_THEME, PageSiteConfig } from "@/services/siteConstant";
+import { PageSiteConfig } from "@/services/siteConstant";
 import { IHeroConfig } from "@/types/schema";
+import Image from "next/image";
+import ImgCrop from "antd-img-crop";
 
 const HeroForm: FC<{
   config: PageSiteConfig;
@@ -13,6 +15,30 @@ const HeroForm: FC<{
   updateSiteConfig: (config: PageSiteConfig) => void;
 }> = ({ form, updateSiteConfig, config }) => {
   const [heroConfig, setHeroConfig] = useState<IHeroConfig | undefined>(config.heroSection);
+  const [base64Images, setBase64Images] = useState<{ lightModePath: string; darkModePath: string }>({
+    lightModePath: "",
+    darkModePath: "",
+  });
+
+  const getBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = (error) => reject(error);
+    });
+  };
+
+  const beforeUpload = async (file: File, mode: string) => {
+    try {
+      const base64 = await getBase64(file);
+      setBase64Images({ ...base64Images, [mode]: base64 });
+      setHeroConfig({ ...heroConfig, banner: { ...heroConfig?.banner, [mode]: base64 } });
+    } catch (error) {
+      message.error(`Error uploading file: ${file.name}`);
+    }
+    return false;
+  };
 
   const onUpdateHeroConfig = (value: string, key: string) => {
     if (key.startsWith("actionButtons")) {
@@ -40,6 +66,7 @@ const HeroForm: FC<{
     }
   };
 
+  console.log(heroConfig, "d");
   useEffect(() => {
     updateSiteConfig({ ...config, heroSection: heroConfig });
   }, [heroConfig]);
@@ -121,11 +148,44 @@ const HeroForm: FC<{
 
       description: "The hero image should be  at least 1200 x 600px.",
       input: (
-        <Upload>
-          <Button icon={<UploadOutlined />} style={{ width: 240, height: 120 }}>
-            Upload Hero image
-          </Button>
-        </Upload>
+        <Flex align="center" vertical gap={10}>
+          <ImgCrop rotationSlider aspect={2 / 1}>
+            <Upload maxCount={1} showUploadList={false} beforeUpload={(file) => beforeUpload(file, "lightModePath")}>
+              {base64Images.lightModePath === "" ? (
+                <Button icon={<UploadOutlined />} style={{ width: 240, height: 120 }}>
+                  Light Hero banner
+                </Button>
+              ) : (
+                <Image
+                  src={`${heroConfig?.banner?.lightModePath}`}
+                  height={120}
+                  width={240}
+                  alt="image"
+                  style={{ cursor: "pointer" }}
+                />
+              )}
+            </Upload>
+          </ImgCrop>
+          {config.darkMode && (
+            <ImgCrop rotationSlider aspect={2 / 1}>
+              <Upload maxCount={1} showUploadList={false} beforeUpload={(file) => beforeUpload(file, "darkModePath")}>
+                {base64Images.darkModePath === "" ? (
+                  <Button icon={<UploadOutlined />} style={{ width: 240, height: 120 }}>
+                    Dark Hero banner
+                  </Button>
+                ) : (
+                  <Image
+                    src={`${heroConfig?.banner?.darkModePath}`}
+                    height={120}
+                    width={240}
+                    alt="image"
+                    style={{ cursor: "pointer" }}
+                  />
+                )}
+              </Upload>
+            </ImgCrop>
+          )}
+        </Flex>
       ),
       inputName: "logo",
     },

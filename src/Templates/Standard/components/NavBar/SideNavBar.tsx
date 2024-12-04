@@ -22,8 +22,15 @@ const MobileNav: FC<INavBarProps> = ({ items, showThemeSwitch, activeTheme, bran
             <div className={styles.drawerTitle}>
               <Link href={"/"} aria-label="Go back to landing page">
                 <Flex align="center" gap={5}>
-                  <Image src={`${brand.logo}`} height={40} width={40} alt={"logo"} loading="lazy" />
-                  <h1 className="font-brand">{brand.name}</h1>
+                  <Image
+                    src={`${brand.logo}`}
+                    height={40}
+                    width={40}
+                    style={{ width: "auto" }}
+                    alt={"logo"}
+                    loading="lazy"
+                  />
+                  {!brand.logo && <h1 className="font-brand">{brand.name}</h1>}
                 </Flex>
               </Link>
               {showSideNav && showThemeSwitch && <ThemeSwitch activeTheme={activeTheme} />}
