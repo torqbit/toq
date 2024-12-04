@@ -21,8 +21,6 @@ const SiteBuilder: FC<{
           <i>{icon}</i>
           <p style={{ margin: 0 }}>{title} </p>
         </Flex>
-
-        {/* <i>{SvgIcons.chevronDown}</i> */}
       </Flex>
     );
   };
