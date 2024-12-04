@@ -168,7 +168,7 @@ const BrandForm: FC<{
       input: (
         <Flex vertical gap={10}>
           <Segmented
-            className={styles.segment}
+            className={`${styles.segment} segment__wrapper`}
             onChange={(value) => setSelectedSegment(value)}
             style={{ lineHeight: 0 }}
             options={[
