@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from "react";
 import styles from "./HeroForm.module.scss";
-import { Button, ColorPicker, Divider, Flex, Form, FormInstance, Input, message, Upload } from "antd";
+import { Button, Divider, Flex, Form, FormInstance, Input, message, Radio, Upload } from "antd";
 import ConfigForm from "@/components/Configuration/ConfigForm";
 import { IConfigForm } from "@/components/Configuration/CMS/ContentManagementSystem";
 import { UploadOutlined } from "@ant-design/icons";
@@ -66,7 +66,6 @@ const HeroForm: FC<{
     }
   };
 
-  console.log(heroConfig, "d");
   useEffect(() => {
     updateSiteConfig({ ...config, heroSection: heroConfig });
   }, [heroConfig]);
@@ -117,7 +116,7 @@ const HeroForm: FC<{
             <Input
               addonBefore="https://"
               onChange={(e) => {
-                onUpdateHeroConfig(e.currentTarget.value, "actionButtons.primary.link");
+                onUpdateHeroConfig(`/${e.currentTarget.value}`, "actionButtons.primary.link");
               }}
               placeholder="Add link"
             />
@@ -133,7 +132,7 @@ const HeroForm: FC<{
             <Input
               addonBefore="https://"
               onChange={(e) => {
-                onUpdateHeroConfig(e.currentTarget.value, "actionButtons.secondary.link");
+                onUpdateHeroConfig(`/${e.currentTarget.value}`, "actionButtons.secondary.link");
               }}
               placeholder="Add link"
             />
@@ -189,19 +188,62 @@ const HeroForm: FC<{
       ),
       inputName: "logo",
     },
+    {
+      title: "Image position",
+      layout: "vertical",
+
+      description: "Select the position of the image",
+      input: (
+        <Flex vertical gap={10}>
+          <Flex gap={62}>
+            <Radio
+              checked={heroConfig?.banner?.position === "left"}
+              onChange={(e) => {
+                setHeroConfig({ ...heroConfig, banner: { ...heroConfig?.banner, position: "left" } });
+              }}
+              title="Left"
+            >
+              Left
+            </Radio>
+            <Radio
+              checked={heroConfig?.banner?.position === "right"}
+              onChange={(e) => {
+                setHeroConfig({ ...heroConfig, banner: { ...heroConfig?.banner, position: "right" } });
+              }}
+              title="Left"
+            >
+              Right
+            </Radio>
+          </Flex>{" "}
+          <Flex gap={40}>
+            <Radio
+              checked={heroConfig?.banner?.position === "bottom"}
+              onChange={(e) => {
+                setHeroConfig({ ...heroConfig, banner: { ...heroConfig?.banner, position: "bottom" } });
+              }}
+              title="Left"
+            >
+              Bottom
+            </Radio>
+
+            <Radio
+              checked={heroConfig?.banner?.position === "background"}
+              onChange={(e) => {
+                setHeroConfig({ ...heroConfig, banner: { ...heroConfig?.banner, position: "background" } });
+              }}
+              title="Left"
+            >
+              Background
+            </Radio>
+          </Flex>
+        </Flex>
+      ),
+      inputName: "position",
+    },
   ];
   return (
     <div className={styles.add__hero__wrapper}>
-      <Form
-        form={form}
-        requiredMark={false}
-        initialValues={{
-          brandColor: config.brand?.brandColor,
-          name: config.brand?.name,
-          title: config.brand?.title,
-          description: config.brand?.description,
-        }}
-      >
+      <Form form={form} requiredMark={false}>
         {heroItems.map((item, i) => {
           return (
             <>

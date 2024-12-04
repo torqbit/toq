@@ -40,7 +40,7 @@ const MarketingHero: FC<{ isMobile: boolean; user: User; siteConfig: PageSiteCon
         return 1200;
 
       default:
-        return 500;
+        return 600;
     }
   };
   const getTextAlign = (align: bannerAlignment) => {
@@ -76,6 +76,7 @@ const MarketingHero: FC<{ isMobile: boolean; user: User; siteConfig: PageSiteCon
       style={{
         ...backgroundStyles,
       }}
+      className={styles.landing__hero}
     >
       <Flex
         vertical={bannerAlign === "bottom" || bannerAlign === "background"}

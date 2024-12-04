@@ -3,7 +3,9 @@
   z-index: 1;
   background-color: var(--bg-primary);
   min-height: 50vh;
+}
 
+.landing__hero {
   .hero_img_bg {
     background-color: var(--bg-secondary);
     height: 300px;
@@ -30,7 +32,6 @@
       margin-bottom: 25px;
     }
     img {
-      width: 1000px;
       height: auto;
       margin: 0 auto;
     }
@@ -115,7 +116,9 @@
     justify-content: center;
     text-align: center;
     flex-direction: column;
+  }
 
+  .landing__hero {
     .hero_img_bg {
       height: 150px;
       width: 100%;
