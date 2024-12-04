@@ -1,4 +1,4 @@
-import { $Enums, paymentMode } from "@prisma/client";
+import { $Enums, ConfigurationState, paymentMode } from "@prisma/client";
 
 import prisma from "@/lib/prisma";
 import appConstant from "../appConstant";
@@ -11,10 +11,58 @@ import {
   CashFreeConfig,
   OrderDetail,
   OrderHistory,
+  CFPaymentsConfig,
 } from "@/types/payment";
 import { CashfreePaymentProvider } from "./CashfreePaymentProvider";
+import SecretsManager from "../secrets/SecretsManager";
 
+export const paymentsConstants = {
+  CF_CLIENT_ID: "CLIENT_ID",
+  CF_CLIENT_SECRET: "CLIENT_SECRET"
+}
 export class PaymentManagemetService {
+  serviceType: string = "payments"
+
+  saveConfig = async (config: GatewayConfig): Promise<boolean> => {
+    switch (config.name) {
+      case $Enums.gatewayProvider.CASHFREE:
+        const c = config as CFPaymentsConfig;
+        const secretStore = SecretsManager.getSecretsProvider();
+        const count = await prisma.serviceProvider.count({
+          where: {
+            service_type: this.serviceType
+          }
+        });
+        if (count > 0) {
+          await prisma.serviceProvider.update({
+            data: {
+              providerDetail: c.payments,
+              state: ConfigurationState.PAYMENT_CONFIGURED
+            },
+            where: {
+              service_type: this.serviceType
+            }
+          })
+        } else {
+          await prisma.serviceProvider.create({
+            data: {
+              provider_name: $Enums.gatewayProvider.CASHFREE,
+              service_type: this.serviceType,
+              providerDetail: c.payments,
+              state: ConfigurationState.PAYMENT_CONFIGURED
+            }
+          })
+        }
+
+        await secretStore.put(paymentsConstants.CF_CLIENT_ID, c.auth.clientId);
+        const result = await secretStore.put(paymentsConstants.CF_CLIENT_SECRET, c.auth.secretId);
+        return result;
+
+      default:
+        return false;
+    }
+  }
+
   getPaymentProvider = (config: GatewayConfig): PaymentServiceProvider => {
     switch (config.name) {
       case $Enums.gatewayProvider.CASHFREE:

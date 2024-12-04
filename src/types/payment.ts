@@ -4,6 +4,17 @@ export interface GatewayConfig {
   name: string;
 }
 
+export interface CFPaymentsConfig extends GatewayConfig {
+  auth: {
+    clientId: string,
+    secretId: string,
+  },
+  payments: {
+    currencies: string[],
+    methods: string[]
+  }
+}
+
 export interface CashFreeConfig extends GatewayConfig {
   clientId: string;
   secretId: string;
