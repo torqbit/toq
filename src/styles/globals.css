@@ -122,7 +122,7 @@ p {
 :root[data-theme="dark"] {
   --bg-secondary: #202433;
   --bg-primary: #283040;
-  --bg-segment: #181d27;
+  --bg-segment: #202124f5;
   --bg-selected-segment: #202433;
   --bg-content-form: #202433;
   --font-mktg-secondary: #c8cddd;
@@ -1075,8 +1075,4 @@ a {
 
 .ant-select .ant-select-arrow {
   color: var(--font-secondary);
-}
-
-.segment__wrapper .ant-segmented-item-selected {
-  background-color: var(--bg-selected-segment);
 }
