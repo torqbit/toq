@@ -1,6 +1,6 @@
 import { BunnyClient } from "./BunnyClient";
 import { baseBunnyConfig, BunnyCMSConfig, BunnyConstants, VideoLibrary } from "@/types/cms/bunny";
-import { apiConstants, APIResponse, APIServerError } from "@/types/cms/apis";
+import { apiConstants, APIResponse, APIServerError } from "@/types/apis";
 import { ICMSAuthConfig, IContentProvider } from "../IContentProvider";
 import { ConfigurationState } from "@prisma/client";
 import SecretsManager from "@/services/secrets/SecretsManager";

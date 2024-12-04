@@ -2,7 +2,7 @@ import { NextApiResponse, NextApiRequest } from "next";
 import { withMethods } from "@/lib/api-middlewares/with-method";
 import { errorHandler } from "@/lib/api-middlewares/errorHandler";
 
-import { APIResponse } from "@/types/cms/apis";
+import { APIResponse } from "@/types/apis";
 import { ContentManagementService } from "@/services/cms/ContentManagementService";
 import { withUserAuthorized } from "@/lib/api-middlewares/with-authorized";
 import { StorageConfig, storeConfig } from "@/types/cms/bunny";

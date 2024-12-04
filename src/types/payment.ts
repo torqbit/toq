@@ -1,4 +1,5 @@
 import { $Enums, Order, CashfreeOrder } from "@prisma/client";
+import { z } from "zod";
 
 export interface GatewayConfig {
   name: string;
@@ -6,13 +7,13 @@ export interface GatewayConfig {
 
 export interface CFPaymentsConfig extends GatewayConfig {
   auth: {
-    clientId: string,
-    secretId: string,
-  },
-  payments: {
-    currencies: string[],
-    methods: string[]
-  }
+    clientId: string;
+    secretId: string;
+  };
+  payments?: {
+    currencies: string[];
+    methods: string[];
+  };
 }
 
 export interface CashFreeConfig extends GatewayConfig {
@@ -48,11 +49,7 @@ export interface PaymentApiResponse {
 
 export interface PaymentServiceProvider {
   name: string;
-  purchaseCourse(
-    courseConfig: CoursePaymentConfig,
-    userConfig: UserConfig,
-    orderId: string
-  ): Promise<PaymentApiResponse>;
+  purchaseCourse(courseConfig: CoursePaymentConfig, userConfig: UserConfig, orderId: string): Promise<PaymentApiResponse>;
 }
 
 export interface CashFreePaymentData {
@@ -108,3 +105,18 @@ export interface OrderHistory {
   invoiceId: number;
   currency: string;
 }
+
+export const paymentAuth = z.object({
+  apiKey: z.string().min(2, "Access key is required"),
+  secretKey: z.string().min(2, "Secret key is required"),
+  gateway: z.string().min(2, "Payment gateway is required"),
+});
+
+export type PaymentAuthConfig = z.infer<typeof paymentAuth>;
+
+export const paymentInfo = z.object({
+  currency: z.string().min(2, "Access key is required"),
+  paymentMethods: z.array(z.string()).min(1, "Atleast one payment method must be specified"),
+});
+
+export type PaymentInfoConfig = z.infer<typeof paymentInfo>;

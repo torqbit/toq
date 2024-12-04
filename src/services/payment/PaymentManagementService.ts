@@ -15,43 +15,71 @@ import {
 } from "@/types/payment";
 import { CashfreePaymentProvider } from "./CashfreePaymentProvider";
 import SecretsManager from "../secrets/SecretsManager";
+import { APIResponse } from "@/types/apis";
+import { error } from "console";
 
 export const paymentsConstants = {
   CF_CLIENT_ID: "CLIENT_ID",
-  CF_CLIENT_SECRET: "CLIENT_SECRET"
-}
+  CF_CLIENT_SECRET: "CLIENT_SECRET",
+};
 export class PaymentManagemetService {
-  serviceType: string = "payments"
+  serviceType: string = "payments";
 
-  saveConfig = async (config: GatewayConfig): Promise<boolean> => {
+  verifyConnection = async (gateway: string, clientId: string, clientSecret: string): Promise<APIResponse<void>> => {
+    switch (gateway) {
+      case $Enums.gatewayProvider.CASHFREE:
+        const cf = new CashfreePaymentProvider(clientId, clientSecret);
+        const result = await cf.testClientCredentials();
+        const success = result != 401;
+        const message =
+          result == 401 ? `Invalid crendentials. Check the credentials again` : `Succesfully authenticated with the given credentials.`;
+        if (success) {
+          //save the config
+          const cfConfig: CFPaymentsConfig = {
+            name: $Enums.gatewayProvider.CASHFREE,
+            auth: {
+              secretId: clientSecret,
+              clientId: clientId,
+            },
+          };
+          this.saveConfig(cfConfig, ConfigurationState.AUTHENTICATED);
+        }
+        return new APIResponse(result != 401, result, message, undefined, result == 401 ? message : undefined);
+
+      default:
+        throw new Error(`No implementation found for the payment gateway - ${gateway}`);
+    }
+  };
+
+  saveConfig = async (config: GatewayConfig, configurationState: ConfigurationState): Promise<boolean> => {
     switch (config.name) {
       case $Enums.gatewayProvider.CASHFREE:
         const c = config as CFPaymentsConfig;
         const secretStore = SecretsManager.getSecretsProvider();
         const count = await prisma.serviceProvider.count({
           where: {
-            service_type: this.serviceType
-          }
+            service_type: this.serviceType,
+          },
         });
         if (count > 0) {
-          await prisma.serviceProvider.update({
+          await prisma.serviceProvider.updateMany({
             data: {
               providerDetail: c.payments,
-              state: ConfigurationState.PAYMENT_CONFIGURED
+              state: configurationState,
             },
             where: {
-              service_type: this.serviceType
-            }
-          })
+              service_type: this.serviceType,
+            },
+          });
         } else {
           await prisma.serviceProvider.create({
             data: {
               provider_name: $Enums.gatewayProvider.CASHFREE,
               service_type: this.serviceType,
               providerDetail: c.payments,
-              state: ConfigurationState.PAYMENT_CONFIGURED
-            }
-          })
+              state: configurationState,
+            },
+          });
         }
 
         await secretStore.put(paymentsConstants.CF_CLIENT_ID, c.auth.clientId);
@@ -61,7 +89,7 @@ export class PaymentManagemetService {
       default:
         return false;
     }
-  }
+  };
 
   getPaymentProvider = (config: GatewayConfig): PaymentServiceProvider => {
     switch (config.name) {
