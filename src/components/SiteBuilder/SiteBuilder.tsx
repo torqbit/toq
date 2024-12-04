@@ -22,7 +22,7 @@ const SiteBuilder: FC<{
           <p style={{ margin: 0 }}>{title} </p>
         </Flex>
 
-        <i>{SvgIcons.chevronDown}</i>
+        {/* <i>{SvgIcons.chevronDown}</i> */}
       </Flex>
     );
   };
@@ -32,13 +32,13 @@ const SiteBuilder: FC<{
       className: styles.collapse__header,
       label: collapseHeader("Brand Configuration", SvgIcons.pencilEdit),
       children: <BrandForm config={config} form={brandForm} updateSiteConfig={updateSiteConfig} />,
-      showArrow: false,
+      // showArrow: false,
     },
     {
       key: "4",
       className: styles.collapse__header,
       children: <HeroForm config={config} form={brandForm} updateSiteConfig={updateSiteConfig} />,
-      showArrow: false,
+      // showArrow: false,
 
       label: collapseHeader("Hero", SvgIcons.pencilEdit),
     },
@@ -68,6 +68,7 @@ const SiteBuilder: FC<{
           </div>
           <Collapse
             accordion
+            expandIconPosition="end"
             className={styles.collapse__wrapper}
             items={items}
             size="middle"
