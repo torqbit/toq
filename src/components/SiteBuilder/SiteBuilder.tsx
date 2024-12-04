@@ -7,6 +7,7 @@ import { Scrollbars } from "react-custom-scrollbars";
 import { PageSiteConfig } from "@/services/siteConstant";
 import BrandForm from "./sections/Brand/BrandForm";
 import HeroForm from "./sections/Hero/HeroForm";
+import FeatureForm from "./sections/Feature/FeatureForm";
 
 const SiteBuilder: FC<{
   config: PageSiteConfig;
@@ -26,19 +27,24 @@ const SiteBuilder: FC<{
   };
   const items: CollapseProps["items"] = [
     {
-      key: "2",
+      key: "1",
       className: styles.collapse__header,
       label: collapseHeader("Brand Configuration", SvgIcons.pencilEdit),
-      children: <BrandForm config={config} form={brandForm} updateSiteConfig={updateSiteConfig} />,
-      // showArrow: false,
+      children: <BrandForm config={config} updateSiteConfig={updateSiteConfig} />,
     },
     {
-      key: "4",
+      key: "2",
       className: styles.collapse__header,
-      children: <HeroForm config={config} form={brandForm} updateSiteConfig={updateSiteConfig} />,
-      // showArrow: false,
+      children: <HeroForm config={config} updateSiteConfig={updateSiteConfig} />,
 
       label: collapseHeader("Hero", SvgIcons.pencilEdit),
+    },
+    {
+      key: "3",
+      className: styles.collapse__header,
+      children: <FeatureForm config={config} updateSiteConfig={updateSiteConfig} />,
+
+      label: collapseHeader("Feature", SvgIcons.pencilEdit),
     },
   ];
 

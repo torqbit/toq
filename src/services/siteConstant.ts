@@ -30,9 +30,11 @@ export const DEFAULT_THEME = {
     ogImage: "/icon/torqbit.png",
     favicon: "/favicon.ico",
     brandColor: "#5b63d3",
-    discord: "https://discord.gg/NserMXcx",
-    github: "https://github.com/torqbit",
-    youtube: "https://www.youtube.com/@torqbit",
+    socialLinks: {
+      discord: "https://discord.gg/NserMXcx",
+      github: "https://github.com/torqbit",
+      youtube: "https://www.youtube.com/@torqbit",
+    },
   },
 
   darkMode: true,

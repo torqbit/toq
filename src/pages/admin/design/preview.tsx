@@ -1,6 +1,6 @@
 import { getCookieName } from "@/lib/utils";
 import { DEFAULT_THEME, PageSiteConfig } from "@/services/siteConstant";
-import StandardTemplate from "@/Templates/Standard/StandardTemplate";
+import StandardTemplate from "@/templates/standard/StandardTemplate";
 
 import { User } from "@prisma/client";
 import { GetServerSidePropsContext } from "next";

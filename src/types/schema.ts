@@ -2,6 +2,13 @@ import { FC, ReactNode } from "react";
 import { INavBarProps } from "./landing/navbar";
 import { IFeatureInfo } from "./landing/feature";
 export type bannerAlignment = "left" | "right" | "bottom" | "background";
+export interface ISocialLinks {
+  github?: string;
+  youtube?: string;
+  instagram?: string;
+  twitter?: string;
+  discord?: string;
+}
 export interface IBrandConfig {
   logo?: string | ReactNode;
   icon?: string | ReactNode;
@@ -12,13 +19,7 @@ export interface IBrandConfig {
   ogImage?: string;
   favicon?: string;
   brandColor?: string;
-  socialLinks?: {
-    github?: string;
-    youtube?: string;
-    instagram?: string;
-    twitter?: string;
-    discord?: string;
-  };
+  socialLinks?: ISocialLinks;
 }
 
 export interface INavBarConfig {
