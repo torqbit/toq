@@ -13,8 +13,6 @@ const SiteBuilder: FC<{
   config: PageSiteConfig;
   updateSiteConfig: (config: PageSiteConfig) => void;
 }> = ({ config, updateSiteConfig }) => {
-  const [brandForm] = Form.useForm();
-
   const collapseHeader = (title: string, icon?: React.ReactNode) => {
     return (
       <Flex className={styles.collapse__header} justify="space-between" align="center">
@@ -50,37 +48,55 @@ const SiteBuilder: FC<{
 
   return (
     <div className={styles.side__bar__container}>
-      <Scrollbars autoHide style={{ width: "300px", height: "100%" }}>
-        <Breadcrumb
-          className={styles.side__bar__breadcrumb}
-          items={[
-            {
-              title: <Link href={`/admin`}>administration</Link>,
-            },
-            {
-              title: "Design",
-            },
-          ]}
+      {/* <Scrollbars  autoHide style={{ width: "300px", height: "100%", overflow: "hidden" }}> */}
+      <Breadcrumb
+        className={styles.side__bar__breadcrumb}
+        items={[
+          {
+            title: <Link href={`/admin`}>administration</Link>,
+          },
+          {
+            title: "Design",
+          },
+        ]}
+      />
+      <div className={styles.config__sections}>
+        <Collapse
+          accordion
+          expandIconPosition="end"
+          className={styles.collapse__wrapper}
+          items={items}
+          size="middle"
+          defaultActiveKey={["1"]}
         />
-        <div className={styles.config__sections}>
-          <div className={styles.darkmode__switch}>
-            <p>Enabel Dark mode</p>
-            <Switch
-              checked={config.darkMode}
-              onChange={() => updateSiteConfig({ ...config, darkMode: !config.darkMode })}
-            />
-          </div>
-          <Collapse
-            accordion
-            expandIconPosition="end"
-            className={styles.collapse__wrapper}
-            items={items}
-            size="middle"
-            defaultActiveKey={["1"]}
+
+        <div className={styles.darkmode__switch}>
+          <p>Show Theme</p>
+          <Switch
+            checked={config.darkMode}
+            onChange={() => updateSiteConfig({ ...config, darkMode: !config.darkMode })}
           />
-          ;
         </div>
-      </Scrollbars>
+        <div className={styles.darkmode__switch}>
+          <p>Show Courses</p>
+          <Switch
+            checked={config.sections?.courses}
+            onChange={() =>
+              updateSiteConfig({ ...config, sections: { ...config.sections, courses: !config.sections?.courses } })
+            }
+          />
+        </div>
+        <div className={styles.darkmode__switch}>
+          <p>Show Blog</p>
+          <Switch
+            checked={config.sections?.blog}
+            onChange={() =>
+              updateSiteConfig({ ...config, sections: { ...config.sections, blog: !config.sections?.blog } })
+            }
+          />
+        </div>
+      </div>
+      {/* </Scrollbars> */}
     </div>
   );
 };

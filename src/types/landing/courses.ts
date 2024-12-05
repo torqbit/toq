@@ -11,10 +11,12 @@ export interface ICourseCard {
   size?: CourseCardSize;
   difficulty: courseDifficultyType;
   cardClass?: string;
+  previewMode?: boolean;
 }
 
 export interface ICourseInfo {
   title: string;
   description: string;
   courseList: ICourseCard[];
+  previewMode?: boolean;
 }

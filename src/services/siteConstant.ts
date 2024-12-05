@@ -59,17 +59,11 @@ export const DEFAULT_THEME = {
     },
   },
   sections: {
+    courses: false,
+    blog: false,
     feature: {
       featureInfo: {
         featureList: [
-          {
-            img: "/img/landing/auth.png",
-            title: "Authentication",
-            description:
-              "Configure authentication with Google, Github or any other auth provider supported by NextAuth",
-            link: "/docs/auth",
-            cardClass: "steps__card__small",
-          },
           {
             img: "/img/landing/auth.png",
             title: "Authentication",

@@ -6,6 +6,7 @@
   top: 0;
   background-color: var(--bg-primary);
   width: 300px;
+  overflow-y: auto;
   .side__bar__breadcrumb {
     padding: 15px;
   }

@@ -7,6 +7,7 @@ import { DEFAULT_THEME, PageSiteConfig } from "@/services/siteConstant";
 import { Button, Flex, message } from "antd";
 import { GetServerSidePropsContext, NextPage } from "next";
 import { useEffect, useRef, useState } from "react";
+import prisma from "@/lib/prisma";
 
 const SiteDesign: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const [messageApi, contexHolder] = message.useMessage();
@@ -63,6 +64,10 @@ export default SiteDesign;
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const siteConfig = getSiteConfig();
+
+  const courses = await prisma.course.findMany({
+    where: {},
+  });
 
   return {
     props: {
