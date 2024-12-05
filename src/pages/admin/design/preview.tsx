@@ -9,16 +9,7 @@ import { FC, useEffect, useState } from "react";
 import { getSiteConfig } from "@/services/getSiteConfig";
 
 const PreviewPage: FC<{ user: User; siteConfig: PageSiteConfig }> = ({ user, siteConfig }) => {
-  const [config, setConfig] = useState<PageSiteConfig>({
-    ...DEFAULT_THEME,
-    brand: {
-      ...DEFAULT_THEME.brand,
-      name: siteConfig.brand?.name,
-      title: siteConfig.brand?.title,
-      description: siteConfig.brand?.description,
-      brandColor: siteConfig.brand?.brandColor,
-    },
-  });
+  const [config, setConfig] = useState<PageSiteConfig>(siteConfig);
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       if (event.data.type === "SITE_CONFIG") {
@@ -34,7 +25,7 @@ const PreviewPage: FC<{ user: User; siteConfig: PageSiteConfig }> = ({ user, sit
     };
   }, []);
 
-  return <StandardTemplate user={user} siteConfig={config} />;
+  return <StandardTemplate user={user} siteConfig={config} previewMode />;
 };
 export default PreviewPage;
 

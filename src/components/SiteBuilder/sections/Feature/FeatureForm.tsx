@@ -23,14 +23,6 @@ const FeatureForm: FC<{
     thirdIcon: featureConfig?.featureList[2].img ? featureConfig?.featureList[2].img : "",
   });
 
-  const onUpdateBrandConfig = (value: any, key: string) => {
-    if (key.startsWith("socialLinks")) {
-      const linkKey = key.split(".")[1];
-      // setBrandConfig({ ...brandConfig, socialLinks: { ...brandConfig?.socialLinks, [linkKey]: value } });
-    } else {
-    }
-  };
-
   const getBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -407,6 +399,8 @@ const FeatureForm: FC<{
       inputName: "",
     },
   ];
+
+  console.log(config.sections?.feature?.featureInfo, "feature info");
 
   return (
     <div className={styles.feature__wrapper}>

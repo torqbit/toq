@@ -19,6 +19,9 @@
         > div:first-child {
           height: 33px;
         }
+        > div:nth-child(3) {
+          margin-top: 4px;
+        }
       }
       i {
         line-height: 0;
@@ -32,6 +35,9 @@
       padding: 10px 20px;
       p {
         margin: 0;
+      }
+      .switch {
+        margin-right: -5px;
       }
     }
     .collapse__wrapper {

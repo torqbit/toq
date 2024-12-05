@@ -5,6 +5,7 @@ import Link from "next/link";
 import Avatar from "../Avatar/Avatar";
 import { Button } from "antd";
 import SvgIcons from "@/components/SvgIcons";
+import BlogSkeleton from "./BlogSkeleton";
 
 const BlogCard: FC<IBlogCard> = ({ img, title, date, slug, cardClass, author }) => (
   <Link href={`/blog/${slug}`} className={`${styles.blogs__card} ${cardClass}`}>
@@ -16,7 +17,7 @@ const BlogCard: FC<IBlogCard> = ({ img, title, date, slug, cardClass, author }) 
   </Link>
 );
 
-const Blogs: FC<IBlogInfo> = ({ blogList, title, description }) => {
+const Blogs: FC<IBlogInfo> = ({ blogList, title, description, previewMode }) => {
   return (
     <section className={styles.blog__list__container}>
       <div>
@@ -31,21 +32,35 @@ const Blogs: FC<IBlogInfo> = ({ blogList, title, description }) => {
         <p>{description}</p>
 
         <div className={`${styles.blogs} ${blogList.length <= 2 ? styles.blogs__double : styles.blogs__triple}`}>
-          {blogList.map((blogInfo, i) => {
-            return (
-              <BlogCard
-                key={i}
-                img={blogInfo.img}
-                title={blogInfo.title}
-                date={blogInfo.date}
-                slug={blogInfo.slug}
-                cardClass={`${styles[blogList.length <= 2 ? "blog__card__large" : `"blog__card__small"`]} ${
-                  blogInfo.cardClass
-                }`}
-                author={blogInfo.author}
-              />
-            );
-          })}
+          {previewMode ? (
+            <BlogSkeleton size={3} />
+          ) : (
+            // <BlogCard
+            //   img={"/screenshot/display-markkk.png"}
+            //   title={"Blog title"}
+            //   date={"4 aug 2024"}
+            //   slug={"blog1"}
+            //   cardClass={`${styles[blogList.length <= 2 ? "blog__card__large" : `"blog__card__small"`]}`}
+            //   author={{ name: "Mehrab", picture: "/screenshot/display-markkk.png" }}
+            // />
+            <>
+              {blogList.map((blogInfo, i) => {
+                return (
+                  <BlogCard
+                    key={i}
+                    img={blogInfo.img}
+                    title={blogInfo.title}
+                    date={blogInfo.date}
+                    slug={blogInfo.slug}
+                    cardClass={`${styles[blogList.length <= 2 ? "blog__card__large" : `"blog__card__small"`]} ${
+                      blogInfo.cardClass
+                    }`}
+                    author={blogInfo.author}
+                  />
+                );
+              })}
+            </>
+          )}
         </div>
       </div>
     </section>

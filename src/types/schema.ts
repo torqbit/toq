@@ -45,6 +45,17 @@ export interface IHeroConfig {
   };
 }
 
+export interface ICourseConfig {
+  enable?: boolean;
+  title?: string;
+  description?: string;
+}
+export interface IBlogConfig {
+  enable?: boolean;
+  title?: string;
+  description?: string;
+}
+
 export interface ThemeSchema {
   template?: string;
   updated?: boolean;
@@ -52,10 +63,9 @@ export interface ThemeSchema {
   brand?: IBrandConfig;
   darkMode?: boolean;
   heroSection?: IHeroConfig;
-
   sections?: {
-    courses?: boolean;
-    blog?: boolean;
+    courses?: ICourseConfig;
+    blog?: IBlogConfig;
     feature?: {
       featureInfo?: IFeatureInfo;
     };

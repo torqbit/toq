@@ -65,9 +65,7 @@ export default SiteDesign;
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const siteConfig = getSiteConfig();
 
-  const courses = await prisma.course.findMany({
-    where: {},
-  });
+  // console.log(siteConfig.site, "this is site");
 
   return {
     props: {

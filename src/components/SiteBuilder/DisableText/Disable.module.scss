@@ -1,0 +1,12 @@
+.disable__text {
+  background-color: var(--bg-content-form);
+  padding: 20px;
+  text-align: center;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  p {
+    margin: 0;
+  }
+}

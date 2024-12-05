@@ -59,8 +59,17 @@ export const DEFAULT_THEME = {
     },
   },
   sections: {
-    courses: false,
-    blog: false,
+    courses: {
+      enable: false,
+      title: "Courses",
+      description: "Description for the course list",
+    },
+    blog: {
+      enable: false,
+      title: "Blogs",
+      description: "Description for the blog list",
+    },
+
     feature: {
       featureInfo: {
         featureList: [

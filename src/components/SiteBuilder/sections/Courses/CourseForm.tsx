@@ -1,0 +1,87 @@
+import { FC, useEffect, useState } from "react";
+import styles from "./Course.module.scss";
+import { Divider, Form, Input } from "antd";
+import ConfigForm from "@/components/Configuration/ConfigForm";
+import { IConfigForm } from "@/components/Configuration/CMS/ContentManagementSystem";
+import { DEFAULT_THEME, PageSiteConfig } from "@/services/siteConstant";
+import { ICourseConfig } from "@/types/schema";
+const CourseForm: FC<{
+  config: PageSiteConfig;
+  updateSiteConfig: (config: PageSiteConfig) => void;
+}> = ({ updateSiteConfig, config }) => {
+  const [courseConfig, setCourseConfig] = useState<ICourseConfig | undefined>(config.sections?.courses);
+  const [form] = Form.useForm();
+  useEffect(() => {
+    updateSiteConfig({ ...config, sections: { ...config.sections, courses: courseConfig } });
+  }, [courseConfig]);
+  const courseItems: IConfigForm[] = [
+    {
+      title: "Course list title",
+      description: "Add a title for your course list ",
+      layout: "vertical",
+      input: (
+        <Input
+          onChange={(e) => {
+            setCourseConfig({ ...courseConfig, title: e.currentTarget.value });
+          }}
+          placeholder="Add title"
+        />
+      ),
+      inputName: "title",
+    },
+    {
+      title: "Course list description",
+      description: "Add description for your course list ",
+      layout: "vertical",
+      input: (
+        <Input
+          onChange={(e) => {
+            setCourseConfig({ ...courseConfig, description: e.currentTarget.value });
+          }}
+          placeholder="Add description"
+        />
+      ),
+      inputName: "description",
+    },
+  ];
+
+  return (
+    <div className={styles.course__Form__wrapper}>
+      <Form
+        form={form}
+        requiredMark={false}
+        initialValues={{
+          title: config.sections?.courses?.title,
+          description: config.sections?.courses?.description,
+        }}
+      >
+        {courseItems.map((item, i) => {
+          return (
+            <>
+              <ConfigForm
+                input={
+                  <Form.Item
+                    name={item.inputName}
+                    rules={[{ required: !item.optional, message: `Field is required!` }]}
+                    key={i}
+                  >
+                    {item.input}
+                  </Form.Item>
+                }
+                title={item.title}
+                description={item.description}
+                layout={item.layout}
+                divider={i === courseItems.length - 1 ? false : true}
+                inputName={""}
+                optional={item.optional}
+              />
+              {courseItems.length !== i + 1 && <Divider style={{ margin: "0px 0px 15px 0px" }} />}
+            </>
+          );
+        })}
+      </Form>
+    </div>
+  );
+};
+
+export default CourseForm;

@@ -20,7 +20,7 @@ site:
       github: https://github.com/torqbit
       youtube: https://www.youtube.com/@torqbit
     name: Code Academy
-    brandColor: "#86d78c"
+    brandColor: "#7e37bc"
     title: Spreads peace and harmony
   darkMode: true
   heroSection:
@@ -56,3 +56,13 @@ site:
           - img: /img/landing/auth.png
             title: Email
             description: Configure authentication
+        title: Features
+        description: Features for the learning platform
+    courses:
+      enable: true
+      title: Courses
+      description: Courses description
+    blog:
+      enable: true
+      title: Blogs
+      description: Description on blogs

@@ -8,11 +8,16 @@ import { PageSiteConfig } from "@/services/siteConstant";
 import BrandForm from "./sections/Brand/BrandForm";
 import HeroForm from "./sections/Hero/HeroForm";
 import FeatureForm from "./sections/Feature/FeatureForm";
+import CourseForm from "./sections/Courses/CourseForm";
+import DisableText from "./DisableText/DisableText";
+import { setConfig } from "isomorphic-dompurify";
+import BlogForm from "./sections/Blog/BlogForm";
 
 const SiteBuilder: FC<{
   config: PageSiteConfig;
   updateSiteConfig: (config: PageSiteConfig) => void;
 }> = ({ config, updateSiteConfig }) => {
+  console.log(config, "conffigd");
   const collapseHeader = (title: string, icon?: React.ReactNode) => {
     return (
       <Flex className={styles.collapse__header} justify="space-between" align="center">
@@ -44,6 +49,64 @@ const SiteBuilder: FC<{
 
       label: collapseHeader("Feature", SvgIcons.pencilEdit),
     },
+    {
+      key: "4",
+      className: styles.collapse__header,
+      extra: (
+        <Switch
+          checked={config.sections?.courses?.enable}
+          onChange={() =>
+            updateSiteConfig({
+              ...config,
+              sections: {
+                ...config.sections,
+                courses: { ...config.sections?.courses, enable: !config.sections?.courses?.enable },
+              },
+            })
+          }
+        />
+      ),
+      children: (
+        <>
+          {config.sections?.courses?.enable ? (
+            <CourseForm config={config} updateSiteConfig={updateSiteConfig} />
+          ) : (
+            <DisableText text="this is dummy text" />
+          )}
+        </>
+      ),
+
+      label: collapseHeader("Courses", SvgIcons.pencilEdit),
+    },
+    {
+      key: "5",
+      className: styles.collapse__header,
+      extra: (
+        <Switch
+          checked={config.sections?.blog?.enable}
+          onChange={() =>
+            updateSiteConfig({
+              ...config,
+              sections: {
+                ...config.sections,
+                blog: { ...config.sections?.blog, enable: !config.sections?.blog?.enable },
+              },
+            })
+          }
+        />
+      ),
+      children: (
+        <>
+          {config.sections?.blog?.enable ? (
+            <BlogForm config={config} updateSiteConfig={updateSiteConfig} />
+          ) : (
+            <DisableText text="this is dummy text" />
+          )}
+        </>
+      ),
+
+      label: collapseHeader("Blog", SvgIcons.pencilEdit),
+    },
   ];
 
   return (
@@ -60,7 +123,16 @@ const SiteBuilder: FC<{
           },
         ]}
       />
+
       <div className={styles.config__sections}>
+        <div className={styles.darkmode__switch}>
+          <p>Show Theme</p>
+          <Switch
+            className={styles.switch}
+            checked={config.darkMode}
+            onChange={() => updateSiteConfig({ ...config, darkMode: !config.darkMode })}
+          />
+        </div>
         <Collapse
           accordion
           expandIconPosition="end"
@@ -69,32 +141,6 @@ const SiteBuilder: FC<{
           size="middle"
           defaultActiveKey={["1"]}
         />
-
-        <div className={styles.darkmode__switch}>
-          <p>Show Theme</p>
-          <Switch
-            checked={config.darkMode}
-            onChange={() => updateSiteConfig({ ...config, darkMode: !config.darkMode })}
-          />
-        </div>
-        <div className={styles.darkmode__switch}>
-          <p>Show Courses</p>
-          <Switch
-            checked={config.sections?.courses}
-            onChange={() =>
-              updateSiteConfig({ ...config, sections: { ...config.sections, courses: !config.sections?.courses } })
-            }
-          />
-        </div>
-        <div className={styles.darkmode__switch}>
-          <p>Show Blog</p>
-          <Switch
-            checked={config.sections?.blog}
-            onChange={() =>
-              updateSiteConfig({ ...config, sections: { ...config.sections, blog: !config.sections?.blog } })
-            }
-          />
-        </div>
       </div>
       {/* </Scrollbars> */}
     </div>

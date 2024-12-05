@@ -27,15 +27,39 @@ const StandardTemplate: FC<IStandardTemplateProps> = ({ user, siteConfig, previe
     >
       <SetupPlatform />
       <Features
-        title={featureInfo?.title ? featureInfo.title : ""}
-        description={featureInfo?.description ? featureInfo.description : ""}
+        title={featureInfo?.title ? featureInfo.title : DEFAULT_THEME.sections.feature.featureInfo.title}
+        description={
+          featureInfo?.description ? featureInfo.description : DEFAULT_THEME.sections.feature.featureInfo.description
+        }
         featureList={featureInfo?.featureList && featureInfo?.featureList.length > 0 ? featureInfo?.featureList : []}
       />
 
       {siteConfig.sections?.courses && (
-        <CourseList title={"Courses"} description={"Description on courses"} courseList={[]} previewMode={true} />
+        <CourseList
+          title={
+            siteConfig.sections.courses.title ? siteConfig.sections.courses.title : DEFAULT_THEME.sections.courses.title
+          }
+          description={
+            siteConfig.sections.courses.description
+              ? siteConfig.sections.courses.description
+              : DEFAULT_THEME.sections.courses.description
+          }
+          courseList={[]}
+          previewMode={previewMode}
+        />
       )}
-      {siteConfig.sections?.blog && <Blogs title={"Blogs"} description={"Description on blogs"} blogList={[]} />}
+      {siteConfig.sections?.blog && (
+        <Blogs
+          title={siteConfig.sections.blog.title ? siteConfig.sections.blog.title : DEFAULT_THEME.sections.blog.title}
+          description={
+            siteConfig.sections.blog.description
+              ? siteConfig.sections.blog.description
+              : DEFAULT_THEME.sections.blog.description
+          }
+          blogList={[]}
+          previewMode={previewMode}
+        />
+      )}
     </MarketingLayout>
   );
 };
