@@ -22,7 +22,7 @@ site:
     name: Code Academy
     brandColor: "#7e37bc"
     title: Spreads peace and harmony
-  darkMode: true
+  darkMode: false
   heroSection:
     title: The Awesomest teaching platform
     description: >
@@ -59,10 +59,10 @@ site:
         title: Features
         description: Features for the learning platform
     courses:
-      enable: true
+      enable: false
       title: Courses
       description: Courses description
     blog:
-      enable: true
+      enable: false
       title: Blogs
       description: Description on blogs

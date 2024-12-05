@@ -34,7 +34,7 @@ const StandardTemplate: FC<IStandardTemplateProps> = ({ user, siteConfig, previe
         featureList={featureInfo?.featureList && featureInfo?.featureList.length > 0 ? featureInfo?.featureList : []}
       />
 
-      {siteConfig.sections?.courses && (
+      {siteConfig.sections?.courses?.enable && (
         <CourseList
           title={
             siteConfig.sections.courses.title ? siteConfig.sections.courses.title : DEFAULT_THEME.sections.courses.title
@@ -48,7 +48,7 @@ const StandardTemplate: FC<IStandardTemplateProps> = ({ user, siteConfig, previe
           previewMode={previewMode}
         />
       )}
-      {siteConfig.sections?.blog && (
+      {siteConfig.sections?.blog?.enable && (
         <Blogs
           title={siteConfig.sections.blog.title ? siteConfig.sections.blog.title : DEFAULT_THEME.sections.blog.title}
           description={

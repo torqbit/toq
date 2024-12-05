@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from "react";
 import styles from "./Course.module.scss";
-import { Divider, Form, Input } from "antd";
+import { Divider, Flex, Form, Input, Switch } from "antd";
 import ConfigForm from "@/components/Configuration/ConfigForm";
 import { IConfigForm } from "@/components/Configuration/CMS/ContentManagementSystem";
 import { DEFAULT_THEME, PageSiteConfig } from "@/services/siteConstant";
@@ -47,6 +47,18 @@ const CourseForm: FC<{
 
   return (
     <div className={styles.course__Form__wrapper}>
+      <Flex className={styles.disable__switch} align="center" justify="space-between">
+        <h5>Disable courses</h5>
+        <Switch
+          size="small"
+          value={true}
+          onChange={(value) => {
+            setCourseConfig({ ...courseConfig, enable: false });
+          }}
+        />
+      </Flex>
+      <Divider style={{ margin: "15px 0px " }} />
+
       <Form
         form={form}
         requiredMark={false}

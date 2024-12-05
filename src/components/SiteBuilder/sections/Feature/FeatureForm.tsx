@@ -400,8 +400,6 @@ const FeatureForm: FC<{
     },
   ];
 
-  console.log(config.sections?.feature?.featureInfo, "feature info");
-
   return (
     <div className={styles.feature__wrapper}>
       <Form

@@ -17,7 +17,6 @@ const SiteBuilder: FC<{
   config: PageSiteConfig;
   updateSiteConfig: (config: PageSiteConfig) => void;
 }> = ({ config, updateSiteConfig }) => {
-  console.log(config, "conffigd");
   const collapseHeader = (title: string, icon?: React.ReactNode) => {
     return (
       <Flex className={styles.collapse__header} justify="space-between" align="center">
@@ -27,6 +26,25 @@ const SiteBuilder: FC<{
         </Flex>
       </Flex>
     );
+  };
+
+  const enableCourse = (value: boolean) => {
+    updateSiteConfig({
+      ...config,
+      sections: {
+        ...config.sections,
+        courses: { ...config.sections?.courses, enable: value },
+      },
+    });
+  };
+  const enableBlog = (value: boolean) => {
+    updateSiteConfig({
+      ...config,
+      sections: {
+        ...config.sections,
+        blog: { ...config.sections?.blog, enable: value },
+      },
+    });
   };
   const items: CollapseProps["items"] = [
     {
@@ -52,26 +70,17 @@ const SiteBuilder: FC<{
     {
       key: "4",
       className: styles.collapse__header,
-      extra: (
-        <Switch
-          checked={config.sections?.courses?.enable}
-          onChange={() =>
-            updateSiteConfig({
-              ...config,
-              sections: {
-                ...config.sections,
-                courses: { ...config.sections?.courses, enable: !config.sections?.courses?.enable },
-              },
-            })
-          }
-        />
-      ),
+
       children: (
         <>
           {config.sections?.courses?.enable ? (
             <CourseForm config={config} updateSiteConfig={updateSiteConfig} />
           ) : (
-            <DisableText text="this is dummy text" />
+            <DisableText
+              text="Enable courses to view configuration"
+              onTriggerSwitch={enableCourse}
+              value={config.sections?.courses?.enable}
+            />
           )}
         </>
       ),
@@ -81,26 +90,17 @@ const SiteBuilder: FC<{
     {
       key: "5",
       className: styles.collapse__header,
-      extra: (
-        <Switch
-          checked={config.sections?.blog?.enable}
-          onChange={() =>
-            updateSiteConfig({
-              ...config,
-              sections: {
-                ...config.sections,
-                blog: { ...config.sections?.blog, enable: !config.sections?.blog?.enable },
-              },
-            })
-          }
-        />
-      ),
+
       children: (
         <>
           {config.sections?.blog?.enable ? (
             <BlogForm config={config} updateSiteConfig={updateSiteConfig} />
           ) : (
-            <DisableText text="this is dummy text" />
+            <DisableText
+              text="Enable blog to view configuration"
+              value={config.sections?.blog?.enable}
+              onTriggerSwitch={enableBlog}
+            />
           )}
         </>
       ),
@@ -128,6 +128,7 @@ const SiteBuilder: FC<{
         <div className={styles.darkmode__switch}>
           <p>Show Theme</p>
           <Switch
+            size="small"
             className={styles.switch}
             checked={config.darkMode}
             onChange={() => updateSiteConfig({ ...config, darkMode: !config.darkMode })}

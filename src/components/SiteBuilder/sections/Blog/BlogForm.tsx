@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from "react";
 import styles from "./BlogForm.module.scss";
-import { Divider, Form, Input } from "antd";
+import { Divider, Flex, Form, Input, Switch } from "antd";
 import ConfigForm from "@/components/Configuration/ConfigForm";
 import { IConfigForm } from "@/components/Configuration/CMS/ContentManagementSystem";
 import { PageSiteConfig } from "@/services/siteConstant";
@@ -9,7 +9,7 @@ const BlogForm: FC<{
   config: PageSiteConfig;
   updateSiteConfig: (config: PageSiteConfig) => void;
 }> = ({ updateSiteConfig, config }) => {
-  const [blogConfig, setBlogConfig] = useState<IBlogConfig | undefined>(config.sections?.courses);
+  const [blogConfig, setBlogConfig] = useState<IBlogConfig | undefined>(config.sections?.blog);
   const [form] = Form.useForm();
   useEffect(() => {
     updateSiteConfig({ ...config, sections: { ...config.sections, blog: blogConfig } });
@@ -47,6 +47,17 @@ const BlogForm: FC<{
 
   return (
     <div className={styles.blog__Form__wrapper}>
+      <Flex className={styles.disable__switch} align="center" justify="space-between">
+        <h5>Disable blog</h5>
+        <Switch
+          size="small"
+          value={true}
+          onChange={(value) => {
+            setBlogConfig({ ...blogConfig, enable: false });
+          }}
+        />
+      </Flex>
+      <Divider style={{ margin: "15px 0px " }} />
       <Form
         form={form}
         requiredMark={false}

@@ -65,8 +65,6 @@ export default SiteDesign;
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const siteConfig = getSiteConfig();
 
-  // console.log(siteConfig.site, "this is site");
-
   return {
     props: {
       siteConfig: siteConfig.site,

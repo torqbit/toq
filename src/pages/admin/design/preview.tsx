@@ -13,7 +13,6 @@ const PreviewPage: FC<{ user: User; siteConfig: PageSiteConfig }> = ({ user, sit
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       if (event.data.type === "SITE_CONFIG") {
-        console.log("Message from Parent:", event.data.payload);
         setConfig(event.data.payload);
       }
     };
