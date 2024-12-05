@@ -11,13 +11,13 @@ import ImgCrop from "antd-img-crop";
 
 const HeroForm: FC<{
   config: PageSiteConfig;
-  form: FormInstance;
   updateSiteConfig: (config: PageSiteConfig) => void;
-}> = ({ form, updateSiteConfig, config }) => {
+}> = ({ updateSiteConfig, config }) => {
+  const [form] = Form.useForm();
   const [heroConfig, setHeroConfig] = useState<IHeroConfig | undefined>(config.heroSection);
   const [base64Images, setBase64Images] = useState<{ lightModePath: string; darkModePath: string }>({
-    lightModePath: "",
-    darkModePath: "",
+    lightModePath: heroConfig?.banner?.lightModePath ? heroConfig.banner.lightModePath : "",
+    darkModePath: heroConfig?.banner?.darkModePath ? heroConfig.banner.darkModePath : "",
   });
 
   const getBase64 = (file: File): Promise<string> => {
@@ -108,6 +108,7 @@ const HeroForm: FC<{
           <Flex vertical gap={10}>
             <h5>Primary</h5>
             <Input
+              defaultValue={config.heroSection?.actionButtons?.primary?.label}
               onChange={(e) => {
                 onUpdateHeroConfig(e.currentTarget.value, "actionButtons.primary.label");
               }}
@@ -124,6 +125,7 @@ const HeroForm: FC<{
           <Flex vertical gap={10}>
             <h5>Secondary</h5>
             <Input
+              defaultValue={config.heroSection?.actionButtons?.secondary?.label}
               onChange={(e) => {
                 onUpdateHeroConfig(e.currentTarget.value, "actionButtons.secondary.label");
               }}
@@ -243,7 +245,14 @@ const HeroForm: FC<{
   ];
   return (
     <div className={styles.add__hero__wrapper}>
-      <Form form={form} requiredMark={false}>
+      <Form
+        form={form}
+        requiredMark={false}
+        initialValues={{
+          title: config.heroSection?.title,
+          description: config.heroSection?.description,
+        }}
+      >
         {heroItems.map((item, i) => {
           return (
             <>

@@ -30,9 +30,11 @@ export const DEFAULT_THEME = {
     ogImage: "/icon/torqbit.png",
     favicon: "/favicon.ico",
     brandColor: "#5b63d3",
-    discord: "https://discord.gg/NserMXcx",
-    github: "https://github.com/torqbit",
-    youtube: "https://www.youtube.com/@torqbit",
+    socialLinks: {
+      discord: "https://discord.gg/NserMXcx",
+      github: "https://github.com/torqbit",
+      youtube: "https://www.youtube.com/@torqbit",
+    },
   },
 
   darkMode: true,
@@ -57,17 +59,20 @@ export const DEFAULT_THEME = {
     },
   },
   sections: {
+    courses: {
+      enable: false,
+      title: "Courses",
+      description: "Description for the course list",
+    },
+    blog: {
+      enable: false,
+      title: "Blogs",
+      description: "Description for the blog list",
+    },
+
     feature: {
       featureInfo: {
         featureList: [
-          {
-            img: "/img/landing/auth.png",
-            title: "Authentication",
-            description:
-              "Configure authentication with Google, Github or any other auth provider supported by NextAuth",
-            link: "/docs/auth",
-            cardClass: "steps__card__small",
-          },
           {
             img: "/img/landing/auth.png",
             title: "Authentication",

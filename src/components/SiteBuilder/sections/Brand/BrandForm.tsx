@@ -5,7 +5,7 @@ import ConfigForm from "@/components/Configuration/ConfigForm";
 import { IConfigForm } from "@/components/Configuration/CMS/ContentManagementSystem";
 import { UploadOutlined } from "@ant-design/icons";
 import { DEFAULT_THEME, PageSiteConfig } from "@/services/siteConstant";
-import { IBrandConfig } from "@/types/schema";
+import { IBrandConfig, ISocialLinks } from "@/types/schema";
 import { RcFile } from "antd/es/upload";
 import Image from "next/image";
 import ImgCrop from "antd-img-crop";
@@ -13,11 +13,14 @@ import SvgIcons from "@/components/SvgIcons";
 
 const BrandForm: FC<{
   config: PageSiteConfig;
-  form: FormInstance;
   updateSiteConfig: (config: PageSiteConfig) => void;
-}> = ({ form, updateSiteConfig, config }) => {
+}> = ({ updateSiteConfig, config }) => {
+  const [form] = Form.useForm();
   const [brandConfig, setBrandConfig] = useState<IBrandConfig | undefined>(config.brand);
-  const [base64Images, setBase64Images] = useState<{ logo: string; icon: string }>({ logo: "", icon: "" });
+  const [base64Images, setBase64Images] = useState<{ logo: string; icon: string }>({
+    logo: config.brand?.logo ? (config.brand.logo as string) : "",
+    icon: config.brand?.icon ? (config.brand?.icon as string) : "",
+  });
   const [selectedSegment, setSelectedSegment] = useState<string>("discord");
 
   // Convert file to Base64
@@ -169,7 +172,14 @@ const BrandForm: FC<{
         <Flex vertical gap={10}>
           <Segmented
             className={`${styles.segment} segment__wrapper`}
-            onChange={(value) => setSelectedSegment(value)}
+            onChange={(value) => {
+              setSelectedSegment(value);
+
+              form.setFieldValue(
+                "social",
+                config.brand?.socialLinks && config.brand?.socialLinks[value as keyof ISocialLinks]
+              );
+            }}
             style={{ lineHeight: 0 }}
             options={[
               {
@@ -204,23 +214,29 @@ const BrandForm: FC<{
               },
             ]}
           />
-
-          <Input
-            addonBefore={`https://${selectedSegment}.com`}
-            type="url"
-            onChange={(e) => {
-              onUpdateBrandConfig(
-                e.currentTarget.value === "" ? "" : `https://${selectedSegment}.com/${e.currentTarget.value}`,
-                `socialLinks.${selectedSegment}`
-              );
-            }}
-            placeholder={`Add ${selectedSegment} link`}
-          />
+          <Form.Item name={"social"}>
+            <Input
+              name="social"
+              addonBefore={`https://${selectedSegment}.com`}
+              type="url"
+              onChange={(e) => {
+                onUpdateBrandConfig(
+                  e.currentTarget.value === "" ? "" : `https://${selectedSegment}.com/${e.currentTarget.value}`,
+                  `socialLinks.${selectedSegment}`
+                );
+              }}
+              defaultValue={
+                config?.brand?.socialLinks ? config.brand.socialLinks[selectedSegment as keyof ISocialLinks] : ""
+              }
+              placeholder={`Add ${selectedSegment} link`}
+            />
+          </Form.Item>
         </Flex>
       ),
-      inputName: "social",
+      inputName: "",
     },
   ];
+
   return (
     <div className={styles.brand__wrapper}>
       <Form
@@ -231,6 +247,7 @@ const BrandForm: FC<{
           name: config.brand?.name,
           title: config.brand?.title,
           description: config.brand?.description,
+          social: config?.brand?.socialLinks ? config.brand.socialLinks[selectedSegment as keyof ISocialLinks] : "",
         }}
       >
         {brandItems.map((item, i) => {

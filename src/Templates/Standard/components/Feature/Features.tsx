@@ -4,7 +4,7 @@ import Link from "next/link";
 import { IFeatureCard, IFeatureInfo } from "@/types/landing/feature";
 
 const FeatureCard: FC<IFeatureCard> = ({ img, title, description, link, cardClass }) => (
-  <Link href={link} className={`${styles.features__card} ${cardClass}`}>
+  <Link href={`${link}`} className={`${styles.features__card} ${cardClass}`}>
     <img alt={title} aria-label={`icon for ${title.toLowerCase()}`} src={img} />
     <h4>{title}</h4>
     <p>{description}</p>

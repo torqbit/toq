@@ -1,6 +1,6 @@
 import { getCookieName } from "@/lib/utils";
 import { DEFAULT_THEME, PageSiteConfig } from "@/services/siteConstant";
-import StandardTemplate from "@/Templates/Standard/StandardTemplate";
+import StandardTemplate from "@/templates/standard/StandardTemplate";
 
 import { User } from "@prisma/client";
 import { GetServerSidePropsContext } from "next";
@@ -9,20 +9,10 @@ import { FC, useEffect, useState } from "react";
 import { getSiteConfig } from "@/services/getSiteConfig";
 
 const PreviewPage: FC<{ user: User; siteConfig: PageSiteConfig }> = ({ user, siteConfig }) => {
-  const [config, setConfig] = useState<PageSiteConfig>({
-    ...DEFAULT_THEME,
-    brand: {
-      ...DEFAULT_THEME.brand,
-      name: siteConfig.brand?.name,
-      title: siteConfig.brand?.title,
-      description: siteConfig.brand?.description,
-      brandColor: siteConfig.brand?.brandColor,
-    },
-  });
+  const [config, setConfig] = useState<PageSiteConfig>(siteConfig);
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       if (event.data.type === "SITE_CONFIG") {
-        console.log("Message from Parent:", event.data.payload);
         setConfig(event.data.payload);
       }
     };
@@ -34,7 +24,7 @@ const PreviewPage: FC<{ user: User; siteConfig: PageSiteConfig }> = ({ user, sit
     };
   }, []);
 
-  return <StandardTemplate user={user} siteConfig={config} />;
+  return <StandardTemplate user={user} siteConfig={config} previewMode />;
 };
 export default PreviewPage;
 

@@ -6,6 +6,7 @@
   top: 0;
   background-color: var(--bg-primary);
   width: 300px;
+  overflow-y: auto;
   .side__bar__breadcrumb {
     padding: 15px;
   }
@@ -13,14 +14,18 @@
     padding-top: 20px;
 
     .collapse__header {
-      padding: 5px 0px;
+      padding: 5px 0px 0px 0px;
       > div:first-child {
         > div:first-child {
           height: 33px;
         }
+        > div:nth-child(3) {
+          margin-top: 4px;
+        }
       }
       i {
         line-height: 0;
+        font-size: 18px;
       }
     }
 
@@ -31,6 +36,9 @@
       padding: 10px 20px;
       p {
         margin: 0;
+      }
+      .switch {
+        margin-right: -5px;
       }
     }
     .collapse__wrapper {

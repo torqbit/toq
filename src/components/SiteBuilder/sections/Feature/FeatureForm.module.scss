@@ -1,0 +1,20 @@
+.feature__wrapper {
+  background-color: var(--bg-content-form);
+  padding: 20px;
+  h4 {
+    margin: 0;
+  }
+  .feature__card__form {
+    border: 1px solid var(--border-color);
+
+    border-radius: 4px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: all 0.4s ease-in;
+    &:hover {
+      border: 1px solid var(--btn-primary);
+    }
+  }
+}

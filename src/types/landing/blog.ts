@@ -1,7 +1,9 @@
 export interface IBlogInfo {
   title: string;
   description: string;
+
   blogList: IBlogCard[];
+  previewMode?: boolean;
 }
 
 export interface IBlogCard {
