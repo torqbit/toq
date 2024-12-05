@@ -14,7 +14,7 @@
     padding-top: 20px;
 
     .collapse__header {
-      padding: 5px 0px;
+      padding: 5px 0px 0px 0px;
       > div:first-child {
         > div:first-child {
           height: 33px;
@@ -25,6 +25,7 @@
       }
       i {
         line-height: 0;
+        font-size: 18px;
       }
     }
 

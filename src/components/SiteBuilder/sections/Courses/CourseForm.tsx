@@ -48,50 +48,54 @@ const CourseForm: FC<{
   return (
     <div className={styles.course__Form__wrapper}>
       <Flex className={styles.disable__switch} align="center" justify="space-between">
-        <h5>Disable courses</h5>
+        <h5> {config.sections?.courses?.enable ? "Disable course" : "Enable course"}</h5>
         <Switch
           size="small"
-          value={true}
+          value={config.sections?.courses?.enable}
           onChange={(value) => {
-            setCourseConfig({ ...courseConfig, enable: false });
+            setCourseConfig({ ...courseConfig, enable: !config.sections?.courses?.enable });
           }}
         />
       </Flex>
-      <Divider style={{ margin: "15px 0px " }} />
+      {config.sections?.courses?.enable && (
+        <>
+          <Divider style={{ margin: "15px 0px " }} />
 
-      <Form
-        form={form}
-        requiredMark={false}
-        initialValues={{
-          title: config.sections?.courses?.title,
-          description: config.sections?.courses?.description,
-        }}
-      >
-        {courseItems.map((item, i) => {
-          return (
-            <>
-              <ConfigForm
-                input={
-                  <Form.Item
-                    name={item.inputName}
-                    rules={[{ required: !item.optional, message: `Field is required!` }]}
-                    key={i}
-                  >
-                    {item.input}
-                  </Form.Item>
-                }
-                title={item.title}
-                description={item.description}
-                layout={item.layout}
-                divider={i === courseItems.length - 1 ? false : true}
-                inputName={""}
-                optional={item.optional}
-              />
-              {courseItems.length !== i + 1 && <Divider style={{ margin: "0px 0px 15px 0px" }} />}
-            </>
-          );
-        })}
-      </Form>
+          <Form
+            form={form}
+            requiredMark={false}
+            initialValues={{
+              title: config.sections?.courses?.title,
+              description: config.sections?.courses?.description,
+            }}
+          >
+            {courseItems.map((item, i) => {
+              return (
+                <>
+                  <ConfigForm
+                    input={
+                      <Form.Item
+                        name={item.inputName}
+                        rules={[{ required: !item.optional, message: `Field is required!` }]}
+                        key={i}
+                      >
+                        {item.input}
+                      </Form.Item>
+                    }
+                    title={item.title}
+                    description={item.description}
+                    layout={item.layout}
+                    divider={i === courseItems.length - 1 ? false : true}
+                    inputName={""}
+                    optional={item.optional}
+                  />
+                  {courseItems.length !== i + 1 && <Divider style={{ margin: "0px 0px 15px 0px" }} />}
+                </>
+              );
+            })}
+          </Form>
+        </>
+      )}
     </div>
   );
 };

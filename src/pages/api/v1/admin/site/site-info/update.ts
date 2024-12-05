@@ -18,7 +18,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     fs.writeFileSync(filePath, updatedYamlContent, "utf8");
 
-    return res.status(200).json({ success: true, message: " site information has been updated", basicInfo: req.body });
+    return res.status(200).json({ success: true, message: " Design has been updated", basicInfo: req.body });
   } catch (error) {
     console.log(error);
     errorHandler(error, res);

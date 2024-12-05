@@ -50,7 +50,7 @@ const SiteBuilder: FC<{
     {
       key: "1",
       className: styles.collapse__header,
-      label: collapseHeader("Brand Configuration", SvgIcons.pencilEdit),
+      label: collapseHeader("Brand Configuration", SvgIcons.brand),
       children: <BrandForm config={config} updateSiteConfig={updateSiteConfig} />,
     },
     {
@@ -58,14 +58,14 @@ const SiteBuilder: FC<{
       className: styles.collapse__header,
       children: <HeroForm config={config} updateSiteConfig={updateSiteConfig} />,
 
-      label: collapseHeader("Hero", SvgIcons.pencilEdit),
+      label: collapseHeader("Hero", SvgIcons.hero),
     },
     {
       key: "3",
       className: styles.collapse__header,
       children: <FeatureForm config={config} updateSiteConfig={updateSiteConfig} />,
 
-      label: collapseHeader("Feature", SvgIcons.pencilEdit),
+      label: collapseHeader("Feature", SvgIcons.features),
     },
     {
       key: "4",
@@ -73,19 +73,11 @@ const SiteBuilder: FC<{
 
       children: (
         <>
-          {config.sections?.courses?.enable ? (
-            <CourseForm config={config} updateSiteConfig={updateSiteConfig} />
-          ) : (
-            <DisableText
-              text="Enable courses to view configuration"
-              onTriggerSwitch={enableCourse}
-              value={config.sections?.courses?.enable}
-            />
-          )}
+          <CourseForm config={config} updateSiteConfig={updateSiteConfig} />
         </>
       ),
 
-      label: collapseHeader("Courses", SvgIcons.pencilEdit),
+      label: collapseHeader("Courses", SvgIcons.courseConfig),
     },
     {
       key: "5",
@@ -93,19 +85,11 @@ const SiteBuilder: FC<{
 
       children: (
         <>
-          {config.sections?.blog?.enable ? (
-            <BlogForm config={config} updateSiteConfig={updateSiteConfig} />
-          ) : (
-            <DisableText
-              text="Enable blog to view configuration"
-              value={config.sections?.blog?.enable}
-              onTriggerSwitch={enableBlog}
-            />
-          )}
+          <BlogForm config={config} updateSiteConfig={updateSiteConfig} />
         </>
       ),
 
-      label: collapseHeader("Blog", SvgIcons.pencilEdit),
+      label: collapseHeader("Blog", SvgIcons.blog),
     },
   ];
 
@@ -116,7 +100,7 @@ const SiteBuilder: FC<{
         className={styles.side__bar__breadcrumb}
         items={[
           {
-            title: <Link href={`/admin`}>administration</Link>,
+            title: <Link href={`/admin`}>Administration</Link>,
           },
           {
             title: "Design",

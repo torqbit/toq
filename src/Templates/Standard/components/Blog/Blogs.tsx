@@ -35,14 +35,6 @@ const Blogs: FC<IBlogInfo> = ({ blogList, title, description, previewMode }) => 
           {previewMode ? (
             <BlogSkeleton size={3} />
           ) : (
-            // <BlogCard
-            //   img={"/screenshot/display-markkk.png"}
-            //   title={"Blog title"}
-            //   date={"4 aug 2024"}
-            //   slug={"blog1"}
-            //   cardClass={`${styles[blogList.length <= 2 ? "blog__card__large" : `"blog__card__small"`]}`}
-            //   author={{ name: "Mehrab", picture: "/screenshot/display-markkk.png" }}
-            // />
             <>
               {blogList.map((blogInfo, i) => {
                 return (
