@@ -8,7 +8,7 @@ class PaymentsClient {
     onSuccess: (response: APIResponse<any>) => void,
     onFailure: (err: string) => void
   ) => {
-    postFetch(authConfig, `/api/v1/admin/config/payments/configure`)
+    postFetch(authConfig, `/api/v1/admin/config/payments/verify`)
       .then(async (result) => {
         const response = (await result.json()) as APIResponse<any>;
         if (response.success) {

@@ -1,21 +1,6 @@
 import { $Enums, Order, CashfreeOrder } from "@prisma/client";
 import { z } from "zod";
 
-export interface GatewayConfig {
-  name: string;
-}
-
-export interface CFPaymentsConfig extends GatewayConfig {
-  auth: {
-    clientId: string;
-    secretId: string;
-  };
-  payments?: {
-    currencies: string[];
-    methods: string[];
-  };
-}
-
 export interface CashFreeConfig extends GatewayConfig {
   clientId: string;
   secretId: string;
@@ -106,6 +91,10 @@ export interface OrderHistory {
   currency: string;
 }
 
+export const paymentGatewayName = z.object({
+  gateway: z.string().min(2, "Payment gateway name is required"),
+});
+
 export const paymentAuth = z.object({
   apiKey: z.string().min(2, "Access key is required"),
   secretKey: z.string().min(2, "Secret key is required"),
@@ -115,8 +104,25 @@ export const paymentAuth = z.object({
 export type PaymentAuthConfig = z.infer<typeof paymentAuth>;
 
 export const paymentInfo = z.object({
-  currency: z.string().min(2, "Access key is required"),
+  currency: z.string().min(2, "Choose the currency"),
   paymentMethods: z.array(z.string()).min(1, "Atleast one payment method must be specified"),
+  gateway: z.string().min(2, "Payment gateway is required"),
 });
 
 export type PaymentInfoConfig = z.infer<typeof paymentInfo>;
+
+export interface GatewayConfig {
+  name: string;
+  paymentConfig?: {
+    currency: string;
+    paymentMethods: string[];
+  };
+}
+
+export interface CFPaymentsConfig extends GatewayConfig {
+  name: string;
+  auth: {
+    clientId: string;
+    secretId: string;
+  };
+}

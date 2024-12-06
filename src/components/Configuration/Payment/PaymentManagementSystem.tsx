@@ -101,7 +101,7 @@ const PaymentManagementSystem = () => {
   return (
     <>
       {contextHolder}
-      <h3>Payment Management System</h3>
+      <h3>Payments</h3>
       <Steps
         current={current}
         status='finish'

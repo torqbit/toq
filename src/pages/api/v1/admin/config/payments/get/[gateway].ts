@@ -3,22 +3,14 @@ import { withMethods } from "@/lib/api-middlewares/with-method";
 import { errorHandler } from "@/lib/api-middlewares/errorHandler";
 import { withUserAuthorized } from "@/lib/api-middlewares/with-authorized";
 import { PaymentManagemetService } from "@/services/payment/PaymentManagementService";
-import { GatewayConfig, paymentAuth, paymentInfo } from "@/types/payment";
-import { ConfigurationState } from "@prisma/client";
+import { paymentGatewayName } from "@/types/payment";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
-    const body = await req.body;
-    const paymentConfig = paymentInfo.parse(body);
+    const query = req.query;
+    const pg = paymentGatewayName.parse(query);
     const paymentManager = new PaymentManagemetService();
-    const gatewayConfig: GatewayConfig = {
-      name: paymentConfig.gateway,
-      paymentConfig: {
-        paymentMethods: paymentConfig.paymentMethods,
-        currency: paymentConfig.currency,
-      },
-    };
-    const result = await paymentManager.saveConfig(gatewayConfig, ConfigurationState.PAYMENT_CONFIGURED);
+    const result = await paymentManager.getGatewayConfig(pg.gateway);
     return res.status(result.status).json(result);
   } catch (error) {
     console.log(error);
@@ -26,4 +18,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default withMethods(["POST"], withUserAuthorized(handler));
+export default withMethods(["GET"], withUserAuthorized(handler));
