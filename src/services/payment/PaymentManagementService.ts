@@ -30,15 +30,19 @@ export class PaymentManagemetService {
         const cf = await prisma.serviceProvider.findUnique({
           select: {
             providerDetail: true,
+            state: true,
           },
           where: {
             service_type: this.serviceType,
             provider_name: gateway,
           },
         });
-        if (cf && cf.providerDetail) {
-          const config = cf.providerDetail;
-          return new APIResponse<any>(true, 200, "Succesfully fetched the gateway configuration", config);
+        console.log(cf);
+        if (cf) {
+          return new APIResponse<any>(true, 200, "Succesfully fetched the gateway configuration", {
+            state: cf.state,
+            config: cf.providerDetail,
+          });
         } else {
           return new APIResponse<any>(false, 404, "Failed to fetched the gateway configuration");
         }
@@ -104,8 +108,10 @@ export class PaymentManagemetService {
           });
         }
 
-        await secretStore.put(paymentsConstants.CF_CLIENT_ID, c.auth.clientId);
-        await secretStore.put(paymentsConstants.CF_CLIENT_SECRET, c.auth.secretId);
+        if (c.auth) {
+          await secretStore.put(paymentsConstants.CF_CLIENT_ID, c.auth.clientId);
+          await secretStore.put(paymentsConstants.CF_CLIENT_SECRET, c.auth.secretId);
+        }
         return new APIResponse<void>(true, 200, `Successfully saved the payments configuration`);
 
       default:
