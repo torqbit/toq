@@ -37,9 +37,9 @@ site:
         label: Contact Us
         link: mailto:support@torqbit.com
     banner:
-      lightModePath: /api/v1/admin/site/image/get/lightModePath.png
+      lightModePath: /api/v1/admin/site/image/get/1733479301748-lightModePath.png
       darkModePath: /img/landing/online-learning.png
-      position: right
+      position: bottom
   sections:
     feature:
       featureInfo:

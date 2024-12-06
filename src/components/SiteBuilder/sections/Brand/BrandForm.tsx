@@ -31,7 +31,7 @@ const BrandForm: FC<{
 }> = ({ updateSiteConfig, config }) => {
   const [form] = Form.useForm();
   const [brandConfig, setBrandConfig] = useState<IBrandConfig | undefined>(config.brand);
-  const [base64Images, setBase64Images] = useState<{ logo: string; icon: string }>({
+  const [brandImage, setBrandImage] = useState<{ logo: string; icon: string }>({
     logo: config.brand?.logo ? (config.brand.logo as string) : "",
     icon: config.brand?.icon ? (config.brand?.icon as string) : "",
   });
@@ -65,7 +65,7 @@ const BrandForm: FC<{
         const res = await postRes.json();
 
         if (res.success) {
-          setBase64Images({ ...base64Images, [imageType]: `/api/v1/admin/site/image/get/${res.imgName}` });
+          setBrandImage({ ...brandImage, [imageType]: `/api/v1/admin/site/image/get/${res.imgName}` });
           setBrandConfig({ ...brandConfig, [imageType]: `/api/v1/admin/site/image/get/${res.imgName}` });
         }
       }
@@ -157,7 +157,7 @@ const BrandForm: FC<{
       input: (
         <ImgCrop rotationSlider aspect={1 / 1}>
           <Upload showUploadList={false} maxCount={1} beforeUpload={(file: RcFile) => beforeUpload(file, "icon")}>
-            {base64Images.icon === "" ? (
+            {brandImage.icon === "" ? (
               <Button icon={<UploadOutlined />} style={{ width: 60, height: 60 }}></Button>
             ) : (
               <Tooltip title="Upload icon">
@@ -183,7 +183,7 @@ const BrandForm: FC<{
       input: (
         <ImgCrop rotationSlider aspect={2 / 1}>
           <Upload showUploadList={false} maxCount={1} beforeUpload={(file: RcFile) => beforeUpload(file, "logo")}>
-            {base64Images.logo === "" ? (
+            {brandImage.logo === "" ? (
               <Button icon={<UploadOutlined />} style={{ width: 100 }}>
                 Logo
               </Button>

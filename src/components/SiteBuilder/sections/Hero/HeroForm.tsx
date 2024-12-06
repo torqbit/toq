@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from "react";
 import styles from "./HeroForm.module.scss";
-import { Button, Divider, Flex, Form, FormInstance, Input, message, Radio, Tooltip, Upload } from "antd";
+import { Button, Divider, Flex, Form, Input, message, Radio, Tooltip, Upload } from "antd";
 import ConfigForm from "@/components/Configuration/ConfigForm";
 import { IConfigForm } from "@/components/Configuration/CMS/ContentManagementSystem";
 import { UploadOutlined } from "@ant-design/icons";
@@ -8,7 +8,7 @@ import { PageSiteConfig } from "@/services/siteConstant";
 import { IHeroConfig } from "@/types/schema";
 import Image from "next/image";
 import ImgCrop from "antd-img-crop";
-import { postFetch, postWithFile } from "@/services/request";
+import { postWithFile } from "@/services/request";
 import { getExtension } from "@/lib/utils";
 
 const HeroForm: FC<{
@@ -17,19 +17,10 @@ const HeroForm: FC<{
 }> = ({ updateSiteConfig, config }) => {
   const [form] = Form.useForm();
   const [heroConfig, setHeroConfig] = useState<IHeroConfig | undefined>(config.heroSection);
-  const [base64Images, setBase64Images] = useState<{ lightModePath: string; darkModePath: string }>({
+  const [heroImages, setHeroImages] = useState<{ lightModePath: string; darkModePath: string }>({
     lightModePath: heroConfig?.banner?.lightModePath ? heroConfig.banner.lightModePath : "",
     darkModePath: heroConfig?.banner?.darkModePath ? heroConfig.banner.darkModePath : "",
   });
-
-  const getBase64 = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = (error) => reject(error);
-    });
-  };
 
   const beforeUpload = async (file: File, mode: string) => {
     const getImageName = () => {
@@ -58,7 +49,7 @@ const HeroForm: FC<{
         const res = await postRes.json();
 
         if (res.success) {
-          setBase64Images({ ...base64Images, [mode]: `/api/v1/admin/site/image/get/${res.imgName}` });
+          setHeroImages({ ...heroImages, [mode]: `/api/v1/admin/site/image/get/${res.imgName}` });
           setHeroConfig({
             ...heroConfig,
             banner: { ...heroConfig?.banner, [mode]: `/api/v1/admin/site/image/get/${res.imgName}` },
@@ -185,7 +176,7 @@ const HeroForm: FC<{
         <Flex align="center" vertical gap={20}>
           <ImgCrop rotationSlider aspect={2 / 1}>
             <Upload maxCount={1} showUploadList={false} beforeUpload={(file) => beforeUpload(file, "lightModePath")}>
-              {base64Images.lightModePath === "" ? (
+              {heroImages.lightModePath === "" ? (
                 <Button icon={<UploadOutlined />} style={{ width: 240, height: 120 }}>
                   Light Hero banner
                 </Button>
@@ -205,7 +196,7 @@ const HeroForm: FC<{
           {config.darkMode && (
             <ImgCrop rotationSlider aspect={2 / 1}>
               <Upload maxCount={1} showUploadList={false} beforeUpload={(file) => beforeUpload(file, "darkModePath")}>
-                {base64Images.darkModePath === "" ? (
+                {heroImages.darkModePath === "" ? (
                   <Button icon={<UploadOutlined />} style={{ width: 240, height: 120 }}>
                     Dark Hero banner
                   </Button>

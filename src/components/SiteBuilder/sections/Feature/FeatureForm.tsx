@@ -87,7 +87,7 @@ const FeatureForm: FC<{
   const [form] = Form.useForm();
   const [featureConfig, setFeatureConfig] = useState<IFeatureInfo | undefined>(config?.sections?.feature?.featureInfo);
 
-  const [base64Images, setBase64Images] = useState<{ firstIcon: string; secondIcon: string; thirdIcon: string }>({
+  const [featureImages, setFeatureImages] = useState<{ firstIcon: string; secondIcon: string; thirdIcon: string }>({
     firstIcon: featureConfig?.featureList[0].img ? featureConfig?.featureList[0].img : "",
     secondIcon: featureConfig?.featureList[1].img ? featureConfig?.featureList[1].img : "",
     thirdIcon: featureConfig?.featureList[2].img ? featureConfig?.featureList[2].img : "",
@@ -109,7 +109,7 @@ const FeatureForm: FC<{
         const res = await postRes.json();
 
         if (res.success) {
-          setBase64Images({ ...base64Images, [imageType]: `/api/v1/admin/site/image/get/${res.imgName}` });
+          setFeatureImages({ ...featureImages, [imageType]: `/api/v1/admin/site/image/get/${res.imgName}` });
           handleFeatureChange(index, "img", `/api/v1/admin/site/image/get/${res.imgName}`);
         }
       }
@@ -152,7 +152,7 @@ const FeatureForm: FC<{
       imageType: "firstIcon",
       index: 0,
       imgPath: `${featureConfig?.featureList[0].img}`,
-      isIconExist: base64Images.firstIcon !== "",
+      isIconExist: featureImages.firstIcon !== "",
       handleFeatureConfig: handleFeatureChange,
       beforeUpload: beforeUpload,
     },
@@ -160,7 +160,7 @@ const FeatureForm: FC<{
       imageType: "secondIcon",
       index: 1,
       imgPath: `${featureConfig?.featureList[1].img}`,
-      isIconExist: base64Images.secondIcon !== "",
+      isIconExist: featureImages.secondIcon !== "",
       handleFeatureConfig: handleFeatureChange,
       beforeUpload: beforeUpload,
     },
@@ -168,7 +168,7 @@ const FeatureForm: FC<{
       imageType: "thirdIcon",
       index: 2,
       imgPath: `${featureConfig?.featureList[2].img}`,
-      isIconExist: base64Images.thirdIcon !== "",
+      isIconExist: featureImages.thirdIcon !== "",
       handleFeatureConfig: handleFeatureChange,
       beforeUpload: beforeUpload,
     },
