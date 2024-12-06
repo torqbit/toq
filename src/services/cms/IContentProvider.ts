@@ -1,4 +1,4 @@
-import { APIResponse, APIServerError } from "@/types/cms/apis";
+import { APIResponse, APIServerError } from "@/types/apis";
 import { ConfigurationState } from "@prisma/client";
 
 export type ICMSAuthConfig = {
@@ -21,9 +21,14 @@ export interface IContentProvider<T extends ICMSAuthConfig, U> {
     watermarkUrl?: string
   ): Promise<APIResponse<void>>;
 
-  saveCDNConfig(authConfig: T, brandName: string,
-    mainStorageRegion: string, replicatedRegions: string[]): Promise<APIResponse<void>>;
+  saveCDNConfig(authConfig: T, brandName: string, mainStorageRegion: string, replicatedRegions: string[]): Promise<APIResponse<void>>;
 
-  configureObjectStorage(authConfig: T, brandName: string,
-    mainStorageRegion: string, replicatedRegions: string[]): Promise<APIResponse<void>>;
+  configureObjectStorage(
+    authConfig: T,
+    brandName: string,
+    mainStorageRegion: string,
+    replicatedRegions: string[]
+  ): Promise<APIResponse<void>>;
+
+  uploadCDNImage(authConfig: T, cmsConfig: U): Promise<APIResponse<any>>;
 }
