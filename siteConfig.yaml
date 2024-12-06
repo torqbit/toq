@@ -10,7 +10,7 @@ site:
       - title: Blog
         link: /blog
   brand:
-    logo: /api/v1/admin/site/image/get/1733467647896-logo.png
+    logo: /static/1733490887414-logo.png
     description: Master the art of product building and turn your ideas into
       successful, scalable products
     ogImage: /icon/torqbit.png
@@ -22,7 +22,7 @@ site:
     name: Code Academy
     brandColor: "#f7bd7a"
     title: Spreads peace and harmony
-    icon: /api/v1/admin/site/image/get/icon.png
+    icon: /static/1733490117864-icon.png
   darkMode: true
   heroSection:
     title: The Awesomest teaching platform
@@ -37,22 +37,23 @@ site:
         label: Contact Us
         link: mailto:support@torqbit.com
     banner:
-      lightModePath: /api/v1/admin/site/image/get/1733479301748-lightModePath.png
+      lightModePath: /static/1733490938751-lightModePath.png
       darkModePath: /img/landing/online-learning.png
-      position: bottom
+      position: right
   sections:
     feature:
       featureInfo:
         featureList:
-          - img: /api/v1/admin/site/image/get/1733468158967-feature-firsticon.png
+          - img: /static/1733491007377-feature-firsticon.png
             title: hjjjh
             description: jjgk
             link: /docs/auth
+          - img: /static/1733490998141-feature-secondicon.png
             title: Authentication
             description: Configure authentication with Google, Github or any other auth
               provider supported by NextAuth
             link: /docs/auth
-          - img: /img/landing/auth.png
+          - img: /static/1733490987993-feature-thirdicon.png
             title: Email
             description: Configure authentication
         title: Features
