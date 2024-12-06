@@ -14,6 +14,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   if (params.imageName) {
     res.setHeader("Content-Type", "image/png");
     res.write(file);
+    res.end();
 
     return {
       props: {},

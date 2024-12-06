@@ -37,9 +37,9 @@ site:
         label: Contact Us
         link: mailto:support@torqbit.com
     banner:
-      lightModePath: /static/1733490938751-lightModePath.png
-      darkModePath: /img/landing/online-learning.png
-      position: right
+      lightModePath: /static/1733494112613-lightModePath.png
+      darkModePath: /static/1733494092015-darkModePath.png
+      position: background
   sections:
     feature:
       featureInfo:
@@ -53,7 +53,7 @@ site:
             description: Configure authentication with Google, Github or any other auth
               provider supported by NextAuth
             link: /docs/auth
-          - img: /static/1733490987993-feature-thirdicon.png
+          - img: /static/1733494176234-feature-thirdicon.jpg
             title: Email
             description: Configure authentication
         title: Features
