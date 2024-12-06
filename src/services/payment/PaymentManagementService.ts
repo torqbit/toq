@@ -1,4 +1,4 @@
-import { $Enums, paymentMode } from "@prisma/client";
+import { $Enums, ConfigurationState, paymentMode } from "@prisma/client";
 
 import prisma from "@/lib/prisma";
 import appConstant from "../appConstant";
@@ -11,10 +11,114 @@ import {
   CashFreeConfig,
   OrderDetail,
   OrderHistory,
+  CFPaymentsConfig,
 } from "@/types/payment";
 import { CashfreePaymentProvider } from "./CashfreePaymentProvider";
+import SecretsManager from "../secrets/SecretsManager";
+import { APIResponse } from "@/types/apis";
 
+export const paymentsConstants = {
+  CF_CLIENT_ID: "CLIENT_ID",
+  CF_CLIENT_SECRET: "CLIENT_SECRET",
+};
 export class PaymentManagemetService {
+  serviceType: string = "payments";
+
+  getGatewayConfig = async (gateway: string): Promise<APIResponse<any>> => {
+    switch (gateway) {
+      case $Enums.gatewayProvider.CASHFREE:
+        const cf = await prisma.serviceProvider.findUnique({
+          select: {
+            providerDetail: true,
+            state: true,
+          },
+          where: {
+            service_type: this.serviceType,
+            provider_name: gateway,
+          },
+        });
+        console.log(cf);
+        if (cf) {
+          return new APIResponse<any>(true, 200, "Succesfully fetched the gateway configuration", {
+            state: cf.state,
+            config: cf.providerDetail,
+          });
+        } else {
+          return new APIResponse<any>(false, 404, "Failed to fetched the gateway configuration");
+        }
+      default:
+        return new APIResponse<any>(false, 400, "No configuration found for the given payment gateway");
+    }
+  };
+
+  verifyConnection = async (gateway: string, clientId: string, clientSecret: string): Promise<APIResponse<void>> => {
+    switch (gateway) {
+      case $Enums.gatewayProvider.CASHFREE:
+        const cf = new CashfreePaymentProvider(clientId, clientSecret);
+        const result = await cf.testClientCredentials();
+        const success = result != 401;
+        const message =
+          result == 401 ? `Invalid crendentials. Check the credentials again` : `Succesfully authenticated with the given credentials.`;
+        if (success) {
+          //save the config
+          const cfConfig: CFPaymentsConfig = {
+            name: $Enums.gatewayProvider.CASHFREE,
+            auth: {
+              secretId: clientSecret,
+              clientId: clientId,
+            },
+          };
+          this.saveConfig(cfConfig, ConfigurationState.AUTHENTICATED);
+        }
+        return new APIResponse(result != 401, result, message, undefined, result == 401 ? message : undefined);
+
+      default:
+        throw new Error(`No implementation found for the payment gateway - ${gateway}`);
+    }
+  };
+
+  saveConfig = async (config: GatewayConfig, configurationState: ConfigurationState): Promise<APIResponse<void>> => {
+    switch (config.name) {
+      case $Enums.gatewayProvider.CASHFREE:
+        const c = config as CFPaymentsConfig;
+        const secretStore = SecretsManager.getSecretsProvider();
+        const count = await prisma.serviceProvider.count({
+          where: {
+            service_type: this.serviceType,
+          },
+        });
+        if (count > 0) {
+          await prisma.serviceProvider.updateMany({
+            data: {
+              providerDetail: c.paymentConfig,
+              state: configurationState,
+            },
+            where: {
+              service_type: this.serviceType,
+            },
+          });
+        } else {
+          await prisma.serviceProvider.create({
+            data: {
+              provider_name: $Enums.gatewayProvider.CASHFREE,
+              service_type: this.serviceType,
+              providerDetail: c.paymentConfig,
+              state: configurationState,
+            },
+          });
+        }
+
+        if (c.auth) {
+          await secretStore.put(paymentsConstants.CF_CLIENT_ID, c.auth.clientId);
+          await secretStore.put(paymentsConstants.CF_CLIENT_SECRET, c.auth.secretId);
+        }
+        return new APIResponse<void>(true, 200, `Successfully saved the payments configuration`);
+
+      default:
+        return new APIResponse<void>(false, 400, `Failed to save the payments configuration`, undefined, `Payment configuration not found`);
+    }
+  };
+
   getPaymentProvider = (config: GatewayConfig): PaymentServiceProvider => {
     switch (config.name) {
       case $Enums.gatewayProvider.CASHFREE:

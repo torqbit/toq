@@ -1,6 +1,6 @@
 import { BunnyClient } from "./BunnyClient";
 import { baseBunnyConfig, BunnyCMSConfig, BunnyConstants, VideoLibrary } from "@/types/cms/bunny";
-import { apiConstants, APIResponse, APIServerError } from "@/types/cms/apis";
+import { apiConstants, APIResponse, APIServerError } from "@/types/apis";
 import { ICMSAuthConfig, IContentProvider } from "../IContentProvider";
 import { ConfigurationState } from "@prisma/client";
 import SecretsManager from "@/services/secrets/SecretsManager";
@@ -350,5 +350,13 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
     } else {
       return new APIResponse(false, 400, "No configuration found for the content management system");
     }
+  }
+
+  async uploadCDNImage(authConfig: BunnyAuthConfig, cmsConfig: BunnyCMSConfig): Promise<APIResponse<any>> {
+    //get the storage password
+    const storagePassword = await secretsStore.get(cmsConfig.cdnStoragePasswordRef);
+    if (storagePassword) {
+    }
+    throw new Error("Method not implemented.");
   }
 }

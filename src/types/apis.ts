@@ -30,5 +30,5 @@ export class APIResponse<T> {
 
 export const apiConstants = {
   successMessage: "Successfully received the response",
-  failedResponse: new APIResponse<void>(false, 400, "Failed to connect with the service"),
+  failedResponse: new APIResponse<void>(false, 400, "Failed to establish connection with the service"),
 };

@@ -1,5 +1,5 @@
 import { postFetch } from "@/services/request";
-import { APIResponse } from "@/types/cms/apis";
+import { APIResponse } from "@/types/apis";
 import { BunnyCMSConfig, StorageConfig } from "@/types/cms/bunny";
 import { ConfigurationState } from "@prisma/client";
 

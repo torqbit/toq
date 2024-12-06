@@ -1,5 +1,5 @@
 import { createSlug } from "@/lib/utils";
-import { apiConstants, APIResponse, APIServerError } from "@/types/cms/apis";
+import { apiConstants, APIResponse, APIServerError } from "@/types/apis";
 import { BunnyRequestError, PullZone, StorageZone, VideoLibrary, VideoLibraryResponse } from "@/types/cms/bunny";
 import sharp from "sharp";
 

@@ -15,7 +15,7 @@ const ConfigurationSettings: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig 
     },
     {
       key: "PMS",
-      label: "Payment Management System",
+      label: "Payments",
       children: <PaymentManagementSystem />,
     },
   ];

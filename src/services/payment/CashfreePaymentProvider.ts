@@ -8,17 +8,25 @@ export class CashfreePaymentProvider implements PaymentServiceProvider {
   name: string = String(process.env.GATEWAY_PROVIDER_NAME);
   clientId: string;
   secretId: string;
+  apiVersion: string = "2023-08-01";
 
   constructor(clientId: string, secretId: string) {
     this.clientId = clientId;
     this.secretId = secretId;
   }
 
-  async processPendingPayment(
-    orderId: string,
-    userConfig: UserConfig,
-    courseConfig: CoursePaymentConfig
-  ): Promise<PaymentApiResponse> {
+  async testClientCredentials(): Promise<number> {
+    Cashfree.XClientId = this.clientId;
+    Cashfree.XClientSecret = this.secretId;
+    try {
+      const response = await Cashfree.PGFetchOrder(this.apiVersion, "test-123");
+      return response.status;
+    } catch (error) {
+      return (error as any).response.status;
+    }
+  }
+
+  async processPendingPayment(orderId: string, userConfig: UserConfig, courseConfig: CoursePaymentConfig): Promise<PaymentApiResponse> {
     let currentTime = new Date();
     const orderDetail = await prisma.order.findUnique({
       where: {
@@ -65,11 +73,7 @@ export class CashfreePaymentProvider implements PaymentServiceProvider {
 
       let orderCreatedTime = orderDetail?.createdAt.getTime();
 
-      if (
-        cashfreeOrderDetail &&
-        cashfreeOrderDetail.sessionExpiry &&
-        cashfreeOrderDetail.sessionExpiry.getTime() < currentTime.getTime()
-      ) {
+      if (cashfreeOrderDetail && cashfreeOrderDetail.sessionExpiry && cashfreeOrderDetail.sessionExpiry.getTime() < currentTime.getTime()) {
         await prisma.order.update({
           where: {
             id: orderId,
@@ -131,11 +135,7 @@ export class CashfreePaymentProvider implements PaymentServiceProvider {
     }
   }
 
-  async createOrder(
-    orderId: string,
-    userConfig: UserConfig,
-    courseConfig: CoursePaymentConfig
-  ): Promise<PaymentApiResponse> {
+  async createOrder(orderId: string, userConfig: UserConfig, courseConfig: CoursePaymentConfig): Promise<PaymentApiResponse> {
     try {
       const cashfreeOrderDetail = await prisma.cashfreeOrder.create({
         data: {
@@ -260,11 +260,7 @@ export class CashfreePaymentProvider implements PaymentServiceProvider {
     }
   }
 
-  async purchaseCourse(
-    courseConfig: CoursePaymentConfig,
-    userConfig: UserConfig,
-    orderId: string
-  ): Promise<PaymentApiResponse> {
+  async purchaseCourse(courseConfig: CoursePaymentConfig, userConfig: UserConfig, orderId: string): Promise<PaymentApiResponse> {
     let currentTime = new Date();
     const orderDetail = await prisma.order.findUnique({
       where: {

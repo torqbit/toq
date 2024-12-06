@@ -2,7 +2,6 @@ import { NextApiResponse, NextApiRequest } from "next";
 import { withMethods } from "@/lib/api-middlewares/with-method";
 import { errorHandler } from "@/lib/api-middlewares/errorHandler";
 import { z } from "zod";
-import { APIServerError } from "@/types/cms/apis";
 import { ContentManagementService } from "@/services/cms/ContentManagementService";
 import { withUserAuthorized } from "@/lib/api-middlewares/with-authorized";
 
