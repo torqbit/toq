@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from "react";
 import styles from "./HeroForm.module.scss";
-import { Button, Divider, Flex, Form, FormInstance, Input, message, Radio, Upload } from "antd";
+import { Button, Divider, Flex, Form, FormInstance, Input, message, Radio, Tooltip, Upload } from "antd";
 import ConfigForm from "@/components/Configuration/ConfigForm";
 import { IConfigForm } from "@/components/Configuration/CMS/ContentManagementSystem";
 import { UploadOutlined } from "@ant-design/icons";
@@ -8,6 +8,8 @@ import { PageSiteConfig } from "@/services/siteConstant";
 import { IHeroConfig } from "@/types/schema";
 import Image from "next/image";
 import ImgCrop from "antd-img-crop";
+import { postFetch, postWithFile } from "@/services/request";
+import { getExtension } from "@/lib/utils";
 
 const HeroForm: FC<{
   config: PageSiteConfig;
@@ -30,10 +32,39 @@ const HeroForm: FC<{
   };
 
   const beforeUpload = async (file: File, mode: string) => {
+    const getImageName = () => {
+      if (mode === "lightModePath") {
+        const name = heroConfig?.banner?.lightModePath?.split("/").pop();
+        return name as string;
+      } else if (mode === "darkModePath") {
+        const name = heroConfig?.banner?.darkModePath?.split("/").pop();
+        return name as string;
+      } else {
+        return "";
+      }
+    };
     try {
-      const base64 = await getBase64(file);
-      setBase64Images({ ...base64Images, [mode]: base64 });
-      setHeroConfig({ ...heroConfig, banner: { ...heroConfig?.banner, [mode]: base64 } });
+      if (file) {
+        const imgName = `${mode}.${getExtension(file.name)}`;
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("imgName", imgName);
+        formData.append("previousPath", getImageName());
+
+        const postRes = await postWithFile(formData, `/api/v1/admin/site/image/save`);
+        if (!postRes.ok) {
+          throw new Error("Failed to upload file");
+        }
+        const res = await postRes.json();
+
+        if (res.success) {
+          setBase64Images({ ...base64Images, [mode]: `/api/v1/admin/site/image/get/${res.imgName}` });
+          setHeroConfig({
+            ...heroConfig,
+            banner: { ...heroConfig?.banner, [mode]: `/api/v1/admin/site/image/get/${res.imgName}` },
+          });
+        }
+      }
     } catch (error) {
       message.error(`Error uploading file: ${file.name}`);
     }
@@ -115,6 +146,7 @@ const HeroForm: FC<{
               placeholder="Add label"
             />
             <Input
+              defaultValue={config.heroSection?.actionButtons?.primary?.link}
               addonBefore="https://"
               onChange={(e) => {
                 onUpdateHeroConfig(`/${e.currentTarget.value}`, "actionButtons.primary.link");
@@ -132,6 +164,7 @@ const HeroForm: FC<{
               placeholder="Add label"
             />
             <Input
+              defaultValue={config.heroSection?.actionButtons?.secondary?.link}
               addonBefore="https://"
               onChange={(e) => {
                 onUpdateHeroConfig(`/${e.currentTarget.value}`, "actionButtons.secondary.link");
@@ -149,7 +182,7 @@ const HeroForm: FC<{
 
       description: "The hero image should be  at least 1200 x 600px.",
       input: (
-        <Flex align="center" vertical gap={10}>
+        <Flex align="center" vertical gap={20}>
           <ImgCrop rotationSlider aspect={2 / 1}>
             <Upload maxCount={1} showUploadList={false} beforeUpload={(file) => beforeUpload(file, "lightModePath")}>
               {base64Images.lightModePath === "" ? (
@@ -157,13 +190,15 @@ const HeroForm: FC<{
                   Light Hero banner
                 </Button>
               ) : (
-                <Image
-                  src={`${heroConfig?.banner?.lightModePath}`}
-                  height={120}
-                  width={240}
-                  alt="image"
-                  style={{ cursor: "pointer" }}
-                />
+                <Tooltip title="Upload light mode banner">
+                  <Image
+                    src={`${heroConfig?.banner?.lightModePath}`}
+                    height={120}
+                    width={240}
+                    alt="image"
+                    style={{ cursor: "pointer" }}
+                  />
+                </Tooltip>
               )}
             </Upload>
           </ImgCrop>
@@ -175,13 +210,15 @@ const HeroForm: FC<{
                     Dark Hero banner
                   </Button>
                 ) : (
-                  <Image
-                    src={`${heroConfig?.banner?.darkModePath}`}
-                    height={120}
-                    width={240}
-                    alt="image"
-                    style={{ cursor: "pointer" }}
-                  />
+                  <Tooltip title="Upload dark mode banner">
+                    <Image
+                      src={`${heroConfig?.banner?.darkModePath}`}
+                      height={120}
+                      width={240}
+                      alt="image"
+                      style={{ cursor: "pointer" }}
+                    />
+                  </Tooltip>
                 )}
               </Upload>
             </ImgCrop>

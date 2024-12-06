@@ -1,6 +1,18 @@
 import { FC, useEffect, useState } from "react";
 import styles from "./BrandForm.module.scss";
-import { Button, ColorPicker, Divider, Flex, Form, FormInstance, Input, message, Segmented, Upload } from "antd";
+import {
+  Button,
+  ColorPicker,
+  Divider,
+  Flex,
+  Form,
+  FormInstance,
+  Input,
+  message,
+  Segmented,
+  Tooltip,
+  Upload,
+} from "antd";
 import ConfigForm from "@/components/Configuration/ConfigForm";
 import { IConfigForm } from "@/components/Configuration/CMS/ContentManagementSystem";
 import { UploadOutlined } from "@ant-design/icons";
@@ -10,6 +22,8 @@ import { RcFile } from "antd/es/upload";
 import Image from "next/image";
 import ImgCrop from "antd-img-crop";
 import SvgIcons from "@/components/SvgIcons";
+import { getFetch, postFetch, postWithFile } from "@/services/request";
+import { getExtension } from "@/lib/utils";
 
 const BrandForm: FC<{
   config: PageSiteConfig;
@@ -23,21 +37,38 @@ const BrandForm: FC<{
   });
   const [selectedSegment, setSelectedSegment] = useState<string>("discord");
 
-  // Convert file to Base64
-  const getBase64 = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = (error) => reject(error);
-    });
-  };
-
   const beforeUpload = async (file: File, imageType: string) => {
+    const getImageName = () => {
+      if (imageType === "icon" && typeof brandConfig?.icon === "string") {
+        const name = brandConfig.icon.split("/").pop();
+        return name as string;
+      } else if (imageType === "logo" && typeof brandConfig?.logo === "string") {
+        const name = brandConfig.logo.split("/").pop();
+        return name as string;
+      } else {
+        return "";
+      }
+    };
+
     try {
-      const base64 = await getBase64(file);
-      setBase64Images({ ...base64Images, [imageType]: base64 });
-      setBrandConfig({ ...brandConfig, [imageType]: base64 });
+      if (file) {
+        const imgName = `${imageType}.${getExtension(file.name)}`;
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("imgName", imgName);
+        formData.append("previousPath", getImageName());
+
+        const postRes = await postWithFile(formData, `/api/v1/admin/site/image/save`);
+        if (!postRes.ok) {
+          throw new Error("Failed to upload file");
+        }
+        const res = await postRes.json();
+
+        if (res.success) {
+          setBase64Images({ ...base64Images, [imageType]: `/api/v1/admin/site/image/get/${res.imgName}` });
+          setBrandConfig({ ...brandConfig, [imageType]: `/api/v1/admin/site/image/get/${res.imgName}` });
+        }
+      }
     } catch (error) {
       message.error(`Error uploading file: ${file.name}`);
     }
@@ -129,13 +160,15 @@ const BrandForm: FC<{
             {base64Images.icon === "" ? (
               <Button icon={<UploadOutlined />} style={{ width: 60, height: 60 }}></Button>
             ) : (
-              <Image
-                src={`${brandConfig?.icon}`}
-                height={60}
-                width={60}
-                alt="image"
-                style={{ cursor: "pointer", border: "1px solid var(--border-color)" }}
-              />
+              <Tooltip title="Upload icon">
+                <Image
+                  src={`${brandConfig?.icon}`}
+                  height={60}
+                  width={60}
+                  alt="image"
+                  style={{ cursor: "pointer", border: "1px solid var(--border-color)" }}
+                />
+              </Tooltip>
             )}
           </Upload>
         </ImgCrop>
@@ -155,7 +188,15 @@ const BrandForm: FC<{
                 Logo
               </Button>
             ) : (
-              <Image src={`${brandConfig?.logo}`} height={100} width={200} alt="image" style={{ cursor: "pointer" }} />
+              <Tooltip title="Upload logo">
+                <Image
+                  src={`${brandConfig?.logo}`}
+                  height={100}
+                  width={200}
+                  alt="image"
+                  style={{ cursor: "pointer" }}
+                />
+              </Tooltip>
             )}
           </Upload>
         </ImgCrop>

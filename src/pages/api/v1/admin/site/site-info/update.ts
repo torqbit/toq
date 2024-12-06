@@ -10,8 +10,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const { config } = req.body;
 
-    console.log(config, "d");
-
     const filePath = "./siteConfig.yaml";
 
     const updatedYamlContent = YAML.stringify({ site: config });

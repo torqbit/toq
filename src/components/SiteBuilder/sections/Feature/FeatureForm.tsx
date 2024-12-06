@@ -1,6 +1,18 @@
 import { FC, useEffect, useState } from "react";
 import styles from "./FeatureForm.module.scss";
-import { Button, ColorPicker, Divider, Flex, Form, FormInstance, Input, message, Segmented, Upload } from "antd";
+import {
+  Button,
+  ColorPicker,
+  Divider,
+  Flex,
+  Form,
+  FormInstance,
+  Input,
+  message,
+  Segmented,
+  Tooltip,
+  Upload,
+} from "antd";
 import ConfigForm from "@/components/Configuration/ConfigForm";
 import { IConfigForm } from "@/components/Configuration/CMS/ContentManagementSystem";
 import { IFeatureCard, IFeatureInfo } from "@/types/landing/feature";
@@ -9,6 +21,64 @@ import ImgCrop from "antd-img-crop";
 import { UploadOutlined } from "@ant-design/icons";
 import { RcFile } from "antd/es/upload";
 import Image from "next/image";
+import { createSlug, getExtension } from "@/lib/utils";
+import { postWithFile } from "@/services/request";
+
+const AddFeatureForm: FC<{
+  imageType: string;
+  index: number;
+  imgPath: string;
+  isIconExist: boolean;
+  beforeUpload: (file: RcFile, imageType: string, index: number) => void;
+  handleFeatureChange: (index: number, key: string, value: string) => void;
+}> = ({ beforeUpload, handleFeatureChange, imageType, index, imgPath, isIconExist }) => {
+  return (
+    <div className={styles.feature__card__form}>
+      <ImgCrop rotationSlider aspect={1 / 1}>
+        <Upload
+          showUploadList={false}
+          maxCount={1}
+          beforeUpload={(file: RcFile) => beforeUpload(file, imageType, index)}
+        >
+          {!isIconExist ? (
+            <Button icon={<UploadOutlined />} style={{ width: 60 }}>
+              Logo
+            </Button>
+          ) : (
+            <Tooltip title="Upload icon">
+              <Image src={`${imgPath}`} height={60} width={60} alt="image" style={{ cursor: "pointer" }} />
+            </Tooltip>
+          )}
+        </Upload>
+      </ImgCrop>
+      <Form.Item name={`title_${index}`}>
+        <Input
+          onChange={(e) => {
+            handleFeatureChange(index, "title", e.currentTarget.value);
+          }}
+          placeholder="Add  title "
+        />
+      </Form.Item>
+      <Form.Item name={`description_${index}`}>
+        <Input
+          onChange={(e) => {
+            handleFeatureChange(index, "description", e.currentTarget.value);
+          }}
+          placeholder="Add  description "
+        />
+      </Form.Item>
+      <Form.Item name={`link_${index}`}>
+        <Input
+          addonBefore={"https://"}
+          onChange={(e) => {
+            handleFeatureChange(index, "link", `/${e.currentTarget.value}`);
+          }}
+          placeholder="Add  link "
+        />
+      </Form.Item>
+    </div>
+  );
+};
 
 const FeatureForm: FC<{
   config: PageSiteConfig;
@@ -23,88 +93,48 @@ const FeatureForm: FC<{
     thirdIcon: featureConfig?.featureList[2].img ? featureConfig?.featureList[2].img : "",
   });
 
-  const getBase64 = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = (error) => reject(error);
+  const beforeUpload = async (file: File, imageType: string, index: number) => {
+    try {
+      if (file) {
+        const imgName = `feature-${createSlug(imageType)}.${getExtension(file.name)}`;
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("imgName", imgName);
+        formData.append("previousPath", featureConfig?.featureList[index].img.split("/").pop() as string);
+
+        const postRes = await postWithFile(formData, `/api/v1/admin/site/image/save`);
+        if (!postRes.ok) {
+          throw new Error("Failed to upload file");
+        }
+        const res = await postRes.json();
+
+        if (res.success) {
+          setBase64Images({ ...base64Images, [imageType]: `/api/v1/admin/site/image/get/${res.imgName}` });
+          handleFeatureChange(index, "img", `/api/v1/admin/site/image/get/${res.imgName}`);
+        }
+      }
+    } catch (error) {
+      message.error(`Error uploading file: ${file.name}`);
+    }
+    return false;
+  };
+
+  const handleFeatureChange = (index: number, key: string, value: string) => {
+    setFeatureConfig((prevTheme: any) => {
+      const updatedFeatureList = [...prevTheme.featureList];
+      updatedFeatureList[index] = {
+        ...updatedFeatureList[index],
+        [key]: value,
+      };
+
+      return {
+        ...prevTheme,
+
+        featureList: updatedFeatureList,
+      };
     });
   };
 
-  const beforeUploadFirstIcon = async (file: File) => {
-    try {
-      const base64 = await getBase64(file);
-      setBase64Images({ ...base64Images, firstIcon: base64 });
-      setFeatureConfig({
-        ...featureConfig,
-        featureList: [
-          {
-            ...featureConfig?.featureList[0],
-            img: base64,
-          },
-          {
-            ...featureConfig?.featureList[1],
-          },
-          {
-            ...featureConfig?.featureList[2],
-          },
-        ],
-      } as IFeatureInfo);
-    } catch (error) {
-      message.error(`Error uploading file: ${file.name}`);
-    }
-    return false;
-  };
-
-  const beforeUploadSecondIcon = async (file: File) => {
-    try {
-      const base64 = await getBase64(file);
-      setBase64Images({ ...base64Images, secondIcon: base64 });
-      setFeatureConfig({
-        ...featureConfig,
-        featureList: [
-          {
-            ...featureConfig?.featureList[0],
-          },
-          {
-            ...featureConfig?.featureList[1],
-            img: base64,
-          },
-          {
-            ...featureConfig?.featureList[2],
-          },
-        ],
-      } as IFeatureInfo);
-    } catch (error) {
-      message.error(`Error uploading file: ${file.name}`);
-    }
-    return false;
-  };
-  const beforeUploadThirdIcon = async (file: File) => {
-    try {
-      const base64 = await getBase64(file);
-      setBase64Images({ ...base64Images, thirdIcon: base64 });
-      setFeatureConfig({
-        ...featureConfig,
-        featureList: [
-          {
-            ...featureConfig?.featureList[0],
-          },
-          {
-            ...featureConfig?.featureList[1],
-          },
-          {
-            ...featureConfig?.featureList[2],
-            img: base64,
-          },
-        ],
-      } as IFeatureInfo);
-    } catch (error) {
-      message.error(`Error uploading file: ${file.name}`);
-    }
-    return false;
-  };
   useEffect(() => {
     updateSiteConfig({
       ...config,
@@ -116,6 +146,50 @@ const FeatureForm: FC<{
       },
     });
   }, [featureConfig]);
+
+  const addFeatureList = [
+    {
+      imageType: "firstIcon",
+      index: 0,
+      imgPath: `${featureConfig?.featureList[0].img}`,
+      isIconExist: base64Images.firstIcon !== "",
+      handleFeatureConfig: handleFeatureChange,
+      beforeUpload: beforeUpload,
+    },
+    {
+      imageType: "secondIcon",
+      index: 1,
+      imgPath: `${featureConfig?.featureList[1].img}`,
+      isIconExist: base64Images.secondIcon !== "",
+      handleFeatureConfig: handleFeatureChange,
+      beforeUpload: beforeUpload,
+    },
+    {
+      imageType: "thirdIcon",
+      index: 2,
+      imgPath: `${featureConfig?.featureList[2].img}`,
+      isIconExist: base64Images.thirdIcon !== "",
+      handleFeatureConfig: handleFeatureChange,
+      beforeUpload: beforeUpload,
+    },
+  ];
+
+  let initialValues = {
+    title: config.sections?.feature?.featureInfo?.title,
+    description: config.sections?.feature?.featureInfo?.description,
+    title_0: config.sections?.feature?.featureInfo?.featureList[0].title,
+    description_0: config.sections?.feature?.featureInfo?.featureList[0].description,
+    link_0: config.sections?.feature?.featureInfo?.featureList[0].link,
+
+    title_1: config.sections?.feature?.featureInfo?.featureList[1].title,
+    description_1: config.sections?.feature?.featureInfo?.featureList[1].description,
+    link_1: config.sections?.feature?.featureInfo?.featureList[1].link,
+
+    title_2: config.sections?.feature?.featureInfo?.featureList[2].title,
+    description_2: config.sections?.feature?.featureInfo?.featureList[2].description,
+    link_2: config.sections?.feature?.featureInfo?.featureList[2].link,
+  };
+
   const featureItems: IConfigForm[] = [
     {
       title: "Feature Title",
@@ -154,246 +228,19 @@ const FeatureForm: FC<{
       layout: "vertical",
       input: (
         <Flex vertical gap={10}>
-          <div className={styles.feature__card__form}>
-            <ImgCrop rotationSlider aspect={1 / 1}>
-              <Upload showUploadList={false} maxCount={1} beforeUpload={(file: RcFile) => beforeUploadFirstIcon(file)}>
-                {base64Images.firstIcon === "" ? (
-                  <Button icon={<UploadOutlined />} style={{ width: 60 }}>
-                    Logo
-                  </Button>
-                ) : (
-                  <Image
-                    src={`${featureConfig?.featureList[0].img}`}
-                    height={60}
-                    width={60}
-                    alt="image"
-                    style={{ cursor: "pointer" }}
-                  />
-                )}
-              </Upload>
-            </ImgCrop>
-            <Input
-              onChange={(e) => {
-                setFeatureConfig({
-                  ...featureConfig,
-                  featureList: [
-                    {
-                      ...featureConfig?.featureList[0],
-                      title: e.currentTarget.value,
-                    },
-                    {
-                      ...featureConfig?.featureList[1],
-                    },
-                    {
-                      ...featureConfig?.featureList[2],
-                    },
-                  ],
-                } as IFeatureInfo);
-              }}
-              placeholder="Add  title "
-            />
-            <Input
-              onChange={(e) => {
-                setFeatureConfig({
-                  ...featureConfig,
-                  featureList: [
-                    {
-                      ...featureConfig?.featureList[0],
-                      description: e.currentTarget.value,
-                    },
-                    {
-                      ...featureConfig?.featureList[1],
-                    },
-                    {
-                      ...featureConfig?.featureList[2],
-                    },
-                  ],
-                } as IFeatureInfo);
-              }}
-              placeholder="Add  description "
-            />
-            <Input
-              addonBefore={"https://"}
-              onChange={(e) => {
-                setFeatureConfig({
-                  ...featureConfig,
-                  featureList: [
-                    {
-                      ...featureConfig?.featureList[0],
-                      link: `/${e.currentTarget.value}`,
-                    },
-                    {
-                      ...featureConfig?.featureList[1],
-                    },
-                    {
-                      ...featureConfig?.featureList[2],
-                    },
-                  ],
-                } as IFeatureInfo);
-              }}
-              placeholder="Add  link "
-            />
-          </div>
-          <div className={styles.feature__card__form}>
-            <ImgCrop rotationSlider aspect={1 / 1}>
-              <Upload showUploadList={false} maxCount={1} beforeUpload={(file: RcFile) => beforeUploadSecondIcon(file)}>
-                {base64Images.firstIcon === "" ? (
-                  <Button icon={<UploadOutlined />} style={{ width: 60 }}>
-                    Logo
-                  </Button>
-                ) : (
-                  <Image
-                    src={`${featureConfig?.featureList[1].img}`}
-                    height={60}
-                    width={60}
-                    alt="image"
-                    style={{ cursor: "pointer" }}
-                  />
-                )}
-              </Upload>
-            </ImgCrop>
-            <Input
-              onChange={(e) => {
-                setFeatureConfig({
-                  ...featureConfig,
-                  featureList: [
-                    {
-                      ...featureConfig?.featureList[0],
-                    },
-                    {
-                      ...featureConfig?.featureList[1],
-                      title: e.currentTarget.value,
-                    },
-                    {
-                      ...featureConfig?.featureList[2],
-                    },
-                  ],
-                } as IFeatureInfo);
-              }}
-              placeholder="Add  title "
-            />
-            <Input
-              onChange={(e) => {
-                setFeatureConfig({
-                  ...featureConfig,
-                  featureList: [
-                    {
-                      ...featureConfig?.featureList[0],
-                    },
-                    {
-                      ...featureConfig?.featureList[1],
-                      description: e.currentTarget.value,
-                    },
-                    {
-                      ...featureConfig?.featureList[2],
-                    },
-                  ],
-                } as IFeatureInfo);
-              }}
-              placeholder="Add  description "
-            />
-            <Input
-              addonBefore={"https://"}
-              onChange={(e) => {
-                setFeatureConfig({
-                  ...featureConfig,
-                  featureList: [
-                    {
-                      ...featureConfig?.featureList[0],
-                    },
-                    {
-                      ...featureConfig?.featureList[1],
-                      link: `/${e.currentTarget.value}`,
-                    },
-                    {
-                      ...featureConfig?.featureList[2],
-                    },
-                  ],
-                } as IFeatureInfo);
-              }}
-              placeholder="Add  link "
-            />
-          </div>
-          <div className={styles.feature__card__form}>
-            <ImgCrop rotationSlider aspect={1 / 1}>
-              <Upload showUploadList={false} maxCount={1} beforeUpload={(file: RcFile) => beforeUploadThirdIcon(file)}>
-                {base64Images.firstIcon === "" ? (
-                  <Button icon={<UploadOutlined />} style={{ width: 60 }}>
-                    Logo
-                  </Button>
-                ) : (
-                  <Image
-                    src={`${featureConfig?.featureList[2].img}`}
-                    height={60}
-                    width={60}
-                    alt="image"
-                    style={{ cursor: "pointer" }}
-                  />
-                )}
-              </Upload>
-            </ImgCrop>
-            <Input
-              onChange={(e) => {
-                setFeatureConfig({
-                  ...featureConfig,
-                  featureList: [
-                    {
-                      ...featureConfig?.featureList[0],
-                    },
-                    {
-                      ...featureConfig?.featureList[1],
-                    },
-                    {
-                      ...featureConfig?.featureList[2],
-                      title: e.currentTarget.value,
-                    },
-                  ],
-                } as IFeatureInfo);
-              }}
-              placeholder="Add  title "
-            />
-            <Input
-              onChange={(e) => {
-                setFeatureConfig({
-                  ...featureConfig,
-                  featureList: [
-                    {
-                      ...featureConfig?.featureList[0],
-                    },
-                    {
-                      ...featureConfig?.featureList[1],
-                    },
-                    {
-                      ...featureConfig?.featureList[2],
-                      description: e.currentTarget.value,
-                    },
-                  ],
-                } as IFeatureInfo);
-              }}
-              placeholder="Add  description "
-            />
-            <Input
-              addonBefore={"https://"}
-              onChange={(e) => {
-                setFeatureConfig({
-                  ...featureConfig,
-                  featureList: [
-                    {
-                      ...featureConfig?.featureList[0],
-                    },
-                    {
-                      ...featureConfig?.featureList[1],
-                      link: `/${e.currentTarget.value}`,
-                    },
-                    {
-                      ...featureConfig?.featureList[2],
-                    },
-                  ],
-                } as IFeatureInfo);
-              }}
-              placeholder="Add  link "
-            />
-          </div>
+          {addFeatureList.map((list, i) => {
+            return (
+              <AddFeatureForm
+                key={i}
+                imageType={list.imageType}
+                index={list.index}
+                imgPath={list.imgPath}
+                isIconExist={list.isIconExist}
+                beforeUpload={list.beforeUpload}
+                handleFeatureChange={list.handleFeatureConfig}
+              />
+            );
+          })}
         </Flex>
       ),
       inputName: "",
@@ -402,14 +249,7 @@ const FeatureForm: FC<{
 
   return (
     <div className={styles.feature__wrapper}>
-      <Form
-        form={form}
-        requiredMark={false}
-        initialValues={{
-          title: config.sections?.feature?.featureInfo?.title,
-          description: config.sections?.feature?.featureInfo?.description,
-        }}
-      >
+      <Form form={form} requiredMark={false} initialValues={initialValues}>
         {featureItems.map((item, i) => {
           return (
             <>

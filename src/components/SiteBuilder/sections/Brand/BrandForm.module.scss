@@ -9,6 +9,10 @@
     border: 1px solid var(--border-color);
     background-color: var(--bg-primary);
     border-radius: 4px;
+    transition: all 0.4s ease-in;
+    &:hover {
+      border: 1px solid var(--btn-primary);
+    }
   }
   .segment {
     background-color: var(--bg-segment);
