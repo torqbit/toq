@@ -28,24 +28,6 @@ const SiteBuilder: FC<{
     );
   };
 
-  const enableCourse = (value: boolean) => {
-    updateSiteConfig({
-      ...config,
-      sections: {
-        ...config.sections,
-        courses: { ...config.sections?.courses, enable: value },
-      },
-    });
-  };
-  const enableBlog = (value: boolean) => {
-    updateSiteConfig({
-      ...config,
-      sections: {
-        ...config.sections,
-        blog: { ...config.sections?.blog, enable: value },
-      },
-    });
-  };
   const items: CollapseProps["items"] = [
     {
       key: "1",

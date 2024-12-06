@@ -17,8 +17,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       cookieName,
     });
 
-    console.log(eventId);
-
     const isRegistered = await prisma.eventRegistration.findUnique({
       where: {
         eventId_email: {
@@ -31,8 +29,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         status: true,
       },
     });
-
-    console.log(isRegistered);
 
     if (isRegistered) {
       return res.status(200).json({ success: true, eventRegistered: true, status: isRegistered.status });

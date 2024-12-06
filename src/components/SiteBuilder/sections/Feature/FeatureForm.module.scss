@@ -4,6 +4,19 @@
   h4 {
     margin: 0;
   }
+
+  img {
+    cursor: pointer;
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-primary);
+    border-radius: 4px;
+    padding: 5px;
+    transition: all 0.4s ease-in;
+    &:hover {
+      border: 1px solid var(--btn-primary);
+    }
+  }
+
   .feature__card__form {
     border: 1px solid var(--border-color);
 
