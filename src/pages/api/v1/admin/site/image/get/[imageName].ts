@@ -11,7 +11,6 @@ import appConstant from "@/services/appConstant";
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const { imageName } = req.query;
-    console.log(imageName, "name");
     const filePath = path.join(os.homedir(), `${appConstant.homeDirName}/static/${imageName}`);
 
     if (!fs.existsSync(filePath)) {
@@ -23,7 +22,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     res.setHeader("Content-Type", "image/png");
     res.status(200).send(file);
   } catch (error) {
-    console.log(error, "error");
     errorHandler(error, res);
   }
 };
