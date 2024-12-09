@@ -27,7 +27,11 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
 
   if (user && params) {
     if (user.role == Role.ADMIN) {
-      return { props: {} };
+      return {
+        props: {
+          siteConfig: site,
+        },
+      };
     } else if (user.role === Role.AUTHOR) {
       const courseDetail = await prisma?.course.findUnique({
         where: {

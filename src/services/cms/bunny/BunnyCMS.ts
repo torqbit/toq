@@ -2,8 +2,11 @@ import { BunnyClient } from "./BunnyClient";
 import { baseBunnyConfig, BunnyCMSConfig, BunnyConstants, VideoLibrary } from "@/types/cms/bunny";
 import { apiConstants, APIResponse, APIServerError } from "@/types/apis";
 import { ICMSAuthConfig, IContentProvider } from "../IContentProvider";
-import { ConfigurationState } from "@prisma/client";
+import { ConfigurationState, VideoState } from "@prisma/client";
 import SecretsManager from "@/services/secrets/SecretsManager";
+import { VideoAPIResponse, VideoInfo } from "@/types/courses/Course";
+import { StaticFileCategory, VideoObjectType } from "@/types/cms/common";
+import prisma from "@/lib/prisma";
 
 export interface BunnyAuthConfig extends ICMSAuthConfig {
   accessKey: string;
@@ -168,7 +171,12 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
             }
 
             //update the resolutions and player color and watermark
-            await bunny.updateVideoLibrary(bunnyConfig.vodConfig.vidLibraryId, playerColor, videoResolutions, watermarkUrl);
+            await bunny.updateVideoLibrary(
+              bunnyConfig.vodConfig.vidLibraryId,
+              playerColor,
+              videoResolutions,
+              watermarkUrl
+            );
 
             //update the allowed domains
             await bunny.addAllowedDomainsVOD(bunnyConfig.vodConfig.vidLibraryId, hostURL.hostname);
@@ -276,6 +284,7 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
               cdnStorageZoneId: cdnStorageZone.body.Id,
               cdnPullZoneId: cdnPullZone.body.Id,
               linkedHostname: cdnPullZone.body.Hostnames[0].Value,
+              zoneName: cdnStorageZone.body.Name,
             },
           };
           await prisma?.serviceProvider.update({
@@ -333,6 +342,7 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
             storageZoneId: objectStorageZone.body.Id,
             mainStorageRegion: mainStorageRegion,
             replicatedRegions: replicatedRegions,
+            zoneName: objectStorageZone.body.Name,
           },
         };
 
@@ -352,11 +362,141 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
     }
   }
 
-  async uploadCDNImage(authConfig: BunnyAuthConfig, cmsConfig: BunnyCMSConfig): Promise<APIResponse<any>> {
+  async uploadCDNImage(
+    authConfig: BunnyAuthConfig,
+    cmsConfig: BunnyCMSConfig,
+    file: Buffer,
+    fileName: string,
+    category: StaticFileCategory
+  ): Promise<APIResponse<string>> {
     //get the storage password
+
     const storagePassword = await secretsStore.get(cmsConfig.cdnStoragePasswordRef);
     if (storagePassword) {
+      const bunny = new BunnyClient(storagePassword);
+      const fullPath = `${category}/${fileName}`;
+      const response = await bunny.uploadCDNFile(
+        file,
+        fullPath,
+        cmsConfig.cdnConfig?.zoneName as string,
+        cmsConfig.storageConfig?.mainStorageRegion as string
+      );
+      if (response.body === "") {
+        return new APIResponse(false, 400, "Unable to upload the file");
+      } else {
+        return new APIResponse(response.success, response.status, response.message, response.body);
+      }
+    } else {
+      return new APIResponse(false, 400, "Storage password is missing");
     }
-    throw new Error("Method not implemented.");
+  }
+
+  async uploadVideo(
+    authConfig: BunnyAuthConfig,
+    cmsConfig: BunnyCMSConfig,
+    file: Buffer,
+    title: string,
+    objectType: VideoObjectType,
+    objectId: number
+  ): Promise<APIResponse<VideoInfo>> {
+    const videoPassword = await secretsStore.get(cmsConfig.vodAccessKeyRef);
+    if (videoPassword) {
+      const bunny = new BunnyClient(videoPassword);
+      const response = await bunny.uploadVideo(
+        file,
+        cmsConfig.vodConfig?.vidLibraryId as number,
+        title,
+        cmsConfig.cdnConfig?.linkedHostname as string
+      );
+      if (!response?.success || !response.body) {
+        return new APIResponse(false, 400, "Unable to upload the video");
+      } else {
+        let videoResponse = response.body;
+
+        if (objectType == "lesson") {
+          const newVideo = await prisma.video.create({
+            data: {
+              videoDuration: videoResponse.videoDuration,
+              videoUrl: videoResponse.videoUrl,
+              providerVideoId: videoResponse.videoId,
+              thumbnail: videoResponse.thumbnail,
+              resourceId: objectId,
+              state: videoResponse.state as VideoState,
+              mediaProvider: this.provider,
+            },
+          });
+
+          bunny.trackVideo(videoResponse, cmsConfig.vodConfig?.vidLibraryId as number, async (videoLen: number) => {
+            let thumbnail = newVideo.thumbnail;
+
+            const uploadResponse = await bunny.uploadThumbnailToCDN(
+              thumbnail,
+              cmsConfig.cdnConfig?.linkedHostname as string,
+              cmsConfig.storageConfig?.mainStorageRegion as string,
+              cmsConfig.cdnConfig?.zoneName as string
+            );
+
+            if (uploadResponse) {
+              thumbnail = uploadResponse;
+            } else {
+              const getExistingVideoThumbnail = await prisma.video.findUnique({
+                where: {
+                  id: newVideo.id,
+                },
+                select: {
+                  thumbnail: true,
+                },
+              });
+              thumbnail = String(getExistingVideoThumbnail?.thumbnail);
+            }
+
+            const updatedVideo = prisma.video.update({
+              where: {
+                id: newVideo.id,
+              },
+              data: {
+                state: VideoState.READY,
+                videoDuration: videoLen,
+                thumbnail: thumbnail,
+              },
+            });
+            const r = await updatedVideo;
+            return r.state;
+          });
+          return new APIResponse(response.success, response.status, response.message, {
+            ...videoResponse,
+            id: Number(newVideo.id),
+          });
+        }
+        if (objectType == "course") {
+          await prisma.course.update({
+            where: {
+              courseId: objectId,
+            },
+            data: {
+              tvProviderId: videoResponse.videoId,
+              tvProviderName: this.provider,
+              tvUrl: videoResponse.videoUrl,
+              tvState: VideoState.PROCESSING,
+              tvThumbnail: videoResponse.thumbnail,
+            },
+          });
+          bunny.trackVideo(videoResponse, cmsConfig.vodConfig?.vidLibraryId as number, async () => {
+            const updatedVideo = prisma.course.update({
+              where: {
+                courseId: objectId,
+              },
+              data: {
+                tvState: VideoState.READY,
+              },
+            });
+            const r = await updatedVideo;
+            return r.state;
+          });
+        }
+        return new APIResponse(response.success, response.status, response.message, videoResponse);
+      }
+    }
+    return new APIResponse(false, 400, "Video password is missing");
   }
 }

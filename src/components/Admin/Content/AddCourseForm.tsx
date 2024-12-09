@@ -24,7 +24,7 @@ import { RcFile } from "antd/es/upload";
 import { postWithFile } from "@/services/request";
 
 import AddLesson from "./AddLesson";
-import { PageSiteConfig } from "@/services/siteConstant";
+import { DEFAULT_THEME, PageSiteConfig } from "@/services/siteConstant";
 
 const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const [courseBannerUploading, setCourseBannerUploading] = useState<boolean>(false);
@@ -524,7 +524,6 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
         }
       );
   }, [router.query.id, refresh]);
-
   return (
     <AppLayout siteConfig={siteConfig}>
       {contextHolder}
