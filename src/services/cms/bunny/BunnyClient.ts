@@ -1,9 +1,11 @@
 import { createSlug } from "@/lib/utils";
 import { apiConstants, APIResponse, APIServerError } from "@/types/apis";
 import { BunnyRequestError, PullZone, StorageZone, VideoLibrary, VideoLibraryResponse } from "@/types/cms/bunny";
-import { VideoAPIResponse, VideoInfo } from "@/types/courses/Course";
+import { VideoInfo } from "@/types/courses/Course";
 import { VideoState } from "@prisma/client";
 import sharp from "sharp";
+import prisma from "@/lib/prisma";
+import { VideoObjectType } from "@/types/cms/common";
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 export class BunnyClient {
@@ -49,7 +51,9 @@ export class BunnyClient {
     for (attemptCount = 1; attemptCount <= times; attemptCount++) {
       try {
         const result = await toTry();
-        let vresult = await result.json();
+        let vrResponse = await result.json();
+
+        let vresult = vrResponse.items[0];
 
         if (vresult.status != 4) {
           if (attemptCount < times) await delay(interval * 1000);
@@ -78,12 +82,97 @@ export class BunnyClient {
     );
   }
 
+  async trackAndUpdateVideo(
+    videoResponse: VideoInfo,
+    objectType: VideoObjectType,
+    id: number,
+    providerName: string,
+    libraryId: number
+  ): Promise<VideoInfo> {
+    if (objectType == "lesson") {
+      const newVideo = await prisma.video.create({
+        data: {
+          videoDuration: videoResponse.videoDuration,
+          videoUrl: videoResponse.videoUrl,
+          providerVideoId: videoResponse.videoId,
+          thumbnail: videoResponse.thumbnail,
+          resourceId: id,
+          state: videoResponse.state as VideoState,
+          mediaProvider: providerName,
+        },
+      });
+
+      this.trackVideo(videoResponse, libraryId, async (videoLen: number) => {
+        let thumbnail = newVideo.thumbnail;
+
+        // const uploadResponse = await csp.uploadThumbnailToCdn(thumbnail);
+        const uploadResponse = false;
+        if (uploadResponse) {
+          thumbnail = uploadResponse;
+        } else {
+          const getExistingVideoThumbnail = await prisma.video.findUnique({
+            where: {
+              id: newVideo.id,
+            },
+            select: {
+              thumbnail: true,
+            },
+          });
+          thumbnail = String(getExistingVideoThumbnail?.thumbnail);
+        }
+
+        const updatedVideo = prisma.video.update({
+          where: {
+            id: newVideo.id,
+          },
+          data: {
+            state: VideoState.READY,
+            videoDuration: videoLen,
+            thumbnail: thumbnail,
+          },
+        });
+        const r = await updatedVideo;
+        return r.state;
+      });
+
+      return { ...videoResponse, id: Number(newVideo.id) };
+    }
+    if (objectType == "course") {
+      await prisma.course.update({
+        where: {
+          courseId: id,
+        },
+        data: {
+          tvProviderId: videoResponse.videoId,
+          tvProviderName: providerName,
+          tvUrl: videoResponse.videoUrl,
+          tvState: VideoState.PROCESSING,
+          tvThumbnail: videoResponse.thumbnail,
+        },
+      });
+      this.trackVideo(videoResponse, libraryId, async () => {
+        const updatedVideo = prisma.course.update({
+          where: {
+            courseId: id,
+          },
+          data: {
+            tvState: VideoState.READY,
+          },
+        });
+        const r = await updatedVideo;
+        return r.state;
+      });
+      return videoResponse;
+    }
+    return videoResponse;
+  }
+
   uploadVideo = async (
     file: Buffer,
     libraryId: number,
     title: string,
     linkedHostname: string
-  ): Promise<APIResponse<VideoAPIResponse>> => {
+  ): Promise<APIResponse<VideoInfo>> => {
     let guid: string;
     const res = await fetch(`${this.vidLibraryUrl}/${libraryId}/videos`, this.getClientPostOptions(title));
     const json = await res.json();
@@ -110,18 +199,13 @@ export class BunnyClient {
       success: videoResult.status == 200,
       message: videoResult.statusText,
       body: {
-        statusCode: videoResult.status,
-        success: videoResult.status == 200,
-        message: videoResult.statusText,
-        video: {
-          videoId: videoData.guid as string,
-          thumbnail: `https://${linkedHostname}/${videoData.guid}/${videoData.thumbnailFileName}`,
-          previewUrl: `https://${linkedHostname}/${videoData.guid}/preview.webp`,
-          videoUrl: `https://iframe.mediadelivery.net/embed/${libraryId}/${videoData.guid}`,
-          mediaProviderName: "bunny",
-          state: state as VideoState,
-          videoDuration: videoData.length,
-        },
+        videoId: videoData.guid as string,
+        thumbnail: `https://${linkedHostname}/${videoData.guid}/${videoData.thumbnailFileName}`,
+        previewUrl: `https://${linkedHostname}/${videoData.guid}/preview.webp`,
+        videoUrl: `https://iframe.mediadelivery.net/embed/${libraryId}/${videoData.guid}`,
+        mediaProviderName: "bunny",
+        state: state as VideoState,
+        videoDuration: videoData.length,
       },
     };
   };

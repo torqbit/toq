@@ -4,8 +4,9 @@ import { apiConstants, APIResponse, APIServerError } from "@/types/apis";
 import { ICMSAuthConfig, IContentProvider } from "../IContentProvider";
 import { ConfigurationState, VideoState } from "@prisma/client";
 import SecretsManager from "@/services/secrets/SecretsManager";
-import { VideoAPIResponse } from "@/types/courses/Course";
-import { StaticFileCategory } from "@/types/cms/common";
+import { VideoAPIResponse, VideoInfo } from "@/types/courses/Course";
+import { StaticFileCategory, VideoObjectType } from "@/types/cms/common";
+import prisma from "@/lib/prisma";
 
 export interface BunnyAuthConfig extends ICMSAuthConfig {
   accessKey: string;
@@ -385,16 +386,19 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
       } else {
         return new APIResponse(response.success, response.status, response.message, response.body);
       }
+    } else {
+      return new APIResponse(false, 400, "Storage password is missing");
     }
-    throw new Error("Method not implemented.");
   }
 
   async uploadVideo(
     authConfig: BunnyAuthConfig,
     cmsConfig: BunnyCMSConfig,
     file: Buffer,
-    title: string
-  ): Promise<APIResponse<VideoAPIResponse>> {
+    title: string,
+    objectType: VideoObjectType,
+    objectId: number
+  ): Promise<APIResponse<VideoInfo>> {
     const videoPassword = await secretsStore.get(cmsConfig.vodAccessKeyRef);
     if (videoPassword) {
       const bunny = new BunnyClient(videoPassword);
@@ -404,17 +408,22 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
         title,
         cmsConfig.cdnConfig?.linkedHostname as string
       );
-      if (!response.body?.success) {
+      if (!response?.success && !response.body) {
         return new APIResponse(false, 400, "Unable to upload the video");
       } else {
-        bunny.trackVideo(response.body.video, cmsConfig.vodConfig?.vidLibraryId as number, async (videoLen: number) => {
-          // completion logic
+        let videoResponse = response.body;
 
-          return "";
-        });
-        return new APIResponse(response.success, response.status, response.message, response.body);
+        const responseData = await bunny.trackAndUpdateVideo(
+          videoResponse as VideoInfo,
+          objectType,
+          objectId,
+          this.provider,
+          cmsConfig.vodConfig?.vidLibraryId as number
+        );
+
+        return new APIResponse(response.success, response.status, response.message, responseData);
       }
     }
-    throw new Error("Method not implemented.");
+    return new APIResponse(false, 400, "Video password is missing");
   }
 }
