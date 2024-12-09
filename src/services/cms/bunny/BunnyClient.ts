@@ -1,6 +1,8 @@
 import { createSlug } from "@/lib/utils";
 import { apiConstants, APIResponse, APIServerError } from "@/types/apis";
 import { BunnyRequestError, PullZone, StorageZone, VideoLibrary, VideoLibraryResponse } from "@/types/cms/bunny";
+import { VideoAPIResponse, VideoInfo } from "@/types/courses/Course";
+import { VideoState } from "@prisma/client";
 import sharp from "sharp";
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -28,9 +30,120 @@ export class BunnyClient {
     };
   };
 
-  getClientVideoUploadUrl(videoId: string, libraryId: number) {
-    return `${this.vidLibraryUrl}/${libraryId}/videos/${videoId}`;
+  getCDNbaseEndpoint = (region: string) => {
+    if (region === "DE") {
+      return `storage.bunnycdn.com`;
+    } else {
+      return `${region.toLowerCase()}.storage.bunnycdn.com`;
+    }
+  };
+
+  async tryNTimes<T>(
+    times: number,
+    interval: number,
+    toTry: () => Promise<Response>,
+    onCompletion: (len: number) => Promise<string>
+  ): Promise<any> {
+    if (times < 1) throw new Error(`Bad argument: 'times' must be greater than 0, but ${times} was received.`);
+    let attemptCount: number;
+    for (attemptCount = 1; attemptCount <= times; attemptCount++) {
+      try {
+        const result = await toTry();
+        let vresult = await result.json();
+
+        if (vresult.status != 4) {
+          if (attemptCount < times) await delay(interval * 1000);
+          else return Promise.reject(result);
+        } else {
+          return onCompletion(vresult.length);
+        }
+      } catch (error) {
+        console.log(`failed due to : ${error}`);
+      }
+    }
   }
+
+  trackVideo(
+    videoInfo: VideoInfo,
+    libraryId: number,
+    onCompletion: (videoLen: number) => Promise<string>
+  ): Promise<string> {
+    return this.tryNTimes(
+      120,
+      5,
+      () => {
+        return fetch(`${this.vidLibraryUrl}/${libraryId}/videos`, this.getClientVideoOption());
+      },
+      onCompletion
+    );
+  }
+
+  uploadVideo = async (
+    file: Buffer,
+    libraryId: number,
+    title: string,
+    linkedHostname: string
+  ): Promise<APIResponse<VideoAPIResponse>> => {
+    let guid: string;
+    const res = await fetch(`${this.vidLibraryUrl}/${libraryId}/videos`, this.getClientPostOptions(title));
+    const json = await res.json();
+
+    guid = json.guid;
+    const res_1 = await fetch(`${this.vidLibraryUrl}/${libraryId}/videos/${guid}`, this.getClientFileOptions(file));
+    const uploadedData = await res_1.json();
+
+    const videoResult = await fetch(`${this.vidLibraryUrl}/${libraryId}/videos`, this.getClientVideoOption());
+    let videoResponseData = await videoResult.json();
+    let videoData = videoResponseData.items[0];
+    let state: string = "";
+    if (videoData.status === 0 || videoData.status === 1 || videoData.status === 2 || videoData.status === 3) {
+      state = VideoState.PROCESSING;
+    }
+    if (videoData.status === 4) {
+      state = VideoState.READY;
+    }
+    if (videoData.status === 5 || videoData.status === 6) {
+      state = VideoState.FAILED;
+    }
+    return {
+      status: videoResult.status,
+      success: videoResult.status == 200,
+      message: videoResult.statusText,
+      body: {
+        statusCode: videoResult.status,
+        success: videoResult.status == 200,
+        message: videoResult.statusText,
+        video: {
+          videoId: videoData.guid as string,
+          thumbnail: `https://${linkedHostname}/${videoData.guid}/${videoData.thumbnailFileName}`,
+          previewUrl: `https://${linkedHostname}/${videoData.guid}/preview.webp`,
+          videoUrl: `https://iframe.mediadelivery.net/embed/${libraryId}/${videoData.guid}`,
+          mediaProviderName: "bunny",
+          state: state as VideoState,
+          videoDuration: videoData.length,
+        },
+      },
+    };
+  };
+
+  uploadCDNFile = async (
+    file: Buffer,
+    path: string,
+    zoneName: string,
+    mainStorageRegion: string
+  ): Promise<APIResponse<string>> => {
+    const res = await fetch(
+      `https://${this.getCDNbaseEndpoint(mainStorageRegion)}/${zoneName}/${path}`,
+      this.getClientFileOptions(file)
+    );
+    const uploadRes = await res.json();
+    return {
+      status: uploadRes.HttpCode,
+      message: uploadRes.Message,
+      success: uploadRes.HttpCode == 201,
+      body: uploadRes.HttpCode == 201 ? `${path}` : "",
+    };
+  };
 
   getClientPostOptions(title: string) {
     return {
@@ -52,19 +165,6 @@ export class BunnyClient {
         AccessKey: this.accessKey,
       },
     };
-  }
-
-  getClientFileUrl(storageZone: number, mediaPath: string, path: string) {
-    let fullPath = mediaPath;
-    if (fullPath.endsWith("/")) {
-      fullPath = `${path.substring(0, path.length - 1)}${path}`;
-    }
-    fullPath = `${mediaPath}${path}`;
-    return `https://storage.bunnycdn.com/${storageZone}/${fullPath}`;
-  }
-
-  getClientVideoUrl(libraryId: number) {
-    return `${this.vidLibraryUrl}/${libraryId}/videos`;
   }
 
   handleError = async <T>(response: Response): Promise<APIResponse<T>> => {
@@ -195,6 +295,10 @@ export class BunnyClient {
       });
   };
 
+  getStorageZoneName = (brand: string, isCDN: boolean) => {
+    return `${createSlug(brand)}-${isCDN ? "cdn" : "files"}`;
+  };
+
   createStorageZone = async (
     brandName: string,
     mainStorageRegion: string,
@@ -206,7 +310,7 @@ export class BunnyClient {
       method: "POST",
       headers: this.getClientHeaders(),
       body: JSON.stringify({
-        Name: `${createSlug(brandName)}-${isCDN ? "cdn" : "files"}`,
+        Name: this.getStorageZoneName(brandName, isCDN),
         Region: mainStorageRegion,
         ReplicationRegions: replicatedRegions,
         ZoneTier: isCDN ? 1 : 0,

@@ -1,4 +1,5 @@
 import { APIResponse, APIServerError } from "@/types/apis";
+import { StaticFileCategory } from "@/types/cms/common";
 import { ConfigurationState } from "@prisma/client";
 
 export type ICMSAuthConfig = {
@@ -35,6 +36,12 @@ export interface IContentProvider<T extends ICMSAuthConfig, U> {
     replicatedRegions: string[]
   ): Promise<APIResponse<void>>;
 
-  uploadCDNImage(authConfig: T, cmsConfig: U, file: Buffer, path: string): Promise<APIResponse<any>>;
+  uploadCDNImage(
+    authConfig: T,
+    cmsConfig: U,
+    file: Buffer,
+    fileName: string,
+    category: StaticFileCategory
+  ): Promise<APIResponse<any>>;
   uploadVideo(authConfig: T, cmsConfig: U, file: Buffer, title: string): Promise<APIResponse<any>>;
 }
