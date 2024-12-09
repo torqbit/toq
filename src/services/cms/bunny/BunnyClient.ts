@@ -6,6 +6,8 @@ import { VideoState } from "@prisma/client";
 import sharp from "sharp";
 import prisma from "@/lib/prisma";
 import { VideoObjectType } from "@/types/cms/common";
+import { fetchImageBuffer } from "@/actions/fetchImageBuffer";
+import { truncateString } from "@/services/helper";
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 export class BunnyClient {
@@ -51,10 +53,7 @@ export class BunnyClient {
     for (attemptCount = 1; attemptCount <= times; attemptCount++) {
       try {
         const result = await toTry();
-        let vrResponse = await result.json();
-
-        let vresult = vrResponse.items[0];
-
+        let vresult = await result.json();
         if (vresult.status != 4) {
           if (attemptCount < times) await delay(interval * 1000);
           else return Promise.reject(result);
@@ -76,95 +75,32 @@ export class BunnyClient {
       120,
       5,
       () => {
-        return fetch(`${this.vidLibraryUrl}/${libraryId}/videos`, this.getClientVideoOption());
+        return fetch(`${this.vidLibraryUrl}/${libraryId}/videos/${videoInfo.videoId}`, this.getClientVideoOption());
       },
       onCompletion
     );
   }
 
-  async trackAndUpdateVideo(
-    videoResponse: VideoInfo,
-    objectType: VideoObjectType,
-    id: number,
-    providerName: string,
-    libraryId: number
-  ): Promise<VideoInfo> {
-    if (objectType == "lesson") {
-      const newVideo = await prisma.video.create({
-        data: {
-          videoDuration: videoResponse.videoDuration,
-          videoUrl: videoResponse.videoUrl,
-          providerVideoId: videoResponse.videoId,
-          thumbnail: videoResponse.thumbnail,
-          resourceId: id,
-          state: videoResponse.state as VideoState,
-          mediaProvider: providerName,
-        },
-      });
+  async uploadThumbnailToCDN(
+    thumbnail: string,
+    linkedHostname: string,
+    mainStorageRegion: string,
+    zoneName: string
+  ): Promise<string | undefined> {
+    if (thumbnail.includes(linkedHostname)) {
+      let fullName = thumbnail.split("/")[thumbnail.split("/").length - 1];
+      const fileBuffer = await fetchImageBuffer(thumbnail);
+      if (fileBuffer) {
+        const uploadResponse = await this.uploadCDNFile(
+          fileBuffer,
+          `thumbnail/${fullName}`,
+          zoneName,
+          mainStorageRegion
+        );
 
-      this.trackVideo(videoResponse, libraryId, async (videoLen: number) => {
-        let thumbnail = newVideo.thumbnail;
-
-        // const uploadResponse = await csp.uploadThumbnailToCdn(thumbnail);
-        const uploadResponse = false;
-        if (uploadResponse) {
-          thumbnail = uploadResponse;
-        } else {
-          const getExistingVideoThumbnail = await prisma.video.findUnique({
-            where: {
-              id: newVideo.id,
-            },
-            select: {
-              thumbnail: true,
-            },
-          });
-          thumbnail = String(getExistingVideoThumbnail?.thumbnail);
-        }
-
-        const updatedVideo = prisma.video.update({
-          where: {
-            id: newVideo.id,
-          },
-          data: {
-            state: VideoState.READY,
-            videoDuration: videoLen,
-            thumbnail: thumbnail,
-          },
-        });
-        const r = await updatedVideo;
-        return r.state;
-      });
-
-      return { ...videoResponse, id: Number(newVideo.id) };
+        return uploadResponse.body;
+      }
     }
-    if (objectType == "course") {
-      await prisma.course.update({
-        where: {
-          courseId: id,
-        },
-        data: {
-          tvProviderId: videoResponse.videoId,
-          tvProviderName: providerName,
-          tvUrl: videoResponse.videoUrl,
-          tvState: VideoState.PROCESSING,
-          tvThumbnail: videoResponse.thumbnail,
-        },
-      });
-      this.trackVideo(videoResponse, libraryId, async () => {
-        const updatedVideo = prisma.course.update({
-          where: {
-            courseId: id,
-          },
-          data: {
-            tvState: VideoState.READY,
-          },
-        });
-        const r = await updatedVideo;
-        return r.state;
-      });
-      return videoResponse;
-    }
-    return videoResponse;
   }
 
   uploadVideo = async (
@@ -181,9 +117,9 @@ export class BunnyClient {
     const res_1 = await fetch(`${this.vidLibraryUrl}/${libraryId}/videos/${guid}`, this.getClientFileOptions(file));
     const uploadedData = await res_1.json();
 
-    const videoResult = await fetch(`${this.vidLibraryUrl}/${libraryId}/videos`, this.getClientVideoOption());
-    let videoResponseData = await videoResult.json();
-    let videoData = videoResponseData.items[0];
+    const videoResult = await fetch(`${this.vidLibraryUrl}/${libraryId}/videos/${guid}`, this.getClientVideoOption());
+    let videoData = await videoResult.json();
+
     let state: string = "";
     if (videoData.status === 0 || videoData.status === 1 || videoData.status === 2 || videoData.status === 3) {
       state = VideoState.PROCESSING;
