@@ -67,7 +67,7 @@ class cmsClient {
     });
   };
 
-  addFile = async (
+  uploadFile = async (
     formData: FormData,
     onSuccess: (response: ApiResponse) => void,
     onFailure: (message: string) => void

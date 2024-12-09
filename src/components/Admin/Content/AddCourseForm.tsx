@@ -273,7 +273,7 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
 
       courseThumbnail && formData.append("existingFilePath", courseThumbnail);
 
-      cmsClient.addFile(
+      cmsClient.uploadFile(
         formData,
         (result) => {
           let course = {
