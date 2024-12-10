@@ -7,6 +7,7 @@ import { createSlug } from "@/lib/utils";
 import { readFieldWithFile } from "../upload/video/upload";
 import { uploadThumbnail } from "@/actions/uploadThumbnail";
 import { APIResponse } from "@/types/apis";
+import { FileObjectType } from "@/types/cms/common";
 
 export const config = {
   api: {
@@ -19,15 +20,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const { fields, files } = (await readFieldWithFile(req)) as any;
 
     const body = JSON.parse(fields.course[0]);
-    const name = createSlug(fields.title[0]);
-    const fileType = fields.hasOwnProperty("fileType") && fields.fileType[0];
+    const name = createSlug(body.name);
     let courseId = Number(body.courseId);
-
     let response: APIResponse<any>;
     let thumbnail;
 
     if (files.file) {
-      response = await uploadThumbnail(files.file[0], name, "course", fileType);
+      response = await uploadThumbnail(files.file[0], name, FileObjectType.COURSE, "thumbnail");
       if (response.success) {
         thumbnail = response.body;
       } else {

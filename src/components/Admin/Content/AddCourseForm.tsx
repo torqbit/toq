@@ -92,6 +92,7 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
     description: "",
     expiryInDays: 365,
     chapters: [],
+    thumbnail: "",
     courseType: $Enums.CourseType.FREE,
   });
 
@@ -127,18 +128,11 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
       previewMode: form.getFieldsValue().previewMode ? form.getFieldsValue().previewMode : false,
       courseType: courseData.courseType,
       coursePrice: courseData.courseType === $Enums.CourseType.FREE ? 0 : Number(courseData.coursePrice),
+      thumbnail: courseData.thumbnail,
     };
 
     const courseFormData = new FormData();
-    const name = createSlug(courseName);
     file && courseFormData.append("file", file);
-    courseFormData.append("title", name);
-    courseFormData.append("fileType", "banner");
-
-    courseThumbnail &&
-      !courseThumbnail.includes("base64") &&
-      courseFormData.append("existingFilePath", courseThumbnail);
-
     courseFormData.append("course", JSON.stringify(course));
 
     ProgramService.updateCourse(
@@ -361,9 +355,10 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
           Curriculum
         </span>
       ),
-      disabled: ((!courseThumbnail || courseThumbnail.includes("base64")) && !uploadVideo?.videoUrl) || !tabActive,
+      disabled:
+        ((!courseThumbnail || courseThumbnail.startsWith("data:image/")) && !uploadVideo?.videoUrl) || !tabActive,
 
-      children: courseThumbnail && !courseThumbnail.includes("base64") && uploadVideo?.videoUrl && (
+      children: courseThumbnail && !courseThumbnail.startsWith("data:image/") && uploadVideo?.videoUrl && (
         <Curriculum
           chapters={courseData.chapters}
           onRefresh={onRefresh}
@@ -383,8 +378,9 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
       label: (
         <span onClick={() => !tabActive && message.error("First fill and  save  the add course form ")}>Preview</span>
       ),
-      disabled: ((!courseThumbnail || courseThumbnail.includes("base64")) && !uploadVideo?.videoUrl) || !tabActive,
-      children: courseThumbnail && !courseThumbnail.includes("base64") && uploadVideo?.videoUrl && (
+      disabled:
+        ((!courseThumbnail || courseThumbnail.startsWith("data:image/")) && !uploadVideo?.videoUrl) || !tabActive,
+      children: courseThumbnail && !courseThumbnail.startsWith("data:image/") && uploadVideo?.videoUrl && (
         <Preview
           videoUrl={uploadVideo?.videoUrl}
           onEnrollCourse={() => {}}
@@ -504,7 +500,7 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
             difficultyLevel: result.courseDetails.difficultyLevel,
             state: result?.courseDetails.state,
             coursePrice: result.courseDetails.coursePrice,
-
+            thumbnail: result.courseDetails.thumbnail,
             courseType: result.courseDetails.courseType,
           });
 
