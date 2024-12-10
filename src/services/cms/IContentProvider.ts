@@ -1,5 +1,5 @@
 import { APIResponse, APIServerError } from "@/types/apis";
-import { StaticFileCategory, VideoObjectType } from "@/types/cms/common";
+import { FileObjectType, StaticFileCategory, VideoObjectType } from "@/types/cms/common";
 import { ConfigurationState } from "@prisma/client";
 
 export type ICMSAuthConfig = {
@@ -40,6 +40,7 @@ export interface IContentProvider<T extends ICMSAuthConfig, U> {
     authConfig: T,
     cmsConfig: U,
     file: Buffer,
+    objectType: FileObjectType,
     fileName: string,
     category: StaticFileCategory
   ): Promise<APIResponse<any>>;

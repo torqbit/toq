@@ -4,16 +4,48 @@ import { errorHandler } from "@/lib/api-middlewares/errorHandler";
 import { withMethods } from "@/lib/api-middlewares/with-method";
 import { withUserAuthorized } from "@/lib/api-middlewares/with-authorized";
 import { createSlug } from "@/lib/utils";
+import { readFieldWithFile } from "../upload/video/upload";
+import { uploadThumbnail } from "@/actions/uploadThumbnail";
+
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
-    const body = await req.body;
+    const { fields, files } = (await readFieldWithFile(req)) as any;
+
+    const body = JSON.parse(fields.course[0]);
+
     let courseId = Number(body.courseId);
     const findCourse = await prisma.course.findUnique({
       where: {
         courseId: body.courseId,
       },
+      select: {
+        thumbnail: true,
+      },
     });
+
+    const getThumbnail = async (): Promise<boolean | string> => {
+      if (files.file) {
+        const name = createSlug(fields.title[0]);
+        const fileType = fields.hasOwnProperty("fileType") && fields.fileType[0];
+
+        const response = await uploadThumbnail(files.file[0], name, "course", fileType, "bunny.net");
+        if (response.success) {
+          return response.body;
+        } else {
+          return false;
+        }
+      } else {
+        return false;
+      }
+    };
+
+    const thumbnail = await getThumbnail();
 
     if (findCourse) {
       let slug = `untitled-${new Date().getTime()}`;
@@ -26,10 +58,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         },
         data: {
           ...body,
+          thumbnail: thumbnail ? thumbnail : findCourse.thumbnail,
           slug: slug,
         },
       });
-
       return res.status(200).json({
         info: false,
         success: true,
@@ -38,6 +70,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       });
     }
   } catch (error) {
+    console.log(error, "error");
     return errorHandler(error, res);
   }
 };

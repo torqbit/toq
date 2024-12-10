@@ -25,7 +25,7 @@ import { postWithFile } from "@/services/request";
 
 import AddLesson from "./AddLesson";
 import { PageSiteConfig } from "@/services/siteConstant";
-import cmsClient from "@/lib/admin/cms/cmsClient";
+import { getBase64 } from "@/lib/utils";
 
 const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const [courseBannerUploading, setCourseBannerUploading] = useState<boolean>(false);
@@ -46,6 +46,7 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const [videoForm] = Form.useForm();
   const [settingloading, setSettingloading] = useState<boolean>(false);
   const [checkVideoState, setCheckVideoState] = useState<boolean>(false);
+  const [file, setFile] = useState<File>();
 
   const [selectedCourseType, setSelectedCourseType] = useState<{
     free: boolean;
@@ -121,8 +122,22 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
       courseType: courseData.courseType,
       coursePrice: courseData.courseType === $Enums.CourseType.FREE ? 0 : Number(courseData.coursePrice),
     };
+    let title = form.getFieldsValue().course_name || courseData?.name;
+
+    const courseFormData = new FormData();
+    const name = title.replace(/\s+/g, "-");
+    file && courseFormData.append("file", file);
+    courseFormData.append("title", name);
+    courseFormData.append("fileType", "banner");
+
+    courseThumbnail &&
+      !courseThumbnail.includes("base64") &&
+      courseFormData.append("existingFilePath", courseThumbnail);
+
+    courseFormData.append("course", JSON.stringify(course));
+
     ProgramService.updateCourse(
-      course,
+      courseFormData,
       (result) => {
         setActiveKey("2");
         form.resetFields();
@@ -265,38 +280,11 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const uploadFile = async (file: any, title: string) => {
     if (file) {
       setCourseBannerUploading(true);
-      const name = title.replace(/\s+/g, "-");
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("title", name);
-      formData.append("fileType", "banner");
+      const base64 = await getBase64(file);
+      setCourseThumbnail(base64 as string);
+      setFile(file);
 
-      courseThumbnail && formData.append("existingFilePath", courseThumbnail);
-
-      cmsClient.uploadFile(
-        formData,
-        (result) => {
-          let course = {
-            thumbnail: result.fileCDNPath,
-            courseId: Number(router.query.id),
-          };
-          ProgramService.updateCourse(
-            course,
-            (res) => {
-              setCourseThumbnail(result.fileCDNPath);
-              messageApi.success("file uploaded");
-              setCourseBannerUploading(false);
-            },
-            (error) => {
-              setCourseBannerUploading(false);
-              messageApi.error(error);
-            }
-          );
-        },
-        (error) => {
-          messageApi.error(error);
-        }
-      );
+      setCourseBannerUploading(false);
     }
   };
 
@@ -368,9 +356,9 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
           Curriculum
         </span>
       ),
-      disabled: (!courseThumbnail && !uploadVideo?.videoUrl) || !tabActive,
+      disabled: ((!courseThumbnail || courseThumbnail.includes("base64")) && !uploadVideo?.videoUrl) || !tabActive,
 
-      children: courseThumbnail && uploadVideo?.videoUrl && (
+      children: courseThumbnail && !courseThumbnail.includes("base64") && uploadVideo?.videoUrl && (
         <Curriculum
           chapters={courseData.chapters}
           onRefresh={onRefresh}
@@ -390,8 +378,8 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
       label: (
         <span onClick={() => !tabActive && message.error("First fill and  save  the add course form ")}>Preview</span>
       ),
-      disabled: (!courseThumbnail && !uploadVideo?.videoUrl) || !tabActive,
-      children: courseThumbnail && uploadVideo?.videoUrl && (
+      disabled: ((!courseThumbnail || courseThumbnail.includes("base64")) && !uploadVideo?.videoUrl) || !tabActive,
+      children: courseThumbnail && !courseThumbnail.includes("base64") && uploadVideo?.videoUrl && (
         <Preview
           videoUrl={uploadVideo?.videoUrl}
           onEnrollCourse={() => {}}
