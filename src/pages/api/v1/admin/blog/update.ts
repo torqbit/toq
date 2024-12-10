@@ -69,7 +69,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       blog: updateBlog,
     });
   } catch (error) {
-    console.log(error);
     return errorHandler(error, res);
   }
 };

@@ -30,8 +30,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const body = JSON.parse(fields.event[0]);
 
-    console.log(body, "body");
-
     const { title, id } = body;
     if (title) {
       const findExistingEvent = await prisma.events.findUnique({
@@ -63,8 +61,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       }
     }
 
-    console.log(thumbnail, "thumbnail");
-
     const updatedEvent = await prisma.events.update({
       where: {
         id: id,
@@ -77,7 +73,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     return res.status(200).json({ success: true, message: "Event has been updated", updatedEvent });
   } catch (error) {
-    console.log(error);
     errorHandler(error, res);
   }
 };
