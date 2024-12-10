@@ -1,0 +1,156 @@
+.heroWrapper {
+  position: relative;
+  z-index: 1;
+  background-color: var(--bg-primary);
+  min-height: 50vh;
+}
+
+.landing__hero {
+  .hero_img_bg {
+    background-color: var(--bg-secondary);
+    height: 300px;
+
+    margin-top: -400px;
+  }
+
+  .heroContentContainer {
+    position: relative;
+    max-width: var(--marketing-container-width);
+
+    margin: 0 auto;
+    padding: 100px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .preview__tag {
+      padding: 10px 15px;
+      color: var(--font-trainer-primary);
+      background: var(--tag-preview);
+      border-radius: 50em;
+      border: 4px solid transparent;
+      margin-bottom: 25px;
+    }
+    img {
+      height: auto;
+      margin: 0 auto;
+    }
+
+    del {
+      color: var(--strike);
+    }
+
+    h1,
+    p {
+      max-width: 700px;
+      margin: 20 auto;
+    }
+
+    h1 {
+      padding: 0px 20px;
+      font-size: 5rem;
+      font-weight: 900;
+      text-align: center;
+    }
+
+    p {
+      color: var(--font-secondary);
+      text-align: center;
+      font-size: 18px;
+      line-height: 1.4;
+      margin-bottom: 40px;
+      padding: 0 20px;
+    }
+  }
+
+  .heroWaveIcon {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+
+  .dotPatternIcon {
+    position: absolute;
+    bottom: 50px;
+    right: 50px;
+  }
+}
+
+.btn__signup {
+  background-color: var(--btn-primary);
+  padding: 5px 15px;
+  display: inline-block;
+  line-height: 1.9;
+  border-radius: 4px;
+  color: white;
+}
+
+.btn__contact {
+  display: inline-block;
+
+  border-radius: 4px;
+}
+.hero__img {
+  width: 100%;
+  text-align: center;
+
+  & > img {
+    margin: -200px auto 50px;
+    margin-top: -200px;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    position: relative;
+  }
+}
+
+.sideNaveContainer {
+  display: none;
+}
+
+@media only screen and (max-width: 435px) {
+  .heroWrapper {
+    min-height: 30vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    flex-direction: column;
+  }
+
+  .landing__hero {
+    .hero_img_bg {
+      height: 150px;
+      width: 100%;
+      margin-top: -200px;
+    }
+
+    .heroContentContainer {
+      width: 100vw;
+      padding: 100px 0;
+
+      h1 {
+        font-size: 35px;
+      }
+      img {
+        width: 80vw;
+        height: auto;
+        margin: 0 auto;
+      }
+
+      button {
+        max-width: 200px;
+      }
+    }
+
+    .heroWaveIcon {
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
+
+    .dotPatternIcon {
+      display: none;
+    }
+  }
+}
