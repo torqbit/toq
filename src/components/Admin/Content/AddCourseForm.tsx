@@ -24,7 +24,8 @@ import { RcFile } from "antd/es/upload";
 import { postWithFile } from "@/services/request";
 
 import AddLesson from "./AddLesson";
-import { DEFAULT_THEME, PageSiteConfig } from "@/services/siteConstant";
+import { PageSiteConfig } from "@/services/siteConstant";
+import { createSlug, getBase64 } from "@/lib/utils";
 
 const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const [courseBannerUploading, setCourseBannerUploading] = useState<boolean>(false);
@@ -45,6 +46,7 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const [videoForm] = Form.useForm();
   const [settingloading, setSettingloading] = useState<boolean>(false);
   const [checkVideoState, setCheckVideoState] = useState<boolean>(false);
+  const [file, setFile] = useState<File>();
 
   const [selectedCourseType, setSelectedCourseType] = useState<{
     free: boolean;
@@ -90,6 +92,7 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
     description: "",
     expiryInDays: 365,
     chapters: [],
+    thumbnail: "",
     courseType: $Enums.CourseType.FREE,
   });
 
@@ -107,10 +110,16 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   };
 
   const onSubmit = () => {
+    let courseName = form.getFieldsValue().course_name || courseData?.name;
+
+    if (!courseName || courseName == "Untitled") {
+      messageApi.error("Course name is missing");
+      return;
+    }
     setSettingloading(true);
 
     let course = {
-      name: form.getFieldsValue().course_name || courseData?.name,
+      name: courseName,
       expiryInDays: Number(courseData?.expiryInDays),
       description: form.getFieldsValue().course_description || courseData.description,
       courseId: Number(router.query.id),
@@ -119,9 +128,15 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
       previewMode: form.getFieldsValue().previewMode ? form.getFieldsValue().previewMode : false,
       courseType: courseData.courseType,
       coursePrice: courseData.courseType === $Enums.CourseType.FREE ? 0 : Number(courseData.coursePrice),
+      thumbnail: courseData.thumbnail,
     };
+
+    const courseFormData = new FormData();
+    file && courseFormData.append("file", file);
+    courseFormData.append("course", JSON.stringify(course));
+
     ProgramService.updateCourse(
-      course,
+      courseFormData,
       (result) => {
         setActiveKey("2");
         form.resetFields();
@@ -264,39 +279,11 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const uploadFile = async (file: any, title: string) => {
     if (file) {
       setCourseBannerUploading(true);
-      const name = title.replace(/\s+/g, "-");
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("title", name);
-      formData.append("dir", "/courses/banners/");
+      const base64 = await getBase64(file);
+      setCourseThumbnail(base64 as string);
+      setFile(file);
 
-      courseThumbnail && formData.append("existingFilePath", courseThumbnail);
-
-      const postRes = await postWithFile(formData, `/api/v1/upload/file/upload`);
-      if (!postRes.ok) {
-        setLoading(false);
-        throw new Error("Failed to upload file");
-      }
-      const res = await postRes.json();
-
-      if (res.success) {
-        let course = {
-          thumbnail: res.fileCDNPath,
-          courseId: Number(router.query.id),
-        };
-        ProgramService.updateCourse(
-          course,
-          (result) => {
-            setCourseThumbnail(res.fileCDNPath);
-            messageApi.success("file uploaded");
-            setCourseBannerUploading(false);
-          },
-          (error) => {
-            setCourseBannerUploading(false);
-            messageApi.error(error);
-          }
-        );
-      }
+      setCourseBannerUploading(false);
     }
   };
 
@@ -368,9 +355,10 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
           Curriculum
         </span>
       ),
-      disabled: (!courseThumbnail && !uploadVideo?.videoUrl) || !tabActive,
+      disabled:
+        ((!courseThumbnail || courseThumbnail.startsWith("data:image/")) && !uploadVideo?.videoUrl) || !tabActive,
 
-      children: courseThumbnail && uploadVideo?.videoUrl && (
+      children: courseThumbnail && !courseThumbnail.startsWith("data:image/") && uploadVideo?.videoUrl && (
         <Curriculum
           chapters={courseData.chapters}
           onRefresh={onRefresh}
@@ -390,8 +378,9 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
       label: (
         <span onClick={() => !tabActive && message.error("First fill and  save  the add course form ")}>Preview</span>
       ),
-      disabled: (!courseThumbnail && !uploadVideo?.videoUrl) || !tabActive,
-      children: courseThumbnail && uploadVideo?.videoUrl && (
+      disabled:
+        ((!courseThumbnail || courseThumbnail.startsWith("data:image/")) && !uploadVideo?.videoUrl) || !tabActive,
+      children: courseThumbnail && !courseThumbnail.startsWith("data:image/") && uploadVideo?.videoUrl && (
         <Preview
           videoUrl={uploadVideo?.videoUrl}
           onEnrollCourse={() => {}}
@@ -511,7 +500,7 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
             difficultyLevel: result.courseDetails.difficultyLevel,
             state: result?.courseDetails.state,
             coursePrice: result.courseDetails.coursePrice,
-
+            thumbnail: result.courseDetails.thumbnail,
             courseType: result.courseDetails.courseType,
           });
 

@@ -1,4 +1,4 @@
-import { postFetch } from "@/services/request";
+import { postFetch, postWithFile } from "@/services/request";
 import { APIResponse } from "@/types/apis";
 import { BunnyCMSConfig, StorageConfig } from "@/types/cms/bunny";
 import { ConfigurationState } from "@prisma/client";
@@ -9,6 +9,7 @@ interface ApiResponse {
   message: string;
   config: { config: BunnyCMSConfig; state: ConfigurationState };
   regions: { name: string; code: string }[];
+  fileCDNPath: string;
 }
 
 type FailedApiResponse = {

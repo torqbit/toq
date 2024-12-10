@@ -5,7 +5,7 @@ import { ICMSAuthConfig, IContentProvider } from "../IContentProvider";
 import { ConfigurationState, VideoState } from "@prisma/client";
 import SecretsManager from "@/services/secrets/SecretsManager";
 import { VideoAPIResponse, VideoInfo } from "@/types/courses/Course";
-import { StaticFileCategory, VideoObjectType } from "@/types/cms/common";
+import { FileObjectType, StaticFileCategory, VideoObjectType } from "@/types/cms/common";
 import prisma from "@/lib/prisma";
 
 export interface BunnyAuthConfig extends ICMSAuthConfig {
@@ -366,6 +366,7 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
     authConfig: BunnyAuthConfig,
     cmsConfig: BunnyCMSConfig,
     file: Buffer,
+    objectType: FileObjectType,
     fileName: string,
     category: StaticFileCategory
   ): Promise<APIResponse<string>> {
@@ -374,12 +375,13 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
     const storagePassword = await secretsStore.get(cmsConfig.cdnStoragePasswordRef);
     if (storagePassword) {
       const bunny = new BunnyClient(storagePassword);
-      const fullPath = `${category}/${fileName}`;
+      const fullPath = `${objectType}/${category}/${fileName}`;
       const response = await bunny.uploadCDNFile(
         file,
         fullPath,
         cmsConfig.cdnConfig?.zoneName as string,
-        cmsConfig.storageConfig?.mainStorageRegion as string
+        cmsConfig.storageConfig?.mainStorageRegion as string,
+        cmsConfig.cdnConfig?.linkedHostname as string
       );
       if (response.body === "") {
         return new APIResponse(false, 400, "Unable to upload the file");
