@@ -2,6 +2,7 @@ import SecretsManager from "../../secrets/SecretsManager";
 import { APIResponse } from "@/types/apis";
 import { IEmailCredentials } from "@/types/cms/email";
 import emailService from "@/services/MailerService";
+import prisma from "@/lib/prisma";
 
 export const emailConstantsVariable = {
   SMTP_HOST: "SMTP_HOST",
@@ -46,6 +47,14 @@ export class EmailManagemetService {
         await secretStore.put(emailConstantsVariable.SMTP_USER, emailConfig.smtpUser);
         await secretStore.put(emailConstantsVariable.SMTP_PASSWORD, emailConfig.smtpPassword);
         await secretStore.put(emailConstantsVariable.SMTP_FROM_EMAIL, emailConfig.smtpFromEmail);
+        await prisma.serviceProvider.create({
+          data: {
+            provider_name: emailConfig.smtpHost,
+            service_type: this.serviceType,
+            providerDetail: { ...emailConstantsVariable },
+            state: "AUTHENTICATED",
+          },
+        });
         return new APIResponse<void>(true, 200, `Successfully saved the email configuration`);
       } else {
         return new APIResponse<void>(false, 400, result?.error);
