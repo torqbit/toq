@@ -12,7 +12,6 @@ export const uploadThumbnail = async (
   provider: string = "bunny.net"
 ): Promise<APIResponse<any>> => {
   if (file) {
-    console.log(file, "file");
     let response: APIResponse<any>;
     const extension = getFileExtension(file.originalFilename);
     const sourcePath = file.filepath;
