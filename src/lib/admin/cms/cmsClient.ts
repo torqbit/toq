@@ -67,26 +67,6 @@ class cmsClient {
     });
   };
 
-  uploadFile = async (
-    formData: FormData,
-    onSuccess: (response: ApiResponse) => void,
-    onFailure: (message: string) => void
-  ) => {
-    postWithFile(formData, `/api/v1/admin/config/cms/upload/file`).then((result) => {
-      if (result.status == 200 || result.status == 201) {
-        result.json().then((r) => {
-          const apiResponse = r as ApiResponse;
-          onSuccess(apiResponse);
-        });
-      } else {
-        result.json().then((r) => {
-          const failedResponse = r as FailedApiResponse;
-          onFailure(failedResponse.error);
-        });
-      }
-    });
-  };
-
   addStorage = (
     config: StorageConfig,
     onSuccess: (response: APIResponse<any>) => void,

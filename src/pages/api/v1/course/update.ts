@@ -34,7 +34,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         const name = createSlug(fields.title[0]);
         const fileType = fields.hasOwnProperty("fileType") && fields.fileType[0];
 
-        const response = await uploadThumbnail(files.file[0], name, "course", fileType, "bunny.net");
+        const response = await uploadThumbnail(files.file[0], name, "course", fileType);
         if (response.success) {
           return response.body;
         } else {

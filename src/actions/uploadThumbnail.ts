@@ -1,4 +1,5 @@
 import { createSlug, getFileExtension } from "@/lib/utils";
+import appConstant from "@/services/appConstant";
 import { ContentManagementService } from "@/services/cms/ContentManagementService";
 import { APIResponse } from "@/types/apis";
 import { FileObjectType, StaticFileCategory } from "@/types/cms/common";
@@ -8,8 +9,7 @@ export const uploadThumbnail = async (
   file: any,
   name: string,
   objectType: FileObjectType,
-  fileType: StaticFileCategory,
-  provider: string = "bunny.net"
+  fileType: StaticFileCategory
 ): Promise<APIResponse<any>> => {
   if (file) {
     let response: APIResponse<any>;
@@ -20,9 +20,9 @@ export const uploadThumbnail = async (
     const fullName = `${name}-${currentTime}.${extension}`;
     const fileBuffer = await fs.promises.readFile(`${sourcePath}`);
 
-    const cms = new ContentManagementService().getCMS(provider);
+    const cms = new ContentManagementService().getCMS(appConstant.defaultCMSProvider);
     const authConfig = await cms.getAuthConfig();
-    const cmsConfig = await (await cms.getCMSConfig()).body?.config;
+    const cmsConfig = (await cms.getCMSConfig()).body?.config;
 
     if (authConfig.success && authConfig.body) {
       response = await cms.uploadCDNImage(authConfig.body, cmsConfig, fileBuffer, objectType, fullName, fileType);
