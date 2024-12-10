@@ -4,8 +4,7 @@ import { Button, Dropdown, Flex, Form, Input, Popconfirm, Tooltip, Upload, Uploa
 import ImgCrop from "antd-img-crop";
 import { LoadingOutlined } from "@ant-design/icons";
 import SvgIcons from "@/components/SvgIcons";
-import { postWithFile } from "@/services/request";
-import { createSlug } from "@/lib/utils";
+import { createSlug, getBase64 } from "@/lib/utils";
 
 import BlogService from "@/services/BlogService";
 import { useRouter } from "next/router";
@@ -23,6 +22,7 @@ const BlogForm: FC<{
   const [blogTitle, setBlogTitle] = useState<string>(title);
   const [editorValue, setEditorValue] = useState<string>("");
   const [messageApi, contextHolder] = message.useMessage();
+  const [file, setFile] = useState<File>();
   const [form] = Form.useForm();
 
   const router = useRouter();
@@ -41,38 +41,10 @@ const BlogForm: FC<{
   const uploadFile = async (file: any, title: string) => {
     if (file) {
       setBlogBannerUploading(true);
-      const name = title.replace(/\s+/g, "-");
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("title", name);
-      formData.append("dir", "/blog/banners/");
-
-      blogBanner && formData.append("existingFilePath", blogBanner);
-
-      const postRes = await postWithFile(formData, `/api/v1/upload/file/upload`);
-      if (!postRes.ok) {
-        setBlogBannerUploading(false);
-        throw new Error("Failed to upload file");
-      }
-      const res = await postRes.json();
-
-      if (res.success) {
-        setBlogBanner(res.fileCDNPath);
-        BlogService.updateBlog(
-          undefined,
-          "",
-          state,
-          res.fileCDNPath,
-          String(router.query.blogId),
-          (result) => {
-            messageApi.success("file uploaded");
-            setBlogBannerUploading(false);
-          },
-          (error) => {
-            messageApi.error(error);
-          }
-        );
-      }
+      const base64 = await getBase64(file);
+      setBlogBanner(base64 as string);
+      setFile(file);
+      setBlogBannerUploading(false);
     }
   };
   const handleChange: UploadProps["onChange"] = (info) => {
@@ -86,12 +58,19 @@ const BlogForm: FC<{
 
   const onPostBlog = (state: StateType, exit?: boolean) => {
     setLoader({ ...loader, publish: true });
-    BlogService.updateBlog(
-      blogTitle,
-      DOMPurify.sanitize(editorValue),
+    const data = {
+      title: blogTitle,
+      content: DOMPurify.sanitize(editorValue),
       state,
-      blogBanner,
-      String(router.query.blogId),
+      banner: bannerImage,
+      contentType,
+      blogId: String(router.query.blogId),
+    };
+    const formData = new FormData();
+    formData.append("blog", JSON.stringify(data));
+    file && formData.append("file", file);
+    BlogService.updateBlog(
+      formData,
       (result) => {
         messageApi.success(result.message);
         setCurrentState(result.blog.state);

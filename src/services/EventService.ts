@@ -1,5 +1,5 @@
 import { EventAccess, EventMode, Events, EventType, StateType } from "@prisma/client";
-import { getDelete, getFetch, postFetch } from "./request";
+import { getDelete, getFetch, postFetch, postWithFile } from "./request";
 
 interface ApiResponse {
   result: IEventList;
@@ -122,11 +122,11 @@ type FailedApiResponse = {
 };
 class EventService {
   createEvent = (
-    data: IEventUpdate,
+    formData: FormData,
     onSuccess: (response: ApiResponse) => void,
     onFailure: (message: string) => void
   ) => {
-    postFetch(data, `/api/v1/admin/events/create`).then((result) => {
+    postWithFile(formData, `/api/v1/admin/events/create`).then((result) => {
       if (result.status == 200) {
         result.json().then((r) => {
           const apiResponse = r as ApiResponse;
@@ -142,12 +142,12 @@ class EventService {
   };
 
   updateEvent = (
-    updateData: IEventUpdate,
+    formData: FormData,
     onSuccess: (response: ApiResponse) => void,
     onFailure: (message: string) => void
   ) => {
-    postFetch(updateData, `/api/v1/admin/events/update`).then((result) => {
-      if (result.status == 200) {
+    postWithFile(formData, `/api/v1/admin/events/update`).then((result) => {
+      if (result.status == 200 || result.status == 201) {
         result.json().then((r) => {
           const apiResponse = r as ApiResponse;
           onSuccess(apiResponse);

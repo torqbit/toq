@@ -16,38 +16,26 @@ import PaymentHistory from "@/components/Admin/Users/PaymentHistory";
 import AppLayout from "@/components/Layouts/AppLayout";
 import { getSiteConfig } from "@/services/getSiteConfig";
 import { PageSiteConfig } from "@/services/siteConstant";
+import { getBase64 } from "@/lib/utils";
+import ProgramService from "@/services/ProgramService";
 
 const ProfileSetting: FC<{
   user: Session;
   onUpdateProfile: (info: { name: string; phone: string; image: string }) => void;
   setUserProfile: (profile: string) => void;
+  setFile: (file: File) => void;
   userProfile: string;
-}> = ({ user, onUpdateProfile, userProfile, setUserProfile }) => {
+}> = ({ user, onUpdateProfile, userProfile, setUserProfile, setFile }) => {
   const [pageLoading, setPageLoading] = useState<boolean>(false);
   const [userProfileUploading, setuserProfileUploading] = useState<boolean>(false);
 
   const uploadFile = async (file: any, title: string) => {
     if (file) {
+      const base64 = await getBase64(file);
       setuserProfileUploading(true);
-      const name = title.replace(/\s+/g, "-");
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("title", name);
-      formData.append("dir", "/user/profile/");
-      formData.append("existingFilePath", userProfile);
-
-      const postRes = await postWithFile(formData, `/api/v1/upload/file/upload`);
-      if (!postRes.ok) {
-        message.error(postRes.statusText);
-      }
-      const res = await postRes.json();
-
-      if (res.success) {
-        setUserProfile(res.fileCDNPath);
-        setuserProfileUploading(false);
-      } else {
-        message.error(res.error);
-      }
+      setUserProfile(base64 as string);
+      setFile(file);
+      setuserProfileUploading(false);
     }
   };
   useEffect(() => {
@@ -156,22 +144,29 @@ const Setting: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const { data: user, update } = useSession();
   const [messageApi, contextMessageHolder] = message.useMessage();
   const [userProfile, setUserProfile] = useState<string>();
+  const [file, setFile] = useState<File>();
   const { dispatch, globalState } = useAppContext();
 
   const onChange = (key: string) => {};
   const onUpdateProfile = async (info: { name: string; phone: string; image: string }) => {
-    const res = await postFetch({ name: info.name, phone: info.phone, image: userProfile }, "/api/user/update");
-    const result = (await res.json()) as IResponse;
-    if (res.ok && result.success) {
-      update({
-        ...info,
-        image: userProfile,
-      });
-      dispatch({ type: "SET_USER", payload: { name: info.name, phone: `${info.phone}` } });
-      messageApi.success(result.message);
-    } else {
-      messageApi.error(result.error);
-    }
+    const formData = new FormData();
+    formData.append("userInfo", JSON.stringify({ name: info.name, phone: info.phone, image: user?.user?.image }));
+    file && formData.append("file", file);
+
+    ProgramService.updateProfile(
+      formData,
+      (result) => {
+        update({
+          ...info,
+          image: result.fileCDNPath,
+        });
+        dispatch({ type: "SET_USER", payload: { name: info.name, phone: `${info.phone}` } });
+        messageApi.success(result.message);
+      },
+      (error) => {
+        messageApi.error(error);
+      }
+    );
   };
 
   const items: TabsProps["items"] = [
@@ -184,6 +179,7 @@ const Setting: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
           onUpdateProfile={onUpdateProfile}
           userProfile={String(userProfile)}
           setUserProfile={setUserProfile}
+          setFile={setFile}
         />
       ),
     },
