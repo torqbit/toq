@@ -1,5 +1,5 @@
 import { Blog, StateType } from "@prisma/client";
-import { getDelete, getFetch, postFetch } from "./request";
+import { getDelete, getFetch, postFetch, postWithFile } from "./request";
 export interface latestBlogs extends Blog {
   user: {
     name: string;
@@ -43,15 +43,11 @@ class BlogService {
   };
 
   updateBlog = (
-    title: string | undefined,
-    content: string | undefined,
-    state: StateType,
-    banner: string | undefined,
-    blogId: string,
+    formData: FormData,
     onSuccess: (response: ApiResponse) => void,
     onFailure: (message: string) => void
   ) => {
-    postFetch({ title, content, state, banner, blogId }, `/api/v1/admin/blog/update`).then((result) => {
+    postWithFile(formData, `/api/v1/admin/blog/update`).then((result) => {
       if (result.status == 400) {
         result.json().then((r) => {
           const failedResponse = r as FailedApiResponse;

@@ -1,6 +1,6 @@
 import { useAppContext } from "@/components/ContextApi/AppContext";
 import appConstant from "@/services/appConstant";
-import { Theme, User } from "@prisma/client";
+import { User } from "@prisma/client";
 import { FC, useEffect } from "react";
 import { IEventInfo } from "@/services/EventService";
 import styles from "@/styles/Marketing/Events/Event.module.scss";

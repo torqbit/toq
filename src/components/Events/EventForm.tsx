@@ -21,8 +21,7 @@ import {
 import ImgCrop from "antd-img-crop";
 import { CaretDownOutlined, LoadingOutlined } from "@ant-design/icons";
 import SvgIcons from "@/components/SvgIcons";
-import { postWithFile } from "@/services/request";
-import { createSlug } from "@/lib/utils";
+import { createSlug, getBase64 } from "@/lib/utils";
 import { useRouter } from "next/router";
 import { EventMode, Events, EventType, StateType } from "@prisma/client";
 import TextEditor from "@/components/Editor/Quilljs/Editor";
@@ -38,6 +37,7 @@ const EventForm: FC<{ details?: Events }> = ({ details }) => {
   const [eventBanner, setEventBanner] = useState<string | null | undefined>(details?.banner);
   const [state, setState] = useState<StateType>();
   const [eventBannerUploading, setEventBannerUploading] = useState<boolean>(false);
+  const [file, setFile] = useState<File>();
   const [loader, setLoader] = useState<{ discard: boolean; publish: boolean }>({
     discard: false,
     publish: false,
@@ -70,42 +70,11 @@ const EventForm: FC<{ details?: Events }> = ({ details }) => {
 
   const uploadFile = async (file: any, title: string) => {
     if (file) {
+      setFile(file);
+      const base64 = await getBase64(file);
       setEventBannerUploading(true);
-      const name = title.replace(/\s+/g, "-");
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("title", name);
-      formData.append("dir", "/blog/banners/");
-
-      eventBanner && formData.append("existingFilePath", eventBanner);
-
-      const postRes = await postWithFile(formData, `/api/v1/upload/file/upload`);
-      if (!postRes.ok) {
-        setEventBannerUploading(false);
-        throw new Error("Failed to upload file");
-      }
-      const res = await postRes.json();
-
-      if (res.success) {
-        setEventBanner(res.fileCDNPath);
-        if (router.query.eventId) {
-          EventService.updateEvent(
-            { banner: res.fileCDNPath, id: Number(router.query.eventId) },
-            (result) => {
-              messageApi.success(result.message);
-              setEventBannerUploading(false);
-            },
-            (error) => {
-              messageApi.error(error);
-              setEventBannerUploading(false);
-            }
-          );
-        } else {
-          setEventBannerUploading(false);
-        }
-      } else {
-        setEventBannerUploading(false);
-      }
+      setEventBanner(base64 as string);
+      setEventBannerUploading(false);
     }
   };
   const handleChange: UploadProps["onChange"] = (info) => {
@@ -124,7 +93,7 @@ const EventForm: FC<{ details?: Events }> = ({ details }) => {
       ...form.getFieldsValue(),
       endTime: form.getFieldsValue().endTime.toISOString(),
       startTime: form.getFieldsValue().startTime.toISOString(),
-      banner: eventBanner,
+      banner: eventDetail?.banner,
       description: eventDetail?.description,
       eventInstructions: eventDetail?.eventInstructions,
       certificate: eventDetail?.certificate,
@@ -133,8 +102,12 @@ const EventForm: FC<{ details?: Events }> = ({ details }) => {
       slug: createSlug(form.getFieldsValue().title),
     };
 
+    const formData = new FormData();
+    formData.append("event", JSON.stringify(data));
+    file && formData.append("file", file);
+
     EventService.updateEvent(
-      data,
+      formData,
       (result) => {
         messageApi.success(result.message);
         if (exit) {
@@ -173,17 +146,21 @@ const EventForm: FC<{ details?: Events }> = ({ details }) => {
       ...form.getFieldsValue(),
       endTime: form.getFieldsValue().endTime.toISOString(),
       startTime: form.getFieldsValue().startTime.toISOString(),
-      banner: eventBanner,
+      banner: eventDetail?.banner,
       description: eventDetail?.description,
       eventInstructions: eventDetail?.eventInstructions,
       certificate: eventDetail?.certificate,
       state,
       slug: createSlug(form.getFieldsValue().title),
     };
+
+    const formData = new FormData();
+    formData.append("event", JSON.stringify(data));
+    file && formData.append("file", file);
     EventService.createEvent(
-      data,
+      formData,
       (result) => {
-        messageApi.success(result.success);
+        messageApi.success(result.message);
         router.push(`/admin/content/`);
         setLoader({ ...loader, publish: false });
       },

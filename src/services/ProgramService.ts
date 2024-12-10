@@ -18,6 +18,7 @@ export type ApiResponse = {
   registerCourses: IRegisteredCourses[];
   courseDetails: CourseInfo;
   certificateId: string;
+  fileCDNPath: string;
   certificateDetail: {
     imgPath: string;
     pdfPath: string;
@@ -449,6 +450,26 @@ class ProgramService {
     onFailure: (message: string) => void
   ) => {
     postWithFile(formData, `/api/v1/course/update`).then((result) => {
+      if (result.status == 200 || result.status == 201) {
+        result.json().then((r) => {
+          const apiResponse = r as ApiResponse;
+          onSuccess(apiResponse);
+        });
+      } else {
+        result.json().then((r) => {
+          const failedResponse = r as FailedApiResponse;
+          onFailure(failedResponse.error);
+        });
+      }
+    });
+  };
+
+  updateProfile = (
+    formData: FormData,
+    onSuccess: (response: ApiResponse) => void,
+    onFailure: (message: string) => void
+  ) => {
+    postWithFile(formData, `/api/user/update`).then((result) => {
       if (result.status == 200 || result.status == 201) {
         result.json().then((r) => {
           const apiResponse = r as ApiResponse;

@@ -6,5 +6,5 @@ export enum FileObjectType {
   COURSE = "course",
   BLOG = "blog",
   UPDATE = "update",
-  PROFILE = "profile",
+  USER = "user",
 }
