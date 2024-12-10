@@ -6,6 +6,7 @@ import { withUserAuthorized } from "@/lib/api-middlewares/with-authorized";
 import { createSlug } from "@/lib/utils";
 import { readFieldWithFile } from "../upload/video/upload";
 import { uploadThumbnail } from "@/actions/uploadThumbnail";
+import { APIResponse } from "@/types/apis";
 
 export const config = {
   api: {
@@ -18,8 +19,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const { fields, files } = (await readFieldWithFile(req)) as any;
 
     const body = JSON.parse(fields.course[0]);
-
+    const name = createSlug(fields.title[0]);
+    const fileType = fields.hasOwnProperty("fileType") && fields.fileType[0];
     let courseId = Number(body.courseId);
+
     const findCourse = await prisma.course.findUnique({
       where: {
         courseId: body.courseId,
@@ -28,24 +31,17 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         thumbnail: true,
       },
     });
+    let response: APIResponse<any>;
+    let thumbnail;
 
-    const getThumbnail = async (): Promise<boolean | string> => {
-      if (files.file) {
-        const name = createSlug(fields.title[0]);
-        const fileType = fields.hasOwnProperty("fileType") && fields.fileType[0];
-
-        const response = await uploadThumbnail(files.file[0], name, "course", fileType);
-        if (response.success) {
-          return response.body;
-        } else {
-          return false;
-        }
+    if (files.file) {
+      response = await uploadThumbnail(files.file[0], name, "course", fileType);
+      if (response.success) {
+        thumbnail = response.body;
       } else {
-        return false;
+        return res.status(response.status).json(response);
       }
-    };
-
-    const thumbnail = await getThumbnail();
+    }
 
     if (findCourse) {
       let slug = `untitled-${new Date().getTime()}`;
