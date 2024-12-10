@@ -23,14 +23,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const fileType = fields.hasOwnProperty("fileType") && fields.fileType[0];
     let courseId = Number(body.courseId);
 
-    const findCourse = await prisma.course.findUnique({
-      where: {
-        courseId: body.courseId,
-      },
-      select: {
-        thumbnail: true,
-      },
-    });
     let response: APIResponse<any>;
     let thumbnail;
 
@@ -42,6 +34,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         return res.status(response.status).json(response);
       }
     }
+
+    const findCourse = await prisma.course.findUnique({
+      where: {
+        courseId: body.courseId,
+      },
+      select: {
+        thumbnail: true,
+      },
+    });
 
     if (findCourse) {
       let slug = `untitled-${new Date().getTime()}`;
