@@ -25,7 +25,7 @@ import { postWithFile } from "@/services/request";
 
 import AddLesson from "./AddLesson";
 import { PageSiteConfig } from "@/services/siteConstant";
-import { getBase64 } from "@/lib/utils";
+import { createSlug, getBase64 } from "@/lib/utils";
 
 const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const [courseBannerUploading, setCourseBannerUploading] = useState<boolean>(false);
@@ -109,10 +109,16 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   };
 
   const onSubmit = () => {
+    let courseName = form.getFieldsValue().course_name || courseData?.name;
+
+    if (!courseName || courseName == "Untitled") {
+      messageApi.error("Course name is missing");
+      return;
+    }
     setSettingloading(true);
 
     let course = {
-      name: form.getFieldsValue().course_name || courseData?.name,
+      name: courseName,
       expiryInDays: Number(courseData?.expiryInDays),
       description: form.getFieldsValue().course_description || courseData.description,
       courseId: Number(router.query.id),
@@ -122,10 +128,9 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
       courseType: courseData.courseType,
       coursePrice: courseData.courseType === $Enums.CourseType.FREE ? 0 : Number(courseData.coursePrice),
     };
-    let title = form.getFieldsValue().course_name || courseData?.name;
 
     const courseFormData = new FormData();
-    const name = title.replace(/\s+/g, "-");
+    const name = createSlug(courseName);
     file && courseFormData.append("file", file);
     courseFormData.append("title", name);
     courseFormData.append("fileType", "banner");

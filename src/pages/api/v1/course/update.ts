@@ -45,10 +45,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     });
 
     if (findCourse) {
-      let slug = `untitled-${new Date().getTime()}`;
-      if (body.name && body.name != "Untitled") {
-        slug = createSlug(body.name);
-      }
       const updateCourse = await prisma.course.update({
         where: {
           courseId: Number(courseId),
@@ -56,15 +52,17 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         data: {
           ...body,
           thumbnail: thumbnail ? thumbnail : findCourse.thumbnail,
-          slug: slug,
+          slug: name,
         },
       });
       return res.status(200).json({
         info: false,
         success: true,
-        message: "Course updated successfully",
+        message: "Course has been updated",
         course: updateCourse,
       });
+    } else {
+      return res.status(400).json({ success: false, error: "Course not found" });
     }
   } catch (error) {
     return errorHandler(error, res);
