@@ -1,7 +1,8 @@
 import { IEmailEventType } from "@/lib/types/email";
 import { render } from "@react-email/render";
 import WelcomeEmailPage from "@/components/Email/WelcomeEmail";
-import nodemailer from "nodemailer";
+import nodemailer, { Transporter } from "nodemailer";
+
 import { CourseEnrolmentEmail } from "@/components/Email/CourseRegistrationEmail";
 import CourseCompletionEmail from "@/components/Email/CourseCompletionEmail";
 import {
@@ -26,6 +27,10 @@ import EventCompletionEmail from "@/components/Email/EventCompletionEmail";
 import EventAccessEmail from "@/components/Email/EventAccessEmail";
 import EventAccessDeniedEmail from "@/components/Email/EventAccessDeniedEmail";
 import TestEmailCredentialsEmail from "@/components/Email/TestEmailCredentialsEmail";
+import { emailConstantsVariable } from "./cms/email/EmailManagementService";
+import SecretsManager from "./secrets/SecretsManager";
+import { getSiteConfig } from "./getSiteConfig";
+import { PageSiteConfig } from "./siteConstant";
 export const getEmailErrorMessage = (response: string, message?: string) => {
   let errResponse;
   if (response === "CONN") {
@@ -43,20 +48,37 @@ export const getEmailErrorMessage = (response: string, message?: string) => {
 };
 
 class MailerService {
-  transporter: any;
-  constructor() {
+  private transporter!: Transporter;
+  siteConfig: PageSiteConfig;
+  private SMTP_HOST: string | undefined;
+  private SMTP_USER: string | undefined;
+  private SMTP_PASSWORD: string | undefined;
+  private SMTP_FROM_EMAIL: string | undefined;
+  private secretStore = SecretsManager.getSecretsProvider();
+
+  async initialize() {
+    this.SMTP_HOST = await this.secretStore.get(emailConstantsVariable.SMTP_HOST);
+    this.SMTP_USER = await this.secretStore.get(emailConstantsVariable.SMTP_USER);
+    this.SMTP_PASSWORD = await this.secretStore.get(emailConstantsVariable.SMTP_PASSWORD);
+    this.SMTP_FROM_EMAIL = await this.secretStore.get(emailConstantsVariable.SMTP_FROM_EMAIL);
+
     this.transporter = nodemailer.createTransport({
       port: 587,
-      host: process.env.NEXT_SMTP_HOST,
+      host: this.SMTP_HOST || process.env.NEXT_SMTP_HOST,
       secure: false,
       auth: {
-        user: process.env.NEXT_SMTP_USER,
-        pass: process.env.NEXT_SMTP_PASSWORD,
+        user: this.SMTP_USER || process.env.NEXT_SMTP_USER,
+        pass: this.SMTP_PASSWORD || process.env.NEXT_SMTP_PASSWORD,
       },
-      from: `${process.env.FROM_SMTP_USER_EMAIL}`,
+      from: `${this.SMTP_FROM_EMAIL || process.env.NEXT_SMTP_USER_EMAIL}`,
     });
   }
+  constructor() {
+    this.siteConfig = getSiteConfig()?.site;
+    this.initialize();
+  }
   sendMail = (eventType: IEmailEventType, config: any) => {
+    const { site } = getSiteConfig();
     switch (eventType) {
       case "NEW_USER":
         return this.sendWelcomeMail(config as IWelcomeEmailConfig);
@@ -110,8 +132,8 @@ class MailerService {
       const htmlString = render(WelcomeEmailPage({ configData: config }));
       const sendMail = await this.transporter.sendMail({
         to: config.email,
-        from: `${process.env.NEXT_PUBLIC_PLATFORM_NAME} <${process.env.FROM_SMTP_USER_EMAIL}>`,
-        subject: `Welcome to ${process.env.NEXT_PUBLIC_PLATFORM_NAME}: Ignite Your Learning Journey!`,
+        from: `${this.siteConfig.brand?.name} <${this.SMTP_FROM_EMAIL || process.env.FROM_SMTP_USER_EMAIL}>`,
+        subject: `Welcome to ${this.siteConfig.brand?.name}: Ignite Your Learning Journey!`,
         html: htmlString,
       });
       return { success: true, message: "Email sent successfully" };
@@ -125,7 +147,7 @@ class MailerService {
       const htmlString = render(CourseEnrolmentEmail({ configData: config }));
       const mailConfig = {
         to: config.email,
-        from: `${process.env.NEXT_PUBLIC_PLATFORM_NAME} <${process.env.FROM_SMTP_USER_EMAIL}>`,
+        from: `${this.siteConfig.brand?.name} <${this.SMTP_FROM_EMAIL}>`,
         subject: `Get Started: ${config.course.name}`,
         html: htmlString,
       };
@@ -159,7 +181,7 @@ class MailerService {
 
       const sendMail = await this.transporter.sendMail({
         to: config.email,
-        from: `${process.env.NEXT_PUBLIC_PLATFORM_NAME} <${process.env.FROM_SMTP_USER_EMAIL}>`,
+        from: `${this.siteConfig.brand?.name} <${this.SMTP_FROM_EMAIL}>`,
         subject: `Congratulations on Completing ${config.courseName}`,
         html: htmlString,
       });
@@ -179,7 +201,7 @@ class MailerService {
 
       const sendMail = await this.transporter.sendMail({
         to: config.email,
-        from: `${process.env.NEXT_PUBLIC_PLATFORM_NAME} <${process.env.FROM_SMTP_USER_EMAIL}>`,
+        from: `${this.siteConfig.brand?.name} <${this.SMTP_FROM_EMAIL}>`,
         subject: `Assignment - ${config.assignmentName} has been evaluated`,
         html: htmlString,
       });
@@ -199,7 +221,7 @@ class MailerService {
 
       const sendMail = await this.transporter.sendMail({
         to: config.email,
-        from: `${process.env.NEXT_PUBLIC_PLATFORM_NAME} <${process.env.FROM_SMTP_USER_EMAIL}>`,
+        from: `${this.siteConfig.brand?.name} <${this.SMTP_FROM_EMAIL}>`,
         subject: `New video lesson published in course `,
         html: htmlString,
       });
@@ -219,7 +241,7 @@ class MailerService {
 
       const sendMail = await this.transporter.sendMail({
         to: config.authorEmail,
-        from: `${process.env.NEXT_PUBLIC_PLATFORM_NAME} <${process.env.FROM_SMTP_USER_EMAIL}>`,
+        from: `${this.siteConfig.brand?.name} <${this.SMTP_FROM_EMAIL}>`,
         subject: `Assignment - ${config.assignmentName} has been submitted `,
         html: htmlString,
       });
@@ -234,7 +256,7 @@ class MailerService {
       const sendMail = await this.transporter.sendMail({
         to: process.env.FROM_SMTP_SUPPORT_EMAIL,
 
-        from: `${process.env.NEXT_PUBLIC_PLATFORM_NAME} <${process.env.FROM_SMTP_USER_EMAIL}>`,
+        from: `${this.siteConfig.brand?.name} <${this.SMTP_FROM_EMAIL}>`,
         subject: `Feedback received from ${config.email} `,
         text: `Hey there, \n \n We have received a feedback from ${config.name} \n \n ${config.feedback}`,
       });
@@ -249,7 +271,7 @@ class MailerService {
       const htmlString = render(EventCompletionEmail({ configData: config }));
       const mailConfig = {
         to: config.email,
-        from: `${process.env.NEXT_PUBLIC_PLATFORM_NAME} <${process.env.FROM_SMTP_USER_EMAIL}>`,
+        from: `${this.siteConfig.brand?.name} <${this.SMTP_FROM_EMAIL}>`,
         subject: `Certificate of Participation for ${config.eventName}`,
         html: htmlString,
       };
@@ -282,7 +304,7 @@ class MailerService {
 
       const sendMail = await this.transporter.sendMail({
         to: config.email,
-        from: `${process.env.NEXT_PUBLIC_PLATFORM_NAME} <${process.env.FROM_SMTP_USER_EMAIL}>`,
+        from: `${this.siteConfig.brand?.name} <${this.SMTP_FROM_EMAIL}>`,
         subject: `Booking request has been confirmed for event - ${config.eventName} `,
         html: htmlString,
       });
@@ -301,7 +323,7 @@ class MailerService {
 
       const sendMail = await this.transporter.sendMail({
         to: config.email,
-        from: `${process.env.NEXT_PUBLIC_PLATFORM_NAME} <${process.env.FROM_SMTP_USER_EMAIL}>`,
+        from: `${this.siteConfig.brand?.name} <${this.SMTP_FROM_EMAIL}>`,
         subject: `Booking request has been denied for event - ${config.eventName} `,
 
         html: htmlString,
@@ -332,7 +354,7 @@ class MailerService {
 
       const sendMail = await testTransporter.sendMail({
         to: config.email,
-        from: `${process.env.NEXT_PUBLIC_PLATFORM_NAME} <${config.credendials.smtpFromEmail}>`,
+        from: `${this.siteConfig.brand?.name} <${config.credendials.smtpFromEmail}>`,
         subject: `Test Email Credentials `,
         html: htmlString,
       });
