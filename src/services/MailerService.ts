@@ -26,12 +26,16 @@ import EventCompletionEmail from "@/components/Email/EventCompletionEmail";
 import EventAccessEmail from "@/components/Email/EventAccessEmail";
 import EventAccessDeniedEmail from "@/components/Email/EventAccessDeniedEmail";
 import TestEmailCredentialsEmail from "@/components/Email/TestEmailCredentialsEmail";
-export const getEmailErrorMessage = (response: string) => {
+export const getEmailErrorMessage = (response: string, message?: string) => {
   let errResponse;
   if (response === "CONN") {
     errResponse = "Connection failed";
   } else if (response === "AUTH PLAIN") {
-    errResponse = "authentication failed";
+    errResponse = " Authentication failed";
+  } else if (response === "ECONNECTION") {
+    errResponse = "Connection failed";
+  } else if (response === "DATA") {
+    errResponse = message;
   } else {
     errResponse = response;
   }
@@ -335,7 +339,7 @@ class MailerService {
       return { success: true, message: "Email sent successfully" };
     } catch (error: any) {
       console.log("error ", error);
-      return { success: false, error: `Error sending email:${getEmailErrorMessage(error.response)}` };
+      return { success: false, error: `Error sending email:${getEmailErrorMessage(error.command, error.response)}` };
     }
   }
 }

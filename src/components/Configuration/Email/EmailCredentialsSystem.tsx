@@ -41,6 +41,7 @@ const EmailCredentialsSystem = () => {
       (response) => {
         messageApi.success(response.message);
         setLoading(false);
+        emailForm.resetFields();
         getEmailCredentials();
       },
       (error) => {
@@ -110,7 +111,7 @@ const EmailCredentialsSystem = () => {
               </Tag>
             ) : (
               <Button loading={loading} onClick={() => emailForm.submit()} type='primary'>
-                Save/Test
+                Test/Save
               </Button>
             )}
           </Flex>

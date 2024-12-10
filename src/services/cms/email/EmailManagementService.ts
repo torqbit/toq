@@ -51,8 +51,8 @@ export class EmailManagemetService {
           data: {
             provider_name: emailConfig.smtpHost,
             service_type: this.serviceType,
-            providerDetail: { ...emailConstantsVariable },
-            state: "AUTHENTICATED",
+            providerDetail: {},
+            state: "EMAIL_CONFIGURED",
           },
         });
         return new APIResponse<void>(true, 200, `Successfully saved the email configuration`);
