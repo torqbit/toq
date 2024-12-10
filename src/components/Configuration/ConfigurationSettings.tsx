@@ -5,7 +5,7 @@ import ContentManagementSystem from "@/components/Configuration/CMS/ContentManag
 import { FC } from "react";
 import { PageSiteConfig } from "@/services/siteConstant";
 import PaymentManagementSystem from "./Payment/PaymentManagementSystem";
-import EmailCredentialsSystem from "./Email/EmailCredentialsSystem";
+import EmailServiceSystem from "./Email/EmailServiceSystem";
 
 const ConfigurationSettings: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const items: TabsProps["items"] = [
@@ -21,8 +21,8 @@ const ConfigurationSettings: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig 
     },
     {
       key: "EMS",
-      label: "Email Credentials",
-      children: <EmailCredentialsSystem />,
+      label: "Email Service",
+      children: <EmailServiceSystem />,
     },
   ];
   return (

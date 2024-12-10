@@ -6,7 +6,7 @@ import SvgIcons from "@/components/SvgIcons";
 import { EmailCredentialsConfig } from "@/types/cms/email";
 import emailClient from "@/lib/admin/email/email-client";
 
-const EmailCredentialsSystem = () => {
+const EmailServiceSystem = () => {
   const [emailForm] = Form.useForm();
   const [messageApi, contextHolder] = message.useMessage();
   const [loading, setLoading] = useState<boolean>(false);
@@ -88,7 +88,7 @@ const EmailCredentialsSystem = () => {
   return (
     <>
       {contextHolder}
-      <h3>Email Credentials</h3>
+      <h3>Email Service</h3>
       <ConfigFormLayout
         extraContent={
           <Flex align='center' gap={10}>
@@ -116,7 +116,7 @@ const EmailCredentialsSystem = () => {
             )}
           </Flex>
         }
-        formTitle={"Email Credentials"}>
+        formTitle={"Email Service"}>
         <Form form={emailForm} onFinish={saveAndTestEmailCredentials} requiredMark={false}>
           {emailSecretItems.map((item, i) => {
             return (
@@ -143,4 +143,4 @@ const EmailCredentialsSystem = () => {
   );
 };
 
-export default EmailCredentialsSystem;
+export default EmailServiceSystem;
