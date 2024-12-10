@@ -1,4 +1,6 @@
 import { IEventAccessDeniedMailConfig, IEventAccessMailConfig, ITestEmailConfig } from "@/lib/emailConfig";
+import { getSiteConfig } from "@/services/getSiteConfig";
+import { PageSiteConfig } from "@/services/siteConstant";
 import {
   Body,
   Button,
@@ -21,12 +23,13 @@ interface IProps {
 }
 
 export const TestEmailCredentialsEmail = ({ configData }: IProps) => {
+  const { site }: { site: PageSiteConfig } = getSiteConfig();
   return (
     <Tailwind>
       <Html>
         <Head />
 
-        <Preview>{`${process.env.NEXT_PUBLIC_PLATFORM_NAME}`}</Preview>
+        <Preview>{`${site.brand?.name}`}</Preview>
 
         <Head>
           <style></style>
@@ -44,7 +47,7 @@ export const TestEmailCredentialsEmail = ({ configData }: IProps) => {
               <Text className='text-[#000] text-[15px] m-0 '>
                 Thanks & Regards <br />
               </Text>
-              <Text className='text-black text-[15px] my-2'>{`${process.env.NEXT_PUBLIC_PLATFORM_NAME}`} team</Text>
+              <Text className='text-black text-[15px] my-2'>{`${site.brand?.name}`} team</Text>
             </Section>
           </Container>
         </Body>

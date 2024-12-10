@@ -1,6 +1,6 @@
 import { useAppContext } from "@/components/ContextApi/AppContext";
 import appConstant from "@/services/appConstant";
-import { Theme, User } from "@prisma/client";
+import { User } from "@prisma/client";
 import { FC, useEffect } from "react";
 import { IEventInfo } from "@/services/EventService";
 import styles from "@/styles/Marketing/Events/Event.module.scss";
@@ -18,11 +18,14 @@ const EventInfo: FC<{
   registrationExpired: boolean;
   eventListLink: string;
 }> = ({ user, eventInfo, classNames, registrationExpired, eventListLink }) => {
+  const {
+    globalState: { siteConfig },
+  } = useAppContext();
   return (
     <div className={`${styles.event_info_wrapper} ${classNames} `}>
-      <Space direction="vertical" className={styles.event_info_space} size={20}>
+      <Space direction='vertical' className={styles.event_info_space} size={20}>
         <Link href={`/${eventListLink}`}>
-          <Flex align="center" gap={10}>
+          <Flex align='center' gap={10}>
             <i>{SvgIcons.arrowLeft}</i>
             Back to all Events
           </Flex>
@@ -31,7 +34,7 @@ const EventInfo: FC<{
           <Flex vertical gap={20}>
             <EventTitleCard
               title={eventInfo.title}
-              organiser={`${process.env.NEXT_PUBLIC_PLATFORM_NAME}`}
+              organiser={`${siteConfig.brand?.name}`}
               eventType={eventInfo.eventType}
               eventMode={eventInfo.eventMode}
             />
