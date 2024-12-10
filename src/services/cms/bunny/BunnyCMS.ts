@@ -368,13 +368,24 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
     file: Buffer,
     objectType: FileObjectType,
     fileName: string,
-    category: StaticFileCategory
+    category: StaticFileCategory,
+    existingPath?: string
   ): Promise<APIResponse<string>> {
     //get the storage password
-
     const storagePassword = await secretsStore.get(cmsConfig.cdnStoragePasswordRef);
     if (storagePassword) {
       const bunny = new BunnyClient(storagePassword);
+      if (existingPath) {
+        const deleteResponse = await bunny.deleteCDNFile(
+          existingPath,
+          cmsConfig.cdnConfig?.linkedHostname as string,
+          cmsConfig.cdnConfig?.zoneName as string
+        );
+        if (!deleteResponse.success && deleteResponse.status !== 200) {
+          return new APIResponse(false, 400, deleteResponse.message);
+        }
+      }
+
       const fullPath = `${objectType}/${category}/${fileName}`;
       const response = await bunny.uploadCDNFile(
         file,

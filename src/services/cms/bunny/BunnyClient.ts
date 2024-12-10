@@ -8,6 +8,7 @@ import prisma from "@/lib/prisma";
 import { VideoObjectType } from "@/types/cms/common";
 import { fetchImageBuffer } from "@/actions/fetchImageBuffer";
 import { truncateString } from "@/services/helper";
+import url from "url";
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 export class BunnyClient {
@@ -147,6 +148,13 @@ export class BunnyClient {
     };
   };
 
+  getDeleteOption() {
+    return {
+      method: "DELETE",
+      headers: { accept: "application/json", AccessKey: this.accessKey },
+    };
+  }
+
   uploadCDNFile = async (
     file: Buffer,
     path: string,
@@ -165,6 +173,37 @@ export class BunnyClient {
       success: uploadRes.HttpCode == 201,
       body: uploadRes.HttpCode == 201 ? `https://${linkedHostname}/${path}` : "",
     };
+  };
+
+  deleteCDNFile = async (filePath: string, linkedHostname: string, zoneName: string): Promise<APIResponse<string>> => {
+    const parseUrl = filePath && url.parse(filePath);
+    const existingPath = parseUrl && parseUrl.pathname;
+    if (parseUrl && parseUrl.host === linkedHostname) {
+      const deleteUrl = `https://storage.bunnycdn.com/${zoneName}/${existingPath}`;
+      const response = await fetch(deleteUrl, this.getDeleteOption());
+      if (response.ok) {
+        return {
+          status: response.status,
+          message: response.statusText,
+          success: true,
+          body: "",
+        };
+      } else {
+        return {
+          status: response.status,
+          message: response.statusText,
+          success: false,
+          body: "",
+        };
+      }
+    } else {
+      return {
+        status: 200,
+        message: "Ignoring the delete operation as image is not stored in this storage provider",
+        success: false,
+        body: "",
+      };
+    }
   };
 
   getClientPostOptions(title: string) {

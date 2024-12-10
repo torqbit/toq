@@ -9,7 +9,8 @@ export const uploadThumbnail = async (
   file: any,
   name: string,
   objectType: FileObjectType,
-  fileType: StaticFileCategory
+  fileType: StaticFileCategory,
+  existingPath?: string
 ): Promise<APIResponse<any>> => {
   if (file) {
     let response: APIResponse<any>;
@@ -25,7 +26,15 @@ export const uploadThumbnail = async (
     const cmsConfig = (await cms.getCMSConfig()).body?.config;
 
     if (authConfig.success && authConfig.body) {
-      response = await cms.uploadCDNImage(authConfig.body, cmsConfig, fileBuffer, objectType, fullName, fileType);
+      response = await cms.uploadCDNImage(
+        authConfig.body,
+        cmsConfig,
+        fileBuffer,
+        objectType,
+        fullName,
+        fileType,
+        existingPath
+      );
       return response;
     } else {
       return new APIResponse(false, 400, "Authentication configuration was not found");

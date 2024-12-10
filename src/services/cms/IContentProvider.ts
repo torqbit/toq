@@ -42,7 +42,8 @@ export interface IContentProvider<T extends ICMSAuthConfig, U> {
     file: Buffer,
     objectType: FileObjectType,
     fileName: string,
-    category: StaticFileCategory
+    category: StaticFileCategory,
+    existingPath?: string
   ): Promise<APIResponse<any>>;
   uploadVideo(
     authConfig: T,
