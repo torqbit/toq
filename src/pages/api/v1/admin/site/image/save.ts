@@ -7,7 +7,7 @@ import fs from "fs";
 import os from "os";
 
 import appConstant from "@/services/appConstant";
-import { readFieldWithFile } from "@/lib/utils";
+import { readFieldWithFile } from "@/lib/upload/utils";
 
 export const config = {
   api: {
@@ -19,14 +19,17 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const { fields, files } = (await readFieldWithFile(req)) as any;
     const homeDir = os.homedir();
-    const dirPath = path.join(homeDir, `${appConstant.homeDirName}/static`);
+    const dirPath = path.join(homeDir, `${appConstant.homeDirName}/${appConstant.staticFileDirName}`);
     if (!fs.existsSync(dirPath)) {
       fs.mkdirSync(dirPath, {
         recursive: true,
       });
     }
 
-    const previousImgPath = path.join(homeDir, `${appConstant.homeDirName}/static/${fields.previousPath[0]}`);
+    const previousImgPath = path.join(
+      homeDir,
+      `${appConstant.homeDirName}/${appConstant.staticFileDirName}/${fields.previousPath[0]}`
+    );
 
     if (fs.existsSync(previousImgPath)) {
       fs.unlinkSync(previousImgPath);

@@ -1,5 +1,5 @@
 import { errorHandler } from "@/lib/api-middlewares/errorHandler";
-import { getCookieName, readFieldWithFile } from "@/lib/utils";
+import { getCookieName } from "@/lib/utils";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getToken } from "next-auth/jwt";
 import prisma from "@/lib/prisma";
@@ -9,6 +9,7 @@ import { withUserAuthorized } from "@/lib/api-middlewares/with-authorized";
 import { APIResponse } from "@/types/apis";
 import { uploadThumbnail } from "@/actions/courses";
 import { FileObjectType } from "@/types/cms/common";
+import { readFieldWithFile } from "@/lib/upload/utils";
 
 export const config = {
   api: {

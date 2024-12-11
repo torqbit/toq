@@ -1,11 +1,5 @@
-import SvgIcons from "@/components/SvgIcons";
-
 import appConstant from "@/services/appConstant";
-import { IncomingForm } from "formidable";
-import { NextApiRequest } from "next";
-import fs from "fs";
-import path from "path";
-import { Dispatch } from "react";
+
 const md5 = require("md5");
 
 export const authConstants = {
@@ -352,46 +346,4 @@ export function getFileExtension(fileName: string) {
   const extension = parts[parts.length - 1];
 
   return extension.toLowerCase();
-}
-
-export const readFieldWithFile = (req: NextApiRequest) => {
-  const form = new IncomingForm({ multiples: true });
-  return new Promise((resolve, reject) => {
-    form.parse(req, (err, fields, files) => {
-      if (err) reject(err);
-      resolve({ fields, files });
-    });
-  });
-};
-
-export async function mergeChunks(
-  fileName: string,
-  totalChunks: number,
-
-  extention: string,
-
-  filePath: string
-) {
-  const outFile = fs.createWriteStream(filePath);
-
-  for (let i = 0; i < totalChunks; i++) {
-    const chunkFilePath = path.join(
-      `${process.env.MEDIA_UPLOAD_PATH}/${appConstant.mediaTempDir}`,
-      `${fileName}.part${i}.${extention}`
-    );
-
-    const partStream = fs.createReadStream(chunkFilePath);
-
-    await new Promise<void>((resolve, reject) => {
-      partStream.pipe(outFile, { end: false });
-      partStream.on("end", () => {
-        fs.unlink(chunkFilePath, (err) => {
-          if (err) reject(err);
-          else resolve();
-        });
-      });
-    });
-  }
-
-  outFile.end();
 }

@@ -3,11 +3,12 @@ import { NextApiResponse, NextApiRequest } from "next";
 import { errorHandler } from "@/lib/api-middlewares/errorHandler";
 import { withMethods } from "@/lib/api-middlewares/with-method";
 import { withUserAuthorized } from "@/lib/api-middlewares/with-authorized";
-import { createSlug, getCookieName, readFieldWithFile } from "@/lib/utils";
+import { createSlug, getCookieName } from "@/lib/utils";
 import { getToken } from "next-auth/jwt";
 import { APIResponse } from "@/types/apis";
 import { uploadThumbnail } from "@/actions/courses";
 import { FileObjectType } from "@/types/cms/common";
+import { readFieldWithFile } from "@/lib/upload/utils";
 export const config = {
   api: {
     bodyParser: false,

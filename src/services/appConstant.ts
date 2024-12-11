@@ -12,6 +12,7 @@ export default {
   country: "Your country",
   privatePath: ["/add-course"],
   homeDirName: ".torqbit",
+  staticFileDirName: "static",
   defaultCMSProvider: "bunny.net",
   attachmentFileFolder: "discussion-attachment",
   assignmentFileFolder: "assignment-files",
