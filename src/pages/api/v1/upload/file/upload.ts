@@ -1,11 +1,10 @@
 import { NextApiResponse, NextApiRequest } from "next";
 import { withMethods } from "@/lib/api-middlewares/with-method";
 import fs from "fs";
-import { saveToDir } from "../video/upload";
 import { ContentManagementService } from "@/services/cms/ContentManagementService";
 import prisma from "@/lib/prisma";
 import { withAuthentication } from "@/lib/api-middlewares/with-authentication";
-import { readFieldWithFile } from "@/lib/utils";
+import { readFieldWithFile, saveToLocal } from "@/lib/upload/utils";
 
 export const config = {
   api: {
@@ -36,7 +35,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       const fullName = `${name.replace(/\s+/g, "-")}-${currentTime}.${extension}`;
       const bannerPath = `${dir}${fullName}`;
 
-      const localPath = await saveToDir(fullName, sourcePath, res);
+      const localPath = await saveToLocal(fullName, sourcePath);
 
       const fileBuffer = await fs.promises.readFile(`${localPath}`);
 
