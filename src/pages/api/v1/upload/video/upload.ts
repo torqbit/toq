@@ -6,20 +6,9 @@ import fs from "fs";
 import { ContentManagementService } from "@/services/cms/ContentManagementService";
 import { UploadVideoObjectType } from "@/types/courses/Course";
 import prisma from "@/lib/prisma";
-import { IncomingForm } from "formidable";
-import { createSlug } from "@/lib/utils";
+import { createSlug, getFileExtension, mergeChunks, readFieldWithFile } from "@/lib/utils";
 import { createTempDir } from "@/actions/checkTempDirExist";
 import appConstant from "@/services/appConstant";
-
-export const readFieldWithFile = (req: NextApiRequest) => {
-  const form = new IncomingForm({ multiples: true });
-  return new Promise((resolve, reject) => {
-    form.parse(req, (err, fields, files) => {
-      if (err) reject(err);
-      resolve({ fields, files });
-    });
-  });
-};
 
 export const config = {
   api: {
@@ -27,13 +16,6 @@ export const config = {
   },
 };
 const cms = new ContentManagementService();
-export function getFileExtension(fileName: string) {
-  const parts = fileName.split(".");
-
-  const extension = parts[parts.length - 1];
-
-  return extension.toLowerCase();
-}
 
 export const saveToDir = async (fullName: string, sourcePath: string, res: NextApiResponse) => {
   if (!createTempDir(process.env.MEDIA_UPLOAD_PATH, appConstant.mediaTempDir)) {
@@ -47,38 +29,6 @@ export const saveToDir = async (fullName: string, sourcePath: string, res: NextA
   fs.unlinkSync(sourcePath);
   return destinationPath;
 };
-
-async function mergeChunks(
-  fileName: string,
-  totalChunks: number,
-
-  extention: string,
-
-  filePath: string
-) {
-  const outFile = fs.createWriteStream(filePath);
-
-  for (let i = 0; i < totalChunks; i++) {
-    const chunkFilePath = path.join(
-      `${process.env.MEDIA_UPLOAD_PATH}/${appConstant.mediaTempDir}`,
-      `${fileName}.part${i}.${extention}`
-    );
-
-    const partStream = fs.createReadStream(chunkFilePath);
-
-    await new Promise<void>((resolve, reject) => {
-      partStream.pipe(outFile, { end: false });
-      partStream.on("end", () => {
-        fs.unlink(chunkFilePath, (err) => {
-          if (err) reject(err);
-          else resolve();
-        });
-      });
-    });
-  }
-
-  outFile.end();
-}
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {

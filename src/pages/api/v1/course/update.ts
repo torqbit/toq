@@ -3,9 +3,8 @@ import { NextApiResponse, NextApiRequest } from "next";
 import { errorHandler } from "@/lib/api-middlewares/errorHandler";
 import { withMethods } from "@/lib/api-middlewares/with-method";
 import { withUserAuthorized } from "@/lib/api-middlewares/with-authorized";
-import { createSlug } from "@/lib/utils";
-import { readFieldWithFile } from "../upload/video/upload";
-import { uploadThumbnail } from "@/actions/uploadThumbnail";
+import { createSlug, readFieldWithFile } from "@/lib/utils";
+import { uploadThumbnail } from "@/actions/courses";
 import { APIResponse } from "@/types/apis";
 import { FileObjectType } from "@/types/cms/common";
 

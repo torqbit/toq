@@ -3,10 +3,9 @@ import { NextApiResponse, NextApiRequest } from "next";
 import { withMethods } from "@/lib/api-middlewares/with-method";
 import { errorHandler } from "@/lib/api-middlewares/errorHandler";
 import { getToken } from "next-auth/jwt";
-import { createSlug, getCookieName } from "@/lib/utils";
-import { readFieldWithFile } from "../v1/upload/video/upload";
+import { createSlug, getCookieName, readFieldWithFile } from "@/lib/utils";
 import { APIResponse } from "@/types/apis";
-import { uploadThumbnail } from "@/actions/uploadThumbnail";
+import { uploadThumbnail } from "@/actions/courses";
 import { FileObjectType } from "@/types/cms/common";
 
 export const config = {

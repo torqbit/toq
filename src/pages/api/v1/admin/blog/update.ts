@@ -3,11 +3,10 @@ import { NextApiResponse, NextApiRequest } from "next";
 import { errorHandler } from "@/lib/api-middlewares/errorHandler";
 import { withMethods } from "@/lib/api-middlewares/with-method";
 import { withUserAuthorized } from "@/lib/api-middlewares/with-authorized";
-import { createSlug, getCookieName } from "@/lib/utils";
+import { createSlug, getCookieName, readFieldWithFile } from "@/lib/utils";
 import { getToken } from "next-auth/jwt";
 import { APIResponse } from "@/types/apis";
-import { readFieldWithFile } from "../../upload/video/upload";
-import { uploadThumbnail } from "@/actions/uploadThumbnail";
+import { uploadThumbnail } from "@/actions/courses";
 import { FileObjectType } from "@/types/cms/common";
 export const config = {
   api: {
