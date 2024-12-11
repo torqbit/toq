@@ -37,7 +37,6 @@ export interface IContentProvider<T extends ICMSAuthConfig, U> {
   ): Promise<APIResponse<void>>;
 
   uploadCDNImage(
-    authConfig: T,
     cmsConfig: U,
     file: Buffer,
     objectType: FileObjectType,
@@ -45,11 +44,12 @@ export interface IContentProvider<T extends ICMSAuthConfig, U> {
     category: StaticFileCategory
   ): Promise<APIResponse<any>>;
   uploadVideo(
-    authConfig: T,
     cmsConfig: U,
     file: Buffer,
     title: string,
     objectType: VideoObjectType,
     objectId: number
   ): Promise<APIResponse<any>>;
+
+  deleteCDNImage(cmsConfig: U, filePath: string): Promise<APIResponse<any>>;
 }

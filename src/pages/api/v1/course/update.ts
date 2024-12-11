@@ -26,7 +26,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     let thumbnail;
 
     if (files.file) {
-      response = await uploadThumbnail(files.file[0], name, FileObjectType.COURSE, "thumbnail");
+      response = await uploadThumbnail(files.file[0], name, FileObjectType.COURSE, "thumbnail", body.thumbnail);
       if (response.success) {
         thumbnail = response.body;
       } else {

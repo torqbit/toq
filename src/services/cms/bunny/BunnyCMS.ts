@@ -362,8 +362,27 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
     }
   }
 
+  async deleteCDNImage(cmsConfig: BunnyCMSConfig, filePath: string): Promise<APIResponse<any>> {
+    const storagePassword = await secretsStore.get(cmsConfig.cdnStoragePasswordRef);
+    if (storagePassword && cmsConfig.cdnConfig) {
+      const bunny = new BunnyClient(storagePassword);
+      const deleteResponse = await bunny.deleteCDNImage(
+        filePath,
+        cmsConfig.cdnConfig.linkedHostname,
+        cmsConfig.cdnConfig.zoneName
+      );
+      return new APIResponse(
+        deleteResponse.success,
+        deleteResponse.status,
+        deleteResponse.message,
+        deleteResponse.body
+      );
+    } else {
+      return new APIResponse(false, 404, "CMS configuration is missing");
+    }
+  }
+
   async uploadCDNImage(
-    authConfig: BunnyAuthConfig,
     cmsConfig: BunnyCMSConfig,
     file: Buffer,
     objectType: FileObjectType,
@@ -371,17 +390,16 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
     category: StaticFileCategory
   ): Promise<APIResponse<string>> {
     //get the storage password
-
     const storagePassword = await secretsStore.get(cmsConfig.cdnStoragePasswordRef);
-    if (storagePassword) {
+    if (storagePassword && cmsConfig.storageConfig && cmsConfig.cdnConfig) {
       const bunny = new BunnyClient(storagePassword);
       const fullPath = `${objectType}/${category}/${fileName}`;
       const response = await bunny.uploadCDNFile(
         file,
         fullPath,
-        cmsConfig.cdnConfig?.zoneName as string,
-        cmsConfig.storageConfig?.mainStorageRegion as string,
-        cmsConfig.cdnConfig?.linkedHostname as string
+        cmsConfig.cdnConfig.zoneName,
+        cmsConfig.storageConfig.mainStorageRegion,
+        cmsConfig.cdnConfig.linkedHostname
       );
       if (response.body === "") {
         return new APIResponse(false, 400, "Unable to upload the file");
@@ -389,12 +407,11 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
         return new APIResponse(response.success, response.status, response.message, response.body);
       }
     } else {
-      return new APIResponse(false, 400, "Storage password is missing");
+      return new APIResponse(false, 404, "CMS configuration is missing");
     }
   }
 
   async uploadVideo(
-    authConfig: BunnyAuthConfig,
     cmsConfig: BunnyCMSConfig,
     file: Buffer,
     title: string,
@@ -402,15 +419,15 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
     objectId: number
   ): Promise<APIResponse<VideoInfo>> {
     const videoPassword = await secretsStore.get(cmsConfig.vodAccessKeyRef);
-    if (videoPassword) {
+    if (videoPassword && cmsConfig.vodConfig && cmsConfig.cdnConfig) {
       const bunny = new BunnyClient(videoPassword);
       const response = await bunny.uploadVideo(
         file,
-        cmsConfig.vodConfig?.vidLibraryId as number,
+        cmsConfig.vodConfig.vidLibraryId,
         title,
-        cmsConfig.cdnConfig?.linkedHostname as string
+        cmsConfig.cdnConfig.linkedHostname
       );
-      if (!response?.success || !response.body) {
+      if (!response.success || !response.body) {
         return new APIResponse(false, 400, "Unable to upload the video");
       } else {
         let videoResponse = response.body;
@@ -423,20 +440,23 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
               providerVideoId: videoResponse.videoId,
               thumbnail: videoResponse.thumbnail,
               resourceId: objectId,
-              state: videoResponse.state as VideoState,
+              state: videoResponse.state,
               mediaProvider: this.provider,
             },
           });
 
-          bunny.trackVideo(videoResponse, cmsConfig.vodConfig?.vidLibraryId as number, async (videoLen: number) => {
+          bunny.trackVideo(videoResponse, cmsConfig.vodConfig.vidLibraryId, async (videoLen: number) => {
             let thumbnail = newVideo.thumbnail;
 
-            const uploadResponse = await bunny.uploadThumbnailToCDN(
-              thumbnail,
-              cmsConfig.cdnConfig?.linkedHostname as string,
-              cmsConfig.storageConfig?.mainStorageRegion as string,
-              cmsConfig.cdnConfig?.zoneName as string
-            );
+            const uploadResponse =
+              cmsConfig.cdnConfig &&
+              cmsConfig.storageConfig &&
+              (await bunny.uploadThumbnailToCDN(
+                thumbnail,
+                cmsConfig.cdnConfig.linkedHostname,
+                cmsConfig.storageConfig.mainStorageRegion,
+                cmsConfig.cdnConfig.zoneName
+              ));
 
             if (uploadResponse) {
               thumbnail = uploadResponse;
@@ -483,7 +503,7 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
               tvThumbnail: videoResponse.thumbnail,
             },
           });
-          bunny.trackVideo(videoResponse, cmsConfig.vodConfig?.vidLibraryId as number, async () => {
+          bunny.trackVideo(videoResponse, cmsConfig.vodConfig?.vidLibraryId, async () => {
             const updatedVideo = prisma.course.update({
               where: {
                 courseId: objectId,
@@ -499,6 +519,6 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
         return new APIResponse(response.success, response.status, response.message, videoResponse);
       }
     }
-    return new APIResponse(false, 400, "Video password is missing");
+    return new APIResponse(false, 404, "CMS configuration is missing");
   }
 }

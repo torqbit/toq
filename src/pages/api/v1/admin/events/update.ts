@@ -53,7 +53,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     let thumbnail;
 
     if (files.file) {
-      response = await uploadThumbnail(files.file[0], body.slug, FileObjectType.EVENT, "banner");
+      response = await uploadThumbnail(files.file[0], body.slug, FileObjectType.EVENT, "banner", body.banner);
       if (response.success) {
         thumbnail = response.body;
       } else {

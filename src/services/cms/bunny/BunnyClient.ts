@@ -8,6 +8,7 @@ import prisma from "@/lib/prisma";
 import { VideoObjectType } from "@/types/cms/common";
 import { fetchImageBuffer } from "@/actions/fetchImageBuffer";
 import { truncateString } from "@/services/helper";
+import url from "url";
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 export class BunnyClient {
@@ -91,7 +92,7 @@ export class BunnyClient {
       let fullName = thumbnail.split("/")[thumbnail.split("/").length - 1];
       const fileBuffer = await fetchImageBuffer(thumbnail);
       if (fileBuffer) {
-        const uploadResponse = await this.uploadCDNFile(
+        const uploadResponse = await this.uploadCDNImage(
           fileBuffer,
           `thumbnail/${fullName}`,
           zoneName,
@@ -131,23 +132,26 @@ export class BunnyClient {
     if (videoData.status === 5 || videoData.status === 6) {
       state = VideoState.FAILED;
     }
-    return {
-      status: videoResult.status,
-      success: videoResult.status == 200,
-      message: videoResult.statusText,
-      body: {
-        videoId: videoData.guid as string,
-        thumbnail: `https://${linkedHostname}/${videoData.guid}/${videoData.thumbnailFileName}`,
-        previewUrl: `https://${linkedHostname}/${videoData.guid}/preview.webp`,
-        videoUrl: `https://iframe.mediadelivery.net/embed/${libraryId}/${videoData.guid}`,
-        mediaProviderName: "bunny",
-        state: state as VideoState,
-        videoDuration: videoData.length,
-      },
-    };
+
+    return new APIResponse(videoResult.status == 200, videoResult.status, videoResult.statusText, {
+      videoId: videoData.guid as string,
+      thumbnail: `https://${linkedHostname}/${videoData.guid}/${videoData.thumbnailFileName}`,
+      previewUrl: `https://${linkedHostname}/${videoData.guid}/preview.webp`,
+      videoUrl: `https://iframe.mediadelivery.net/embed/${libraryId}/${videoData.guid}`,
+      mediaProviderName: "bunny",
+      state: state as VideoState,
+      videoDuration: videoData.length,
+    });
   };
 
-  uploadCDNFile = async (
+  getDeleteOption() {
+    return {
+      method: "DELETE",
+      headers: { accept: "application/json", AccessKey: this.accessKey },
+    };
+  }
+
+  uploadCDNImage = async (
     file: Buffer,
     path: string,
     zoneName: string,
@@ -159,12 +163,33 @@ export class BunnyClient {
       this.getClientFileOptions(file)
     );
     const uploadRes = await res.json();
-    return {
-      status: uploadRes.HttpCode,
-      message: uploadRes.Message,
-      success: uploadRes.HttpCode == 201,
-      body: uploadRes.HttpCode == 201 ? `https://${linkedHostname}/${path}` : "",
-    };
+
+    return new APIResponse(
+      uploadRes.HttpCode == 201,
+      uploadRes.HttpCode,
+      uploadRes.Message,
+      uploadRes.HttpCode == 201 ? `https://${linkedHostname}/${path}` : ""
+    );
+  };
+
+  deleteCDNFile = async (filePath: string, linkedHostname: string, zoneName: string): Promise<APIResponse<string>> => {
+    const parseUrl = filePath && url.parse(filePath);
+    const existingPath = parseUrl && parseUrl.pathname;
+    if (parseUrl && parseUrl.host === linkedHostname) {
+      const deleteUrl = `https://storage.bunnycdn.com/${zoneName}/${existingPath}`;
+      const response = await fetch(deleteUrl, this.getDeleteOption());
+      if (response.ok) {
+        return new APIResponse(true, response.status, response.statusText);
+      } else {
+        return new APIResponse(false, response.status, response.statusText);
+      }
+    } else {
+      return new APIResponse(
+        false,
+        200,
+        "Ignoring the delete operation as image is not stored in this storage provider"
+      );
+    }
   };
 
   getClientPostOptions(title: string) {
@@ -173,7 +198,7 @@ export class BunnyClient {
       headers: {
         accept: "application/json",
         "content-type": "application/json",
-        AccessKey: this.accessKey as string,
+        AccessKey: this.accessKey,
       },
       body: JSON.stringify({ title: title }),
     };
@@ -207,7 +232,6 @@ export class BunnyClient {
         AccessKey: this.accessKey,
       },
     };
-
     try {
       const result = await fetch(url, options);
       if (result.status == 200) {

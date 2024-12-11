@@ -39,7 +39,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         files.file[0],
         body.slug,
         contentType === "UPDATE" ? FileObjectType.UPDATE : FileObjectType.BLOG,
-        "banner"
+        "banner",
+        banner
       );
       if (response.success) {
         thumbnail = response.body;
