@@ -411,6 +411,49 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
     }
   }
 
+  async deleteVideo(
+    cmsConfig: BunnyCMSConfig,
+    videoId: string,
+    objectId: number,
+    objectType: VideoObjectType
+  ): Promise<APIResponse<any>> {
+    const storagePassword = await secretsStore.get(cmsConfig.vodAccessKeyRef);
+    if (storagePassword && cmsConfig.vodConfig) {
+      const bunny = new BunnyClient(storagePassword);
+      const deleteResponse = await bunny.deleteVideo(videoId, cmsConfig.vodConfig?.vidLibraryId);
+      if ((deleteResponse.success || deleteResponse.status === 404) && objectType == "lesson") {
+        const videoDel = await prisma.video.delete({
+          where: {
+            resourceId: objectId,
+            providerVideoId: videoId,
+          },
+        });
+      } else if ((deleteResponse.success || deleteResponse.status === 404) && objectType == "course") {
+        await prisma.course.update({
+          where: {
+            courseId: objectId,
+          },
+          data: {
+            tvProviderId: undefined,
+            tvProviderName: undefined,
+            tvUrl: undefined,
+            tvThumbnail: undefined,
+            tvState: undefined,
+          },
+        });
+      }
+
+      return new APIResponse(
+        deleteResponse.success,
+        deleteResponse.status,
+        deleteResponse.message,
+        deleteResponse.body
+      );
+    } else {
+      return new APIResponse(false, 404, "CMS configuration is missing");
+    }
+  }
+
   async uploadVideo(
     cmsConfig: BunnyCMSConfig,
     file: Buffer,
