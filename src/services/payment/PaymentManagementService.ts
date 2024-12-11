@@ -127,13 +127,20 @@ export class PaymentManagemetService {
     }
   };
 
-  getPaymentProvider = (config: GatewayConfig): PaymentServiceProvider => {
+  getPaymentProvider = async (config: GatewayConfig): Promise<PaymentServiceProvider> => {
     switch (config.name) {
       case $Enums.gatewayProvider.CASHFREE:
-        let c = config as CashFreeConfig;
-        return new CashfreePaymentProvider(c.clientId, c.secretId);
+        const secretStore = SecretsManager.getSecretsProvider();
+        const clientId = await secretStore.get(paymentsConstants.CF_CLIENT_ID);
+        const clientSecret = await secretStore.get(paymentsConstants.CF_CLIENT_SECRET);
+        if (clientId && clientSecret) {
+          return new CashfreePaymentProvider(clientId, clientSecret);
+        } else {
+          throw new Error("Access key and secret for Cashfree not found");
+        }
+
       default:
-        throw new Error("Unable to find the payment provider! contact with support team");
+        throw new Error("Unable to find the payment provider! Contact your support team");
     }
   };
 
@@ -280,7 +287,7 @@ export class PaymentManagemetService {
      * if latest order is in failed state or not available
      */
     try {
-      const paymentProvider = this.getPaymentProvider(gatewayConfig);
+      const paymentProvider = await this.getPaymentProvider(gatewayConfig);
 
       if (!latestOrder || latestOrder.latestStatus === $Enums.paymentStatus.FAILED) {
         const order = await prisma.order.create({

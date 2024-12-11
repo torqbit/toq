@@ -25,12 +25,17 @@ class PaymentsClient {
 
   getPaymentGatewayConfig = (
     gateway: $Enums.gatewayProvider,
-    onSuccess: (response: APIResponse<{ state: ConfigurationState; config: CFPaymentsConfig }>) => void,
+    onSuccess: (
+      response: APIResponse<{ state: ConfigurationState; config: { currency: string; paymentMethods: string[] } }>
+    ) => void,
     onFailure: (err: string) => void
   ) => {
     getFetch(`/api/v1/admin/config/payments/get/${gateway}`)
       .then(async (result) => {
-        const response = (await result.json()) as APIResponse<{ state: ConfigurationState; config: CFPaymentsConfig }>;
+        const response = (await result.json()) as APIResponse<{
+          state: ConfigurationState;
+          config: { currency: string; paymentMethods: string[] };
+        }>;
         if (response.success) {
           onSuccess(response);
         } else {
