@@ -172,7 +172,7 @@ export class BunnyClient {
     );
   };
 
-  deleteCDNFile = async (filePath: string, linkedHostname: string, zoneName: string): Promise<APIResponse<string>> => {
+  deleteCDNImage = async (filePath: string, linkedHostname: string, zoneName: string): Promise<APIResponse<string>> => {
     const parseUrl = filePath && url.parse(filePath);
     const existingPath = parseUrl && parseUrl.pathname;
     if (parseUrl && parseUrl.host === linkedHostname) {

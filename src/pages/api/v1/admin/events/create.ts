@@ -1,14 +1,13 @@
 import { errorHandler } from "@/lib/api-middlewares/errorHandler";
-import { getCookieName } from "@/lib/utils";
+import { getCookieName, readFieldWithFile } from "@/lib/utils";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getToken } from "next-auth/jwt";
 import prisma from "@/lib/prisma";
 import { withMethods } from "@/lib/api-middlewares/with-method";
 import { withAuthentication } from "@/lib/api-middlewares/with-authentication";
 import { withUserAuthorized } from "@/lib/api-middlewares/with-authorized";
-import { readFieldWithFile } from "../../upload/video/upload";
 import { APIResponse } from "@/types/apis";
-import { uploadThumbnail } from "@/actions/uploadThumbnail";
+import { uploadThumbnail } from "@/actions/courses";
 import { FileObjectType } from "@/types/cms/common";
 
 export const config = {

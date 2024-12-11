@@ -394,7 +394,7 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
     if (storagePassword && cmsConfig.storageConfig && cmsConfig.cdnConfig) {
       const bunny = new BunnyClient(storagePassword);
       const fullPath = `${objectType}/${category}/${fileName}`;
-      const response = await bunny.uploadCDNFile(
+      const response = await bunny.uploadCDNImage(
         file,
         fullPath,
         cmsConfig.cdnConfig.zoneName,

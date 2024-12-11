@@ -1,10 +1,11 @@
 import { NextApiResponse, NextApiRequest } from "next";
 import { withMethods } from "@/lib/api-middlewares/with-method";
 import fs from "fs";
-import { readFieldWithFile, saveToDir } from "../video/upload";
+import { saveToDir } from "../video/upload";
 import { ContentManagementService } from "@/services/cms/ContentManagementService";
 import prisma from "@/lib/prisma";
 import { withAuthentication } from "@/lib/api-middlewares/with-authentication";
+import { readFieldWithFile } from "@/lib/utils";
 
 export const config = {
   api: {
