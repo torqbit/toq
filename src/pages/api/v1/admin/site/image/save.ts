@@ -19,7 +19,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const { fields, files } = (await readFieldWithFile(req)) as any;
     const homeDir = os.homedir();
-    const dirPath = path.join(homeDir, `${appConstant.homeDirName}/${appConstant.homeDirFileName}`);
+    const dirPath = path.join(homeDir, `${appConstant.homeDirName}/${appConstant.staticFileDirName}`);
     if (!fs.existsSync(dirPath)) {
       fs.mkdirSync(dirPath, {
         recursive: true,
@@ -28,7 +28,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const previousImgPath = path.join(
       homeDir,
-      `${appConstant.homeDirName}/${appConstant.homeDirFileName}/${fields.previousPath[0]}`
+      `${appConstant.homeDirName}/${appConstant.staticFileDirName}/${fields.previousPath[0]}`
     );
 
     if (fs.existsSync(previousImgPath)) {

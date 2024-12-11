@@ -16,7 +16,7 @@ export async function mergeChunks(
   const homeDir = os.homedir();
 
   const outFile = fs.createWriteStream(filePath);
-  const dirPath = path.join(homeDir, `${appConstant.homeDirName}/${appConstant.homeDirFileName}`);
+  const dirPath = path.join(homeDir, `${appConstant.homeDirName}/${appConstant.staticFileDirName}`);
   for (let i = 0; i < totalChunks; i++) {
     const chunkFilePath = path.join(dirPath, `${fileName}.part${i}.${extention}`);
 
@@ -38,7 +38,7 @@ export async function mergeChunks(
 
 export const saveToLocal = async (fileName: string, sourcePath: string): Promise<string> => {
   const homeDir = os.homedir();
-  const dirPath = path.join(homeDir, `${appConstant.homeDirName}/${appConstant.homeDirFileName}`);
+  const dirPath = path.join(homeDir, `${appConstant.homeDirName}/${appConstant.staticFileDirName}`);
   if (!fs.existsSync(dirPath)) {
     fs.mkdirSync(dirPath, {
       recursive: true,

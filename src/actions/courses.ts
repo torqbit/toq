@@ -92,7 +92,7 @@ export const uploadVideo = async (
 
     const homeDir = os.homedir();
 
-    const localDirPath = path.join(homeDir, `${appConstant.homeDirName}/${appConstant.homeDirFileName}`);
+    const localDirPath = path.join(homeDir, `${appConstant.homeDirName}/${appConstant.staticFileDirName}`);
 
     const totalFile = fs.readdirSync(localDirPath).filter((file) => file.startsWith(name));
 
@@ -108,12 +108,12 @@ export const uploadVideo = async (
         }
         return new APIResponse(response.success, response.status, response.message, response.body);
       } else {
-        return new APIResponse(false, 400, "CMS configuration was not found");
+        return new APIResponse(false, 404, "CMS configuration was not found");
       }
     } else {
       return new APIResponse(false, 200, "uploading");
     }
   } else {
-    return new APIResponse(false, 400, "File is missing");
+    return new APIResponse(false, 404, "File is missing");
   }
 };
