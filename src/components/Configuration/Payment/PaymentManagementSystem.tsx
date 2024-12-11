@@ -49,7 +49,9 @@ const PaymentManagementSystem = () => {
       ...paymentInfoForm.getFieldsValue(),
       gateway: paymentGateway,
       currency: paymentInfoForm.getFieldsValue().currency,
-      paymentMethods: paymentInfoForm.getFieldsValue().paymentMethods.map((r: any) => (typeof r !== "object" ? r : r.value)),
+      paymentMethods: paymentInfoForm
+        .getFieldsValue()
+        .paymentMethods.map((r: any) => (typeof r !== "object" ? r : r.value)),
     };
 
     paymentsClient.savePaymentGatewayConfig(
@@ -68,8 +70,17 @@ const PaymentManagementSystem = () => {
       paymentGateway,
       (response) => {
         messageApi.success(response.message);
+        if (response.body) {
+        }
         if (response.body && response.body.state == "AUTHENTICATED") {
           setCurrent(1);
+        } else if (response.body && response.body.state == "PAYMENT_CONFIGURED") {
+          console.log(response.body.config);
+          setCurrent(2);
+          paymentInfoForm.setFieldsValue({
+            currency: response.body.config.currency,
+            paymentMethods: response.body.config.paymentMethods,
+          });
         }
       },
       (error) => {
@@ -84,7 +95,7 @@ const PaymentManagementSystem = () => {
       description: "The API Key that will be used to authenticate with the Cashfree service",
       optional: false,
 
-      input: <Input placeholder='Ap1Key123' width={250} />,
+      input: <Input placeholder="Ap1Key123" width={250} />,
       inputName: "apiKey",
     },
 
@@ -92,7 +103,7 @@ const PaymentManagementSystem = () => {
       title: "Secret Key",
       optional: false,
       description: "The secret key that will be used to authenticate with the Cashfree service",
-      input: <Input.Password placeholder='*********' />,
+      input: <Input.Password placeholder="*********" />,
       inputName: "secretKey",
     },
   ];
@@ -102,7 +113,7 @@ const PaymentManagementSystem = () => {
       title: "Select Currency",
       description: "Choose the preferred currency for the end users",
       input: (
-        <Select style={{ width: 250 }} placeholder='Select currency '>
+        <Select style={{ width: 250 }} placeholder="Select currency ">
           {orderCurrency.map((currency, i) => {
             return (
               <Select.Option key={i} value={`${currency}`}>
@@ -118,7 +129,13 @@ const PaymentManagementSystem = () => {
       title: "Payment Methods",
       description: "Use a custom domain that will be used to access images",
       input: (
-        <Select labelInValue optionLabelProp='label' style={{ width: 250 }} mode='tags' placeholder='Select payment methods'>
+        <Select
+          labelInValue
+          optionLabelProp="label"
+          style={{ width: 250 }}
+          mode="tags"
+          placeholder="Select payment methods"
+        >
           {paymentMethods.map((methods, i) => {
             return (
               <Select.Option key={i} value={`${methods.value}`}>
@@ -138,40 +155,42 @@ const PaymentManagementSystem = () => {
       <h3>Payments</h3>
       <Steps
         current={current}
-        status='finish'
-        size='small'
+        status="finish"
+        size="small"
         progressDot
-        direction='vertical'
+        direction="vertical"
         items={[
           {
             title: (
               <ConfigFormLayout
                 extraContent={
-                  <Flex align='center' gap={10}>
+                  <Flex align="center" gap={10}>
                     {
                       <Button
                         onClick={() => {
                           paymentAuthForm.resetFields();
-                        }}>
+                        }}
+                      >
                         Reset
                       </Button>
                     }
 
                     {current > 0 ? (
                       <Tag style={{ padding: "5px 10px" }}>
-                        <Flex align='center' gap={5}>
+                        <Flex align="center" gap={5}>
                           <i style={{ lineHeight: 0, fontSize: 15 }}>{SvgIcons.checkFilled}</i>
                           <span>Connected</span>
                         </Flex>
                       </Tag>
                     ) : (
-                      <Button onClick={() => paymentAuthForm.submit()} type='primary'>
+                      <Button onClick={() => paymentAuthForm.submit()} type="primary">
                         Connect
                       </Button>
                     )}
                   </Flex>
                 }
-                formTitle={"Configure Cashfree"}>
+                formTitle={"Configure Cashfree"}
+              >
                 <Form form={paymentAuthForm} onFinish={verifyPaymentAuth} requiredMark={false}>
                   {paymentSecretItems.map((item, i) => {
                     return (
@@ -180,7 +199,8 @@ const PaymentManagementSystem = () => {
                           <Form.Item
                             style={{ width: 250 }}
                             name={item.inputName}
-                            rules={[{ required: true, message: "API key is required!" }]}>
+                            rules={[{ required: true, message: "API key is required!" }]}
+                          >
                             {<Input.Password disabled={current > 0} placeholder={"***************"} />}
                           </Form.Item>
                         }
@@ -200,29 +220,35 @@ const PaymentManagementSystem = () => {
             title: (
               <ConfigFormLayout
                 extraContent={
-                  <Flex align='center' gap={10}>
+                  <Flex align="center" gap={10}>
                     {
                       <Button
                         onClick={() => {
                           paymentInfoForm.resetFields();
-                        }}>
+                        }}
+                      >
                         Reset
                       </Button>
                     }
 
-                    <Button onClick={() => paymentInfoForm.submit()} type='primary'>
+                    <Button onClick={() => paymentInfoForm.submit()} type="primary">
                       Save
                     </Button>
                   </Flex>
                 }
-                formTitle={"Payment Information"}>
+                formTitle={"Payment Information"}
+              >
                 <Form form={paymentInfoForm} onFinish={savePaymentConfiguration} requiredMark={false}>
                   {paymentInfo.map((item, i) => {
                     return (
                       <ConfigForm
                         key={item.inputName}
                         input={
-                          <Form.Item name={item.inputName} rules={[{ required: !item.optional, message: `Field is required!` }]} key={i}>
+                          <Form.Item
+                            name={item.inputName}
+                            rules={[{ required: !item.optional, message: `Field is required!` }]}
+                            key={i}
+                          >
                             {item.input}
                           </Form.Item>
                         }
