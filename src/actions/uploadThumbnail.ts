@@ -10,7 +10,7 @@ export const uploadThumbnail = async (
   name: string,
   objectType: FileObjectType,
   fileType: StaticFileCategory,
-  existingPath?: string
+  existingFilePath?: string
 ): Promise<APIResponse<any>> => {
   if (file) {
     let response: APIResponse<any>;
@@ -25,16 +25,15 @@ export const uploadThumbnail = async (
     const authConfig = await cms.getAuthConfig();
     const cmsConfig = (await cms.getCMSConfig()).body?.config;
 
+    // deleting thumbnail
+
+    if (existingFilePath) {
+      console.log(`deleting the thumbnail: ${existingFilePath}`);
+      const deleteResponse = await cms.deleteCDNFile(authConfig.body, cmsConfig, existingFilePath);
+    }
+
     if (authConfig.success && authConfig.body) {
-      response = await cms.uploadCDNImage(
-        authConfig.body,
-        cmsConfig,
-        fileBuffer,
-        objectType,
-        fullName,
-        fileType,
-        existingPath
-      );
+      response = await cms.uploadCDNImage(authConfig.body, cmsConfig, fileBuffer, objectType, fullName, fileType);
       return response;
     } else {
       return new APIResponse(false, 400, "Authentication configuration was not found");

@@ -362,30 +362,42 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
     }
   }
 
+  async deleteCDNFile(
+    authConfig: BunnyAuthConfig,
+    cmsConfig: BunnyCMSConfig,
+    filePath: string
+  ): Promise<APIResponse<any>> {
+    const storagePassword = await secretsStore.get(cmsConfig.cdnStoragePasswordRef);
+    if (storagePassword) {
+      const bunny = new BunnyClient(storagePassword);
+      const deleteResponse = await bunny.deleteCDNFile(
+        filePath,
+        cmsConfig.cdnConfig?.linkedHostname as string,
+        cmsConfig.cdnConfig?.zoneName as string
+      );
+      return new APIResponse(
+        deleteResponse.success,
+        deleteResponse.status,
+        deleteResponse.message,
+        deleteResponse.body
+      );
+    } else {
+      return new APIResponse(false, 400, "Storage password is missing");
+    }
+  }
+
   async uploadCDNImage(
     authConfig: BunnyAuthConfig,
     cmsConfig: BunnyCMSConfig,
     file: Buffer,
     objectType: FileObjectType,
     fileName: string,
-    category: StaticFileCategory,
-    existingPath?: string
+    category: StaticFileCategory
   ): Promise<APIResponse<string>> {
     //get the storage password
     const storagePassword = await secretsStore.get(cmsConfig.cdnStoragePasswordRef);
     if (storagePassword) {
       const bunny = new BunnyClient(storagePassword);
-      if (existingPath) {
-        const deleteResponse = await bunny.deleteCDNFile(
-          existingPath,
-          cmsConfig.cdnConfig?.linkedHostname as string,
-          cmsConfig.cdnConfig?.zoneName as string
-        );
-        if (!deleteResponse.success && deleteResponse.status !== 200) {
-          return new APIResponse(false, 400, deleteResponse.message);
-        }
-      }
-
       const fullPath = `${objectType}/${category}/${fileName}`;
       const response = await bunny.uploadCDNFile(
         file,

@@ -42,8 +42,7 @@ export interface IContentProvider<T extends ICMSAuthConfig, U> {
     file: Buffer,
     objectType: FileObjectType,
     fileName: string,
-    category: StaticFileCategory,
-    existingPath?: string
+    category: StaticFileCategory
   ): Promise<APIResponse<any>>;
   uploadVideo(
     authConfig: T,
@@ -53,4 +52,6 @@ export interface IContentProvider<T extends ICMSAuthConfig, U> {
     objectType: VideoObjectType,
     objectId: number
   ): Promise<APIResponse<any>>;
+
+  deleteCDNFile(authConfig: T, cmsConfig: U, filePath: string): Promise<APIResponse<any>>;
 }
