@@ -58,7 +58,9 @@ export class PaymentManagemetService {
         const result = await cf.testClientCredentials();
         const success = result != 401;
         const message =
-          result == 401 ? `Invalid crendentials. Check the credentials again` : `Succesfully authenticated with the given credentials.`;
+          result == 401
+            ? `Invalid crendentials. Check the credentials again`
+            : `Succesfully authenticated with the given credentials.`;
         if (success) {
           //save the config
           const cfConfig: CFPaymentsConfig = {
@@ -115,7 +117,13 @@ export class PaymentManagemetService {
         return new APIResponse<void>(true, 200, `Successfully saved the payments configuration`);
 
       default:
-        return new APIResponse<void>(false, 400, `Failed to save the payments configuration`, undefined, `Payment configuration not found`);
+        return new APIResponse<void>(
+          false,
+          400,
+          `Failed to save the payments configuration`,
+          undefined,
+          `Payment configuration not found`
+        );
     }
   };
 
@@ -247,7 +255,10 @@ export class PaymentManagemetService {
      */
 
     if (latestOrder && latestOrder.latestStatus === $Enums.paymentStatus.SUCCESS) {
-      return { success: false, error: "You have already purchased this course" };
+      return {
+        success: false,
+        error: "You have already purchased this course",
+      };
     }
 
     /**
@@ -300,7 +311,10 @@ export class PaymentManagemetService {
     } catch (error) {
       console.log(error);
 
-      return { success: false, error: "Unable to find the payment provider.Contact the support team" };
+      return {
+        success: false,
+        error: "Unable to find the payment provider.Contact the support team",
+      };
     }
 
     return { success: false, error: "something went wrong" };
