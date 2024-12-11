@@ -212,7 +212,7 @@ export class BunnyClient {
       headers: {
         accept: "application/json",
         "content-type": "application/json",
-        AccessKey: this.accessKey as string,
+        AccessKey: this.accessKey,
       },
       body: JSON.stringify({ title: title }),
     };
