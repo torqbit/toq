@@ -364,12 +364,12 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
 
   async deleteCDNFile(cmsConfig: BunnyCMSConfig, filePath: string): Promise<APIResponse<any>> {
     const storagePassword = await secretsStore.get(cmsConfig.cdnStoragePasswordRef);
-    if (storagePassword && cmsConfig.cdnConfig?.linkedHostname && cmsConfig.cdnConfig?.zoneName) {
+    if (storagePassword && cmsConfig.cdnConfig) {
       const bunny = new BunnyClient(storagePassword);
       const deleteResponse = await bunny.deleteCDNFile(
         filePath,
-        cmsConfig.cdnConfig?.linkedHostname,
-        cmsConfig.cdnConfig?.zoneName
+        cmsConfig.cdnConfig.linkedHostname,
+        cmsConfig.cdnConfig.zoneName
       );
       return new APIResponse(
         deleteResponse.success,
@@ -391,12 +391,7 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
   ): Promise<APIResponse<string>> {
     //get the storage password
     const storagePassword = await secretsStore.get(cmsConfig.cdnStoragePasswordRef);
-    if (
-      storagePassword &&
-      cmsConfig.cdnConfig?.zoneName &&
-      cmsConfig.storageConfig?.mainStorageRegion &&
-      cmsConfig.cdnConfig?.linkedHostname
-    ) {
+    if (storagePassword && cmsConfig.storageConfig && cmsConfig.cdnConfig) {
       const bunny = new BunnyClient(storagePassword);
       const fullPath = `${objectType}/${category}/${fileName}`;
       const response = await bunny.uploadCDNFile(
@@ -424,15 +419,15 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
     objectId: number
   ): Promise<APIResponse<VideoInfo>> {
     const videoPassword = await secretsStore.get(cmsConfig.vodAccessKeyRef);
-    if (videoPassword && cmsConfig.vodConfig?.vidLibraryId && cmsConfig.cdnConfig?.linkedHostname) {
+    if (videoPassword && cmsConfig.vodConfig && cmsConfig.cdnConfig) {
       const bunny = new BunnyClient(videoPassword);
       const response = await bunny.uploadVideo(
         file,
-        cmsConfig.vodConfig?.vidLibraryId,
+        cmsConfig.vodConfig.vidLibraryId,
         title,
-        cmsConfig.cdnConfig?.linkedHostname
+        cmsConfig.cdnConfig.linkedHostname
       );
-      if (!response?.success || !response.body) {
+      if (!response.success || !response.body) {
         return new APIResponse(false, 400, "Unable to upload the video");
       } else {
         let videoResponse = response.body;
@@ -450,15 +445,18 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
             },
           });
 
-          bunny.trackVideo(videoResponse, cmsConfig.vodConfig?.vidLibraryId, async (videoLen: number) => {
+          bunny.trackVideo(videoResponse, cmsConfig.vodConfig.vidLibraryId, async (videoLen: number) => {
             let thumbnail = newVideo.thumbnail;
 
-            const uploadResponse = await bunny.uploadThumbnailToCDN(
-              thumbnail,
-              cmsConfig.cdnConfig?.linkedHostname as string,
-              cmsConfig.storageConfig?.mainStorageRegion as string,
-              cmsConfig.cdnConfig?.zoneName as string
-            );
+            const uploadResponse =
+              cmsConfig.cdnConfig &&
+              cmsConfig.storageConfig &&
+              (await bunny.uploadThumbnailToCDN(
+                thumbnail,
+                cmsConfig.cdnConfig.linkedHostname,
+                cmsConfig.storageConfig.mainStorageRegion,
+                cmsConfig.cdnConfig.zoneName
+              ));
 
             if (uploadResponse) {
               thumbnail = uploadResponse;
