@@ -2,6 +2,7 @@ import { IRegisteredCourses, IResourceDetail, VideoDetails } from "@/lib/types/l
 import { ICourseDetial, ResourceDetails } from "@/lib/types/program";
 import { ChapterDetail, CourseAPIResponse, CourseInfo, CourseLessonAPIResponse } from "@/types/courses/Course";
 import { Chapter, Course, CourseCertificates, Resource } from "@prisma/client";
+import { postWithFile } from "./request";
 
 export interface ICourseList extends Course {
   courseId: number;
@@ -17,6 +18,7 @@ export type ApiResponse = {
   registerCourses: IRegisteredCourses[];
   courseDetails: CourseInfo;
   certificateId: string;
+  fileCDNPath: string;
   certificateDetail: {
     imgPath: string;
     pdfPath: string;
@@ -443,45 +445,40 @@ class ProgramService {
   };
 
   updateCourse = (
-    courseData: {
-      name?: string;
-      duration?: number;
-      state?: string | undefined;
-      skills?: string[];
-      description?: string;
-      thumbnail?: string;
-      thumbnailId?: string;
-      videoUrl?: string;
-      expiryInDays?: number;
-      videoId?: string;
-      programId?: number;
-      authorId?: string | undefined;
-      sequenceId?: number | undefined;
-      courseId: number;
-      difficultyLevel?: string;
-      certificateTemplate?: string;
-    },
-
+    formData: FormData,
     onSuccess: (response: ApiResponse) => void,
     onFailure: (message: string) => void
   ) => {
-    fetch(`/api/v1/course/update`, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(courseData),
-    }).then((result) => {
-      if (result.status == 400) {
+    postWithFile(formData, `/api/v1/course/update`).then((result) => {
+      if (result.status == 200 || result.status == 201) {
+        result.json().then((r) => {
+          const apiResponse = r as ApiResponse;
+          onSuccess(apiResponse);
+        });
+      } else {
         result.json().then((r) => {
           const failedResponse = r as FailedApiResponse;
           onFailure(failedResponse.error);
         });
-      } else if (result.status == 200) {
+      }
+    });
+  };
+
+  updateProfile = (
+    formData: FormData,
+    onSuccess: (response: ApiResponse) => void,
+    onFailure: (message: string) => void
+  ) => {
+    postWithFile(formData, `/api/user/update`).then((result) => {
+      if (result.status == 200 || result.status == 201) {
         result.json().then((r) => {
           const apiResponse = r as ApiResponse;
           onSuccess(apiResponse);
+        });
+      } else {
+        result.json().then((r) => {
+          const failedResponse = r as FailedApiResponse;
+          onFailure(failedResponse.error);
         });
       }
     });

@@ -17,10 +17,19 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     if (authConfig.success && authConfig.body) {
       console.log(`attempting to save the CDN configuration`);
-      response = await cms.saveCDNConfig(authConfig.body, config.brandName, config.mainStorageRegion, config.replicatedRegions);
+      response = await cms.saveCDNConfig(
+        authConfig.body,
+        config.brandName,
+        config.mainStorageRegion,
+        config.replicatedRegions
+      );
       if (response.success) {
-        console.log(`attempting to save the object storage configuration`);
-        response = await cms.configureObjectStorage(authConfig.body, config.brandName, config.mainStorageRegion, config.replicatedRegions);
+        response = await cms.configureObjectStorage(
+          authConfig.body,
+          config.brandName,
+          config.mainStorageRegion,
+          config.replicatedRegions
+        );
       }
 
       return res.status(response.status).json(response);

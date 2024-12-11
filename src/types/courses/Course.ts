@@ -155,6 +155,7 @@ export interface CourseData {
   certificateTemplate?: string;
   courseType?: string;
   coursePrice?: number;
+  thumbnail?: string;
 }
 export interface CourseInfo {
   about: string;

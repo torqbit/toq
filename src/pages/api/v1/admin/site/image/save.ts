@@ -7,7 +7,7 @@ import fs from "fs";
 import os from "os";
 
 import appConstant from "@/services/appConstant";
-import { readFieldWithFile } from "../../../upload/video/upload";
+import { readFieldWithFile } from "@/lib/utils";
 
 export const config = {
   api: {

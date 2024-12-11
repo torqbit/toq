@@ -3,39 +3,64 @@ import { NextApiResponse, NextApiRequest } from "next";
 import { errorHandler } from "@/lib/api-middlewares/errorHandler";
 import { withMethods } from "@/lib/api-middlewares/with-method";
 import { withUserAuthorized } from "@/lib/api-middlewares/with-authorized";
-import { createSlug } from "@/lib/utils";
+import { createSlug, readFieldWithFile } from "@/lib/utils";
+import { uploadThumbnail } from "@/actions/courses";
+import { APIResponse } from "@/types/apis";
+import { FileObjectType } from "@/types/cms/common";
+
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
-    const body = await req.body;
+    const { fields, files } = (await readFieldWithFile(req)) as any;
+
+    const body = JSON.parse(fields.course[0]);
+    const name = createSlug(body.name);
     let courseId = Number(body.courseId);
+    let response: APIResponse<any>;
+    let thumbnail;
+
+    if (files.file) {
+      response = await uploadThumbnail(files.file[0], name, FileObjectType.COURSE, "thumbnail", body.thumbnail);
+      if (response.success) {
+        thumbnail = response.body;
+      } else {
+        return res.status(response.status).json(response);
+      }
+    }
+
     const findCourse = await prisma.course.findUnique({
       where: {
         courseId: body.courseId,
       },
+      select: {
+        thumbnail: true,
+      },
     });
 
     if (findCourse) {
-      let slug = `untitled-${new Date().getTime()}`;
-      if (body.name && body.name != "Untitled") {
-        slug = createSlug(body.name);
-      }
       const updateCourse = await prisma.course.update({
         where: {
           courseId: Number(courseId),
         },
         data: {
           ...body,
-          slug: slug,
+          thumbnail: thumbnail ? thumbnail : findCourse.thumbnail,
+          slug: name,
         },
       });
-
       return res.status(200).json({
         info: false,
         success: true,
-        message: "Course updated successfully",
+        message: "Course has been updated",
         course: updateCourse,
       });
+    } else {
+      return res.status(400).json({ success: false, error: "Course not found" });
     }
   } catch (error) {
     return errorHandler(error, res);

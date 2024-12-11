@@ -12,6 +12,8 @@ import MailerService from "@/services/MailerService";
 import { ICertificateInfo, ICertificateReponse } from "@/types/courses/Course";
 import { createTempDir } from "@/actions/checkTempDirExist";
 import { getCertificateDescripiton1, getCertificateDescripiton2 } from "./utils";
+import { getSiteConfig } from "@/services/getSiteConfig";
+import { PageSiteConfig } from "@/services/siteConstant";
 
 export const getDateAndYear = (dateInfo?: Date) => {
   const currentDate = dateInfo ? dateInfo : new Date();
@@ -32,6 +34,7 @@ export const onCreateImg = async (
   dateOfCompletion: string,
   certificateId?: string
 ) => {
+  const { site }: { site: PageSiteConfig } = getSiteConfig();
   const certificateData = certificateConfig.find((c) => c.id === certificateId);
 
   const filePath = path.join(process.cwd(), `/public/${certificateData?.path}`);
@@ -39,10 +42,7 @@ export const onCreateImg = async (
   const regularPath = path.join(process.cwd(), appConstant.fontDirectory.dmSerif.regular);
   const kalamPath = path.join(process.cwd(), appConstant.fontDirectory.kalam);
   const kaushanPath = path.join(process.cwd(), appConstant.fontDirectory.kaushan);
-  const outputPath = path.join(
-    `${process.env.MEDIA_UPLOAD_PATH}/${appConstant.certificateTempFolder}`,
-    `${certificateIssueId}.png`
-  );
+  const outputPath = path.join(`${process.env.MEDIA_UPLOAD_PATH}/${appConstant.certificateTempFolder}`, `${certificateIssueId}.png`);
 
   registerFont(kalamPath, { family: "Kalam" });
   registerFont(kaushanPath, { family: "Kaushan Script" });
@@ -58,18 +58,10 @@ export const onCreateImg = async (
       ctx.font = '30px "Arial"';
       ctx.fillStyle = certificateData.color.description;
       ctx.textAlign = "center";
-      ctx.fillText(
-        descripition1,
-        certificateData?.coordinates.description.x,
-        certificateData?.coordinates.description.y
-      );
+      ctx.fillText(descripition1, certificateData?.coordinates.description.x, certificateData?.coordinates.description.y);
       ctx.fillStyle = certificateData.color.description;
       ctx.textAlign = "center";
-      ctx.fillText(
-        descripition2,
-        certificateData?.coordinates.description.x,
-        certificateData?.coordinates.description.y + 40
-      );
+      ctx.fillText(descripition2, certificateData?.coordinates.description.x, certificateData?.coordinates.description.y + 40);
       ctx.font = `${80 - 0.5 * studentName.length}px "Kaushan Script"`;
       ctx.fillStyle = certificateData?.color.student;
       ctx.textAlign = "center";
@@ -77,19 +69,11 @@ export const onCreateImg = async (
       ctx.font = '40px "Kalam"';
       ctx.fillStyle = certificateData?.color.authorSignature;
       ctx.textAlign = "center";
-      ctx.fillText(
-        authorName,
-        certificateData?.coordinates.authorSignature.x,
-        certificateData?.coordinates.authorSignature.y
-      );
+      ctx.fillText(authorName, certificateData?.coordinates.authorSignature.x, certificateData?.coordinates.authorSignature.y);
       ctx.font = '40px "Kaushan Script"';
       ctx.fillStyle = certificateData?.color.date;
       ctx.textAlign = "center";
-      ctx.fillText(
-        dateOfCompletion,
-        certificateData?.coordinates.dateOfCompletion.x,
-        certificateData?.coordinates.dateOfCompletion.y
-      );
+      ctx.fillText(dateOfCompletion, certificateData?.coordinates.dateOfCompletion.x, certificateData?.coordinates.dateOfCompletion.y);
       const buffer = canvas.toBuffer("image/png");
 
       fs.writeFileSync(outputPath, new Uint8Array(buffer));
@@ -130,10 +114,7 @@ export const generateCertificate = async (
   // Create a document
   const doc = new PDFDocument({ size: "A4", margin: 0, layout: "landscape" });
 
-  const uploadPdfPath = path.join(
-    `${process.env.MEDIA_UPLOAD_PATH}/${appConstant.certificateTempFolder}`,
-    `${certificateIssueId}.pdf`
-  );
+  const uploadPdfPath = path.join(`${process.env.MEDIA_UPLOAD_PATH}/${appConstant.certificateTempFolder}`, `${certificateIssueId}.pdf`);
   const outputStream = doc.pipe(fs.createWriteStream(uploadPdfPath));
 
   doc
@@ -152,6 +133,7 @@ export const generateCertificate = async (
 };
 
 export const createCertificate = async (certificatInfo: ICertificateInfo): Promise<ICertificateReponse> => {
+  const { site }: { site: PageSiteConfig } = getSiteConfig();
   const cms = new ContentManagementService();
 
   return new Promise(async (resolve, reject) => {
@@ -192,10 +174,7 @@ export const createCertificate = async (certificatInfo: ICertificateInfo): Promi
         });
         if (serviceProviderResponse && pdfTempPath && imgPath) {
           let certificateIssueId;
-          const serviceProvider = cms.getServiceProvider(
-            serviceProviderResponse?.provider_name,
-            serviceProviderResponse?.providerDetail
-          );
+          const serviceProvider = cms.getServiceProvider(serviceProviderResponse?.provider_name, serviceProviderResponse?.providerDetail);
           const pdfBuffer = fs.readFileSync(pdfTempPath);
 
           const imgBuffer = fs.readFileSync(imgPath as string);
@@ -267,7 +246,7 @@ export const createCertificate = async (certificatInfo: ICertificateInfo): Promi
             name: certificatInfo.authorName,
             email: certificatInfo.studentEmail,
             courseName: certificatInfo.courseName,
-            productName: process.env.NEXT_PUBLIC_PLATFORM_NAME,
+            productName: site.brand?.name,
             url: `${process.env.NEXTAUTH_URL}/courses/${certificatInfo.courseId}/certificate/${createCertificate.id}`,
           };
 

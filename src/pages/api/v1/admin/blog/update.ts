@@ -3,13 +3,14 @@ import { NextApiResponse, NextApiRequest } from "next";
 import { errorHandler } from "@/lib/api-middlewares/errorHandler";
 import { withMethods } from "@/lib/api-middlewares/with-method";
 import { withUserAuthorized } from "@/lib/api-middlewares/with-authorized";
-import { createSlug, getCookieName } from "@/lib/utils";
+import { createSlug, getCookieName, readFieldWithFile } from "@/lib/utils";
 import { getToken } from "next-auth/jwt";
+import { APIResponse } from "@/types/apis";
+import { uploadThumbnail } from "@/actions/courses";
+import { FileObjectType } from "@/types/cms/common";
 export const config = {
   api: {
-    bodyParser: {
-      sizeLimit: "10mb",
-    },
+    bodyParser: false,
   },
 };
 
@@ -22,16 +23,30 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       secret: process.env.NEXT_PUBLIC_SECRET,
       cookieName,
     });
-    const body = await req.body;
-    const { title, banner, state, content, blogId } = body;
+    const { fields, files } = (await readFieldWithFile(req)) as any;
+
+    const body = JSON.parse(fields.blog[0]);
+    const { title, banner, state, content, blogId, contentType } = body;
 
     const slug = title && createSlug(title);
-    const updateObj: any = {};
-    if (slug) updateObj.slug = slug;
-    if (title) updateObj.title = title;
-    if (content) updateObj.content = content;
-    if (banner) updateObj.banner = banner;
-    if (state) updateObj.state = state;
+
+    let response: APIResponse<any>;
+    let thumbnail;
+
+    if (files.file) {
+      response = await uploadThumbnail(
+        files.file[0],
+        body.slug,
+        contentType === "UPDATE" ? FileObjectType.UPDATE : FileObjectType.BLOG,
+        "banner",
+        banner
+      );
+      if (response.success) {
+        thumbnail = response.body;
+      } else {
+        return res.status(response.status).json(response);
+      }
+    }
 
     const updateBlog = await prisma.blog.update({
       where: {
@@ -39,8 +54,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         authorId: String(token?.id),
       },
       data: {
-        ...updateObj,
-
+        title,
+        content,
+        state,
+        banner: thumbnail ? thumbnail : banner,
+        slug,
         updatedAt: new Date(),
       },
     });
