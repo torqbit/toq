@@ -26,7 +26,6 @@ export const uploadThumbnail = async (
       // deleting thumbnail
 
       if (existingFilePath) {
-        console.log(`deleting the thumbnail: ${existingFilePath}`);
         await cms.deleteCDNFile(cmsConfig, existingFilePath);
       }
       // upload thumbnail
