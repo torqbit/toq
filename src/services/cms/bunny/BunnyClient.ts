@@ -92,7 +92,7 @@ export class BunnyClient {
       let fullName = thumbnail.split("/")[thumbnail.split("/").length - 1];
       const fileBuffer = await fetchImageBuffer(thumbnail);
       if (fileBuffer) {
-        const uploadResponse = await this.uploadCDNFile(
+        const uploadResponse = await this.uploadCDNImage(
           fileBuffer,
           `thumbnail/${fullName}`,
           zoneName,
@@ -151,7 +151,7 @@ export class BunnyClient {
     };
   }
 
-  uploadCDNFile = async (
+  uploadCDNImage = async (
     file: Buffer,
     path: string,
     zoneName: string,
