@@ -362,11 +362,7 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
     }
   }
 
-  async deleteCDNFile(
-    authConfig: BunnyAuthConfig,
-    cmsConfig: BunnyCMSConfig,
-    filePath: string
-  ): Promise<APIResponse<any>> {
+  async deleteCDNFile(cmsConfig: BunnyCMSConfig, filePath: string): Promise<APIResponse<any>> {
     const storagePassword = await secretsStore.get(cmsConfig.cdnStoragePasswordRef);
     if (storagePassword) {
       const bunny = new BunnyClient(storagePassword);
@@ -387,7 +383,6 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
   }
 
   async uploadCDNImage(
-    authConfig: BunnyAuthConfig,
     cmsConfig: BunnyCMSConfig,
     file: Buffer,
     objectType: FileObjectType,
@@ -417,7 +412,6 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
   }
 
   async uploadVideo(
-    authConfig: BunnyAuthConfig,
     cmsConfig: BunnyCMSConfig,
     file: Buffer,
     title: string,
