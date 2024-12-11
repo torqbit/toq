@@ -144,6 +144,16 @@ export class BunnyClient {
     });
   };
 
+  async deleteVideo(videoProviderId: string, libraryId: number): Promise<APIResponse<string>> {
+    const deleteUrl = `${this.vidLibraryUrl}/${libraryId}/videos/${videoProviderId}`;
+    const response = await fetch(deleteUrl, this.getDeleteOption());
+    if (response.ok) {
+      return new APIResponse(true, response.status, response.statusText);
+    } else {
+      return new APIResponse(false, response.status, response.statusText);
+    }
+  }
+
   getDeleteOption() {
     return {
       method: "DELETE",

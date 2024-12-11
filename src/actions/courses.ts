@@ -102,6 +102,9 @@ export const uploadVideo = async (
       await mergeChunks(name, totalChunks, extension, mergedFinalFilePath);
       const fileBuffer = await fs.promises.readFile(mergedFinalFilePath);
       if (cmsConfig) {
+        if (needDeletion && videoProviderId) {
+          await cms.deleteVideo(cmsConfig, videoProviderId, objectId, objectType);
+        }
         response = await cms.uploadVideo(cmsConfig, fileBuffer, fullName, objectType, objectId);
         if (mergedFinalFilePath != "") {
           fs.unlinkSync(mergedFinalFilePath);
