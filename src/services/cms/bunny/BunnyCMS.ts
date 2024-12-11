@@ -378,7 +378,7 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
         deleteResponse.body
       );
     } else {
-      return new APIResponse(false, 400, "CMS configuration is missing");
+      return new APIResponse(false, 404, "CMS configuration is missing");
     }
   }
 
@@ -407,7 +407,7 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
         return new APIResponse(response.success, response.status, response.message, response.body);
       }
     } else {
-      return new APIResponse(false, 400, "CMS configuration is missing");
+      return new APIResponse(false, 404, "CMS configuration is missing");
     }
   }
 
@@ -519,6 +519,6 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
         return new APIResponse(response.success, response.status, response.message, videoResponse);
       }
     }
-    return new APIResponse(false, 400, "Video password is missing");
+    return new APIResponse(false, 404, "CMS configuration is missing");
   }
 }
