@@ -1,8 +1,7 @@
 .login_page_wrapper {
   background-color: var(--bg-secondary);
-  background: url("/img/landing/hero-bg-light.png");
-  background-size: 150% 150%;
-  background-position: 50% 0%;
+  background-size: 100%;
+  background-position: 50% 50%;
   height: 100vh;
   width: 100%;
   display: flex;
@@ -22,6 +21,13 @@
   border-radius: 8px;
   backdrop-filter: blur(10px);
   background: var(--bg-header);
+}
+
+.bg__light {
+  background-image: url("/img/landing/hero-bg.png");
+}
+.bg__dark {
+  background-image: url("/img/landing/hero-bg-dark.png");
 }
 
 .login_img {

@@ -7,7 +7,6 @@ export const getSiteConfig = () => {
   try {
     const file = fs.readFileSync("./site.yaml", "utf8");
     const config = YAML.parse(file);
-    console.log(config)
 
     let configData = {
       ...DEFAULT_THEME,
@@ -18,8 +17,8 @@ export const getSiteConfig = () => {
             DEEP_OBJECT_KEYS.includes(key) && typeof userValue === "object" && userValue !== null
               ? deepMerge(DEFAULT_THEME[key as keyof PageSiteConfig], userValue)
               : userValue !== undefined && userValue !== null
-                ? userValue
-                : DEFAULT_THEME[key as keyof PageSiteConfig],
+              ? userValue
+              : DEFAULT_THEME[key as keyof PageSiteConfig],
           ])
         )),
     };

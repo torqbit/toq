@@ -43,20 +43,20 @@ site:
       position: background
   sections:
     features:
-      title: Get Started
-      description: Features for the learning platform
+      title: Our Features
+      description: Our educational platform is completely secure, robust and scales to millions of users, and always available, giving you the flexibility to learn from anywhere, anytime.
       items:
         - img: /img/landing/auth.png
-          title: hjjjh
-          description: jjgk
+          title: Social Login
+          description: Login with any of the support networking platform like Google, Github or Facebook
           link: /docs/auth
-        - img: /static/1733490998141-feature-secondicon.png
-          title: Authentication
-          description: Configure authentication with Google, Github or any other auth provider supported by NextAuth
+        - img: /img/landing/laptop.png
+          title: Portable
+          description: Access the course lessons and assignments from anywhere and from any device.
           link: /docs/auth
-        - img: /static/1733494176234-feature-thirdicon.jpg
-          title: Email
-          description: Configure authentication
+        - img: /img/landing/event.png
+          title: Events
+          description: Connect with the educator through offline or online events and workshops.
 
     courses:
       enable: false

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ISiteSetupCard } from "@/types/setup/siteSetup";
 const SetupOptionCard: FC<ISiteSetupCard> = ({ icon, title, description, link, iconBgColor }) => (
   <Link href={link} className={`${styles.setup__card} `}>
-    <div style={{ backgroundColor: iconBgColor }}>
+    <div style={{ backgroundColor: iconBgColor ? iconBgColor : "transparent" }}>
       <img alt={title} aria-label={`icon for ${title.toLowerCase()}`} src={icon} />
     </div>
     <div>
@@ -24,7 +24,7 @@ const SiteSetup: FC<{ siteConfig: PageSiteConfig; setupOptions: ISiteSetupCard[]
       <div className={styles.setup__side__bar}>
         <div className={styles.side__bar__header}>
           <h2>All done!</h2>
-          <p>Your brand new publication is set up and ready to go.</p>
+          <p>Your brand new education platform is set up, but few things still pending.</p>
           <h4>What do you want to do first?</h4>
         </div>
 

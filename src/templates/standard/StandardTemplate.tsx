@@ -25,12 +25,10 @@ const StandardTemplate: FC<IStandardTemplateProps> = ({ user, siteConfig, previe
       siteConfig={siteConfig}
       heroSection={<Hero siteConfig={siteConfig} isMobile={isMobile} user={user} />}
     >
-      <SetupPlatform />
+      {/* <SetupPlatform /> */}
       <Features
         title={featureInfo?.title ? featureInfo.title : DEFAULT_THEME.sections.features.title}
-        description={
-          featureInfo?.description ? featureInfo.description : DEFAULT_THEME.sections.features.description
-        }
+        description={featureInfo?.description ? featureInfo.description : DEFAULT_THEME.sections.features.description}
         items={featureInfo?.items && featureInfo?.items.length > 0 ? featureInfo?.items : []}
       />
 

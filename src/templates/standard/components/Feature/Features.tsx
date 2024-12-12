@@ -5,12 +5,7 @@ import { IFeatureCard, IFeatureInfo } from "@/types/landing/feature";
 
 const FeatureCard: FC<IFeatureCard> = ({ img, title, description, link, cardClass }) => (
   <Link href={link ? `${link}` : "#"} className={`${styles.features__card} ${cardClass}`}>
-    <img
-      alt={title}
-      style={{ width: "auto", height: "auto" }}
-      aria-label={`icon for ${title.toLowerCase()}`}
-      src={img}
-    />
+    <img alt={title} aria-label={`icon for ${title.toLowerCase()}`} src={img} />
     <h4>{title}</h4>
     <p>{description}</p>
   </Link>
@@ -30,8 +25,9 @@ const Features: FC<IFeatureInfo> = ({ title, description, items }) => (
               title={feature.title}
               description={feature.description}
               link={feature.link}
-              cardClass={`${styles[items.length <= 2 ? "features__card__large" : `"features__card__small"`]} ${feature.cardClass
-                }`}
+              cardClass={`${styles[items.length <= 2 ? "features__card__large" : `"features__card__small"`]} ${
+                feature.cardClass
+              }`}
             />
           );
         })}
