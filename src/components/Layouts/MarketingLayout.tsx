@@ -35,6 +35,7 @@ const MarketingLayout: FC<{
   let brandInfo: IBrandInfo = {
     logo: siteConfig.brand?.logo ?? DEFAULT_THEME.brand.logo,
     name: siteConfig.brand?.name ?? DEFAULT_THEME.brand.name,
+    darkLogo: siteConfig.brand?.darkLogo || DEFAULT_THEME.brand.darkLogo
   };
 
   const setGlobalTheme = (theme: Theme) => {
@@ -87,7 +88,7 @@ const MarketingLayout: FC<{
       }
       <ConfigProvider theme={globalState.theme == "dark" ? darkThemeConfig(siteConfig) : antThemeConfig(siteConfig)}>
         <Head>
-          <title>{`${siteConfig.brand?.title} | ${siteConfig.brand?.name}`}</title>
+          <title>{`${siteConfig.brand?.name} · ${siteConfig.brand?.title}`}</title>
           <meta name="description" content={siteConfig.brand?.description} />
           <meta property="og:image" content={siteConfig.brand?.ogImage} />
           <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
@@ -110,7 +111,7 @@ const MarketingLayout: FC<{
         </section>
         <div className={landingPage.children_wrapper}>{children}</div>
 
-        <Footer siteConfig={siteConfig} isMobile={isMobile} />
+        <Footer siteConfig={siteConfig} isMobile={isMobile} activeTheme={globalState.theme ?? "light"} />
       </ConfigProvider>
     </>
   );

@@ -10,7 +10,8 @@ site:
       - title: Blog
         link: /blog
   brand:
-    logo: /static/1733490887414-logo.png
+    logo: /img/brand/logo.png
+    darkLogo: /img/brand/logo-dark.png
     description: Master the art of product building and turn your ideas into
       successful, scalable products
     ogImage: /icon/torqbit.png
@@ -19,13 +20,13 @@ site:
       discord: https://discord.gg/NserMXcx
       github: https://github.com/torqbit
       youtube: https://www.youtube.com/@torqbit
-    name: source Academy
-    brandColor: "#f7bd7a"
-    title: Spreads peace and harmony
-    icon: /static/1733490117864-icon.png
+    name: Torqbit
+    brandColor: "#747df0"
+    title: Making online education delightful and easy
+    icon: /icon/torqbit.png
   darkMode: true
   heroSection:
-    title: The Awesomest teaching platform
+    title: Making online education delightful and easy
     description: >
       Torqbit, an open-source platform, serves as a learning management software
       that works for single person to largest educational institutions
@@ -37,27 +38,26 @@ site:
         label: Contact Us
         link: mailto:support@torqbit.com
     banner:
-      lightModePath: /static/1733494112613-lightModePath.png
-      darkModePath: /static/1733494092015-darkModePath.png
+      lightModePath: /img/landing/hero-bg.png
+      darkModePath: /img/landing/hero-bg-dark.png
       position: background
   sections:
-    feature:
-      featureInfo:
-        featureList:
-          - img: /static/1733491007377-feature-firsticon.png
-            title: hjjjh
-            description: jjgk
-            link: /docs/auth
-          - img: /static/1733490998141-feature-secondicon.png
-            title: Authentication
-            description: Configure authentication with Google, Github or any other auth
-              provider supported by NextAuth
-            link: /docs/auth
-          - img: /static/1733494176234-feature-thirdicon.jpg
-            title: Email
-            description: Configure authentication
-        title: Features
-        description: Features for the learning platform
+    features:
+      title: Get Started
+      description: Features for the learning platform
+      items:
+        - img: /img/landing/auth.png
+          title: hjjjh
+          description: jjgk
+          link: /docs/auth
+        - img: /static/1733490998141-feature-secondicon.png
+          title: Authentication
+          description: Configure authentication with Google, Github or any other auth provider supported by NextAuth
+          link: /docs/auth
+        - img: /static/1733494176234-feature-thirdicon.jpg
+          title: Email
+          description: Configure authentication
+
     courses:
       enable: false
       title: Courses list

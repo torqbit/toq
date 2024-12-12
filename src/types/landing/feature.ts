@@ -8,5 +8,5 @@ export interface IFeatureCard {
 export interface IFeatureInfo {
   title: string;
   description: string;
-  featureList: IFeatureCard[];
+  items: IFeatureCard[];
 }

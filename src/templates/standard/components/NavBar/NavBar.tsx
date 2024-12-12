@@ -23,8 +23,8 @@ const NavBar: FC<INavBarProps> = ({ user, items, brand, showThemeSwitch, activeT
           <nav>
             <Link href={"/"} aria-label="Go back to landing page">
               <Flex align="center" gap={5}>
-                {typeof brand.logo === "string" ? (
-                  <Image src={brand.logo} height={40} width={40} style={{ width: "auto" }} alt={"logo"} />
+                {typeof brand.logo === "string" && typeof brand.darkLogo === 'string' ? (
+                  <img src={activeTheme == 'dark' ? brand.darkLogo : brand.logo} style={{ width: "auto", height: 40 }} alt={`logo of ${brand.name}`} />
                 ) : (
                   brand.logo
                 )}

@@ -1,6 +1,5 @@
 import { FC, ReactNode } from "react";
-import { INavBarProps } from "./landing/navbar";
-import { IFeatureInfo } from "./landing/feature";
+import { IFeatureCard, IFeatureInfo } from "./landing/feature";
 export type bannerAlignment = "left" | "right" | "bottom" | "background";
 
 export interface ISocialLinks {
@@ -13,7 +12,7 @@ export interface ISocialLinks {
 export interface IBrandConfig {
   logo?: string | ReactNode;
   icon?: string | ReactNode;
-
+  darkLogo?: string | ReactNode;
   name?: string;
   title?: string;
   description?: string;
@@ -68,8 +67,6 @@ export interface ThemeSchema {
   sections?: {
     courses?: ICourseConfig;
     blog?: IBlogConfig;
-    feature?: {
-      featureInfo?: IFeatureInfo;
-    };
+    features?: IFeatureInfo;
   };
 }
