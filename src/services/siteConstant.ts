@@ -25,6 +25,7 @@ export const DEFAULT_THEME = {
   brand: {
     name: "TORQBIT",
     logo: "/icon/torqbit.png",
+    darkLogo: "/icon/torqbit.png",
     title: "Become a Pro Product Builder",
     description: "Master the art of product building and turn your ideas into successful, scalable products",
     ogImage: "/icon/torqbit.png",
@@ -70,37 +71,35 @@ export const DEFAULT_THEME = {
       description: "Description for the blog list",
     },
 
-    feature: {
-      featureInfo: {
-        featureList: [
-          {
-            img: "/img/landing/auth.png",
-            title: "Authentication",
-            description:
-              "Configure authentication with Google, Github or any other auth provider supported by NextAuth",
-            link: "/docs/auth",
-            cardClass: "steps__card__small",
-          },
-          {
-            img: "/img/landing/auth.png",
-            title: "Authentication",
-            description:
-              "Configure authentication with Google, Github or any other auth provider supported by NextAuth",
-            link: "/docs/auth",
-            cardClass: "steps__card__small",
-          },
-          {
-            img: "/img/landing/auth.png",
-            title: "Authentication",
-            description:
-              "Configure authentication with Google, Github or any other auth provider supported by NextAuth",
-            link: "/docs/auth",
-            cardClass: "steps__card__small",
-          },
-        ],
-        title: "Features",
-        description: "Features for the learning platform",
-      },
+    features: {
+      items: [
+        {
+          img: "/img/landing/auth.png",
+          title: "Authentication",
+          description:
+            "Configure authentication with Google, Github or any other auth provider supported by NextAuth",
+          link: "/docs/auth",
+          cardClass: "steps__card__small",
+        },
+        {
+          img: "/img/landing/auth.png",
+          title: "Authentication",
+          description:
+            "Configure authentication with Google, Github or any other auth provider supported by NextAuth",
+          link: "/docs/auth",
+          cardClass: "steps__card__small",
+        },
+        {
+          img: "/img/landing/auth.png",
+          title: "Authentication",
+          description:
+            "Configure authentication with Google, Github or any other auth provider supported by NextAuth",
+          link: "/docs/auth",
+          cardClass: "steps__card__small",
+        },
+      ],
+      title: "Features",
+      description: "Features for the learning platform",
     },
   },
 };

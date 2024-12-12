@@ -5,7 +5,7 @@ import YAML from "yaml";
 
 export const getSiteConfig = () => {
   try {
-    const file = fs.readFileSync("./siteConfig.yaml", "utf8");
+    const file = fs.readFileSync("./site.yaml", "utf8");
     const config = YAML.parse(file);
 
     let configData = {

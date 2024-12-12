@@ -5,8 +5,13 @@ import Image from "next/image";
 import SvgIcons from "@/components/SvgIcons";
 import { FC } from "react";
 import { PageSiteConfig } from "@/services/siteConstant";
+import { Theme } from "@/types/theme";
 
-const Footer: FC<{ siteConfig: PageSiteConfig; isMobile: boolean }> = ({ siteConfig, isMobile }) => {
+const Footer: FC<{ siteConfig: PageSiteConfig; isMobile: boolean; activeTheme: Theme }> = ({
+  siteConfig,
+  isMobile,
+  activeTheme,
+}) => {
   const { navBar, brand } = siteConfig;
 
   const footerContent = [
@@ -97,14 +102,18 @@ const Footer: FC<{ siteConfig: PageSiteConfig; isMobile: boolean }> = ({ siteCon
         <div>
           <Link href={"/landing-page"}>
             <Flex align="center" gap={5}>
-              <Image
-                src={`${brand?.logo}`}
-                height={40}
-                width={40}
-                style={{ width: "auto" }}
-                alt={"logo"}
-                loading="lazy"
-              />
+              {siteConfig.brand &&
+              typeof siteConfig.brand?.logo === "string" &&
+              typeof siteConfig.brand?.darkLogo === "string" ? (
+                <img
+                  src={activeTheme == "dark" ? siteConfig.brand?.darkLogo : siteConfig.brand?.logo}
+                  style={{ width: "auto", height: 30 }}
+                  alt={`logo of ${siteConfig.brand?.name}`}
+                />
+              ) : (
+                siteConfig.brand?.logo
+              )}
+
               {!brand?.logo && <h1 className="font-brand">{brand?.name}</h1>}
             </Flex>
           </Link>

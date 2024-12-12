@@ -18,7 +18,7 @@
     max-width: var(--marketing-container-width);
 
     margin: 0 auto;
-    padding: 100px 0;
+    padding: 160px 0 100px 0;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -31,6 +31,7 @@
       border: 4px solid transparent;
       margin-bottom: 25px;
     }
+
     img {
       height: auto;
       margin: 0 auto;
@@ -90,11 +91,12 @@
 
   border-radius: 4px;
 }
+
 .hero__img {
   width: 100%;
   text-align: center;
 
-  & > img {
+  &>img {
     margin: -200px auto 50px;
     margin-top: -200px;
     width: 100%;
@@ -127,11 +129,12 @@
 
     .heroContentContainer {
       width: 100vw;
-      padding: 100px 0;
+
 
       h1 {
         font-size: 35px;
       }
+
       img {
         width: 80vw;
         height: auto;

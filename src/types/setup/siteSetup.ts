@@ -3,5 +3,5 @@ export interface ISiteSetupCard {
   title: string;
   description: string;
   link: string;
-  iconBgColor: string;
+  iconBgColor?: string;
 }

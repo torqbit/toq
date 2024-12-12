@@ -4,6 +4,7 @@ import { ReactNode } from "react";
 export interface IBrandInfo {
   name: string;
   logo: ReactNode | string;
+  darkLogo: string | ReactNode
 }
 export interface INavBarProps {
   user?: User;

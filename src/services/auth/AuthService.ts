@@ -16,7 +16,6 @@ class AuthService {
   ) => {
     postFetch(userData, `/api/v1/user/signup`).then((result) => {
       result.json().then((r) => {
-        console.log(r);
         const apiResponse = r as AuthAPIResponse;
         apiResponse.success ? onSuccess(apiResponse) : onFailure(apiResponse.error || authErrorMessage);
       });

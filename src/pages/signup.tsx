@@ -89,7 +89,7 @@ const LoginPage: NextPage<{
 
   return (
     <ConfigProvider theme={globalState.theme == "dark" ? darkThemeConfig(siteConfig) : antThemeConfig(siteConfig)}>
-      <div className={styles.login_page_wrapper}>
+      <div className={`${styles.login_page_wrapper} bg__${globalState.theme}`}>
         {contextHolder}
         <div className={styles.social_login_container}>
           <Image src={"/icon/torqbit.png"} height={60} width={60} alt={"logo"} />
@@ -175,8 +175,8 @@ const LoginPage: NextPage<{
                         loginMethods.available.includes(provider)
                           ? ``
                           : `Signup method disabled for ${capitalizeFirstLetter(
-                            provider
-                          )} due to missing environment variables`
+                              provider
+                            )} due to missing environment variables`
                       }
                     >
                       <Button
