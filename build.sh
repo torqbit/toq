@@ -3,7 +3,7 @@ cd /opt/torqbit
 pm2 stop $2
 rm -rf torq
 
-
+#clone the repository 
 git clone https://amezng:${GH_TOKEN}@github.com/torqbit/torq.git
 cd torq
 git fetch --all
