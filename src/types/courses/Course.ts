@@ -12,6 +12,7 @@ import {
   VideoState,
   courseDifficultyType,
 } from "@prisma/client";
+import { APIResponse } from "../apis";
 
 export interface IHeroCoursePreview {
   courseName: string;
@@ -69,6 +70,17 @@ export interface ICertificateInfo {
   studentEmail: string;
   studentName: string;
   certificateTemplate: string;
+}
+
+export interface IEventCertificateInfo {
+  eventId: number;
+  authorName: string;
+  eventName: string;
+  studentEmail: string;
+  studentName: string;
+  certificateTemplate: string;
+  slug: string;
+  registrationId: number;
 }
 
 export interface StaticVideoLesson {

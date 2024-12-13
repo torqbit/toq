@@ -1,4 +1,3 @@
-import { ContentManagementService } from "./cms/ContentManagementService";
 import { generateDayAndYear } from "@/lib/utils";
 import { InvoiceData } from "@/types/payment";
 import prisma from "@/lib/prisma";
@@ -6,15 +5,14 @@ import appConstant from "./appConstant";
 import MailerService from "./MailerService";
 import path from "path";
 import { createTempDir } from "@/actions/checkTempDirExist";
+import { ContentManagementService } from "./cms/ContentManagementService";
+import { FileObjectType } from "@/types/cms/common";
+import { APIResponse } from "@/types/apis";
 
 const fs = require("fs");
 const PDFDocument = require("pdfkit");
 
 export class BillingService {
-  cms: ContentManagementService;
-  constructor(cms: ContentManagementService) {
-    this.cms = cms;
-  }
   // currency formatter
 
   async createPdf(invoice: InvoiceData, savePath: string): Promise<string> {
@@ -200,36 +198,33 @@ export class BillingService {
     });
   }
 
-  async uploadInvoice(pdfPath: string, invoice: InvoiceData): Promise<string> {
+  async uploadInvoice(pdfPath: string, invoice: InvoiceData): Promise<APIResponse<string>> {
     return new Promise(async (resolve, reject) => {
-      const serviceProviderResponse = await prisma?.serviceProvider.findFirst({
-        where: {
-          service_type: "media",
-        },
-      });
-
-      if (serviceProviderResponse && pdfPath) {
-        const serviceProvider = this.cms.getServiceProvider(
-          serviceProviderResponse?.provider_name,
-          serviceProviderResponse?.providerDetail
-        );
+      if (pdfPath) {
         const pdfBuffer = fs.readFileSync(pdfPath);
-        await this.cms
-          .uploadFile(`${invoice.invoiceNumber}_invocie`, pdfBuffer, pdfPath, serviceProvider)
-          .then(async (result) => {
-            await prisma.invoice
-              .update({
-                where: {
-                  id: invoice.invoiceNumber,
-                },
-                data: {
-                  pdfPath: result.fileCDNPath,
-                },
-              })
-              .then(async (result) => {
-                resolve(pdfPath);
-              });
+        const cms = new ContentManagementService().getCMS(appConstant.defaultCMSProvider);
+        const cmsConfig = (await cms.getCMSConfig()).body?.config;
+
+        const response = await cms.uploadPrivateFile(
+          cmsConfig,
+          pdfBuffer,
+          FileObjectType.INVOICE,
+          `${invoice.invoiceNumber}_invocie`,
+          "pdf"
+        );
+
+        if (response.success) {
+          await prisma.invoice.update({
+            where: {
+              id: invoice.invoiceNumber,
+            },
+            data: {
+              pdfPath: response.body,
+            },
           });
+        }
+
+        return response;
       }
     });
   }

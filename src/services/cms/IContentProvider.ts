@@ -43,6 +43,16 @@ export interface IContentProvider<T extends ICMSAuthConfig, U> {
     fileName: string,
     category: StaticFileCategory
   ): Promise<APIResponse<any>>;
+
+  uploadPrivateFile(
+    cmsConfig: U,
+    file: Buffer,
+    objectType: FileObjectType,
+    fileName: string,
+    category: StaticFileCategory
+  ): Promise<APIResponse<any>>;
+  deletePrivateFile(cmsConfig: U, filePath: string): Promise<APIResponse<any>>;
+
   uploadVideo(
     cmsConfig: U,
     file: Buffer,

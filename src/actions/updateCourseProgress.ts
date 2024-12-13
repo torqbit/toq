@@ -1,5 +1,5 @@
-import { createCertificate } from "@/lib/addCertificate";
 import prisma from "@/lib/prisma";
+import { CeritificateService } from "@/services/certificate/CertificateService";
 import { ICertificateInfo } from "@/types/courses/Course";
 import { ResourceContentType, StateType } from "@prisma/client";
 
@@ -101,7 +101,7 @@ const updateCourseProgress = async (
             authorName: String(courseDetail?.user.name),
           };
 
-          await createCertificate(certificateInfo);
+          await new CeritificateService().courseCertificate(certificateInfo);
 
           resolve({ lessonsCompleted: courseProgress[0].watched_lessons, totalLessons: courseProgress[0].lessons });
         } else {

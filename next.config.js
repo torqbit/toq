@@ -5,7 +5,7 @@ const cacheConfig = require("./cacheConfig");
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ["cdn.torqbit.com"],
+    domains: ["cdn.torqbit.com", "torqbit-dev.b-cdn.net", "dev-test-103-pz.b-cdn.net", "dev-test-101-pz.b-cdn.net"],
   },
 
   productionBrowserSourceMaps: false,
