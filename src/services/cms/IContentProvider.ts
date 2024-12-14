@@ -1,4 +1,5 @@
 import { APIResponse, APIServerError } from "@/types/apis";
+import { FileObjectType, StaticFileCategory, VideoObjectType } from "@/types/cms/common";
 import { ConfigurationState } from "@prisma/client";
 
 export type ICMSAuthConfig = {
@@ -21,7 +22,12 @@ export interface IContentProvider<T extends ICMSAuthConfig, U> {
     watermarkUrl?: string
   ): Promise<APIResponse<void>>;
 
-  saveCDNConfig(authConfig: T, brandName: string, mainStorageRegion: string, replicatedRegions: string[]): Promise<APIResponse<void>>;
+  saveCDNConfig(
+    authConfig: T,
+    brandName: string,
+    mainStorageRegion: string,
+    replicatedRegions: string[]
+  ): Promise<APIResponse<void>>;
 
   configureObjectStorage(
     authConfig: T,
@@ -30,5 +36,21 @@ export interface IContentProvider<T extends ICMSAuthConfig, U> {
     replicatedRegions: string[]
   ): Promise<APIResponse<void>>;
 
-  uploadCDNImage(authConfig: T, cmsConfig: U): Promise<APIResponse<any>>;
+  uploadCDNImage(
+    cmsConfig: U,
+    file: Buffer,
+    objectType: FileObjectType,
+    fileName: string,
+    category: StaticFileCategory
+  ): Promise<APIResponse<any>>;
+  uploadVideo(
+    cmsConfig: U,
+    file: Buffer,
+    title: string,
+    objectType: VideoObjectType,
+    objectId: number
+  ): Promise<APIResponse<any>>;
+
+  deleteCDNImage(cmsConfig: U, filePath: string): Promise<APIResponse<any>>;
+  deleteVideo(cmsConfig: U, videoId: string, objectId: number, objectType: VideoObjectType): Promise<APIResponse<any>>;
 }

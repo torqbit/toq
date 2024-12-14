@@ -237,12 +237,8 @@ export class BillingService {
   async sendInvoice(invoice: InvoiceData, savePath: string) {
     this.createPdf(invoice, savePath)
       .then(async (result) => {
-        console.log("invoice generated");
-
         this.uploadInvoice(result, invoice)
           .then((result) => {
-            console.log("invoice uploaded");
-
             this.mailInvoice(savePath, invoice)
               .then((r) => console.log("invoice sent through mail"))
               .catch((error) => {

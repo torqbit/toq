@@ -92,10 +92,12 @@ const LoginPage: NextPage<{
       range: "${label} must be between ${min} and ${max}",
     },
   };
-
+  console.log(globalState.theme, "theme");
   return (
     <ConfigProvider theme={globalState.theme == "dark" ? darkThemeConfig(siteConfig) : antThemeConfig(siteConfig)}>
-      <div className={styles.login_page_wrapper}>
+      <div
+        className={`${styles.login_page_wrapper} ${styles[`bg__${globalState.theme === "dark" ? "dark" : "light"}`]}`}
+      >
         {contextHolder}
         <div className={styles.social_login_container}>
           <Image src={"/icon/torqbit.png"} height={60} width={60} alt={"logo"} />

@@ -14,25 +14,24 @@ const SiteSetupPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig })
 
   const setupOptions: ISiteSetupCard[] = [
     {
-      icon: "/img/landing/auth.png",
-      title: "Site Configuration",
-      description: "Configure authentication with Google, Github or any other",
-      link: "#",
-      iconBgColor: "red",
+      icon: "/img/landing/site-design.png",
+      title: "Site Design",
+      description:
+        "Customize your site to suit your brand's color theme, add content to your landing page and much more",
+      link: "/admin/site",
     },
     {
-      icon: "/img/landing/auth.png",
-      title: "Content Configuration",
-      description: "Configure authentication with Google, Github or any other",
-      link: "#",
-      iconBgColor: "blue",
+      icon: "/img/landing/video-stream.png",
+      title: "Content Management",
+      description:
+        "Configure video streaming, image and other file storage that will be used when creating lessons, assignments and certificates",
+      link: "/admin/settings?tab=content",
     },
     {
-      icon: "/img/landing/auth.png",
-      title: "Payment Configuration",
-      description: "Configure authentication with Google, Github or any other",
-      link: "#",
-      iconBgColor: "green",
+      icon: "/img/landing/payment.png",
+      title: "Payments System",
+      description: "Configure your payment gateway through which you can earn instantly from all the course sales",
+      link: "/admin/settings?tab=payments",
     },
   ];
 

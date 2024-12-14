@@ -30,11 +30,11 @@ MyDocument.getInitialProps = async (ctx: DocumentContext) => {
   ctx.renderPage = () =>
     originalRenderPage({
       enhanceApp: (App) => (props) =>
-        (
-          <StyleProvider cache={cache}>
-            <App {...props} />
-          </StyleProvider>
-        ),
+      (
+        <StyleProvider hashPriority="high" cache={cache}>
+          <App {...props} />
+        </StyleProvider>
+      ),
     });
 
   const initialProps = await Document.getInitialProps(ctx);

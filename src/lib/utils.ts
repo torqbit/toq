@@ -1,7 +1,5 @@
-import SvgIcons from "@/components/SvgIcons";
-
 import appConstant from "@/services/appConstant";
-import { Dispatch } from "react";
+
 const md5 = require("md5");
 
 export const authConstants = {
@@ -145,7 +143,8 @@ export const mapToArray = (map: Map<string, string>): [string, string][] => {
 };
 
 export const compareByHash = (existingValue: [string, string][], currentValue: [string, string][]): boolean => {
-  const cleanedMap = (map: [string, string][]) => new Map(Array.from(map, ([key, value]) => [key, value.replace(/\n/g, " ").trim()]));
+  const cleanedMap = (map: [string, string][]) =>
+    new Map(Array.from(map, ([key, value]) => [key, value.replace(/\n/g, " ").trim()]));
 
   const map1Json = mapToArray(cleanedMap(existingValue)).flat().join("").replace(/\s+/g, "").trim();
   const map2Json = mapToArray(cleanedMap(currentValue)).flat().join("").replace(/\s+/g, "").trim();
@@ -340,3 +339,11 @@ export const deepMerge = (defaultObj: any, userObj: any): any => {
 
   return userObj;
 };
+
+export function getFileExtension(fileName: string) {
+  const parts = fileName.split(".");
+
+  const extension = parts[parts.length - 1];
+
+  return extension.toLowerCase();
+}

@@ -91,7 +91,7 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
       icon: SvgIcons.dashboard,
     },
     {
-      label: <Link href="/admin/site">Site Design</Link>,
+      label: <Link href="/admin/design">Site Design</Link>,
       key: "site",
       icon: <i style={{ fontSize: 18 }}>{SvgIcons.site}</i>,
     },

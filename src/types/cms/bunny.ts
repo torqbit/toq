@@ -45,12 +45,14 @@ export type BunnyCMSConfig = {
   };
   cdnConfig?: {
     cdnStorageZoneId: number;
+    zoneName: string;
     cdnPullZoneId: number;
     linkedHostname: string;
   };
   storageConfig?: {
     storageZoneId: number;
     mainStorageRegion: string;
+    zoneName: string;
     replicatedRegions: string[];
   };
 };

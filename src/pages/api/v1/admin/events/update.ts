@@ -6,6 +6,16 @@ import prisma from "@/lib/prisma";
 import { withMethods } from "@/lib/api-middlewares/with-method";
 import { withAuthentication } from "@/lib/api-middlewares/with-authentication";
 import { withUserAuthorized } from "@/lib/api-middlewares/with-authorized";
+import { APIResponse } from "@/types/apis";
+import { uploadThumbnail } from "@/actions/courses";
+import { FileObjectType } from "@/types/cms/common";
+import { readFieldWithFile } from "@/lib/upload/utils";
+
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
@@ -16,7 +26,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       cookieName,
     });
 
-    const body = req.body;
+    const { fields, files } = (await readFieldWithFile(req)) as any;
+
+    const body = JSON.parse(fields.event[0]);
 
     const { title, id } = body;
     if (title) {
@@ -37,6 +49,18 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       }
     }
 
+    let response: APIResponse<any>;
+    let thumbnail;
+
+    if (files.file) {
+      response = await uploadThumbnail(files.file[0], body.slug, FileObjectType.EVENT, "banner", body.banner);
+      if (response.success) {
+        thumbnail = response.body;
+      } else {
+        return res.status(response.status).json(response);
+      }
+    }
+
     const updatedEvent = await prisma.events.update({
       where: {
         id: id,
@@ -49,7 +73,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     return res.status(200).json({ success: true, message: "Event has been updated", updatedEvent });
   } catch (error) {
-    console.log(error);
     errorHandler(error, res);
   }
 };

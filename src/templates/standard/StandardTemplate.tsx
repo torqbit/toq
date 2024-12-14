@@ -17,7 +17,7 @@ interface IStandardTemplateProps {
 
 const StandardTemplate: FC<IStandardTemplateProps> = ({ user, siteConfig, previewMode }) => {
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
-  const featureInfo = siteConfig.sections?.feature?.featureInfo;
+  const featureInfo = siteConfig.sections?.features;
 
   return (
     <MarketingLayout
@@ -25,13 +25,11 @@ const StandardTemplate: FC<IStandardTemplateProps> = ({ user, siteConfig, previe
       siteConfig={siteConfig}
       heroSection={<Hero siteConfig={siteConfig} isMobile={isMobile} user={user} />}
     >
-      <SetupPlatform />
+      {/* <SetupPlatform /> */}
       <Features
-        title={featureInfo?.title ? featureInfo.title : DEFAULT_THEME.sections.feature.featureInfo.title}
-        description={
-          featureInfo?.description ? featureInfo.description : DEFAULT_THEME.sections.feature.featureInfo.description
-        }
-        featureList={featureInfo?.featureList && featureInfo?.featureList.length > 0 ? featureInfo?.featureList : []}
+        title={featureInfo?.title ? featureInfo.title : DEFAULT_THEME.sections.features.title}
+        description={featureInfo?.description ? featureInfo.description : DEFAULT_THEME.sections.features.description}
+        items={featureInfo?.items && featureInfo?.items.length > 0 ? featureInfo?.items : []}
       />
 
       {siteConfig.sections?.courses?.enable && (

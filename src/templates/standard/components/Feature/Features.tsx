@@ -11,13 +11,13 @@ const FeatureCard: FC<IFeatureCard> = ({ img, title, description, link, cardClas
   </Link>
 );
 
-const Features: FC<IFeatureInfo> = ({ title, description, featureList }) => (
+const Features: FC<IFeatureInfo> = ({ title, description, items }) => (
   <section className={styles.features__container}>
     <div>
       <h2>{title}</h2>
       <p style={{ marginBottom: 30 }}>{description}</p>
       <div className={`${styles.features} ${styles.features__triple}`}>
-        {featureList.map((feature, i) => {
+        {items.map((feature, i) => {
           return (
             <FeatureCard
               key={i}
@@ -25,7 +25,7 @@ const Features: FC<IFeatureInfo> = ({ title, description, featureList }) => (
               title={feature.title}
               description={feature.description}
               link={feature.link}
-              cardClass={`${styles[featureList.length <= 2 ? "features__card__large" : `"features__card__small"`]} ${
+              cardClass={`${styles[items.length <= 2 ? "features__card__large" : `"features__card__small"`]} ${
                 feature.cardClass
               }`}
             />
