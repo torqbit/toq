@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 
-const { protocol, hostname } = new URL(process.env.NEXTAUTH_URL);
+const { protocol, hostname } = new URL(process.env.NEXTAUTH_URL || "http://localhost:3000");
 
 const cacheConfig = require("./cacheConfig");
 
