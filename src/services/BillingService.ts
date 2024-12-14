@@ -209,7 +209,7 @@ export class BillingService {
           cmsConfig,
           pdfBuffer,
           FileObjectType.INVOICE,
-          `${invoice.invoiceNumber}_invocie`,
+          `${invoice.invoiceNumber}_invocie.pdf`,
           "pdf"
         );
 
