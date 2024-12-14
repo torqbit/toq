@@ -29,6 +29,7 @@
     "@react-email/components": "0.0.19",
     "@react-email/render": "0.0.15",
     "@react-pdf/renderer": "^3.1.14",
+    "@types/nodemailer": "^6.4.17",
     "antd": "5.20.0",
     "antd-img-crop": "4.23.0",
     "aos": "^3.0.0-beta.6",

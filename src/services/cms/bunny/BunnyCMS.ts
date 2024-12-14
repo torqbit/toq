@@ -540,29 +540,29 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
           bunny.trackVideo(videoResponse, cmsConfig.vodConfig.vidLibraryId, async (videoLen: number) => {
             let thumbnail = newVideo.thumbnail;
 
-            const uploadResponse =
-              cmsConfig.cdnConfig &&
-              cmsConfig.storageConfig &&
-              (await bunny.uploadThumbnailToCDN(
-                thumbnail,
-                cmsConfig.cdnConfig.linkedHostname,
-                cmsConfig.storageConfig.mainStorageRegion,
-                cmsConfig.cdnConfig.zoneName
-              ));
+            // const uploadResponse =
+            //   cmsConfig.cdnConfig &&
+            //   cmsConfig.storageConfig &&
+            //   (await bunny.uploadThumbnailToCDN(
+            //     thumbnail,
+            //     cmsConfig.cdnConfig.linkedHostname,
+            //     cmsConfig.storageConfig.mainStorageRegion,
+            //     cmsConfig.cdnConfig.zoneName
+            //   ));
 
-            if (uploadResponse) {
-              thumbnail = uploadResponse;
-            } else {
-              const getExistingVideoThumbnail = await prisma.video.findUnique({
-                where: {
-                  id: newVideo.id,
-                },
-                select: {
-                  thumbnail: true,
-                },
-              });
-              thumbnail = String(getExistingVideoThumbnail?.thumbnail);
-            }
+            // if (uploadResponse) {
+            //   thumbnail = uploadResponse;
+            // } else {
+            const getExistingVideoThumbnail = await prisma.video.findUnique({
+              where: {
+                id: newVideo.id,
+              },
+              select: {
+                thumbnail: true,
+              },
+            });
+            thumbnail = String(getExistingVideoThumbnail?.thumbnail);
+            // }
 
             const updatedVideo = prisma.video.update({
               where: {
