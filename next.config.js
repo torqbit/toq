@@ -1,11 +1,22 @@
 /** @type {import('next').NextConfig} */
 
+const { protocol, hostname } = new URL(process.env.NEXTAUTH_URL || "http://localhost:3000");
+
 const cacheConfig = require("./cacheConfig");
 
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ["cdn.torqbit.com", "torqbit-dev.b-cdn.net", "dev-test-103-pz.b-cdn.net", "dev-test-101-pz.b-cdn.net"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "**.b-cdn.net",
+      },
+      {
+        protocol: protocol.slice(0, -1) || "http",
+        hostname: hostname || "localhost",
+      },
+    ],
   },
 
   productionBrowserSourceMaps: false,
@@ -16,7 +27,14 @@ const nextConfig = {
       });
       config.cache.maxMemoryGenerations = 0;
     }
-    // Important: return the modified config
+
+    config.module.rules.push({
+      test: /\.js$/,
+      resolve: {
+        fullySpecified: false,
+      },
+    });
+
     return config;
   },
   typescript: {
