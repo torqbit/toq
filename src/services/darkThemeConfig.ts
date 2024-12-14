@@ -1,4 +1,32 @@
+import { Theme } from "@/types/theme";
 import { PageSiteConfig } from "./siteConstant";
+import { IBrandConfig } from "@/types/schema";
+
+export const getIconTheme = (
+  theme: Theme,
+  brand?: IBrandConfig
+): { bgColor: string; brandColor: string; fontColor: string } => {
+  switch (theme) {
+    case "dark":
+      return {
+        bgColor: "#283040",
+        fontColor: "#939db8",
+        brandColor: brand?.brandColor || "blue",
+      };
+    case "light":
+      return {
+        bgColor: "#fff",
+        fontColor: "#666",
+        brandColor: brand?.brandColor || "blue",
+      };
+    default:
+      return {
+        bgColor: "#fff",
+        fontColor: "#666",
+        brandColor: brand?.brandColor || "blue",
+      };
+  }
+};
 
 const darkThemeConfig = (siteConfig: PageSiteConfig) => {
   return {
@@ -70,19 +98,15 @@ const darkThemeConfig = (siteConfig: PageSiteConfig) => {
       },
       Button: {
         defaultBg: "#283040",
-
         groupBorderColor: "#000",
-
         colorPrimaryActive: "#fff",
       },
       Input: {
         borderRadius: 4,
         activeShadow: "none",
         activeBg: "#222938",
-
         hoverBg: "#222938",
         colorTextPlaceholder: "#939db8",
-
         activeBorderColor: "#939db8",
       },
 

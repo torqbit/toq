@@ -17,8 +17,11 @@ import AppLayout from "@/components/Layouts/AppLayout";
 import { getSiteConfig } from "@/services/getSiteConfig";
 import { GetServerSidePropsContext } from "next";
 import { PageSiteConfig } from "@/services/siteConstant";
+import { EmptyNotification } from "@/components/SvgIcons";
+import { useAppContext } from "@/components/ContextApi/AppContext";
+import { getIconTheme } from "@/services/darkThemeConfig";
 
-const NotificationList: FC = () => {
+const NotificationList: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const router = useRouter();
   const { data: user } = useSession();
   const [loading, setLoading] = useState(false);
@@ -27,6 +30,7 @@ const NotificationList: FC = () => {
   const [notificationsCount, setNotificationsCount] = useState<number>();
   const [notifications, setNotifications] = useState<INotification[]>();
   const [notificationsList, setNotificationsList] = useState<INotification[]>();
+  const { globalState } = useAppContext();
 
   const getNotification = async () => {
     try {
@@ -125,6 +129,14 @@ const NotificationList: FC = () => {
       loadMore={loadMore}
       bordered={false}
       dataSource={notificationsList}
+      locale={{
+        emptyText: (
+          <div>
+            <EmptyNotification size="150px" {...getIconTheme(globalState.theme || "light", siteConfig.brand)} />
+            <p>No Notifications found</p>
+          </div>
+        ),
+      }}
       className={styles.notifications_list}
       renderItem={(item, index) => (
         <List.Item
@@ -162,12 +174,7 @@ const NotificationList: FC = () => {
                     )}
                   </Link>
                 }
-                description={
-                  // <span className={styles.description_text}>
-                  //   <PurifyContent className="notifications_info" content={item.comment.comment as string} />{" "}
-                  // </span>
-                  <></>
-                }
+                description={<></>}
               />
               <span>{moment(new Date(item.createdAt), "YYYY-MM-DDThh:mm:ss").fromNow()}</span>
             </div>
@@ -184,7 +191,7 @@ const Dashboard: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
       <section className={styles.dashboard_content}>
         <h3>Notification</h3>
 
-        <NotificationList />
+        <NotificationList siteConfig={siteConfig} />
       </section>
     </AppLayout>
   );

@@ -77,7 +77,7 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
     },
     {
       title: "Notifications",
-      icon: SvgIcons.nottification,
+      icon: SvgIcons.notification,
 
       link: "admin/notifications",
       key: "notifications",
@@ -112,7 +112,7 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
     },
 
     {
-      label: <Link href="/admin/notifications">Notifications</Link>,
+      label: <Link href="/notifications">Notifications</Link>,
       key: "notifications",
       icon: (
         <Badge
@@ -122,7 +122,7 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
           style={{ fontSize: 10, paddingTop: 1.5 }}
           size="small"
         >
-          {SvgIcons.nottification}
+          {SvgIcons.notification}
         </Badge>
       ),
     },
