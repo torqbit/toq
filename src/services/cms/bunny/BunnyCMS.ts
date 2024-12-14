@@ -382,6 +382,21 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
     }
   }
 
+  async downloadPrivateFiles(cmsConfig: BunnyCMSConfig, filePath: string): Promise<APIResponse<ArrayBuffer>> {
+    const storagePassword = await secretsStore.get(cmsConfig.fileStoragePasswordRef);
+    if (storagePassword && cmsConfig.cdnConfig && cmsConfig.storageConfig) {
+      const bunny = new BunnyClient(storagePassword);
+      const deleteResponse = await bunny.downloadPrivateFiles(
+        filePath,
+        cmsConfig.cdnConfig.linkedHostname,
+        cmsConfig.storageConfig.zoneName
+      );
+      return deleteResponse;
+    } else {
+      return new APIResponse(false, 404, "CMS configuration is missing");
+    }
+  }
+
   async uploadCDNImage(
     cmsConfig: BunnyCMSConfig,
     file: Buffer,
