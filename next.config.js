@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
 
+const { protocol, hostname } = new URL(process.env.NEXTAUTH_URL);
+
 const cacheConfig = require("./cacheConfig");
 
 const nextConfig = {
@@ -9,6 +11,10 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "**.b-cdn.net",
+      },
+      {
+        protocol: protocol,
+        hostname: hostname,
       },
     ],
   },
