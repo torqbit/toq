@@ -347,3 +347,13 @@ export function getFileExtension(fileName: string) {
 
   return extension.toLowerCase();
 }
+
+export const getDateAndYear = (dateInfo?: Date) => {
+  const currentDate = dateInfo ? dateInfo : new Date();
+  const year = currentDate.getFullYear();
+  const monthNumber = currentDate.getMonth();
+  const day = currentDate.getDate();
+  const date = new Date(year, monthNumber, day); // 2009-11-10
+  const monthName = date.toLocaleString("default", { month: "long" });
+  return `${monthName} ${day}, ${year}`;
+};

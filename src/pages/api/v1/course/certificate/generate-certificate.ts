@@ -7,15 +7,14 @@ import { getToken } from "next-auth/jwt";
 import { getCookieName } from "@/lib/utils";
 import { ContentManagementService } from "@/services/cms/ContentManagementService";
 
-import { createCertificate } from "@/lib/addCertificate";
 import { ICertificateInfo } from "@/types/courses/Course";
 import { CourseType, ResourceContentType } from "@prisma/client";
 import getTotalScore from "@/actions/getTotalScore";
+import { CeritificateService } from "@/services/certificate/CertificateService";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const cms = new ContentManagementService();
-
     let cookieName = getCookieName();
 
     const { courseId } = req.query;
@@ -75,13 +74,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         certificateTemplate: String(course?.certificateTemplate),
         authorName: String(course.user.name),
       };
-      await createCertificate(certificateInfo).then((r) => {
+      await new CeritificateService().courseCertificate(certificateInfo).then((r) => {
         if (r.success) {
-          return res.status(200).json(r);
+          return res.status(200).json({ ...r, certificateIssueId: r.body });
         } else {
           return res.status(400).json(r);
         }
       });
+    } else {
+      return res.status(404).json({ success: false, error: "Course not found" });
     }
   } catch (error) {
     return errorHandler(error, res);

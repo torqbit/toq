@@ -26,7 +26,11 @@ export class CashfreePaymentProvider implements PaymentServiceProvider {
     }
   }
 
-  async processPendingPayment(orderId: string, userConfig: UserConfig, courseConfig: CoursePaymentConfig): Promise<PaymentApiResponse> {
+  async processPendingPayment(
+    orderId: string,
+    userConfig: UserConfig,
+    courseConfig: CoursePaymentConfig
+  ): Promise<PaymentApiResponse> {
     let currentTime = new Date();
     const orderDetail = await prisma.order.findUnique({
       where: {
@@ -73,7 +77,11 @@ export class CashfreePaymentProvider implements PaymentServiceProvider {
 
       let orderCreatedTime = orderDetail?.createdAt.getTime();
 
-      if (cashfreeOrderDetail && cashfreeOrderDetail.sessionExpiry && cashfreeOrderDetail.sessionExpiry.getTime() < currentTime.getTime()) {
+      if (
+        cashfreeOrderDetail &&
+        cashfreeOrderDetail.sessionExpiry &&
+        cashfreeOrderDetail.sessionExpiry.getTime() < currentTime.getTime()
+      ) {
         await prisma.order.update({
           where: {
             id: orderId,
@@ -135,7 +143,11 @@ export class CashfreePaymentProvider implements PaymentServiceProvider {
     }
   }
 
-  async createOrder(orderId: string, userConfig: UserConfig, courseConfig: CoursePaymentConfig): Promise<PaymentApiResponse> {
+  async createOrder(
+    orderId: string,
+    userConfig: UserConfig,
+    courseConfig: CoursePaymentConfig
+  ): Promise<PaymentApiResponse> {
     try {
       const cashfreeOrderDetail = await prisma.cashfreeOrder.create({
         data: {
@@ -260,7 +272,11 @@ export class CashfreePaymentProvider implements PaymentServiceProvider {
     }
   }
 
-  async purchaseCourse(courseConfig: CoursePaymentConfig, userConfig: UserConfig, orderId: string): Promise<PaymentApiResponse> {
+  async purchaseCourse(
+    courseConfig: CoursePaymentConfig,
+    userConfig: UserConfig,
+    orderId: string
+  ): Promise<PaymentApiResponse> {
     let currentTime = new Date();
     const orderDetail = await prisma.order.findUnique({
       where: {

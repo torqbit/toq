@@ -411,6 +411,55 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
     }
   }
 
+  async deletePrivateFile(cmsConfig: BunnyCMSConfig, filePath: string): Promise<APIResponse<any>> {
+    const storagePassword = await secretsStore.get(cmsConfig.fileStoragePasswordRef);
+    if (storagePassword && cmsConfig.cdnConfig && cmsConfig.storageConfig) {
+      const bunny = new BunnyClient(storagePassword);
+      const deleteResponse = await bunny.deleteCDNImage(
+        filePath,
+        cmsConfig.cdnConfig.linkedHostname,
+        cmsConfig.storageConfig.zoneName
+      );
+      return new APIResponse(
+        deleteResponse.success,
+        deleteResponse.status,
+        deleteResponse.message,
+        deleteResponse.body
+      );
+    } else {
+      return new APIResponse(false, 404, "CMS configuration is missing");
+    }
+  }
+
+  async uploadPrivateFile(
+    cmsConfig: BunnyCMSConfig,
+    file: Buffer,
+    objectType: FileObjectType,
+    fileName: string,
+    category: StaticFileCategory
+  ): Promise<APIResponse<string>> {
+    //get the storage password
+    const storagePassword = await secretsStore.get(cmsConfig.fileStoragePasswordRef);
+    if (storagePassword && cmsConfig.storageConfig && cmsConfig.cdnConfig) {
+      const bunny = new BunnyClient(storagePassword);
+      const fullPath = `${objectType}/${category}/${fileName}`;
+      const response = await bunny.uploadCDNImage(
+        file,
+        fullPath,
+        cmsConfig.storageConfig.zoneName,
+        cmsConfig.storageConfig.mainStorageRegion,
+        cmsConfig.cdnConfig.linkedHostname
+      );
+      if (response.body === "") {
+        return new APIResponse(false, 400, "Unable to upload the file");
+      } else {
+        return new APIResponse(response.success, response.status, response.message, response.body);
+      }
+    } else {
+      return new APIResponse(false, 404, "CMS configuration is missing");
+    }
+  }
+
   async deleteVideo(
     cmsConfig: BunnyCMSConfig,
     videoId: string,

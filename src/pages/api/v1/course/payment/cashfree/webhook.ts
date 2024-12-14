@@ -9,6 +9,8 @@ import fs from "fs";
 import { businessConfig } from "@/services/businessConfig";
 import { ContentManagementService } from "@/services/cms/ContentManagementService";
 import { BillingService } from "@/services/BillingService";
+import os from "os";
+import path from "path";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const body = req.body;
@@ -154,10 +156,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
         invoiceNumber: Number(invoiceData.id),
       };
-      let savePath = `${process.env.MEDIA_UPLOAD_PATH}/${appConstant.invoiceTempDir}/${invoiceData.id}_invoice.pdf`;
+      let homeDir = os.homedir();
+      const savePath = path.join(
+        homeDir,
+        `${appConstant.homeDirName}/${appConstant.staticFileDirName}/${invoiceData.id}_invoice.pdf`
+      );
       const cms = new ContentManagementService();
 
-      new BillingService(cms).sendInvoice(invoiceConfig, savePath);
+      new BillingService().sendInvoice(invoiceConfig, savePath);
 
       return res.status(200).json({
         success: true,

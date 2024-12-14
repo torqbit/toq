@@ -3,6 +3,7 @@ import { Button, Form, FormInstance, InputNumber, message, Modal } from "antd";
 import { useSession } from "next-auth/react";
 import { FC } from "react";
 import { useAppContext } from "../ContextApi/AppContext";
+import ProgramService from "@/services/ProgramService";
 
 const AddPhone: FC<{
   title: string;
@@ -14,19 +15,25 @@ const AddPhone: FC<{
   const [form] = Form.useForm();
   const [messageApi, contextHolder] = message.useMessage();
   const addPhone = async () => {
-    const res = await postFetch({ phone: form.getFieldsValue().phone }, "/api/user/update");
-    const result = (await res.json()) as IResponse;
-    if (res.ok && result.success) {
-      update({
-        phone: form.getFieldsValue().phone,
-      });
-      dispatch({ type: "SET_USER", payload: { ...globalState.session, phone: form.getFieldsValue().phone } });
-      onCloseModal();
-      messageApi.success(result.message);
-    } else {
-      console.log(result.error);
-      messageApi.error(result.error);
-    }
+    const formData = new FormData();
+    formData.append(
+      "userInfo",
+      JSON.stringify({ name: user?.user?.name, phone: form.getFieldsValue().phone, image: user?.user?.image })
+    );
+    ProgramService.updateProfile(
+      formData,
+      (result) => {
+        update({
+          phone: form.getFieldsValue().phone,
+        });
+        dispatch({ type: "SET_USER", payload: { ...globalState.session, phone: form.getFieldsValue().phone } });
+        onCloseModal();
+        messageApi.success(result.message);
+      },
+      (error) => {
+        messageApi.error(error);
+      }
+    );
   };
   return (
     <Modal title={<div>{title}</div>} open={open} footer={null} onCancel={onCloseModal}>
