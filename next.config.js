@@ -13,7 +13,7 @@ const nextConfig = {
         hostname: "**.b-cdn.net",
       },
       {
-        protocol: protocol,
+        protocol: protocol.slice(0, -1),
         hostname: hostname,
       },
     ],
