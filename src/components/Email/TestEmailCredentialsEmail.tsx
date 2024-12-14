@@ -1,4 +1,4 @@
-import { IEventAccessDeniedMailConfig, IEventAccessMailConfig, ITestEmailConfig } from "@/lib/emailConfig";
+import { ITestEmailConfig } from "@/lib/emailConfig";
 import { getSiteConfig } from "@/services/getSiteConfig";
 import { PageSiteConfig } from "@/services/siteConstant";
 import {
@@ -23,14 +23,14 @@ interface IProps {
 }
 
 export const TestEmailCredentialsEmail = ({ configData }: IProps) => {
+
   const { site }: { site: PageSiteConfig } = getSiteConfig();
+
   return (
     <Tailwind>
       <Html>
         <Head />
-
         <Preview>{`${site.brand?.name}`}</Preview>
-
         <Head>
           <style></style>
         </Head>

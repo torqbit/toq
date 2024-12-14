@@ -27,10 +27,12 @@ import EventCompletionEmail from "@/components/Email/EventCompletionEmail";
 import EventAccessEmail from "@/components/Email/EventAccessEmail";
 import EventAccessDeniedEmail from "@/components/Email/EventAccessDeniedEmail";
 import TestEmailCredentialsEmail from "@/components/Email/TestEmailCredentialsEmail";
+
 import { emailConstantsVariable } from "./cms/email/EmailManagementService";
 import SecretsManager from "./secrets/SecretsManager";
 import { getSiteConfig } from "./getSiteConfig";
 import { PageSiteConfig } from "./siteConstant";
+
 export const getEmailErrorMessage = (response: string, message?: string) => {
   let errResponse;
   if (response === "CONN") {
