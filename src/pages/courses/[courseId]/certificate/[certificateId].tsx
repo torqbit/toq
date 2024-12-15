@@ -1,84 +1,60 @@
 import SvgIcons from "@/components/SvgIcons";
 import { getCookieName } from "@/lib/utils";
-import ProgramService from "@/services/ProgramService";
 import { Breadcrumb, Button, Flex, Space } from "antd";
 import { GetServerSidePropsContext } from "next";
 import { getToken } from "next-auth/jwt";
-import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { FC, useEffect, useState } from "react";
+import { FC } from "react";
 import styles from "@/styles/Certificate.module.scss";
 import prisma from "@/lib/prisma";
-import SpinLoader from "@/components/SpinLoader/SpinLoader";
 import AppLayout from "@/components/Layouts/AppLayout";
 import { PageSiteConfig } from "@/services/siteConstant";
 import { getSiteConfig } from "@/services/getSiteConfig";
 
-const ShowCertificate: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
-  const [certificateData, setCertificateData] = useState<{ pdfPath: string; imgPath: string; courseName: string }>();
-  const { data: session } = useSession();
-  const [loading, setLoading] = useState<boolean>();
-  const [courseName, setCourseName] = useState<string>();
+const ShowCertificate: FC<{ siteConfig: PageSiteConfig; courseName: string; userName: string }> = ({
+  siteConfig,
+  courseName,
+  userName,
+}) => {
   const router = useRouter();
-  const getCertificateImgUrl = () => {};
-  useEffect(() => {
-    setLoading(true);
-    ProgramService.getCertificate(
-      String(router.query.certificateId),
-      (result) => {
-        setCertificateData(result.certificateDetail);
-        setCourseName(result.certificateDetail.courseName);
-        setLoading(false);
-      },
-      (error) => {
-        setLoading(false);
-      }
-    );
-  }, [router.query.courseId]);
 
   return (
     <AppLayout siteConfig={siteConfig}>
-      {loading ? (
-        <SpinLoader />
-      ) : (
-        <Space direction="vertical" size={"middle"} className={styles.certificate_page}>
-          <div>
-            <Breadcrumb
-              items={[
-                {
-                  title: <Link href={`/courses`}>Courses</Link>,
-                },
-                {
-                  title: `${courseName}`,
-                },
-                {
-                  title: "Certificate",
-                },
-              ]}
-            />
-          </div>
-          <p className={styles.about_description}>
-            Torqbit certifies the successful completion of <span>{courseName}</span> by{" "}
-            <span>{session?.user?.name} </span>
-          </p>
-          <div className={styles.certificate_image}>
-            <img src={String(certificateData?.imgPath)} alt={session?.user?.name ?? "Certificate"} />
-
-            <Button
-              type="primary"
-              onClick={() => {
-                router.push(
-                  `/courses/${router.query.courseId}/certificate/download/${String(router.query.certificateId)}`
-                );
-              }}
-            >
-              <div> Download Certificate </div>
-              <i>{SvgIcons.arrowRight}</i>
-            </Button>
-          </div>
-        </Space>
-      )}
+      <Space direction="vertical" size={"middle"} className={styles.certificate_page}>
+        <div>
+          <Breadcrumb
+            items={[
+              {
+                title: <Link href={`/courses`}>Courses</Link>,
+              },
+              {
+                title: `${courseName}`,
+              },
+              {
+                title: "Certificate",
+              },
+            ]}
+          />
+        </div>
+        <p className={styles.about_description}>
+          Torqbit certifies the successful completion of <span>{courseName}</span> by <span>{userName} </span>
+        </p>
+        <div className={styles.certificate_image}>
+          <img src={`/static/course/certificate/${router.query.certificateId}`} alt={userName ?? "Certificate"} />{" "}
+          <Button
+            onClick={() => {
+              router.push(
+                `/courses/${router.query.courseId}/certificate/download/${String(router.query.certificateId)}`
+              );
+            }}
+            type="primary"
+          >
+            <div> Download Certificate </div>
+            <i>{SvgIcons.arrowRight}</i>
+          </Button>
+        </div>
+      </Space>
     </AppLayout>
   );
 };
@@ -100,6 +76,14 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
           courseId: Number(params.courseId),
         },
       },
+      select: {
+        courseState: true,
+        course: {
+          select: {
+            name: true,
+          },
+        },
+      },
     });
 
     if (isCompleted?.courseState !== "COMPLETED") {
@@ -108,6 +92,14 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
           permanent: false,
           message: "you are not enrolled in this course",
           destination: "/unauthorized",
+        },
+      };
+    } else {
+      return {
+        props: {
+          siteConfig: site,
+          courseName: isCompleted.course.name,
+          userName: user.name,
         },
       };
     }

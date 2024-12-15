@@ -5,55 +5,41 @@ import { getToken } from "next-auth/jwt";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import prisma from "@/lib/prisma";
+import { downloadPrivateFile } from "@/actions/downloadPrivateFile";
 
-const DownloadCertificate = () => {
-  const [certificatePdfPath, setCertificatePdfPath] = useState<string>();
-
-  const router = useRouter();
-  useEffect(() => {
-    ProgramService.getCertificate(
-      String(router.query.certificateId),
-      (result) => {
-        setCertificatePdfPath(String(result.certificateDetail.pdfPath));
-      },
-      (error) => {}
-    );
-  }, [router.query.courseId]);
-
-  return (
-    <section style={{ height: "100vh" }}>
-      <object data={certificatePdfPath} type="application/pdf" width="100%" height="100%"></object>
-    </section>
-  );
-};
+const DownloadCertificate = () => null;
 
 export default DownloadCertificate;
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const { req } = ctx;
-  const params = ctx?.params;
-  let cookieName = getCookieName();
-  const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
+  const { req, res, query } = ctx;
 
-  if (user && params) {
-    const isCompleted = await prisma?.courseRegistration.findUnique({
-      where: {
-        studentId_courseId: {
-          studentId: user.id,
-          courseId: Number(params.courseId),
-        },
-      },
-    });
+  const certificate = await prisma.courseCertificates.findUnique({
+    where: {
+      id: String(query.certificateId),
+    },
+    select: {
+      pdfPath: true,
+    },
+  });
+  if (certificate?.pdfPath) {
+    const getFile = await downloadPrivateFile(certificate?.pdfPath);
 
-    if (isCompleted?.courseState !== "COMPLETED") {
+    if (getFile.body) {
+      const arrayBuffer = getFile.body;
+
+      const buffer = Buffer.from(arrayBuffer);
+      console.log(buffer);
+
+      res.setHeader("Content-Type", "application/pdf");
+      res.setHeader("Content-Disposition", `inline; `);
+
+      res.write(buffer);
+      res.end();
+
       return {
-        redirect: {
-          permanent: false,
-          message: "you are not enrolled in this course",
-          destination: "/unauthorized",
-        },
+        props: {},
       };
     }
   }
-  return { props: {} };
 };

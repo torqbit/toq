@@ -44,6 +44,8 @@ export interface IContentProvider<T extends ICMSAuthConfig, U> {
     category: StaticFileCategory
   ): Promise<APIResponse<any>>;
 
+  downloadPrivateFiles(cmsConfig: U, filePath: string): Promise<APIResponse<any>>;
+
   uploadPrivateFile(
     cmsConfig: U,
     file: Buffer,

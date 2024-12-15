@@ -4,10 +4,7 @@ import { BunnyRequestError, PullZone, StorageZone, VideoLibrary, VideoLibraryRes
 import { VideoInfo } from "@/types/courses/Course";
 import { VideoState } from "@prisma/client";
 import sharp from "sharp";
-import prisma from "@/lib/prisma";
-import { VideoObjectType } from "@/types/cms/common";
 import { fetchImageBuffer } from "@/actions/fetchImageBuffer";
-import { truncateString } from "@/services/helper";
 import url from "url";
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -182,6 +179,31 @@ export class BunnyClient {
     );
   };
 
+  downloadPrivateFiles = async (
+    filePath: string,
+    linkedHostname: string,
+    zoneName: string
+  ): Promise<APIResponse<ArrayBuffer>> => {
+    const parseUrl = filePath && url.parse(filePath);
+    const existingPath = parseUrl && parseUrl.pathname;
+    if (parseUrl) {
+      return new Promise(async (resolve, reject) => {
+        const downloadUrl = `https://storage.bunnycdn.com/${zoneName}/${existingPath}`;
+        const response = await fetch(downloadUrl, this.getClientDownloadOption());
+        await response
+          .arrayBuffer()
+          .then((r) => {
+            resolve(new APIResponse(true, response.status, response.statusText, r));
+          })
+          .catch((error) => {
+            resolve(new APIResponse(false, response.status, error));
+          });
+      });
+    } else {
+      return new APIResponse(false, 404, "file path is missing");
+    }
+  };
+
   deleteCDNImage = async (filePath: string, linkedHostname: string, zoneName: string): Promise<APIResponse<string>> => {
     const parseUrl = filePath && url.parse(filePath);
     const existingPath = parseUrl && parseUrl.pathname;
@@ -221,6 +243,17 @@ export class BunnyClient {
         accept: "application/json",
         AccessKey: this.accessKey,
       },
+    };
+  }
+
+  getClientDownloadOption() {
+    return {
+      method: "GET",
+      headers: {
+        accept: "application/octet-stream",
+        AccessKey: this.accessKey,
+      },
+      responseType: "arraybuffer",
     };
   }
 
