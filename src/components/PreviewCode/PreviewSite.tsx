@@ -14,7 +14,7 @@ const PreviewSite = forwardRef<HTMLIFrameElement>((props, ref) => {
           ref={ref}
           loading="lazy"
           className={styles.site__preview__iframe}
-          src={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/admin/design/preview`}
+          src={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/admin/site/preview`}
         ></iframe>
       </div>
     </>
