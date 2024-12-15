@@ -20,6 +20,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const query = req.query;
 
     const { courseListPreview } = query;
+
     if (token?.role === Role.ADMIN || courseListPreview === "true") {
       const allCourse = await prisma.course.findMany({
         select: {
@@ -118,4 +119,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default withMethods(["GET"], withAuthentication(handler));
+export default withMethods(["GET"], handler);

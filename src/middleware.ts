@@ -12,7 +12,8 @@ export default async function middleware(req: NextRequest, event: NextFetchEvent
   });
 
   const isAuthenticated = token != null;
-  if (!isAuthenticated) {
+
+  if (!isAuthenticated && !req.nextUrl.pathname.endsWith("courses")) {
     return NextResponse.redirect(new URL(`/login?redirect=${req.nextUrl.pathname}`, req.url));
   }
 
