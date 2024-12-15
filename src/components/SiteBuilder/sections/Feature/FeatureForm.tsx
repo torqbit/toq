@@ -85,12 +85,12 @@ const FeatureForm: FC<{
   updateSiteConfig: (config: PageSiteConfig) => void;
 }> = ({ updateSiteConfig, config }) => {
   const [form] = Form.useForm();
-  const [featureConfig, setFeatureConfig] = useState<IFeatureInfo | undefined>(config?.sections?.feature?.featureInfo);
+  const [featureConfig, setFeatureConfig] = useState<IFeatureInfo | undefined>(config?.sections?.features);
 
   const [featureImages, setFeatureImages] = useState<{ firstIcon: string; secondIcon: string; thirdIcon: string }>({
-    firstIcon: featureConfig?.featureList[0].img ? featureConfig?.featureList[0].img : "",
-    secondIcon: featureConfig?.featureList[1].img ? featureConfig?.featureList[1].img : "",
-    thirdIcon: featureConfig?.featureList[2].img ? featureConfig?.featureList[2].img : "",
+    firstIcon: featureConfig?.items[0].img ? featureConfig?.items[0].img : "",
+    secondIcon: featureConfig?.items[1].img ? featureConfig?.items[1].img : "",
+    thirdIcon: featureConfig?.items[2].img ? featureConfig?.items[2].img : "",
   });
 
   const beforeUpload = async (file: File, imageType: string, index: number) => {
@@ -100,7 +100,7 @@ const FeatureForm: FC<{
         const formData = new FormData();
         formData.append("file", file);
         formData.append("imgName", imgName);
-        formData.append("previousPath", featureConfig?.featureList[index].img.split("/").pop() as string);
+        formData.append("previousPath", featureConfig?.items[index].img.split("/").pop() as string);
 
         const postRes = await postWithFile(formData, `/api/v1/admin/site/image/save`);
         if (!postRes.ok) {
@@ -121,7 +121,7 @@ const FeatureForm: FC<{
 
   const handleFeatureChange = (index: number, key: string, value: string) => {
     setFeatureConfig((prevTheme: any) => {
-      const updatedFeatureList = [...prevTheme.featureList];
+      const updatedFeatureList = [...prevTheme.items];
       updatedFeatureList[index] = {
         ...updatedFeatureList[index],
         [key]: value,
@@ -129,8 +129,7 @@ const FeatureForm: FC<{
 
       return {
         ...prevTheme,
-
-        featureList: updatedFeatureList,
+        items: updatedFeatureList,
       };
     });
   };
@@ -140,9 +139,7 @@ const FeatureForm: FC<{
       ...config,
       sections: {
         ...config.sections,
-        feature: {
-          featureInfo: featureConfig,
-        },
+        features: featureConfig,
       },
     });
   }, [featureConfig]);
@@ -151,7 +148,7 @@ const FeatureForm: FC<{
     {
       imageType: "firstIcon",
       index: 0,
-      imgPath: `${featureConfig?.featureList[0].img}`,
+      imgPath: `${featureConfig?.items[0].img}`,
       isIconExist: featureImages.firstIcon !== "",
       handleFeatureConfig: handleFeatureChange,
       beforeUpload: beforeUpload,
@@ -159,7 +156,7 @@ const FeatureForm: FC<{
     {
       imageType: "secondIcon",
       index: 1,
-      imgPath: `${featureConfig?.featureList[1].img}`,
+      imgPath: `${featureConfig?.items[1].img}`,
       isIconExist: featureImages.secondIcon !== "",
       handleFeatureConfig: handleFeatureChange,
       beforeUpload: beforeUpload,
@@ -167,7 +164,7 @@ const FeatureForm: FC<{
     {
       imageType: "thirdIcon",
       index: 2,
-      imgPath: `${featureConfig?.featureList[2].img}`,
+      imgPath: `${featureConfig?.items[2].img}`,
       isIconExist: featureImages.thirdIcon !== "",
       handleFeatureConfig: handleFeatureChange,
       beforeUpload: beforeUpload,
@@ -175,19 +172,19 @@ const FeatureForm: FC<{
   ];
 
   let initialValues = {
-    title: config.sections?.feature?.featureInfo?.title,
-    description: config.sections?.feature?.featureInfo?.description,
-    title_0: config.sections?.feature?.featureInfo?.featureList[0].title,
-    description_0: config.sections?.feature?.featureInfo?.featureList[0].description,
-    link_0: config.sections?.feature?.featureInfo?.featureList[0].link,
+    title: config.sections?.features?.title,
+    description: config.sections?.features?.description,
+    title_0: config.sections?.features?.items[0].title,
+    description_0: config.sections?.features?.items[0].description,
+    link_0: config.sections?.features?.items[0].link,
 
-    title_1: config.sections?.feature?.featureInfo?.featureList[1].title,
-    description_1: config.sections?.feature?.featureInfo?.featureList[1].description,
-    link_1: config.sections?.feature?.featureInfo?.featureList[1].link,
+    title_1: config.sections?.features?.items[1].title,
+    description_1: config.sections?.features?.items[1].description,
+    link_1: config.sections?.features?.items[1].link,
 
-    title_2: config.sections?.feature?.featureInfo?.featureList[2].title,
-    description_2: config.sections?.feature?.featureInfo?.featureList[2].description,
-    link_2: config.sections?.feature?.featureInfo?.featureList[2].link,
+    title_2: config.sections?.features?.items[2].title,
+    description_2: config.sections?.features?.items[2].description,
+    link_2: config.sections?.features?.items[2].link,
   };
 
   const featureItems: IConfigForm[] = [

@@ -7,7 +7,6 @@ import { DEFAULT_THEME, PageSiteConfig } from "@/services/siteConstant";
 import { Button, Flex, message } from "antd";
 import { GetServerSidePropsContext, NextPage } from "next";
 import { useEffect, useRef, useState } from "react";
-import prisma from "@/lib/prisma";
 
 const SiteDesign: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const [messageApi, contexHolder] = message.useMessage();
@@ -27,6 +26,7 @@ const SiteDesign: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) =>
   };
 
   const updateYamlFile = async (config: PageSiteConfig) => {
+
     const res = await postFetch({ config }, "/api/v1/admin/site/site-info/update");
     const result = await res.json();
     if (res.ok) {

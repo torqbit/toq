@@ -11,7 +11,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const { brandName, brandColor, brandTitle } = req.body;
 
-    const filePath = "./siteConfig.yaml";
+    const filePath = "./site.yaml";
 
     const file = fs.readFileSync(filePath, "utf8");
     const yamlData = YAML.parse(file);
