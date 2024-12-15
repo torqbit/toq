@@ -4,15 +4,13 @@ import SpinLoader from "@/components/SpinLoader/SpinLoader";
 import ProgramService from "@/services/ProgramService";
 import { getFetch, IResponse, postFetch } from "@/services/request";
 import { CourseLessonAPIResponse } from "@/types/courses/Course";
-import { Alert, AlertProps, Button, Form, InputNumber, Modal, message } from "antd";
+import { Alert, AlertProps, Form, Modal, message } from "antd";
 import { GetServerSidePropsContext, NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { load } from "@cashfreepayments/cashfree-js";
 import { $Enums, Role } from "@prisma/client";
 import styles from "@/styles/Preview.module.scss";
-import { useAppContext } from "@/components/ContextApi/AppContext";
-import { useSession } from "next-auth/react";
 import appConstant from "@/services/appConstant";
 import AddPhone from "@/components/AddPhone/AddPhone";
 import AppLayout from "@/components/Layouts/AppLayout";
@@ -22,7 +20,6 @@ import { PageSiteConfig } from "@/services/siteConstant";
 const LearnCoursesPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const router = useRouter();
   const [form] = Form.useForm();
-  const { data: user, update } = useSession();
 
   const [courseDetail, setCourseDetail] = useState<CourseLessonAPIResponse>();
   const [messageApi, contextMessageHolder] = message.useMessage();
@@ -32,7 +29,6 @@ const LearnCoursesPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig
   const [paymentStatusLoading, setPaymentStatusLaoding] = useState<boolean>(false);
   const [refresh, setRefresh] = useState<boolean>(false);
   const [modal, contextModalHolder] = Modal.useModal();
-  const { dispatch, globalState } = useAppContext();
 
   const [enableModal, setModal] = useState<{ active: boolean; message: string }>({ active: false, message: "" });
 
@@ -183,21 +179,6 @@ const LearnCoursesPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig
     form.resetFields();
   };
 
-  const addPhone = async () => {
-    const res = await postFetch({ phone: form.getFieldsValue().phone }, "/api/user/update");
-    const result = (await res.json()) as IResponse;
-    if (res.ok && result.success) {
-      update({
-        phone: form.getFieldsValue().phone,
-      });
-      dispatch({ type: "SET_USER", payload: { ...globalState.session, phone: form.getFieldsValue().phone } });
-      onCloseModal();
-      messageApi.success(result.message);
-    } else {
-      console.log(result.error);
-      messageApi.error(result.error);
-    }
-  };
   return (
     <AppLayout siteConfig={siteConfig}>
       {contextMessageHolder}
