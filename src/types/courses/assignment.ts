@@ -16,3 +16,8 @@ export interface AssignmentConfig {
   userId: string;
   previewFileName: string;
 }
+
+export interface SubmissionConfig {
+  initialCode?: string;
+  programmingLang?: string;
+}

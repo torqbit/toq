@@ -42,8 +42,10 @@ const AddAssignment: FC<{
         assignmentFiles: assignmentForm.getFieldsValue().assignmentFiles,
         title: assignmentForm.getFieldsValue().title,
         submissionType: submissionType,
-        initialCode: initialCode,
-        programmingLang: programmingLang,
+        submissionConfig: {
+          initialCode: initialCode,
+          programmingLang: programmingLang,
+        },
         content: editorValue,
         isEdit,
         estimatedDuration: assignmentForm.getFieldsValue().estimatedDuration,
@@ -68,9 +70,9 @@ const AddAssignment: FC<{
           assignmentForm.setFieldValue("estimatedDuration", result.assignmentDetail.estimatedDuration);
           setSubmissionType(result.assignmentDetail.submissionType);
           if (result.assignmentDetail.submissionType === "PROGRAMMING_LANG") {
-            setInitialCode(result.assignmentDetail.initialCode as string);
-            setProgrammingLang(result.assignmentDetail.programmingLang as string);
-            assignmentForm.setFieldValue("programmingLang", result.assignmentDetail.programmingLang);
+            setInitialCode(result.assignmentDetail.submissionConfig.initialCode as string);
+            setProgrammingLang(result.assignmentDetail.submissionConfig.programmingLang as string);
+            assignmentForm.setFieldValue("programmingLang", result.assignmentDetail.submissionConfig.programmingLang);
           }
 
           setDefaultValue(result.assignmentDetail.content as string);
@@ -135,15 +137,16 @@ const AddAssignment: FC<{
         <Form.Item name="title" label="Title" rules={[{ required: true, message: "Please Enter Title" }]}>
           <Input placeholder="Add a title" />
         </Form.Item>
-
-        <Segmented
-          value={submissionType}
-          className={`${styles.Segmented_wrapper} segment__wrapper`}
-          options={appConstant.submissionTypes}
-          onChange={(value) => {
-            setSubmissionType(value as SubmissionType);
-          }}
-        />
+        <Form.Item label="Submission Type" required>
+          <Segmented
+            value={submissionType}
+            className={`${styles.Segmented_wrapper} segment__wrapper`}
+            options={appConstant.submissionTypes}
+            onChange={(value) => {
+              setSubmissionType(value as SubmissionType);
+            }}
+          />
+        </Form.Item>
 
         {submissionType === "PROGRAMMING_LANG" && (
           <Form.Item

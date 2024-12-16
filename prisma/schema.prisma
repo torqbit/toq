@@ -547,8 +547,7 @@ model Assignment {
   content           Json?
   assignmentFiles   Json?
   submissionType    SubmissionType?
-  initialCode       String?
-  programmingLang   String?
+  submissionConfig  Json?
   estimatedDuration Int?
   lesson            Resource               @relation(fields: [lessonId], references: [resourceId], onDelete: Cascade)
   submission        AssignmentSubmission[]

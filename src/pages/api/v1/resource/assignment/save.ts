@@ -16,17 +16,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const body = req.body;
 
-    const {
-      lessonId,
-      title,
-      content,
-      state,
-      assignmentFiles,
-      estimatedDuration,
-      submissionType,
-      initialCode,
-      programmingLang,
-    } = body;
+    const { lessonId, title, content, state, assignmentFiles, estimatedDuration, submissionType, submissionConfig } =
+      body;
 
     let assignmentData: any = {};
 
@@ -36,8 +27,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     if (assignmentFiles) assignmentData.assignmentFiles = assignmentFiles;
     if (estimatedDuration) assignmentData.estimatedDuration = estimatedDuration;
     if (submissionType) assignmentData.submissionType = submissionType;
-    if (initialCode) assignmentData.initialCode = initialCode;
-    if (programmingLang) assignmentData.programmingLang = programmingLang;
+    if (submissionConfig) assignmentData.submissionConfig = submissionConfig;
 
     if (title) {
       await prisma?.resource.update({
