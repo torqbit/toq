@@ -8,6 +8,7 @@ import {
   ResourceContentType,
   Role,
   StateType,
+  SubmissionType,
   Video,
   VideoState,
   courseDifficultyType,
@@ -36,6 +37,9 @@ export interface IAssignmentDetail {
   assignmentId: number;
   content: string;
   assignmentFiles: string[];
+  submissionType: SubmissionType;
+  initialCode?: string;
+  programmingLang?: string;
   name?: string;
   estimatedDuration: number;
 }

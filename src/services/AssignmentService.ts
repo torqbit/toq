@@ -1,4 +1,4 @@
-import { Assignment, AssignmentSubmission, submissionStatus } from "@prisma/client";
+import { Assignment, AssignmentSubmission, submissionStatus, SubmissionType } from "@prisma/client";
 import { getDelete, getFetch, postFetch } from "./request";
 import { IAssignmentDetail } from "@/types/courses/Course";
 
@@ -110,6 +110,9 @@ class AssignmentSerivce {
       content?: string;
       title?: string;
       assignmentFiles?: string[];
+      initialCode: string;
+      programmingLang?: string;
+      submissionType: SubmissionType;
       isEdit: boolean;
       estimatedDuration: number;
     },
