@@ -12,6 +12,7 @@ import { ConfigurationState } from "@prisma/client";
 import SvgIcons from "@/components/SvgIcons";
 import SpinLoader from "@/components/SpinLoader/SpinLoader";
 import { StorageConfig } from "@/types/cms/bunny";
+import { useRouter } from "next/router";
 
 export interface IConfigForm {
   title: string;
@@ -36,7 +37,7 @@ const ContentManagementSystem: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfi
   const [storageLoading, setStorageLoading] = useState<boolean>(false);
   const [pageLoading, setPageLoading] = useState<boolean>(true);
   const [configState, setConfigState] = useState<ConfigurationState>(ConfigurationState.INITIATED);
-
+  const router = useRouter();
   const [current, setCurrent] = useState<number>(0);
   let logoUrl = `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/${siteConfig.brand?.logo}`;
   let iconUrl = `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/img/logo.png`;
@@ -311,8 +312,10 @@ const ContentManagementSystem: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfi
     );
   };
   useEffect(() => {
-    getDetail();
-  }, []);
+    if (!router.query.tab || router.query.tab === "cms") {
+      getDetail();
+    }
+  }, [router.query.tab]);
 
   return (
     <>

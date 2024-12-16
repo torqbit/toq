@@ -7,12 +7,13 @@ import { $Enums } from "@prisma/client";
 import paymentsClient from "@/lib/admin/payments/payments-client";
 import { PaymentAuthConfig, PaymentInfoConfig } from "@/types/payment";
 import SvgIcons from "@/components/SvgIcons";
+import { useRouter } from "next/router";
 
 const PaymentManagementSystem = () => {
   const [paymentAuthForm] = Form.useForm();
   const [paymentInfoForm] = Form.useForm();
   const paymentGateway = $Enums.gatewayProvider.CASHFREE;
-
+  const router = useRouter();
   const [messageApi, contextHolder] = message.useMessage();
   const [current, setCurrent] = useState<number>(0);
 
@@ -66,28 +67,28 @@ const PaymentManagementSystem = () => {
   };
 
   useEffect(() => {
-    paymentsClient.getPaymentGatewayConfig(
-      paymentGateway,
-      (response) => {
-        messageApi.success(response.message);
-        if (response.body) {
+    router.query.tab === "pms" &&
+      paymentsClient.getPaymentGatewayConfig(
+        paymentGateway,
+        (response) => {
+          if (response.body) {
+          }
+          if (response.body && response.body.state == "AUTHENTICATED") {
+            setCurrent(1);
+          } else if (response.body && response.body.state == "PAYMENT_CONFIGURED") {
+            console.log(response.body.config);
+            setCurrent(2);
+            paymentInfoForm.setFieldsValue({
+              currency: response.body.config.currency,
+              paymentMethods: response.body.config.paymentMethods,
+            });
+          }
+        },
+        (error) => {
+          messageApi.error(error);
         }
-        if (response.body && response.body.state == "AUTHENTICATED") {
-          setCurrent(1);
-        } else if (response.body && response.body.state == "PAYMENT_CONFIGURED") {
-          console.log(response.body.config);
-          setCurrent(2);
-          paymentInfoForm.setFieldsValue({
-            currency: response.body.config.currency,
-            paymentMethods: response.body.config.paymentMethods,
-          });
-        }
-      },
-      (error) => {
-        messageApi.error(error);
-      }
-    );
-  }, []);
+      );
+  }, [router.query.tab]);
 
   const paymentSecretItems = [
     {

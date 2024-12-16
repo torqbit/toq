@@ -1,12 +1,13 @@
 import { useAppContext } from "@/components/ContextApi/AppContext";
 import { capsToPascalCase } from "@/lib/utils";
-import { EventType, Theme, User } from "@prisma/client";
+import { EventType, User } from "@prisma/client";
 import { FC, useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import EventService, { IEventList } from "@/services/EventService";
 import EventCard from "@/components/Events/EventCard";
 import styles from "@/styles/Marketing/Events/Event.module.scss";
 import { Button, Flex, message, Tabs, TabsProps } from "antd";
+import { Theme } from "@/types/theme";
 
 const Events: FC<{ user: User; eventList: IEventList[]; totalEventsLength: number; eventLink: string }> = ({
   user,

@@ -2,12 +2,15 @@ import AppLayout from "@/components/Layouts/AppLayout";
 import { Tabs, TabsProps } from "antd";
 
 import ContentManagementSystem from "@/components/Configuration/CMS/ContentManagementSystem";
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 import { PageSiteConfig } from "@/services/siteConstant";
 import PaymentManagementSystem from "./Payment/PaymentManagementSystem";
 import EmailServiceSystem from "./Email/EmailServiceSystem";
+import { useRouter } from "next/router";
 
 const ConfigurationSettings: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
+  const router = useRouter();
+  const [activeKey, setActiveKey] = useState<string>("CMS");
   const items: TabsProps["items"] = [
     {
       key: "CMS",
@@ -25,6 +28,17 @@ const ConfigurationSettings: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig 
       children: <EmailServiceSystem />,
     },
   ];
+
+  const onChange = (key: string) => {
+    setActiveKey(key);
+
+    router.push(`/admin/settings?tab=${key.toLowerCase()}`);
+  };
+  useEffect(() => {
+    if (router.query.tab && typeof router.query.tab === "string") {
+      setActiveKey(router.query.tab.toUpperCase());
+    }
+  }, []);
   return (
     <AppLayout siteConfig={siteConfig}>
       <div style={{ padding: "20px 40px" }}>
@@ -33,7 +47,8 @@ const ConfigurationSettings: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig 
           tabBarStyle={{
             borderColor: "gray",
           }}
-          defaultActiveKey={"CMS"}
+          defaultActiveKey={activeKey}
+          onChange={onChange}
           items={items}
         />
       </div>

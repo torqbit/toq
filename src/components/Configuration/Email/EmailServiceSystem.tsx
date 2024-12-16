@@ -5,12 +5,14 @@ import { useEffect, useState } from "react";
 import SvgIcons from "@/components/SvgIcons";
 import { EmailCredentialsConfig } from "@/types/cms/email";
 import emailClient from "@/lib/admin/email/email-client";
+import { useRouter } from "next/router";
 
 const EmailServiceSystem = () => {
   const [emailForm] = Form.useForm();
   const [messageApi, contextHolder] = message.useMessage();
   const [loading, setLoading] = useState<boolean>(false);
   const [isConnected, setIsConnected] = useState<boolean>(false);
+  const router = useRouter();
 
   const getEmailCredentials = () => {
     emailClient.getEmailCredendialsConfig(
@@ -25,8 +27,10 @@ const EmailServiceSystem = () => {
   };
 
   useEffect(() => {
-    getEmailCredentials();
-  }, []);
+    if (router.query.tab === "ems") {
+      getEmailCredentials();
+    }
+  }, [router.query.tab]);
 
   const saveAndTestEmailCredentials = () => {
     setLoading(true);
@@ -57,7 +61,7 @@ const EmailServiceSystem = () => {
       description: "The host name that will be used to authenticate with the Email service",
       optional: false,
 
-      input: <Input disabled={isConnected} placeholder='smtp.gmail.com' width={250} />,
+      input: <Input disabled={isConnected} placeholder="smtp.gmail.com" width={250} />,
       inputName: "smtpHost",
     },
 
@@ -66,21 +70,21 @@ const EmailServiceSystem = () => {
       description: "The user name that will be used to authenticate with the Email service",
       optional: false,
 
-      input: <Input disabled={isConnected} placeholder='username' width={250} />,
+      input: <Input disabled={isConnected} placeholder="username" width={250} />,
       inputName: "smtpUser",
     },
     {
       title: "Password",
       description: "The password that will be used to authenticate with the Email service",
       optional: false,
-      input: <Input.Password disabled={isConnected} placeholder='password' width={250} />,
+      input: <Input.Password disabled={isConnected} placeholder="password" width={250} />,
       inputName: "smtpPassword",
     },
     {
       title: "From Email",
       description: "The email address that will be used to send emails from",
       optional: false,
-      input: <Input disabled={isConnected} placeholder='From Email' width={250} />,
+      input: <Input disabled={isConnected} placeholder="From Email" width={250} />,
       inputName: "smtpFromEmail",
     },
   ];
@@ -91,32 +95,34 @@ const EmailServiceSystem = () => {
       <h3>Email Service</h3>
       <ConfigFormLayout
         extraContent={
-          <Flex align='center' gap={10}>
+          <Flex align="center" gap={10}>
             {
               <Button
                 disabled
                 onClick={() => {
                   emailForm.resetFields;
-                }}>
+                }}
+              >
                 Reset
               </Button>
             }
 
             {isConnected ? (
               <Tag style={{ padding: "5px 10px" }}>
-                <Flex align='center' gap={5}>
+                <Flex align="center" gap={5}>
                   <i style={{ lineHeight: 0, fontSize: 15 }}>{SvgIcons.checkFilled}</i>
                   <span>Connected</span>
                 </Flex>
               </Tag>
             ) : (
-              <Button loading={loading} onClick={() => emailForm.submit()} type='primary'>
+              <Button loading={loading} onClick={() => emailForm.submit()} type="primary">
                 Test/Save
               </Button>
             )}
           </Flex>
         }
-        formTitle={"Email Service"}>
+        formTitle={"Email Service"}
+      >
         <Form form={emailForm} onFinish={saveAndTestEmailCredentials} requiredMark={false}>
           {emailSecretItems.map((item, i) => {
             return (
@@ -125,7 +131,8 @@ const EmailServiceSystem = () => {
                   <Form.Item
                     style={{ width: 250 }}
                     name={item.inputName}
-                    rules={[{ required: true, message: `${item.title} is required` }]}>
+                    rules={[{ required: true, message: `${item.title} is required` }]}
+                  >
                     {item.input}
                   </Form.Item>
                 }

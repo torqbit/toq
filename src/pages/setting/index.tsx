@@ -144,10 +144,22 @@ const Setting: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const { data: user, update } = useSession();
   const [messageApi, contextMessageHolder] = message.useMessage();
   const [userProfile, setUserProfile] = useState<string>();
+  const [activeKey, setActiveKey] = useState<string>("profile");
+
   const [file, setFile] = useState<File>();
   const { dispatch, globalState } = useAppContext();
 
-  const onChange = (key: string) => {};
+  const onChange = (key: string) => {
+    switch (key) {
+      case "profile":
+        return setActiveKey("profile");
+
+      case "payment":
+        return setActiveKey("payment");
+      default:
+        return setActiveKey("profile");
+    }
+  };
   const onUpdateProfile = async (info: { name: string; phone: string; image: string }) => {
     const formData = new FormData();
     formData.append("userInfo", JSON.stringify({ name: info.name, phone: info.phone, image: user?.user?.image }));
@@ -171,7 +183,7 @@ const Setting: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
 
   const items: TabsProps["items"] = [
     {
-      key: "1",
+      key: "profile",
       label: "Profile",
       children: user && (
         <ProfileSetting
@@ -184,7 +196,7 @@ const Setting: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
       ),
     },
     {
-      key: "2",
+      key: "payment",
       label: "Payment",
       children: user && <PaymentHistory />,
     },
