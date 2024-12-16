@@ -739,7 +739,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   return {
     props: {
       siteConfig: site,
-      courseId: courseInfo?.courseId,
+      courseId: Number(courseInfo?.courseId),
     },
   };
 };

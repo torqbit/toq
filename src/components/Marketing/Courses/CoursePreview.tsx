@@ -344,7 +344,7 @@ const CoursePreview: FC<{
                       </div>
                     )}
                     {(courseDetails.userRole === Role.NA || status === "unauthenticated") && (
-                      <Link href={`/login?redirect=courses/${courseId}`} className={styles.buttonWrapper}>
+                      <Link href={`/login?redirect=courses/${router.query.slug}`} className={styles.buttonWrapper}>
                         <Button type="primary">Login to Continue</Button>
                       </Link>
                     )}
