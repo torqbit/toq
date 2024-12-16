@@ -3,25 +3,42 @@ import Preview from "@/components/Admin/Content/Preview";
 import SpinLoader from "@/components/SpinLoader/SpinLoader";
 import ProgramService from "@/services/ProgramService";
 import { getFetch, IResponse, postFetch } from "@/services/request";
-import { CourseLessonAPIResponse } from "@/types/courses/Course";
+import { CourseLessonAPIResponse, CourseLessons, ICoursePriviewInfo } from "@/types/courses/Course";
 import { Alert, AlertProps, Form, Modal, message } from "antd";
 import { GetServerSidePropsContext, NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { load } from "@cashfreepayments/cashfree-js";
-import { $Enums, Role } from "@prisma/client";
+import { $Enums, CourseState, Role } from "@prisma/client";
 import styles from "@/styles/Preview.module.scss";
 import appConstant from "@/services/appConstant";
 import AddPhone from "@/components/AddPhone/AddPhone";
 import AppLayout from "@/components/Layouts/AppLayout";
 import { getSiteConfig } from "@/services/getSiteConfig";
 import { PageSiteConfig } from "@/services/siteConstant";
+import { getToken } from "next-auth/jwt";
+import { getCookieName } from "@/lib/utils";
+import MarketingLayout from "@/components/Layouts/MarketingLayout";
+import CoursePreview from "@/components/Marketing/Courses/CoursePreview";
+import HeroCoursePreview from "@/components/Marketing/Courses/HeroCoursePreview";
+import getCourseDetail, { extractLessonAndChapterDetail } from "@/actions/getCourseDetail";
 
-const LearnCoursesPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
+const LearnCoursesPage: NextPage<{
+  siteConfig: PageSiteConfig;
+  userRole: Role;
+  course: ICoursePriviewInfo;
+  lessons: CourseLessons[];
+}> = ({ siteConfig, userRole, course, lessons }) => {
   const router = useRouter();
   const [form] = Form.useForm();
 
-  const [courseDetail, setCourseDetail] = useState<CourseLessonAPIResponse>();
+  const [courseDetail, setCourseDetail] = useState<CourseLessonAPIResponse>({
+    success: lessons.length > 0,
+    statusCode: lessons.length > 0 ? 200 : 404,
+    message: "",
+    course,
+    lessons,
+  });
   const [messageApi, contextMessageHolder] = message.useMessage();
   const [loading, setLoading] = useState<boolean>();
   const [nextLessonId, setNextLessonId] = useState<number>();
@@ -133,20 +150,20 @@ const LearnCoursesPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig
 
   useEffect(() => {
     if (router.query.courseId) {
-      getNextLessonId();
-      getPaymentStatus();
+      userRole && getNextLessonId();
+      userRole && getPaymentStatus();
 
-      ProgramService.getCourses(
-        Number(router.query.courseId),
-        (result) => {
-          setCourseDetail(result);
-        },
-        (error) => {
-          message.error(error);
-        }
-      );
+      // ProgramService.getCourses(
+      //   Number(router.query.courseId),
+      //   (result) => {
+      //     setCourseDetail(result);
+      //   },
+      //   (error) => {
+      //     message.error(error);
+      //   }
+      // );
       setTimeout(() => {
-        getPaymentStatus();
+        userRole && getPaymentStatus();
       }, appConstant.payment.lockoutMinutes + 3000);
     }
   }, [router.query.courseId, refresh]);
@@ -180,48 +197,112 @@ const LearnCoursesPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig
   };
 
   return (
-    <AppLayout siteConfig={siteConfig}>
-      {contextMessageHolder}
-      {contextModalHolder}
-
-      {router.query.callback && alertConfig.message && (
-        <Alert
-          message={alertConfig.message}
-          description={alertConfig.description}
-          type={alertConfig.type}
-          showIcon
-          onClose={onCloseAlert}
-          closable
-          className={styles.alertMessage}
-        />
-      )}
-      {courseDetail ? (
-        <Preview
-          videoUrl={courseDetail?.course.courseTrailer}
-          onEnrollCourse={onEnrollCourse}
-          courseDetail={courseDetail}
-          paymentDisable={paymentDisable}
-          paymentStatus={paymentStatus}
-          paymentStatusLoading={paymentStatusLoading}
-          loading={loading}
-        />
+    <>
+      {!userRole ? (
+        <>
+          <MarketingLayout
+            siteConfig={siteConfig}
+            heroSection={
+              <HeroCoursePreview
+                courseName={course.name}
+                authorImage={course.authorImage}
+                authorName={course.authorName}
+                courseTrailer={course.courseTrailer}
+              />
+            }
+          >
+            <CoursePreview
+              courseId={Number(router.query.courseId)}
+              nextLessonId={nextLessonId}
+              courseDetails={course}
+              chapters={lessons}
+            />
+          </MarketingLayout>
+        </>
       ) : (
-        <SpinLoader className="course__spinner" />
-      )}
+        <AppLayout siteConfig={siteConfig}>
+          {contextMessageHolder}
+          {contextModalHolder}
 
-      <AddPhone title={enableModal.message} open={enableModal.active} onCloseModal={onCloseModal} />
-    </AppLayout>
+          {router.query.callback && alertConfig.message && (
+            <Alert
+              message={alertConfig.message}
+              description={alertConfig.description}
+              type={alertConfig.type}
+              showIcon
+              onClose={onCloseAlert}
+              closable
+              className={styles.alertMessage}
+            />
+          )}
+          {courseDetail ? (
+            <Preview
+              videoUrl={courseDetail?.course.courseTrailer}
+              onEnrollCourse={onEnrollCourse}
+              courseDetail={courseDetail}
+              paymentDisable={paymentDisable}
+              paymentStatus={paymentStatus}
+              paymentStatusLoading={paymentStatusLoading}
+              loading={loading}
+            />
+          ) : (
+            <SpinLoader className="course__spinner" />
+          )}
+
+          <AddPhone title={enableModal.message} open={enableModal.active} onCloseModal={onCloseModal} />
+        </AppLayout>
+      )}
+    </>
   );
 };
 
 export default LearnCoursesPage;
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+  const { req, query } = ctx;
+
+  let cookieName = getCookieName();
+
+  const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
   const siteConfig = getSiteConfig();
+
   const { site } = siteConfig;
-  return {
-    props: {
-      siteConfig: site,
-    },
-  };
+  const detail = await getCourseDetail(Number(query.courseId), user?.role, user?.id);
+
+  if (detail?.courseDetail && detail?.courseDetail.length > 0) {
+    const info = extractLessonAndChapterDetail(detail.courseDetail, detail?.userStatus as CourseState, detail.userRole);
+    if (user) {
+      return {
+        props: {
+          userRole: user?.role,
+          siteConfig: site,
+          course: {
+            ...info.courseInfo,
+            progress: info.progress,
+            userStatus: info.courseInfo.userStatus ? info.courseInfo.userStatus : Role.NA,
+          },
+          lessons: info.chapterLessons,
+        },
+      };
+    } else {
+      return {
+        props: {
+          siteConfig: site,
+          course: {
+            ...info.courseInfo,
+            progress: info.progress,
+            userStatus: info.courseInfo.userStatus ? info.courseInfo.userStatus : Role.NA,
+          },
+          lessons: info.chapterLessons,
+        },
+      };
+    }
+  } else {
+    return {
+      props: {
+        siteConfig: site,
+        lessons: [],
+      },
+    };
+  }
 };

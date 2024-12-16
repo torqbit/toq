@@ -13,7 +13,7 @@ export default async function middleware(req: NextRequest, event: NextFetchEvent
 
   const isAuthenticated = token != null;
 
-  if (!isAuthenticated && !req.nextUrl.pathname.endsWith("courses")) {
+  if (!isAuthenticated && !/^\/courses(\/[^\/]+)?$/.test(req.nextUrl.pathname)) {
     return NextResponse.redirect(new URL(`/login?redirect=${req.nextUrl.pathname}`, req.url));
   }
 
