@@ -153,15 +153,6 @@ const LearnCoursesPage: NextPage<{
       userRole && getNextLessonId();
       userRole && getPaymentStatus();
 
-      // ProgramService.getCourses(
-      //   Number(router.query.courseId),
-      //   (result) => {
-      //     setCourseDetail(result);
-      //   },
-      //   (error) => {
-      //     message.error(error);
-      //   }
-      // );
       setTimeout(() => {
         userRole && getPaymentStatus();
       }, appConstant.payment.lockoutMinutes + 3000);
