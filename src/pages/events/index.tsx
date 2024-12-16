@@ -90,8 +90,6 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
     },
   });
 
-  console.log(eventList, "this is list");
-
   if (eventList.length > 0) {
     return {
       props: {
