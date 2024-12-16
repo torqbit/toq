@@ -11,6 +11,7 @@ import DefaulttHero from "@/components/Marketing/DefaultHero/DefaultHero";
 import MarketingLayout from "@/components/Layouts/MarketingLayout";
 import { PageSiteConfig } from "@/services/siteConstant";
 import { getSiteConfig } from "@/services/getSiteConfig";
+import AppLayout from "@/components/Layouts/AppLayout";
 
 const EventsPage: FC<{
   user: User;
@@ -19,15 +20,28 @@ const EventsPage: FC<{
   siteConfig: PageSiteConfig;
 }> = ({ user, eventList, totalEventsLength, siteConfig }) => {
   return (
-    <MarketingLayout
-      siteConfig={siteConfig}
-      user={user}
-      heroSection={<DefaulttHero title="Events" description="Connect, Learn, and Thrive Together!" />}
-    >
-      <div className={styles.events_wrapper}>
-        <Events user={user} eventList={eventList} totalEventsLength={totalEventsLength} eventLink="events" />;
-      </div>
-    </MarketingLayout>
+    <>
+      {!user ? (
+        <MarketingLayout
+          siteConfig={siteConfig}
+          user={user}
+          heroSection={<DefaulttHero title="Events" description="Connect, Learn, and Thrive Together!" />}
+        >
+          <div className={styles.events_wrapper}>
+            <Events user={user} eventList={eventList} totalEventsLength={totalEventsLength} eventLink="events" />;
+          </div>
+        </MarketingLayout>
+      ) : (
+        <AppLayout siteConfig={siteConfig}>
+          <div className={styles.events_list_wrapper}>
+            <div className={styles.event_header}>
+              <h3>Events</h3>
+            </div>
+            <Events user={user} eventList={eventList} totalEventsLength={totalEventsLength} eventLink="events" />
+          </div>
+        </AppLayout>
+      )}
+    </>
   );
 };
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {

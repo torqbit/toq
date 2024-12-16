@@ -10,6 +10,9 @@ import styles from "@/styles/Marketing/Events/Event.module.scss";
 import EventInfo from "@/components/Events/EventInfo";
 import { PageSiteConfig } from "@/services/siteConstant";
 import { getSiteConfig } from "@/services/getSiteConfig";
+import { truncateString } from "@/services/helper";
+import { Breadcrumb } from "antd";
+import AppLayout from "@/components/Layouts/AppLayout";
 
 const EventInfoPage: FC<{
   user: User;
@@ -18,17 +21,55 @@ const EventInfoPage: FC<{
   siteConfig: PageSiteConfig;
 }> = ({ user, eventInfo, registrationExpired, siteConfig }) => {
   return (
-    <MarketingLayout
-      siteConfig={siteConfig}
-      user={user}
-      heroSection={
-        <div className={styles.banner_Wrapper}>
-          <img src={eventInfo?.banner} alt="banner" />
-        </div>
-      }
-    >
-      <EventInfo user={user} eventInfo={eventInfo} registrationExpired={registrationExpired} eventListLink="events" />
-    </MarketingLayout>
+    <>
+      {!user ? (
+        <>
+          <MarketingLayout
+            siteConfig={siteConfig}
+            user={user}
+            heroSection={
+              <div className={styles.banner_Wrapper}>
+                <img src={eventInfo?.banner} alt="banner" />
+              </div>
+            }
+          >
+            <EventInfo
+              user={user}
+              eventInfo={eventInfo}
+              registrationExpired={registrationExpired}
+              eventListLink="events"
+            />
+          </MarketingLayout>
+        </>
+      ) : (
+        <AppLayout siteConfig={siteConfig}>
+          <div className={styles.event_list_info_wrapper}>
+            <Breadcrumb
+              className={styles.breadcrumb}
+              items={[
+                {
+                  title: <a href="/events"> Events</a>,
+                },
+                {
+                  title: `${truncateString(eventInfo.title, 25)}`,
+                  className: styles.courseName,
+                },
+              ]}
+            />
+            <div className={styles.events_banner}>
+              <img src={eventInfo?.banner} alt="banner" />
+            </div>
+            <EventInfo
+              user={user}
+              eventInfo={eventInfo}
+              registrationExpired={registrationExpired}
+              eventListLink="events"
+              classNames="events_content_wrapper"
+            />
+          </div>
+        </AppLayout>
+      )}
+    </>
   );
 };
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {

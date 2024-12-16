@@ -93,7 +93,7 @@ const CoursesPage: NextPage<{ siteConfig: PageSiteConfig; userRole: Role }> = ({
       ) : (
         <MarketingLayout
           siteConfig={siteConfig}
-          heroSection={<DefaulttHero title="Courses" description="Connect, Learn, and Thrive Together!" />}
+          heroSection={<DefaulttHero title="Courses" description="Expand Your Knowledge with Comprehensive Courses" />}
         >
           {contextMessageHolder}
           <section>
