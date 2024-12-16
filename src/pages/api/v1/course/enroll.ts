@@ -69,6 +69,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         courseType: true,
         thumbnail: true,
         name: true,
+        slug: true,
         expiryInDays: true,
         coursePrice: true,
       },
@@ -93,7 +94,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           name: token.name,
           email: token.email,
 
-          url: `${process.env.NEXTAUTH_URL}/courses/${courseId}`,
+          url: `${process.env.NEXTAUTH_URL}/courses/${course.slug}`,
           course: {
             name: course.name,
             thumbnail: course.thumbnail,
@@ -129,6 +130,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
           const courseConfig: CoursePaymentConfig = {
             courseId: Number(courseId),
+            slug: String(course.slug),
             amount: Number(course.coursePrice),
             coursePrice: Number(course.coursePrice),
           };

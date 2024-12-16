@@ -44,9 +44,7 @@ const ShowCertificate: FC<{ siteConfig: PageSiteConfig; courseName: string; user
           <img src={`/static/course/certificate/${router.query.certificateId}`} alt={userName ?? "Certificate"} />{" "}
           <Button
             onClick={() => {
-              router.push(
-                `/courses/${router.query.courseId}/certificate/download/${String(router.query.certificateId)}`
-              );
+              router.push(`/courses/${router.query.slug}/certificate/download/${String(router.query.certificateId)}`);
             }}
             type="primary"
           >

@@ -13,7 +13,7 @@ import { getSiteConfig } from "@/services/getSiteConfig";
 import { PageSiteConfig } from "@/services/siteConstant";
 
 const EnrolledCourseList: FC<{
-  courseData: { courseName: string; progress: string; courseId: number }[];
+  courseData: { courseName: string; progress: string; courseId: number; slug: string }[];
   pageLoading: boolean;
 }> = ({ courseData, pageLoading }) => {
   return (
@@ -31,7 +31,7 @@ const EnrolledCourseList: FC<{
           dataSource={courseData}
           className={styles.enrolled_course_list}
           renderItem={(item) => (
-            <Link href={`/courses/${item.courseId}`}>
+            <Link href={`/courses/${item.slug}`}>
               <List.Item className={styles.enroll_course_item}>
                 <div>{item.courseName}</div>
                 <Space className={styles.completed_course} size={5}>
@@ -51,7 +51,7 @@ const Dashboard: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => 
   const [pageLoading, setPageLoading] = useState<boolean>(false);
 
   const [allRegisterCourse, setAllRegisterCourse] = useState<
-    { courseName: string; progress: string; courseId: number }[]
+    { courseName: string; progress: string; courseId: number; slug: string }[]
   >([]);
 
   const onChange = (key: string) => {};

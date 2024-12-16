@@ -59,10 +59,13 @@
 
 // Course page styles
 
+.logged__out__course__card {
+  justify-content: center;
+}
+
 .course_card_wrapper {
   margin-top: 20px;
   display: flex;
-
   flex-wrap: wrap;
   gap: 20px;
 

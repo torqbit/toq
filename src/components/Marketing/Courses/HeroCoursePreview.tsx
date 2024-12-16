@@ -5,9 +5,15 @@ import { UserOutlined } from "@ant-design/icons";
 import Image from "next/image";
 import { IHeroCoursePreview } from "@/types/courses/Course";
 
-const HeroCoursePreview: FC<IHeroCoursePreview> = ({ courseName, courseTrailer, authorName, authorImage }) => {
+const HeroCoursePreview: FC<IHeroCoursePreview> = ({
+  courseName,
+  courseTrailer,
+  authorName,
+  authorImage,
+  userRole,
+}) => {
   return (
-    <div className={styles.contentWrapper}>
+    <div className={`${styles.contentWrapper} ${userRole ? styles.logged__in__content : styles.logged__out__content}`}>
       <div>
         <Flex vertical gap={20} style={{ width: "100%" }}>
           <h1>{courseName}</h1>

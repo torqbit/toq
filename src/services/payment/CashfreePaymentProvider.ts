@@ -180,7 +180,7 @@ export class CashfreePaymentProvider implements PaymentServiceProvider {
           customer_phone: userConfig.phone,
         },
         order_meta: {
-          return_url: `${process.env.NEXTAUTH_URL}/courses/${courseConfig.courseId}?callback=payment`,
+          return_url: `${process.env.NEXTAUTH_URL}/courses/${courseConfig.slug}?callback=payment`,
           notify_url: `${process.env.NEXTAUTH_URL}/api/v1/course/payment/cashfree/webhook`,
           payment_methods: "upi, nb, cc, dc,app",
         },

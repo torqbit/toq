@@ -73,6 +73,7 @@ const updateCourseProgress = async (
             select: {
               certificateTemplate: true,
               name: true,
+              slug: true,
               user: {
                 select: {
                   name: true,
@@ -95,6 +96,7 @@ const updateCourseProgress = async (
             studentEmail: String(studentDetail?.email),
             studentId: studentId,
             courseName: String(courseDetail?.name),
+            slug: String(courseDetail?.slug),
             studentName: String(studentDetail?.name),
             courseId: courseId,
             certificateTemplate: String(courseDetail?.certificateTemplate),

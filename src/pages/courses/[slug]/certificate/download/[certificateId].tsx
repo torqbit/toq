@@ -1,9 +1,5 @@
-import { getCookieName } from "@/lib/utils";
-import ProgramService from "@/services/ProgramService";
 import { GetServerSidePropsContext } from "next";
-import { getToken } from "next-auth/jwt";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+
 import prisma from "@/lib/prisma";
 import { downloadPrivateFile } from "@/actions/downloadPrivateFile";
 
