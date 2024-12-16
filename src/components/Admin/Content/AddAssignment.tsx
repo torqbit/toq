@@ -164,17 +164,19 @@ const AddAssignment: FC<{
         )}
 
         {submissionType === "PROGRAMMING_LANG" && programmingLang && (
-          <Editor
-            width={"100%"}
-            className={styles.code__editor_container}
-            theme={globalState.theme === "dark" ? "vs-dark" : "light"}
-            height={"250px"}
-            language={programmingLang}
-            value={initialCode}
-            onChange={(e) => setInitialCode(e?.toString() || "")}
-            options={{ formatOnType: true }}
-            // onMount={handleEditorDidMount}
-          />
+          <Form.Item label="Initial Code">
+            <Editor
+              width={"100%"}
+              className={styles.code__editor_container}
+              theme={globalState.theme === "dark" ? "vs-dark" : "light"}
+              height={"250px"}
+              language={programmingLang}
+              value={initialCode}
+              onChange={(e) => setInitialCode(e?.toString() || "")}
+              options={{ formatOnType: true }}
+              // onMount={handleEditorDidMount}
+            />
+          </Form.Item>
         )}
 
         <Form.Item
