@@ -7,22 +7,27 @@
   background-color: var(--bg-primary);
   width: 300px;
   overflow-y: auto;
+
   .side__bar__breadcrumb {
-    padding: 15px;
+    padding: 10px 20px;
   }
+
   .config__sections {
-    padding-top: 20px;
+    padding-top: 10px;
 
     .collapse__header {
       padding: 5px 0px 0px 0px;
-      > div:first-child {
-        > div:first-child {
+
+      >div:first-child {
+        >div:first-child {
           height: 33px;
         }
-        > div:nth-child(3) {
+
+        >div:nth-child(3) {
           margin-top: 4px;
         }
       }
+
       i {
         line-height: 0;
         font-size: 18px;
@@ -34,13 +39,16 @@
       align-items: center;
       justify-content: space-between;
       padding: 10px 20px;
+
       p {
         margin: 0;
       }
+
       .switch {
         margin-right: -5px;
       }
     }
+
     .collapse__wrapper {
       height: 100%;
       border: none;

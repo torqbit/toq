@@ -77,18 +77,7 @@ const SiteBuilder: FC<{
 
   return (
     <div className={styles.side__bar__container}>
-      {/* <Scrollbars  autoHide style={{ width: "300px", height: "100%", overflow: "hidden" }}> */}
-      <Breadcrumb
-        className={styles.side__bar__breadcrumb}
-        items={[
-          {
-            title: <Link href={`/admin`}>Administration</Link>,
-          },
-          {
-            title: "Design",
-          },
-        ]}
-      />
+      <h4 style={{ padding: "10px 20px" }}>Site Design</h4>
 
       <div className={styles.config__sections}>
         <div className={styles.darkmode__switch}>
