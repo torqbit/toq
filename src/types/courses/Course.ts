@@ -19,6 +19,7 @@ export interface IHeroCoursePreview {
   authorImage: string;
   authorName: string;
   courseTrailer: string;
+  userRole?: Role;
 }
 
 export interface ChapterDetail {
@@ -65,6 +66,7 @@ export interface ICertificateReponse {
 export interface ICertificateInfo {
   studentId: string;
   courseId: number;
+  slug: string;
   authorName: string;
   courseName: string;
   studentEmail: string;

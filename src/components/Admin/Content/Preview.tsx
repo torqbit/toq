@@ -117,7 +117,7 @@ const Preview: FC<{
       Number(router.query.courseId),
       (result) => {
         const id = String(result.certificateId);
-        router.push(`/courses/${router.query.courseId}/certificate/${id}`);
+        router.push(`/courses/${router.query.slug}/certificate/${id}`);
       },
       (error) => {}
     );
@@ -177,9 +177,7 @@ const Preview: FC<{
                 {isCourseCompleted ? (
                   <Flex align="center" gap={10}>
                     {!courseDetail?.course.previewMode && <Button onClick={onViewCertificate}>View Certificate</Button>}
-                    <Link
-                      href={`/courses/${router.query.courseId}/lesson/${courseDetail?.lessons[0].lessons[0].lessonId}`}
-                    >
+                    <Link href={`/courses/${router.query.slug}/lesson/${courseDetail?.lessons[0].lessons[0].lessonId}`}>
                       <Button type="primary">Rewatch</Button>
                     </Link>
                   </Flex>

@@ -30,6 +30,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         name: true,
         expiryInDays: true,
         coursePrice: true,
+        slug: true,
         user: {
           select: {
             id: true,
@@ -70,7 +71,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             const configData = {
               name: findUserDetail?.name,
               email: findUserDetail?.email,
-              url: `${process.env.NEXTAUTH_URL}/courses/${courseId}`,
+              url: `${process.env.NEXTAUTH_URL}/courses/${course.slug}`,
               course: {
                 name: course.name,
                 thumbnail: course.thumbnail,
@@ -135,6 +136,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           courseDetail: {
             courseId: courseId,
             courseName: course.name,
+
+            slug: String(course.slug),
             validUpTo: generateDayAndYear(addDays(Number(course.expiryInDays))),
             thumbnail: String(course.thumbnail),
           },
@@ -160,9 +163,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           invoiceNumber: Number(invoiceData.id),
         };
         let savePath = `${process.env.MEDIA_UPLOAD_PATH}/${appConstant.invoiceTempDir}/${invoiceData.id}_invoice.pdf`;
-        const cms = new ContentManagementService();
 
-        new BillingService(cms).sendInvoice(invoiceConfig, savePath);
+        new BillingService().sendInvoice(invoiceConfig, savePath);
 
         return res.status(200).json({
           success: true,

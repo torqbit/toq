@@ -49,6 +49,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             courseId: true,
             totalResources: true,
             name: true,
+            slug: true,
           },
         },
       },
@@ -100,7 +101,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             lessonName: String(findResource?.name),
             email: String(user.user.email),
             name: String(user.user.name),
-            url: `${process.env.NEXTAUTH_URL}/courses/${courseDetails.course.courseId}/lesson/${resourceId}`,
+            url: `${process.env.NEXTAUTH_URL}/courses/${courseDetails.course.slug}/lesson/${resourceId}`,
             thumbnail: String(findResource?.video?.thumbnail),
             lessonDesription: String(findResource?.description),
           };

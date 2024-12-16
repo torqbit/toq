@@ -6,6 +6,7 @@ import { Flex, Tag } from "antd";
 import Link from "next/link";
 import { convertSecToHourandMin } from "@/pages/admin/content";
 import Image from "next/image";
+import { Role } from "@prisma/client";
 
 interface ICourseCard {
   thumbnail: string;
@@ -16,6 +17,7 @@ interface ICourseCard {
   courseType: string;
   difficulty: string;
   previewMode: boolean;
+  slug: string;
 }
 
 const CourseCard: FC<ICourseCard> = ({
@@ -27,9 +29,10 @@ const CourseCard: FC<ICourseCard> = ({
   courseType,
   difficulty,
   previewMode,
+  slug,
 }) => {
   return (
-    <Link href={`/courses/${courseId}`}>
+    <Link href={`/courses/${slug}`}>
       <div className={styles.course_card}>
         <div className={styles.card_img}>
           <Image height={250} width={250} src={thumbnail} alt={courseName} loading="lazy" />
@@ -60,12 +63,17 @@ const CourseCard: FC<ICourseCard> = ({
 
 const Courses: FC<{
   allCourses: any[];
-}> = ({ allCourses }) => {
+  userRole?: Role;
+}> = ({ allCourses, userRole }) => {
   return (
     <>
       {allCourses.length ? (
         <section className={styles.course_content}>
-          <div className={styles.course_card_wrapper}>
+          <div
+            className={`${styles.course_card_wrapper} ${
+              userRole ? styles.logged__in__course__card : styles.logged__out__course__card
+            }`}
+          >
             {allCourses.map((course: any, i) => {
               let totalDuration = 0;
               course.chapters.forEach((chap: any) => {
@@ -88,6 +96,7 @@ const Courses: FC<{
                   courseType={course.courseType}
                   difficulty={course.difficultyLevel}
                   previewMode={course.previewMode}
+                  slug={course.slug}
                 />
               );
             })}

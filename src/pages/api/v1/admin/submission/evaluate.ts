@@ -49,6 +49,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                       chapter: {
                         select: {
                           courseId: true,
+                          course: {
+                            select: {
+                              slug: true,
+                            },
+                          },
                         },
                       },
                     },
@@ -61,6 +66,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       });
 
       let courseId = evaluationDetail.submission.assignment.lesson.chapter.courseId;
+      let courseSlug = evaluationDetail.submission.assignment.lesson.chapter.course.slug;
+
       let lessonId = evaluationDetail.submission.assignment.lesson.resourceId;
       let studentId = evaluationDetail.submission.studentId;
 
@@ -133,7 +140,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         assignmentName: evaluationDetail.submission.assignment.lesson.name,
         score: evaluationDetail.score,
         submissionDate: convertToDayMonthTime(new Date(evaluationDetail.submission.createdAt)),
-        url: `${process.env.NEXTAUTH_URL}/courses/${courseId}/lesson/${lessonId}?tab=submission&segment=evaluations`,
+        url: `${process.env.NEXTAUTH_URL}/courses/${courseSlug}/lesson/${lessonId}?tab=submission&segment=evaluations`,
       };
 
       MailerService.sendMail("ASSIGNMENT_COMPLETION", configData).then((result) => {

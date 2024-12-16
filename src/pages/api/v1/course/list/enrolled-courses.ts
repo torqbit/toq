@@ -30,7 +30,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     let courseProgress = await prisma.$queryRaw<
       any[]
-    >`select co.courseId, co.name, COUNT(re.resourceId) as lessons, COUNT(cp.resourceId) as watched_lessons FROM Course as co
+    >`select co.courseId, co.name,co.slug, COUNT(re.resourceId) as lessons, COUNT(cp.resourceId) as watched_lessons FROM Course as co
   INNER JOIN Chapter as ch ON co.courseId = ch.courseId 
   INNER JOIN CourseRegistration as cr ON co.courseId = cr.courseId
   INNER JOIN Resource as re ON ch.chapterId = re.chapterId
@@ -38,7 +38,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   WHERE  re.state = 'ACTIVE' AND cr.studentId = ${token?.id} AND cr.courseState != ${CourseState.COMPLETED}
   GROUP BY co.courseId, co.name
   UNION
-  select co.courseId, co.name, COUNT(re.resourceId) as lessons, COUNT(cp.resourceId) as watched_lessons FROM Course as co
+  select co.courseId, co.name,co.slug, COUNT(re.resourceId) as lessons, COUNT(cp.resourceId) as watched_lessons FROM Course as co
   INNER JOIN Chapter as ch ON co.courseId = ch.courseId 
   INNER JOIN CourseRegistration as cr ON co.courseId = cr.courseId
   INNER JOIN Resource as re ON ch.chapterId = re.chapterId
@@ -52,6 +52,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         return {
           courseName: cp.name,
           courseId: cp.courseId,
+          slug: cp.slug,
           progress: `${Math.floor(percentage(Number(cp.watched_lessons), Number(cp.lessons)))}%`,
         };
       });

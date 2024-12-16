@@ -207,7 +207,7 @@ const QADiscssionTab: FC<{ resourceId?: number; loading: boolean }> = ({
             onClick={() => {
               setPageSize(3);
               getDiscussions(pageSize);
-              router.push(`/courses/${router.query.courseId}/lesson/${router.query.lessonId}`);
+              router.push(`/courses/${router.query.slug}/lesson/${router.query.lessonId}`);
             }}
           >
             Load all

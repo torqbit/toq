@@ -10,6 +10,7 @@ import Link from "next/link";
 import Image from "next/image";
 import NotificationService from "@/services/NotificationService";
 import { useSession } from "next-auth/react";
+import { Router, useRouter } from "next/router";
 
 const Label: FC<{
   title: string;
@@ -40,11 +41,14 @@ const CoursePreview: FC<{
   nextLessonId?: number;
   courseDetails: ICoursePriviewInfo;
   chapters: CourseLessons[];
-}> = ({ user, courseId, courseDetails, nextLessonId, chapters }) => {
+  onEnrollCourse: () => void;
+  userRole?: Role;
+}> = ({ user, courseId, courseDetails, nextLessonId, chapters, userRole, onEnrollCourse }) => {
   const { data: session, status } = useSession();
   const [notificationLoading, setNotificationLoading] = useState<boolean>(false);
   const [isNotified, setNotified] = useState<boolean>(false);
   const [form] = Form.useForm();
+  const router = useRouter();
 
   const [email, setEmail] = useState<string>("");
   const courseListDetail = {
@@ -202,7 +206,11 @@ const CoursePreview: FC<{
   const showFeatures = courseDetails.previewMode ? previewCourseFeatures : courseFeatures;
 
   return (
-    <section className={styles.coursePreview}>
+    <section
+      className={`${styles.coursePreview} ${
+        userRole ? styles.logged__in__coursePreview : styles.logged__out__coursePreview
+      }`}
+    >
       <div className={styles.coursePreviewContainer}>
         <div className={styles.courseInfoWrapper}>
           <Space direction="vertical">
@@ -279,14 +287,20 @@ const CoursePreview: FC<{
                   <>
                     {(courseDetails.userRole === Role.ADMIN || courseDetails.userRole === Role.AUTHOR) &&
                       status === "authenticated" && (
-                        <Link className={styles.buttonWrapper} href={`/courses/${courseId}/lesson/${nextLessonId}`}>
+                        <Link
+                          className={styles.buttonWrapper}
+                          href={`/courses/${router.query.slug}/lesson/${nextLessonId}`}
+                        >
                           <Button type="primary">View Course</Button>
                         </Link>
                       )}
                     {courseDetails.userRole === Role.STUDENT && status === "authenticated" && (
                       <>
                         {courseDetails.userStatus === CourseState.COMPLETED ? (
-                          <Link className={styles.buttonWrapper} href={`/courses/${courseId}/lesson/${nextLessonId}`}>
+                          <Link
+                            className={styles.buttonWrapper}
+                            href={`/courses/${router.query.slug}/lesson/${nextLessonId}`}
+                          >
                             <Button type="primary">Rewatch</Button>
                           </Link>
                         ) : (
@@ -294,14 +308,14 @@ const CoursePreview: FC<{
                             {courseDetails.progress > 0 ? (
                               <Link
                                 className={styles.buttonWrapper}
-                                href={`/courses/${courseId}/lesson/${nextLessonId}`}
+                                href={`/courses/${router.query.slug}/lesson/${nextLessonId}`}
                               >
                                 <Button type="primary">Resume</Button>
                               </Link>
                             ) : (
                               <Link
                                 className={styles.buttonWrapper}
-                                href={`/courses/${courseId}/lesson/${nextLessonId}`}
+                                href={`/courses/${router.query.slug}/lesson/${nextLessonId}`}
                               >
                                 <Button type="primary">Start Course</Button>
                               </Link>
@@ -310,21 +324,24 @@ const CoursePreview: FC<{
                         )}
                       </>
                     )}
+
+                    {/* need to fix */}
+
                     {courseDetails.userRole === "NOT_ENROLLED" && status === "authenticated" && (
-                      <Link href={`/courses/${courseId}`} className={styles.buttonWrapper}>
+                      <div className={styles.buttonWrapper}>
                         {courseDetails.courseType === CourseType.PAID ? (
-                          <Button type="primary">
+                          <Button type="primary" onClick={onEnrollCourse}>
                             <Flex align="center" gap={5} justify="center">
                               {SvgIcons.lock}
                               <span>Buy Now</span>
                             </Flex>
                           </Button>
                         ) : (
-                          <Button type="primary">
+                          <Button type="primary" onClick={onEnrollCourse}>
                             {courseDetails.previewMode ? "Preview Course" : "Enroll for Free"}
                           </Button>
                         )}
-                      </Link>
+                      </div>
                     )}
                     {(courseDetails.userRole === Role.NA || status === "unauthenticated") && (
                       <Link href={`/login?redirect=courses/${courseId}`} className={styles.buttonWrapper}>

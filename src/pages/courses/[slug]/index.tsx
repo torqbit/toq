@@ -1,10 +1,7 @@
-import Preview from "@/components/Admin/Content/Preview";
-
-import SpinLoader from "@/components/SpinLoader/SpinLoader";
 import ProgramService from "@/services/ProgramService";
 import { getFetch, IResponse, postFetch } from "@/services/request";
 import { CourseLessonAPIResponse, CourseLessons, ICoursePriviewInfo } from "@/types/courses/Course";
-import { Alert, AlertProps, Form, Modal, message } from "antd";
+import { Alert, AlertProps, Breadcrumb, Form, Modal, message } from "antd";
 import { GetServerSidePropsContext, NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -28,7 +25,8 @@ const LearnCoursesPage: NextPage<{
   userRole: Role;
   course: ICoursePriviewInfo;
   lessons: CourseLessons[];
-}> = ({ siteConfig, userRole, course, lessons }) => {
+  courseId: number;
+}> = ({ siteConfig, userRole, course, lessons, courseId }) => {
   const router = useRouter();
   const [form] = Form.useForm();
 
@@ -86,7 +84,7 @@ const LearnCoursesPage: NextPage<{
 
   const getNextLessonId = async () => {
     ProgramService.getNextLessonId(
-      Number(router.query.courseId),
+      Number(courseId),
       (result) => {
         setNextLessonId(result.nextLessonId);
       },
@@ -102,12 +100,12 @@ const LearnCoursesPage: NextPage<{
         courseDetail?.course.userRole === Role.ADMIN ||
         courseDetail?.course.userRole === Role.STUDENT
       ) {
-        router.replace(`/courses/${router.query.courseId}/lesson/${nextLessonId}`);
+        router.replace(`/courses/${router.query.slug}/lesson/${nextLessonId}`);
         return;
       }
       const res = await postFetch(
         {
-          courseId: Number(router.query.courseId),
+          courseId: Number(courseId),
         },
         "/api/v1/course/enroll"
       );
@@ -130,7 +128,7 @@ const LearnCoursesPage: NextPage<{
         }
       } else {
         if (result.alreadyEnrolled) {
-          router.replace(`/courses/${router.query.courseId}/lesson/${nextLessonId}`);
+          router.replace(`/courses/${router.query.slug}/lesson/${nextLessonId}`);
           setLoading(false);
         } else {
           if (result.phoneNotFound && result.error) {
@@ -149,7 +147,7 @@ const LearnCoursesPage: NextPage<{
   };
 
   useEffect(() => {
-    if (router.query.courseId) {
+    if (courseId) {
       userRole && getNextLessonId();
       userRole && getPaymentStatus();
 
@@ -157,11 +155,11 @@ const LearnCoursesPage: NextPage<{
         userRole && getPaymentStatus();
       }, appConstant.payment.lockoutMinutes + 3000);
     }
-  }, [router.query.courseId, refresh]);
+  }, [courseId, refresh]);
 
   const getPaymentStatus = async () => {
     setPaymentStatusLaoding(true);
-    const res = await getFetch(`/api/v1/course/payment/paymentStatus?courseId=${router.query.courseId}`);
+    const res = await getFetch(`/api/v1/course/payment/paymentStatus?courseId=${courseId}`);
     const result = (await res.json()) as IResponse;
     if (router.query.callback) {
       setAlertConfig({ type: result.alertType, message: result.alertMessage, description: result.alertDescription });
@@ -179,7 +177,7 @@ const LearnCoursesPage: NextPage<{
   };
 
   const onCloseAlert = () => {
-    router.replace(`/courses/${router.query.courseId}`);
+    router.replace(`/courses/${router.query.slug}`);
   };
 
   const onCloseModal = () => {
@@ -203,10 +201,11 @@ const LearnCoursesPage: NextPage<{
             }
           >
             <CoursePreview
-              courseId={Number(router.query.courseId)}
+              courseId={Number(courseId)}
               nextLessonId={nextLessonId}
               courseDetails={course}
               chapters={lessons}
+              onEnrollCourse={() => {}}
             />
           </MarketingLayout>
         </>
@@ -226,19 +225,36 @@ const LearnCoursesPage: NextPage<{
               className={styles.alertMessage}
             />
           )}
-          {courseDetail ? (
-            <Preview
-              videoUrl={courseDetail?.course.courseTrailer}
-              onEnrollCourse={onEnrollCourse}
-              courseDetail={courseDetail}
-              paymentDisable={paymentDisable}
-              paymentStatus={paymentStatus}
-              paymentStatusLoading={paymentStatusLoading}
-              loading={loading}
+
+          <>
+            <Breadcrumb
+              style={{ margin: "10px 40px" }}
+              items={[
+                {
+                  title: <a href="/courses"> Courses</a>,
+                },
+                {
+                  title: `${courseDetail.course.name}`,
+                  className: styles.courseName,
+                },
+              ]}
             />
-          ) : (
-            <SpinLoader className="course__spinner" />
-          )}
+            <HeroCoursePreview
+              courseName={course.name}
+              authorImage={course.authorImage}
+              authorName={course.authorName}
+              courseTrailer={course.courseTrailer}
+              userRole={userRole}
+            />
+            <CoursePreview
+              courseId={Number(courseId)}
+              nextLessonId={nextLessonId}
+              courseDetails={course}
+              chapters={lessons}
+              onEnrollCourse={onEnrollCourse}
+              userRole={userRole}
+            />
+          </>
 
           <AddPhone title={enableModal.message} open={enableModal.active} onCloseModal={onCloseModal} />
         </AppLayout>
@@ -248,19 +264,26 @@ const LearnCoursesPage: NextPage<{
 };
 
 export default LearnCoursesPage;
-
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const { req, query } = ctx;
-
   let cookieName = getCookieName();
 
   const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
   const siteConfig = getSiteConfig();
 
   const { site } = siteConfig;
-  const detail = await getCourseDetail(Number(query.courseId), user?.role, user?.id);
 
-  if (detail?.courseDetail && detail?.courseDetail.length > 0) {
+  const courseInfo = await prisma?.course.findUnique({
+    where: {
+      slug: String(query.slug),
+    },
+    select: {
+      courseId: true,
+    },
+  });
+  const detail = courseInfo?.courseId && (await getCourseDetail(Number(courseInfo.courseId), user?.role, user?.id));
+
+  if (detail && detail?.courseDetail && detail?.courseDetail.length > 0) {
     const info = extractLessonAndChapterDetail(detail.courseDetail, detail?.userStatus as CourseState, detail.userRole);
     if (user) {
       return {
@@ -273,6 +296,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
             userStatus: info.courseInfo.userStatus ? info.courseInfo.userStatus : Role.NA,
           },
           lessons: info.chapterLessons,
+          courseId: courseInfo.courseId,
         },
       };
     } else {
@@ -285,6 +309,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
             userStatus: info.courseInfo.userStatus ? info.courseInfo.userStatus : Role.NA,
           },
           lessons: info.chapterLessons,
+          courseId: courseInfo.courseId,
         },
       };
     }
@@ -293,6 +318,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
       props: {
         siteConfig: site,
         lessons: [],
+        courseId: courseInfo?.courseId,
       },
     };
   }

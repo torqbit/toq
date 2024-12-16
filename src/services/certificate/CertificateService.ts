@@ -291,7 +291,7 @@ export class CeritificateService {
             email: certificatInfo.studentEmail,
             courseName: certificatInfo.courseName,
             productName: site.brand?.name,
-            url: `${process.env.NEXTAUTH_URL}/courses/${certificatInfo.courseId}/certificate/${createCertificate.id}`,
+            url: `${process.env.NEXTAUTH_URL}/courses/${certificatInfo.slug}/certificate/${createCertificate.id}`,
           };
 
           // MailerService.sendMail("COURSE_COMPLETION", configData).then((result) => {

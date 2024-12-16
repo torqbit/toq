@@ -32,6 +32,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           description: true,
           totalResources: true,
           previewMode: true,
+          slug: true,
           user: {
             select: {
               name: true,
@@ -75,6 +76,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           difficultyLevel: true,
           state: true,
           thumbnail: true,
+          slug: true,
+
           description: true,
           totalResources: true,
           previewMode: true,

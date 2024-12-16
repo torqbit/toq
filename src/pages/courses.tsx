@@ -74,7 +74,7 @@ const CoursesPage: NextPage<{ siteConfig: PageSiteConfig; userRole: Role }> = ({
             {!loading ? (
               <>
                 {allCourses && allCourses.filter((c) => c.state === "ACTIVE").length > 0 ? (
-                  <Courses allCourses={allCourses.filter((c) => c.state === "ACTIVE")} />
+                  <Courses allCourses={allCourses.filter((c) => c.state === "ACTIVE")} userRole={userRole} />
                 ) : (
                   <>
                     <div className={styles.no_course_found}>
@@ -100,7 +100,7 @@ const CoursesPage: NextPage<{ siteConfig: PageSiteConfig; userRole: Role }> = ({
             {!loading ? (
               <>
                 {allCourses && allCourses.filter((c) => c.state === "ACTIVE").length > 0 ? (
-                  <Courses allCourses={allCourses.filter((c) => c.state === "ACTIVE")} />
+                  <Courses allCourses={allCourses.filter((c) => c.state === "ACTIVE")} userRole={userRole} />
                 ) : (
                   <>
                     <div className={styles.no_course_found}>

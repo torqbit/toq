@@ -184,7 +184,7 @@ export class BillingService {
     const configData = {
       name: invoice.stundentInfo.name,
       email: invoice.stundentInfo.email,
-      url: `${process.env.NEXTAUTH_URL}/courses/${invoice.courseDetail.courseId}`,
+      url: `${process.env.NEXTAUTH_URL}/courses/${invoice.courseDetail.slug}`,
       pdfPath: pdfPath,
       course: {
         name: invoice.courseDetail.courseName,

@@ -54,6 +54,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         },
         select: {
           expiryInDays: true,
+          slug: true,
           name: true,
           thumbnail: true,
           coursePrice: true,
@@ -132,6 +133,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         courseDetail: {
           courseId: Number(courseDetail?.courseId),
           courseName: String(courseDetail?.name),
+          slug: String(courseDetail?.slug),
           validUpTo: generateDayAndYear(addDays(Number(courseDetail?.expiryInDays))),
           thumbnail: String(courseDetail?.thumbnail),
         },
@@ -161,7 +163,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         homeDir,
         `${appConstant.homeDirName}/${appConstant.staticFileDirName}/${invoiceData.id}_invoice.pdf`
       );
-      const cms = new ContentManagementService();
 
       new BillingService().sendInvoice(invoiceConfig, savePath);
 

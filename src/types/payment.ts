@@ -15,6 +15,7 @@ export interface UserConfig {
 
 export interface CoursePaymentConfig {
   courseId: number;
+  slug: string;
   amount: number;
   coursePrice: number;
 }
@@ -34,7 +35,11 @@ export interface PaymentApiResponse {
 
 export interface PaymentServiceProvider {
   name: string;
-  purchaseCourse(courseConfig: CoursePaymentConfig, userConfig: UserConfig, orderId: string): Promise<PaymentApiResponse>;
+  purchaseCourse(
+    courseConfig: CoursePaymentConfig,
+    userConfig: UserConfig,
+    orderId: string
+  ): Promise<PaymentApiResponse>;
 }
 
 export interface CashFreePaymentData {
@@ -56,6 +61,7 @@ export interface OrderDetail extends Order {
 export interface InvoiceData {
   courseDetail: {
     courseId: number;
+    slug: string;
     courseName: string;
     validUpTo: string;
     thumbnail: string;

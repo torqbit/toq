@@ -92,7 +92,7 @@ const LessonItem: FC<{
   );
 };
 
-const LessonPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
+const LessonPage: NextPage<{ siteConfig: PageSiteConfig; courseId: number }> = ({ siteConfig, courseId }) => {
   const router = useRouter();
   const isMobile = useMediaQuery({ query: "(max-width: 933px)" });
   const { globalState } = useAppContext();
@@ -121,7 +121,7 @@ const LessonPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) =>
   const onCreateCertificate = () => {
     setCertificateData({ ...certificateData, loading: !courseDetail?.previewMode, completed: true } as ICertficateData);
     ProgramService.createCertificate(
-      Number(router.query.courseId),
+      Number(courseId),
       (result) => {
         setCertificateData({
           certificateId: result.certificateIssueId,
@@ -206,7 +206,7 @@ const LessonPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) =>
       });
 
       if (nextLessonId > 0) {
-        router.push(`/courses/${router.query.courseId}/lesson/${nextLessonId}`);
+        router.push(`/courses/${router.query.slug}/lesson/${nextLessonId}`);
       }
     }
   };
@@ -237,7 +237,7 @@ const LessonPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) =>
 
   const getLessonsDetail = (courseId: number) => {
     ProgramService.getCourseLessons(
-      Number(router.query.courseId),
+      Number(courseId),
       (result) => {
         setCourseLessons(result.lessons);
         setLessonLoading(false);
@@ -256,8 +256,8 @@ const LessonPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) =>
   };
 
   useEffect(() => {
-    router.query.courseId && getLessonsDetail(Number(router.query.courseId));
-  }, [router.query.courseId]);
+    courseId && getLessonsDetail(Number(courseId));
+  }, [courseId]);
 
   useEffect(() => {
     if (router.query.lessonId && courseLessons.length > 0) {
@@ -287,7 +287,7 @@ const LessonPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) =>
                 : `${styles.lesson__default}`
             }
           >
-            <Link href={`/courses/${router.query.courseId}/lesson/${item.lessonId}`} className={styles.lesson__item}>
+            <Link href={`/courses/${router.query.slug}/lesson/${item.lessonId}`} className={styles.lesson__item}>
               <div style={{ display: "flex" }}>
                 <i style={{ height: 20 }}>
                   {item.isWatched ? (
@@ -352,7 +352,7 @@ const LessonPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) =>
       children: ch.lessons.map((l) => {
         return {
           label: (
-            <Link href={`/courses/${router.query.courseId}/lesson/${l.lessonId}`}>
+            <Link href={`/courses/${router.query.slug}/lesson/${l.lessonId}`}>
               <Flex align="center" justify="space-between">
                 <span>{l.title}</span>
                 <Tag style={{ marginRight: 0 }} className={styles.time_tag}>
@@ -445,10 +445,10 @@ const LessonPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) =>
     try {
       const res = await postFetch(
         {
-          courseId: Number(router.query.courseId),
+          courseId: Number(courseId),
           resourceId: Number(router.query.lessonId),
         },
-        `/api/v1/course/${router.query.courseId}/update-progress`
+        `/api/v1/course/${courseId}/update-progress`
       );
       const result = (await res.json()) as ICourseProgressUpdateResponse;
       if (res.ok && result.success) {
@@ -519,7 +519,7 @@ const LessonPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) =>
             </div>
 
             <Flex className={styles.responsive_action_btn} align="center" justify="space-between">
-              <Link href={`/courses/${router.query.courseId}`}>
+              <Link href={`/courses/${router.query.slug}`}>
                 <Button>
                   <Flex gap={5} align="center">
                     <i className={styles.goBackArrow}>{SvgIcons.arrowLeft}</i>
@@ -630,7 +630,7 @@ const LessonPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) =>
                             type="primary"
                             onClick={() => {
                               router.push(
-                                `/courses/${router.query.courseId}/certificate/${certificateData?.certificateId}`
+                                `/courses/${router.query.slug}/certificate/${certificateData?.certificateId}`
                               );
                             }}
                           >
@@ -701,22 +701,31 @@ const LessonPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) =>
 export default LessonPage;
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const { req } = ctx;
+  const { req, query } = ctx;
   const params = ctx?.params;
   let cookieName = getCookieName();
   const { site } = getSiteConfig();
   const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
 
-  if (user && params) {
+  const courseInfo = await prisma.course.findUnique({
+    where: {
+      slug: String(query.slug),
+    },
+    select: {
+      courseId: true,
+    },
+  });
+
+  if (user && courseInfo) {
     const courseAuthor = await prisma?.course.findUnique({
       where: {
-        courseId: Number(params?.courseId),
+        courseId: courseInfo.courseId,
       },
       select: {
         authorId: true,
       },
     });
-    const isEnrolled = await getUserEnrolledCoursesId(Number(params.courseId), user?.id);
+    const isEnrolled = await getUserEnrolledCoursesId(courseInfo?.courseId, user?.id);
     if (!isEnrolled && user.id !== courseAuthor?.authorId) {
       return {
         redirect: {
@@ -730,6 +739,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   return {
     props: {
       siteConfig: site,
+      courseId: courseInfo?.courseId,
     },
   };
 };
