@@ -19,19 +19,20 @@ const BlogList: FC<{ contentType: string }> = ({ contentType }) => {
 
   const handleBlogStatusUpdate = (id: string, state: StateType) => {
     setLoading(true);
-
-    BlogService.updateBlog(
-      undefined,
-      undefined,
+    const data = {
       state,
-      undefined,
-      id,
+      blogId: id,
+    };
+    BlogService.updateState(
+      data,
       (result) => {
         messageApi.success(result.message);
         setRefresh(!refresh);
         setLoading(false);
       },
       (error) => {
+        messageApi.error(error);
+
         setLoading(false);
       }
     );
@@ -84,8 +85,8 @@ const BlogList: FC<{ contentType: string }> = ({ contentType }) => {
                   label: "Edit",
                   onClick: () => {
                     contentType === "BLOG"
-                      ? router.push(`/admin/content/blog/${blogInfo?.id}`)
-                      : router.push(`/admin/content/update/${blogInfo?.id}`);
+                      ? router.push(`/admin/content/blog/edit/${blogInfo?.id}`)
+                      : router.push(`/admin/content/update/edit/${blogInfo?.id}`);
                   },
                 },
                 {
