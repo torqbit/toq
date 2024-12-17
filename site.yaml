@@ -43,22 +43,21 @@ site:
       position: background
   sections:
     features:
-      title: Our Features description:Our educational platform is completely secure, robust and scales to millions of users, and always available, giving you the flexibility to learn from anywhere, anytime.
+      title: Our Features
+      description: Our educational platform is completely secure, robust and scales to millions of users, and always available, giving you the flexibility to learn from anywhere, anytime.
       items:
         - img: /img/landing/auth.png
           title: Social Login
-          description: Login with any of the support networking platform like Google,
-            Github or Facebook
+          description: Login with any of the support networking platform like Google, Github or Facebook
           link: /docs/auth
         - img: /img/landing/laptop.png
           title: Portable
-          description: Access the course lessons and assignments from anywhere and from
-            any device.
+          description: Access the course lessons and assignments from anywhere and from any device.
           link: /docs/auth
         - img: /img/landing/event.png
           title: Events
-          description: Connect with the educator through offline or online events and
-            workshops.
+          description: Connect with the educator through offline or online events and workshops.
+
     courses:
       enable: false
       title: Courses list
