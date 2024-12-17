@@ -18,6 +18,20 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const body = await req.body;
     const { contentType } = body;
 
+    const findUntitled = await prisma.blog.count({
+      where: {
+        title: "Untitled",
+      },
+    });
+    if (findUntitled > 0) {
+      await prisma.blog.deleteMany({
+        where: {
+          title: "Untitled",
+          contentType,
+        },
+      });
+    }
+
     const createBlog = await prisma.blog.create({
       data: {
         authorId: String(token?.id),

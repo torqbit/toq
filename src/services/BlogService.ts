@@ -61,6 +61,26 @@ class BlogService {
       }
     });
   };
+
+  updateState = (
+    data: { blogId: string; state: StateType },
+    onSuccess: (response: ApiResponse) => void,
+    onFailure: (message: string) => void
+  ) => {
+    postFetch(data, `/api/v1/admin/blog/updateState`).then((result) => {
+      if (result.status == 200) {
+        result.json().then((r) => {
+          const apiResponse = r as ApiResponse;
+          onSuccess(apiResponse);
+        });
+      } else {
+        result.json().then((r) => {
+          const failedResponse = r as FailedApiResponse;
+          onFailure(failedResponse.error);
+        });
+      }
+    });
+  };
   getLatestDraftBlog = (
     contentType: string,
     onSuccess: (response: ApiResponse) => void,

@@ -57,6 +57,10 @@ const BlogForm: FC<{
   };
 
   const onPostBlog = (state: StateType, exit?: boolean) => {
+    if (blogTitle === "Untitled") {
+      messageApi.warning("Title is missing");
+      return;
+    }
     setLoader({ ...loader, publish: true });
     const data = {
       title: blogTitle,
@@ -110,8 +114,8 @@ const BlogForm: FC<{
 
         <Flex className={styles.publishBtn} align="center" gap={10}>
           <Popconfirm
-            title={`Delete the blog`}
-            description={`Are you sure to delete this blog?`}
+            title={`Delete the ${contentType.toLowerCase()}`}
+            description={`Are you sure to delete this ${contentType.toLowerCase()}?`}
             onConfirm={() => onDelete()}
             okText="Yes"
             cancelText="No"
@@ -147,7 +151,7 @@ const BlogForm: FC<{
             <Input
               onChange={(e) => setBlogTitle(e.target.value)}
               defaultValue={blogTitle}
-              placeholder="Set the title of the blog"
+              placeholder={`Set the title of the ${contentType}`}
             />
           </Form.Item>
           <div className={styles.video_container}>
