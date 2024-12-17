@@ -24,6 +24,12 @@ export enum SubmissionType {
   URL = "URL",
 }
 
+export enum ProjectFramework {
+  STATIC_WEB = "STATIC_WEB",
+  REACTJS = "REACTJS",
+  NEXT_APP = "NEXT_APP",
+}
+
 export interface IAssignmentSubmission {
   _type: SubmissionType;
 }
@@ -33,8 +39,9 @@ export interface IProgrammingLangSubmission extends IAssignmentSubmission {
 }
 
 export interface IProgrammingProjectSubmission extends IAssignmentSubmission {
-  framework: "STATIC_WEB" | "REACTJS" | "NEXT_APP";
-  url: string;
+  framework: ProjectFramework;
+  versions: Map<string, string>;
+  baseProjectArchiveUrl: string;
 }
 
 export interface ITextSubmissionContent extends IAssignmentSubmission {
