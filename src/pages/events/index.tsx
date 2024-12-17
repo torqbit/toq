@@ -28,7 +28,7 @@ const EventsPage: FC<{
           heroSection={<DefaulttHero title="Events" description="Connect, Learn, and Thrive Together!" />}
         >
           <div className={styles.events_wrapper}>
-            <Events user={user} eventList={eventList} totalEventsLength={totalEventsLength} eventLink="events" />;
+            <Events user={user} eventList={eventList} eventLink="events" siteConfig={siteConfig} />;
           </div>
         </MarketingLayout>
       ) : (
@@ -37,7 +37,7 @@ const EventsPage: FC<{
             <div className={styles.event_header}>
               <h3>Events</h3>
             </div>
-            <Events user={user} eventList={eventList} totalEventsLength={totalEventsLength} eventLink="events" />
+            <Events user={user} eventList={eventList} eventLink="events" siteConfig={siteConfig} />
           </div>
         </AppLayout>
       )}
