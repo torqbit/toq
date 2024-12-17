@@ -1,16 +1,13 @@
 import { FC } from "react";
 import styles from "./SiteBuilder.module.scss";
 import { Breadcrumb, Collapse, CollapseProps, Flex, Form, Switch } from "antd";
-import Link from "next/link";
 import SvgIcons from "../SvgIcons";
-import { Scrollbars } from "react-custom-scrollbars";
+
 import { PageSiteConfig } from "@/services/siteConstant";
 import BrandForm from "./sections/Brand/BrandForm";
 import HeroForm from "./sections/Hero/HeroForm";
 import FeatureForm from "./sections/Feature/FeatureForm";
 import CourseForm from "./sections/Courses/CourseForm";
-import DisableText from "./DisableText/DisableText";
-import { setConfig } from "isomorphic-dompurify";
 import BlogForm from "./sections/Blog/BlogForm";
 
 const SiteBuilder: FC<{
@@ -98,7 +95,6 @@ const SiteBuilder: FC<{
           defaultActiveKey={["1"]}
         />
       </div>
-      {/* </Scrollbars> */}
     </div>
   );
 };

@@ -1,7 +1,8 @@
 .site__preview__container {
+  overflow: hidden;
+
   .site__preview__titlebar {
     width: calc(100vw - 360px);
-
     padding: 0px 10px;
     height: 30px;
     background-color: var(--bg-primary);
@@ -15,21 +16,21 @@
     justify-content: left;
     gap: 5px;
 
-    >div {
+    > div {
       height: 8px;
       width: 8px;
       border-radius: 50%;
     }
 
-    >div:first-child {
+    > div:first-child {
       background-color: red;
     }
 
-    >div:nth-child(2) {
+    > div:nth-child(2) {
       background-color: #eeee3b;
     }
 
-    >div:last-child {
+    > div:last-child {
       background-color: #05c605;
     }
   }
