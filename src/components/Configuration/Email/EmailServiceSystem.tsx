@@ -12,7 +12,6 @@ const EmailServiceSystem: FC<{ active: boolean }> = ({ active }) => {
   const [messageApi, contextHolder] = message.useMessage();
   const [loading, setLoading] = useState<boolean>(false);
   const [isConnected, setIsConnected] = useState<boolean>(false);
-  const router = useRouter();
 
   const getEmailCredentials = () => {
     emailClient.getEmailCredendialsConfig(

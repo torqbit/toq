@@ -13,7 +13,6 @@ const PaymentManagementSystem: FC<{ active: boolean }> = ({ active }) => {
   const [paymentAuthForm] = Form.useForm();
   const [paymentInfoForm] = Form.useForm();
   const paymentGateway = $Enums.gatewayProvider.CASHFREE;
-  const router = useRouter();
   const [messageApi, contextHolder] = message.useMessage();
   const [current, setCurrent] = useState<number>(0);
 
