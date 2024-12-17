@@ -12,7 +12,6 @@ import { ConfigurationState } from "@prisma/client";
 import SvgIcons from "@/components/SvgIcons";
 import SpinLoader from "@/components/SpinLoader/SpinLoader";
 import { StorageConfig } from "@/types/cms/bunny";
-import { useRouter } from "next/router";
 
 export interface IConfigForm {
   title: string;

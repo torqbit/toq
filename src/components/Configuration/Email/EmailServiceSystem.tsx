@@ -5,7 +5,6 @@ import { FC, useEffect, useState } from "react";
 import SvgIcons from "@/components/SvgIcons";
 import { EmailCredentialsConfig } from "@/types/cms/email";
 import emailClient from "@/lib/admin/email/email-client";
-import { useRouter } from "next/router";
 
 const EmailServiceSystem: FC<{ active: boolean }> = ({ active }) => {
   const [emailForm] = Form.useForm();

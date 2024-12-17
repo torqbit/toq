@@ -2,12 +2,10 @@ import { Button, Flex, Form, Input, message, Select, Steps, Tag } from "antd";
 import ConfigFormLayout from "../ConfigFormLayout";
 import ConfigForm from "../ConfigForm";
 import { FC, useEffect, useState } from "react";
-import FormDisableOverlay from "../FormDisableOverlay";
 import { $Enums } from "@prisma/client";
 import paymentsClient from "@/lib/admin/payments/payments-client";
 import { PaymentAuthConfig, PaymentInfoConfig } from "@/types/payment";
 import SvgIcons from "@/components/SvgIcons";
-import { useRouter } from "next/router";
 
 const PaymentManagementSystem: FC<{ active: boolean }> = ({ active }) => {
   const [paymentAuthForm] = Form.useForm();
