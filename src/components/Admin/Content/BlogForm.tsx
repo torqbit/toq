@@ -58,7 +58,7 @@ const BlogForm: FC<{
 
   const onCreateBlog = (state: StateType, exit?: boolean) => {
     if (!file) {
-      messageApi.warning("Upload a banner first");
+      messageApi.warning(`${contentType.toLowerCase()} must have a banner`);
       return;
     }
     setLoader({ ...loader, publish: true });
@@ -80,7 +80,9 @@ const BlogForm: FC<{
         setCurrentState(result.blog.state);
         setLoader({ ...loader, publish: false });
 
-        router.push("/admin/content");
+        result.blog.state === StateType.ACTIVE
+          ? router.push(`/blog/${result.blog.slug}`)
+          : router.push("admin/content");
       },
       (error) => {
         messageApi.error(error);
@@ -108,9 +110,9 @@ const BlogForm: FC<{
         messageApi.success(result.message);
         setCurrentState(result.blog.state);
         setLoader({ ...loader, publish: false });
-        if (exit) {
-          router.push("/admin/content");
-        }
+        result.blog.state === StateType.ACTIVE
+          ? router.push(`/blog/${result.blog.slug}`)
+          : router.push("admin/content");
       },
       (error) => {
         messageApi.error(error);
