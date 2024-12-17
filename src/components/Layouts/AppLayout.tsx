@@ -101,12 +101,12 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
       icon: SvgIcons.setting,
     },
     {
-      label: <Link href="/admin/courses">Courses</Link>,
+      label: <Link href="/courses">Courses</Link>,
       key: "courses",
       icon: SvgIcons.courses,
     },
     {
-      label: <Link href="/admin/events">Events</Link>,
+      label: <Link href="/events">Events</Link>,
       key: "events",
       icon: <i style={{ fontSize: 18 }}>{SvgIcons.events}</i>,
     },
@@ -154,7 +154,7 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
           dispatch({ type: "SET_UNREAD_NOTIFICATION", payload: 0 });
         }
       },
-      (error) => { }
+      (error) => {}
     );
   };
 
@@ -197,7 +197,7 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
       (result) => {
         setConversationList(result.comments);
       },
-      (error) => { }
+      (error) => {}
     );
   };
 

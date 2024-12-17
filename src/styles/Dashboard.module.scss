@@ -38,16 +38,9 @@
 //no courses found
 
 .no_course_found {
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  justify-content: center;
-
-  p {
-    // font-size: 15px;
-    color: var(--font-secondary);
-  }
+  width: 300px;
+  margin: 100px auto;
+  text-align: center;
 }
 
 // Guides Page styles
