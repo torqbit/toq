@@ -341,18 +341,10 @@ const Content: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   };
 
   const handleBlogOk = (contentType: string) => {
-    setLoading(true);
-    BlogService.createBlog(
-      contentType,
-      (result) => {
-        setLoading(false);
-
-        router.push(`/admin/content/blog/${result.blog.id}`);
-      },
-      (error) => {
-        messageApi.error(error);
-        setLoading(false);
-      }
+    router.push(
+      `/admin/content/${contentType === "BLOG" ? "blog" : "update"}/${
+        contentType === "BLOG" ? "add-blog" : "add-update"
+      }`
     );
   };
 

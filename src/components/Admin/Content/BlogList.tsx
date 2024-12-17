@@ -85,8 +85,8 @@ const BlogList: FC<{ contentType: string }> = ({ contentType }) => {
                   label: "Edit",
                   onClick: () => {
                     contentType === "BLOG"
-                      ? router.push(`/admin/content/blog/${blogInfo?.id}`)
-                      : router.push(`/admin/content/update/${blogInfo?.id}`);
+                      ? router.push(`/admin/content/blog/edit/${blogInfo?.id}`)
+                      : router.push(`/admin/content/update/edit/${blogInfo?.id}`);
                   },
                 },
                 {

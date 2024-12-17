@@ -55,7 +55,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         authorId: String(token?.id),
       },
       data: {
-        ...body,
         title,
         content,
         state,
