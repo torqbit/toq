@@ -204,6 +204,7 @@ const QADiscssionTab: FC<{ resourceId?: number; loading: boolean }> = ({
         <Flex align="center" justify="flex-end">
           <Button
             type="primary"
+            loading={listLoading}
             onClick={() => {
               setPageSize(3);
               getDiscussions(pageSize);

@@ -179,6 +179,8 @@ const Content: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [messageApi, contextMessageHolder] = message.useMessage();
   const [loading, setLoading] = useState<boolean>(false);
+  const [addLoading, setAddLoading] = useState<boolean>(false);
+
   const [activeTab, setActiveTab] = useState<string>("Add Course");
 
   const [coursesAuthored, setCoursesAuthored] = useState<{
@@ -335,13 +337,19 @@ const Content: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
 
   const handleOk = () => {
     setIsModalOpen(false);
-
+    setAddLoading(true);
     ProgramService.createDraftCourses(
       undefined,
       (result) => {
+        setAddLoading(false);
+
         router.push(`/admin/content/course/${result.getCourse.courseId}/edit`);
       },
-      (error) => {}
+      (error) => {
+        setAddLoading(false);
+
+        messageApi.error(error);
+      }
     );
   };
 
@@ -455,7 +463,12 @@ const Content: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
           tabBarExtraContent={
             <>
               {activeTab !== "Submission" && (
-                <Button type="primary" onClick={handleActionButton} className={styles.add_user_btn}>
+                <Button
+                  loading={addLoading}
+                  type="primary"
+                  onClick={handleActionButton}
+                  className={styles.add_user_btn}
+                >
                   <span>{activeTab}</span>
                   {SvgIcons.arrowRight}
                 </Button>

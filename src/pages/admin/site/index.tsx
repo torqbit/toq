@@ -12,7 +12,7 @@ const SiteDesign: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) =>
   const [messageApi, contexHolder] = message.useMessage();
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [config, setConfig] = useState<PageSiteConfig>(siteConfig);
-
+  const [loading, setLoading] = useState<boolean>(false);
   const sendMessageToIframe = () => {
     if (iframeRef.current && iframeRef.current.contentWindow) {
       iframeRef.current.contentWindow.postMessage(
@@ -26,12 +26,16 @@ const SiteDesign: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) =>
   };
 
   const updateYamlFile = async (config: PageSiteConfig) => {
-
+    setLoading(true);
     const res = await postFetch({ config }, "/api/v1/admin/site/site-info/update");
     const result = await res.json();
     if (res.ok) {
+      setLoading(false);
+
       messageApi.success(result.message);
     } else {
+      setLoading(false);
+
       messageApi.error(result.error);
     }
   };
@@ -46,6 +50,7 @@ const SiteDesign: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) =>
       <Flex vertical align="flex-end" gap={20}>
         <div>
           <Button
+            loading={loading}
             onClick={() => {
               updateYamlFile(config);
             }}
