@@ -1,22 +1,26 @@
 import { useAppContext } from "@/components/ContextApi/AppContext";
 import { capsToPascalCase } from "@/lib/utils";
-import { EventType, Theme, User } from "@prisma/client";
+import { EventType, User } from "@prisma/client";
 import { FC, useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import EventService, { IEventList } from "@/services/EventService";
 import EventCard from "@/components/Events/EventCard";
 import styles from "@/styles/Marketing/Events/Event.module.scss";
 import { Button, Flex, message, Tabs, TabsProps } from "antd";
+import { EmptyEvents } from "../SvgIcons";
+import { getIconTheme } from "@/services/darkThemeConfig";
+import { PageSiteConfig } from "@/services/siteConstant";
+import { Theme } from "@/types/theme";
 
-const Events: FC<{ user: User; eventList: IEventList[]; totalEventsLength: number; eventLink: string }> = ({
-  user,
-  eventList,
-  totalEventsLength,
-  eventLink,
-}) => {
+const Events: FC<{
+  user: User;
+  eventList: IEventList[];
+  eventLink: string;
+  siteConfig: PageSiteConfig;
+}> = ({ user, eventList, eventLink, siteConfig }) => {
   const [eventData, setEventData] = useState<IEventList[]>(eventList);
   const [eventfetchLength, setEventFetchLength] = useState<number>(5);
-  const [totalEvents, setTotalEvents] = useState<number>(totalEventsLength);
+  const [totalEvents, setTotalEvents] = useState<number>(eventList.length);
 
   const [selectedTab, setSelectedTab] = useState<string>("all");
   const [loading, setLoading] = useState<boolean>(false);
@@ -50,13 +54,6 @@ const Events: FC<{ user: User; eventList: IEventList[]; totalEventsLength: numbe
       </p>
     </div>
   );
-
-  const setGlobalTheme = (theme: Theme) => {
-    dispatch({
-      type: "SWITCH_THEME",
-      payload: theme,
-    });
-  };
 
   const getEventList = () => {
     setLoading(true);
@@ -198,7 +195,13 @@ const Events: FC<{ user: User; eventList: IEventList[]; totalEventsLength: numbe
     <>
       {contextHolder}
       <div className={styles.event_list_wrapper}>
-        <Tabs items={items} onChange={onChange} />
+        {eventData.length > 0 && <Tabs items={items} onChange={onChange} />}
+        {eventData.length == 0 && (
+          <div className={styles.empty__content}>
+            <EmptyEvents size="300px" {...getIconTheme(globalState.theme || "light", siteConfig.brand)} />
+            <h4 style={{ marginBottom: 20 }}>No events have been created.</h4>
+          </div>
+        )}
       </div>
     </>
   );

@@ -106,8 +106,7 @@ const Courses: FC<{
         <>
           <div className={styles.no_course_found}>
             <img src="/img/common/empty.svg" alt="" />
-            <h2>No Courses were found</h2>
-            <p>Contact support team for more information.</p>
+            <h4>No Courses were found</h4>
           </div>
         </>
       )}
