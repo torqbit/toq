@@ -4,7 +4,6 @@ import styles from "@/styles/Profile.module.scss";
 import { useSession } from "next-auth/react";
 
 import { Button, Form, Input, Tabs, TabsProps, message, Tooltip, Upload, InputNumber } from "antd";
-import { postFetch, IResponse, postWithFile } from "@/services/request";
 import { GetServerSidePropsContext, NextPage } from "next";
 import { Session } from "next-auth";
 import SpinLoader from "@/components/SpinLoader/SpinLoader";
@@ -18,6 +17,7 @@ import { getSiteConfig } from "@/services/getSiteConfig";
 import { PageSiteConfig } from "@/services/siteConstant";
 import { getBase64 } from "@/lib/utils";
 import ProgramService from "@/services/ProgramService";
+import { useRouter } from "next/router";
 
 const ProfileSetting: FC<{
   user: Session;
@@ -28,7 +28,7 @@ const ProfileSetting: FC<{
 }> = ({ user, onUpdateProfile, userProfile, setUserProfile, setFile }) => {
   const [pageLoading, setPageLoading] = useState<boolean>(false);
   const [userProfileUploading, setuserProfileUploading] = useState<boolean>(false);
-
+  const router = useRouter();
   const uploadFile = async (file: any, title: string) => {
     if (file) {
       const base64 = await getBase64(file);
@@ -40,11 +40,11 @@ const ProfileSetting: FC<{
   };
   useEffect(() => {
     setPageLoading(true);
-    if (user) {
+    if (user && (!router.query.tab || router.query.tab === "profile")) {
       setUserProfile(String(user.user?.image));
       setPageLoading(false);
     }
-  }, []);
+  }, [router.query.tab]);
 
   return (
     <>
@@ -145,17 +145,20 @@ const Setting: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const [messageApi, contextMessageHolder] = message.useMessage();
   const [userProfile, setUserProfile] = useState<string>();
   const [activeKey, setActiveKey] = useState<string>("profile");
-
+  const router = useRouter();
   const [file, setFile] = useState<File>();
   const { dispatch, globalState } = useAppContext();
 
   const onChange = (key: string) => {
     switch (key) {
       case "profile":
-        return setActiveKey("profile");
+        setActiveKey("profile");
+        return router.push(`/setting?tab=${key}`);
 
       case "payment":
-        return setActiveKey("payment");
+        setActiveKey("payment");
+        return router.push(`/setting?tab=${key}`);
+
       default:
         return setActiveKey("profile");
     }

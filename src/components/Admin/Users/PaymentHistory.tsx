@@ -5,11 +5,12 @@ import { OrderHistory } from "@/types/payment";
 import { $Enums } from "@prisma/client";
 import { Flex, message, Table, Tag } from "antd";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { FC, useEffect, useState } from "react";
 
 const PaymentHistory: FC = () => {
   const [messageApi, contextMessageHolder] = message.useMessage();
-
+  const router = useRouter();
   const [paymentData, setPaymentData] = useState<{
     loading: boolean;
     data?: OrderHistory[];
@@ -101,8 +102,8 @@ const PaymentHistory: FC = () => {
   };
 
   useEffect(() => {
-    getPaymentData();
-  }, []);
+    router.query.tab === "payment " && getPaymentData();
+  }, [router.query.tab]);
 
   return (
     <>

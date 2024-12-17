@@ -19,6 +19,7 @@ import MarketingLayout from "@/components/Layouts/MarketingLayout";
 import CoursePreview from "@/components/Marketing/Courses/CoursePreview";
 import HeroCoursePreview from "@/components/Marketing/Courses/HeroCoursePreview";
 import getCourseDetail, { extractLessonAndChapterDetail } from "@/actions/getCourseDetail";
+import prisma from "@/lib/prisma";
 
 const LearnCoursesPage: NextPage<{
   siteConfig: PageSiteConfig;
