@@ -43,8 +43,7 @@ site:
       position: background
   sections:
     features:
-      title: Our Features
-      description:Our educational platform is completely secure, robust and scales to millions of users, and always available, giving you the flexibility to learn from anywhere, anytime.
+      title: Our Features description:Our educational platform is completely secure, robust and scales to millions of users, and always available, giving you the flexibility to learn from anywhere, anytime.
       items:
         - img: /img/landing/auth.png
           title: Social Login

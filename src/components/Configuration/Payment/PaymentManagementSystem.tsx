@@ -1,7 +1,7 @@
 import { Button, Flex, Form, Input, message, Select, Steps, Tag } from "antd";
 import ConfigFormLayout from "../ConfigFormLayout";
 import ConfigForm from "../ConfigForm";
-import { useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import FormDisableOverlay from "../FormDisableOverlay";
 import { $Enums } from "@prisma/client";
 import paymentsClient from "@/lib/admin/payments/payments-client";
@@ -9,7 +9,7 @@ import { PaymentAuthConfig, PaymentInfoConfig } from "@/types/payment";
 import SvgIcons from "@/components/SvgIcons";
 import { useRouter } from "next/router";
 
-const PaymentManagementSystem = () => {
+const PaymentManagementSystem: FC<{ active: boolean }> = ({ active }) => {
   const [paymentAuthForm] = Form.useForm();
   const [paymentInfoForm] = Form.useForm();
   const paymentGateway = $Enums.gatewayProvider.CASHFREE;
@@ -67,7 +67,7 @@ const PaymentManagementSystem = () => {
   };
 
   useEffect(() => {
-    router.query.tab === "pms" &&
+    active &&
       paymentsClient.getPaymentGatewayConfig(
         paymentGateway,
         (response) => {
@@ -88,7 +88,7 @@ const PaymentManagementSystem = () => {
           messageApi.error(error);
         }
       );
-  }, [router.query.tab]);
+  }, [active]);
 
   const paymentSecretItems = [
     {

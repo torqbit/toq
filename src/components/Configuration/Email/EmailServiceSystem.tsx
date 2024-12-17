@@ -1,13 +1,13 @@
 import { Button, Flex, Form, Input, message, Select, Steps, Tag } from "antd";
 import ConfigFormLayout from "../ConfigFormLayout";
 import ConfigForm from "../ConfigForm";
-import { useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import SvgIcons from "@/components/SvgIcons";
 import { EmailCredentialsConfig } from "@/types/cms/email";
 import emailClient from "@/lib/admin/email/email-client";
 import { useRouter } from "next/router";
 
-const EmailServiceSystem = () => {
+const EmailServiceSystem: FC<{ active: boolean }> = ({ active }) => {
   const [emailForm] = Form.useForm();
   const [messageApi, contextHolder] = message.useMessage();
   const [loading, setLoading] = useState<boolean>(false);
@@ -27,10 +27,10 @@ const EmailServiceSystem = () => {
   };
 
   useEffect(() => {
-    if (router.query.tab === "ems") {
+    if (active) {
       getEmailCredentials();
     }
-  }, [router.query.tab]);
+  }, [active]);
 
   const saveAndTestEmailCredentials = () => {
     setLoading(true);
