@@ -25,6 +25,6 @@ export const getSiteConfig = () => {
 
     return configData;
   } catch (error) {
-    console.log(error);
+    console.log(error, "error");
   }
 };

@@ -23,7 +23,7 @@ export interface IConfigForm {
   layout?: "vertical" | "horizontal";
 }
 
-const ContentManagementSystem: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
+const ContentManagementSystem: FC<{ siteConfig: PageSiteConfig; active: boolean }> = ({ siteConfig, active }) => {
   const [messageApi, contextHolder] = message.useMessage();
   const [accessKeyForm] = Form.useForm();
   const [selectedWatermark, setWatermark] = useState<string | null>(null);
@@ -36,10 +36,9 @@ const ContentManagementSystem: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfi
   const [storageLoading, setStorageLoading] = useState<boolean>(false);
   const [pageLoading, setPageLoading] = useState<boolean>(true);
   const [configState, setConfigState] = useState<ConfigurationState>(ConfigurationState.INITIATED);
-
   const [current, setCurrent] = useState<number>(0);
   let logoUrl = `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/${siteConfig.brand?.logo}`;
-  let iconUrl = `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/img/logo.png`;
+  let iconUrl = `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/${siteConfig.brand?.icon}`;
 
   const videoItems = [
     {
@@ -311,8 +310,10 @@ const ContentManagementSystem: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfi
     );
   };
   useEffect(() => {
-    getDetail();
-  }, []);
+    if (active) {
+      getDetail();
+    }
+  }, [active]);
 
   return (
     <>

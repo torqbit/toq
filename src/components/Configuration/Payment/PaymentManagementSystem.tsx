@@ -1,18 +1,16 @@
 import { Button, Flex, Form, Input, message, Select, Steps, Tag } from "antd";
 import ConfigFormLayout from "../ConfigFormLayout";
 import ConfigForm from "../ConfigForm";
-import { useEffect, useState } from "react";
-import FormDisableOverlay from "../FormDisableOverlay";
+import { FC, useEffect, useState } from "react";
 import { $Enums } from "@prisma/client";
 import paymentsClient from "@/lib/admin/payments/payments-client";
 import { PaymentAuthConfig, PaymentInfoConfig } from "@/types/payment";
 import SvgIcons from "@/components/SvgIcons";
 
-const PaymentManagementSystem = () => {
+const PaymentManagementSystem: FC<{ active: boolean }> = ({ active }) => {
   const [paymentAuthForm] = Form.useForm();
   const [paymentInfoForm] = Form.useForm();
   const paymentGateway = $Enums.gatewayProvider.CASHFREE;
-
   const [messageApi, contextHolder] = message.useMessage();
   const [current, setCurrent] = useState<number>(0);
 
@@ -66,28 +64,28 @@ const PaymentManagementSystem = () => {
   };
 
   useEffect(() => {
-    paymentsClient.getPaymentGatewayConfig(
-      paymentGateway,
-      (response) => {
-        messageApi.success(response.message);
-        if (response.body) {
+    active &&
+      paymentsClient.getPaymentGatewayConfig(
+        paymentGateway,
+        (response) => {
+          if (response.body) {
+          }
+          if (response.body && response.body.state == "AUTHENTICATED") {
+            setCurrent(1);
+          } else if (response.body && response.body.state == "PAYMENT_CONFIGURED") {
+            console.log(response.body.config);
+            setCurrent(2);
+            paymentInfoForm.setFieldsValue({
+              currency: response.body.config.currency,
+              paymentMethods: response.body.config.paymentMethods,
+            });
+          }
+        },
+        (error) => {
+          messageApi.error(error);
         }
-        if (response.body && response.body.state == "AUTHENTICATED") {
-          setCurrent(1);
-        } else if (response.body && response.body.state == "PAYMENT_CONFIGURED") {
-          console.log(response.body.config);
-          setCurrent(2);
-          paymentInfoForm.setFieldsValue({
-            currency: response.body.config.currency,
-            paymentMethods: response.body.config.paymentMethods,
-          });
-        }
-      },
-      (error) => {
-        messageApi.error(error);
-      }
-    );
-  }, []);
+      );
+  }, [active]);
 
   const paymentSecretItems = [
     {
