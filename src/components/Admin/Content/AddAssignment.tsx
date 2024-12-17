@@ -4,10 +4,11 @@ import appConstant from "@/services/appConstant";
 import TextEditor from "@/components/Editor/Quilljs/Editor";
 import { FC, useEffect, useState } from "react";
 import AssignmentService from "@/services/AssignmentService";
-import { ResourceContentType, SubmissionType } from "@prisma/client";
+import { ResourceContentType } from "@prisma/client";
 import { CloseOutlined } from "@ant-design/icons";
 import { Editor } from "@monaco-editor/react";
 import { useAppContext } from "@/components/ContextApi/AppContext";
+import { IProgrammingLangSubmission, SubmissionType } from "@/types/courses/assignment";
 
 const AddAssignment: FC<{
   setResourceDrawer: (value: boolean) => void;
@@ -36,16 +37,18 @@ const AddAssignment: FC<{
   const { globalState } = useAppContext();
   const handleAssignment = () => {
     if (!submissionType) return message.error("Please select assignment type");
+    const progAssignment: IProgrammingLangSubmission = {
+      _type: submissionType,
+      initialCode: initialCode,
+      programmingLang: programmingLang,
+    };
     AssignmentService.createAssignment(
       {
         lessonId: Number(currResId),
         assignmentFiles: assignmentForm.getFieldsValue().assignmentFiles,
         title: assignmentForm.getFieldsValue().title,
         submissionType: submissionType,
-        submissionConfig: {
-          initialCode: initialCode,
-          programmingLang: programmingLang,
-        },
+        submissionConfig: progAssignment,
         content: editorValue,
         isEdit,
         estimatedDuration: assignmentForm.getFieldsValue().estimatedDuration,
@@ -68,13 +71,18 @@ const AddAssignment: FC<{
           assignmentForm.setFieldValue("title", result.assignmentDetail.name);
           assignmentForm.setFieldValue("assignmentFiles", result.assignmentDetail.assignmentFiles);
           assignmentForm.setFieldValue("estimatedDuration", result.assignmentDetail.estimatedDuration);
-          setSubmissionType(result.assignmentDetail.submissionType);
-          if (result.assignmentDetail.submissionType === "PROGRAMMING_LANG") {
-            setInitialCode(result.assignmentDetail.submissionConfig.initialCode as string);
-            setProgrammingLang(result.assignmentDetail.submissionConfig.programmingLang as string);
-            assignmentForm.setFieldValue("programmingLang", result.assignmentDetail.submissionConfig.programmingLang);
-          }
 
+          switch (result.assignmentDetail.submissionConfig._type) {
+            case SubmissionType.PROGRAMMING_LANG:
+              const submissionConf = result.assignmentDetail.submissionConfig as IProgrammingLangSubmission;
+              setSubmissionType(SubmissionType.PROGRAMMING_LANG);
+              setInitialCode(submissionConf.initialCode);
+              setProgrammingLang(submissionConf.programmingLang);
+              assignmentForm.setFieldValue("programmingLang", submissionConf.programmingLang);
+              break;
+            default:
+              break;
+          }
           setDefaultValue(result.assignmentDetail.content as string);
         },
         (error) => {}

@@ -531,14 +531,6 @@ model Invoice {
   @@index([orderId])
 }
 
-enum SubmissionType {
-  PROGRAMMING_LANG
-  PROGRAMMING_PROJECT
-  TEXT
-  URL
-  FILE
-}
-
 model Assignment {
   id                Int                    @id @unique @default(autoincrement())
   createdAt         DateTime               @default(now())
@@ -546,7 +538,6 @@ model Assignment {
   lessonId          Int
   content           Json?
   assignmentFiles   Json?
-  submissionType    SubmissionType?
   submissionConfig  Json?
   estimatedDuration Int?
   lesson            Resource               @relation(fields: [lessonId], references: [resourceId], onDelete: Cascade)

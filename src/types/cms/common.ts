@@ -1,4 +1,4 @@
-export type StaticFileCategory = "thumbnail" | "profile" | "banner" | "pdf";
+export type StaticFileCategory = "thumbnail" | "profile" | "banner" | "pdf" | "assignment";
 export type VideoObjectType = "lesson" | "course";
 
 export enum FileObjectType {
@@ -8,6 +8,6 @@ export enum FileObjectType {
   UPDATE = "update",
   CERTIFICATE = "certificate",
   INVOICE = "invoice",
-
+  ARCHIVE = "archive",
   USER = "user",
 }
