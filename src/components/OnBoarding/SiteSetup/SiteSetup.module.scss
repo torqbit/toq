@@ -68,6 +68,7 @@
   .site__preview__container {
     padding-top: 20px;
     border-top: 2px solid var(--border-color);
+    overflow: hidden;
 
     .site__preview__titlebar {
       padding: 0px 10px;

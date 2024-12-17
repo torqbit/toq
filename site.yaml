@@ -20,13 +20,13 @@ site:
       discord: https://discord.gg/NserMXcx
       github: https://github.com/torqbit
       youtube: https://www.youtube.com/@torqbit
-    name: Torqbit
-    brandColor: "#747df0"
-    title: Making online education delightful and easy
+    name: Learn Online
+    brandColor: "#df54ac"
+    title: Making online fun and easy
     icon: /icon/torqbit.png
   darkMode: true
   heroSection:
-    title: Making online education delightful and easy
+    title: Making online education fun and easy
     description: >
       Torqbit, an open-source platform, serves as a learning management software
       that works for single person to largest educational institutions
@@ -44,22 +44,26 @@ site:
   sections:
     features:
       title: Our Features
-      description: Our educational platform is completely secure, robust and scales to millions of users, and always available, giving you the flexibility to learn from anywhere, anytime.
+      description: Our educational platform is completely secure, robust and scales to
+        millions of users, and always available, giving you the flexibility to
+        learn from anywhere, anytime.
       items:
         - img: /img/landing/auth.png
           title: Social Login
-          description: Login with any of the support networking platform like Google, Github or Facebook
+          description: Login with any of the support networking platform like Google,
+            Github or Facebook
           link: /docs/auth
         - img: /img/landing/laptop.png
           title: Portable
-          description: Access the course lessons and assignments from anywhere and from any device.
+          description: Access the course lessons and assignments from anywhere and from
+            any device.
           link: /docs/auth
         - img: /img/landing/event.png
           title: Events
-          description: Connect with the educator through offline or online events and workshops.
-
+          description: Connect with the educator through offline or online events and
+            workshops.
     courses:
-      enable: false
+      enable: true
       title: Courses list
       description: Courses description for alll
     blog:
