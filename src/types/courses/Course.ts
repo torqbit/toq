@@ -13,6 +13,7 @@ import {
   courseDifficultyType,
 } from "@prisma/client";
 import { APIResponse } from "../apis";
+import { IAssignmentSubmission } from "./assignment";
 
 export interface IHeroCoursePreview {
   courseName: string;
@@ -37,6 +38,7 @@ export interface IAssignmentDetail {
   assignmentId: number;
   content: string;
   assignmentFiles: string[];
+  submissionConfig: IAssignmentSubmission;
   name?: string;
   estimatedDuration: number;
 }

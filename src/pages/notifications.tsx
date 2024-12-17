@@ -132,8 +132,8 @@ const NotificationList: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) =>
       locale={{
         emptyText: (
           <div>
-            <EmptyNotification size="150px" {...getIconTheme(globalState.theme || "light", siteConfig.brand)} />
-            <p>No Notifications found</p>
+            <EmptyNotification size="300px" {...getIconTheme(globalState.theme || "light", siteConfig.brand)} />
+            <h4>No Notifications found</h4>
           </div>
         ),
       }}
@@ -189,7 +189,7 @@ const Dashboard: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   return (
     <AppLayout siteConfig={siteConfig}>
       <section className={styles.dashboard_content}>
-        <h3>Notification</h3>
+        <h3>Notifications</h3>
 
         <NotificationList siteConfig={siteConfig} />
       </section>

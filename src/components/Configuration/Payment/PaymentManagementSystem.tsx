@@ -1,18 +1,19 @@
 import { Button, Flex, Form, Input, message, Select, Steps, Tag } from "antd";
 import ConfigFormLayout from "../ConfigFormLayout";
 import ConfigForm from "../ConfigForm";
-import { useEffect, useState } from "react";
-import FormDisableOverlay from "../FormDisableOverlay";
+import { FC, useEffect, useState } from "react";
 import { $Enums } from "@prisma/client";
 import paymentsClient from "@/lib/admin/payments/payments-client";
 import { PaymentAuthConfig, PaymentInfoConfig } from "@/types/payment";
 import SvgIcons from "@/components/SvgIcons";
 
-const PaymentManagementSystem = () => {
+const PaymentManagementSystem: FC<{ active: boolean }> = ({ active }) => {
   const [paymentAuthForm] = Form.useForm();
   const [paymentInfoForm] = Form.useForm();
-  const paymentGateway = $Enums.gatewayProvider.CASHFREE;
+  const [verifyLoading, setVerifyLoading] = useState<boolean>(false);
+  const [saveLoading, setSaveLoading] = useState<boolean>(false);
 
+  const paymentGateway = $Enums.gatewayProvider.CASHFREE;
   const [messageApi, contextHolder] = message.useMessage();
   const [current, setCurrent] = useState<number>(0);
 
@@ -26,6 +27,7 @@ const PaymentManagementSystem = () => {
   ];
 
   const verifyPaymentAuth = () => {
+    setVerifyLoading(true);
     let data: PaymentAuthConfig = {
       ...paymentAuthForm.getFieldsValue(),
       gateway: paymentGateway,
@@ -36,15 +38,20 @@ const PaymentManagementSystem = () => {
     paymentsClient.verifyPaymentGateway(
       data,
       (response) => {
+        setVerifyLoading(false);
+
         messageApi.success(response.message);
       },
       (error) => {
+        setVerifyLoading(false);
+
         messageApi.error(error);
       }
     );
   };
 
   const savePaymentConfiguration = () => {
+    setSaveLoading(true);
     let data: PaymentInfoConfig = {
       ...paymentInfoForm.getFieldsValue(),
       gateway: paymentGateway,
@@ -57,37 +64,41 @@ const PaymentManagementSystem = () => {
     paymentsClient.savePaymentGatewayConfig(
       data,
       (response) => {
+        setSaveLoading(false);
+
         messageApi.success(response.message);
       },
       (error) => {
+        setSaveLoading(false);
+
         messageApi.error(error);
       }
     );
   };
 
   useEffect(() => {
-    paymentsClient.getPaymentGatewayConfig(
-      paymentGateway,
-      (response) => {
-        messageApi.success(response.message);
-        if (response.body) {
+    active &&
+      paymentsClient.getPaymentGatewayConfig(
+        paymentGateway,
+        (response) => {
+          if (response.body) {
+          }
+          if (response.body && response.body.state == "AUTHENTICATED") {
+            setCurrent(1);
+          } else if (response.body && response.body.state == "PAYMENT_CONFIGURED") {
+            console.log(response.body.config);
+            setCurrent(2);
+            paymentInfoForm.setFieldsValue({
+              currency: response.body.config.currency,
+              paymentMethods: response.body.config.paymentMethods,
+            });
+          }
+        },
+        (error) => {
+          messageApi.error(error);
         }
-        if (response.body && response.body.state == "AUTHENTICATED") {
-          setCurrent(1);
-        } else if (response.body && response.body.state == "PAYMENT_CONFIGURED") {
-          console.log(response.body.config);
-          setCurrent(2);
-          paymentInfoForm.setFieldsValue({
-            currency: response.body.config.currency,
-            paymentMethods: response.body.config.paymentMethods,
-          });
-        }
-      },
-      (error) => {
-        messageApi.error(error);
-      }
-    );
-  }, []);
+      );
+  }, [active]);
 
   const paymentSecretItems = [
     {
@@ -183,7 +194,7 @@ const PaymentManagementSystem = () => {
                         </Flex>
                       </Tag>
                     ) : (
-                      <Button onClick={() => paymentAuthForm.submit()} type="primary">
+                      <Button loading={verifyLoading} onClick={() => paymentAuthForm.submit()} type="primary">
                         Connect
                       </Button>
                     )}
@@ -231,7 +242,7 @@ const PaymentManagementSystem = () => {
                       </Button>
                     }
 
-                    <Button onClick={() => paymentInfoForm.submit()} type="primary">
+                    <Button loading={saveLoading} onClick={() => paymentInfoForm.submit()} type="primary">
                       Save
                     </Button>
                   </Flex>

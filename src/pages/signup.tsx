@@ -26,6 +26,8 @@ const LoginPage: NextPage<{
   const router = useRouter();
   const [gitHubLoading, setGitHubLoading] = useState<boolean>(false);
   const [googleLoading, setGoogleLoading] = useState<boolean>(false);
+  const [signupLoading, setSignupLoading] = useState<boolean>(false);
+
   const [emailSignup, setSignupWithEmail] = useState(false);
   const [loginError, setLoginError] = React.useState("");
   const { data: session, status: sessionStatus } = useSession();
@@ -61,15 +63,20 @@ const LoginPage: NextPage<{
     return <SpinLoader />;
   }
   const handleSignup = () => {
+    setSignupLoading(true);
     console.log(signupForm.getFieldsValue());
 
     AuthService.signup(
       { ...signupForm.getFieldsValue() },
       (r) => {
+        setSignupLoading(false);
+
         messageApi.success(r.message);
         router.push("/login?provider=email");
       },
       (err) => {
+        setSignupLoading(false);
+
         console.log(`error: ${err}`);
         messageApi.error(err);
       }
@@ -133,6 +140,7 @@ const LoginPage: NextPage<{
                 onClick={() => {
                   signupForm.submit();
                 }}
+                loading={signupLoading}
                 type="primary"
                 className={styles.google_btn}
               >

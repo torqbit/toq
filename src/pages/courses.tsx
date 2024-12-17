@@ -1,12 +1,11 @@
 import type { GetServerSidePropsContext, NextPage } from "next";
 import styles from "@/styles/Dashboard.module.scss";
-import React, { useEffect, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { Course, Role } from "@prisma/client";
 import Courses from "@/components/Courses/Courses";
 import { Spin, message, Flex, Button } from "antd";
 
 import ProgramService from "@/services/ProgramService";
-import { LoadingOutlined } from "@ant-design/icons";
 import SpinLoader from "@/components/SpinLoader/SpinLoader";
 import AppLayout from "@/components/Layouts/AppLayout";
 import { getSiteConfig } from "@/services/getSiteConfig";
@@ -15,15 +14,51 @@ import { getCookieName } from "@/lib/utils";
 import { getToken } from "next-auth/jwt";
 import MarketingLayout from "@/components/Layouts/MarketingLayout";
 import DefaulttHero from "@/components/Marketing/DefaultHero/DefaultHero";
-import SvgIcons from "@/components/SvgIcons";
-import Link from "next/link";
+import SvgIcons, { EmptyCourses } from "@/components/SvgIcons";
 import { useRouter } from "next/router";
+import { getIconTheme } from "@/services/darkThemeConfig";
+import { useAppContext } from "@/components/ContextApi/AppContext";
+import { Theme } from "@/types/theme";
+
+const CoursesView: FC<{
+  courses: Course[];
+  role: Role;
+  siteConfig: PageSiteConfig;
+  currentTheme: Theme;
+  handleCourseCreate: () => void;
+}> = ({ courses, role, currentTheme, siteConfig, handleCourseCreate }) => {
+  return (
+    <>
+      {courses.filter((c) => c.state === "ACTIVE").length > 0 ? (
+        <Courses allCourses={courses.filter((c) => c.state === "ACTIVE")} userRole={role} />
+      ) : (
+        <>
+          <div className={styles.no_course_found}>
+            <EmptyCourses size="300px" {...getIconTheme(currentTheme, siteConfig.brand)} />
+            <h4 style={{ marginBottom: 20 }}>No Courses were found</h4>
+            {role === Role.ADMIN && courses.length === 0 && (
+              <Button onClick={handleCourseCreate} type="primary">
+                <Flex align="center" gap={10}>
+                  <span>Add Course</span>
+                  <i style={{ lineHeight: 0 }}>{SvgIcons.arrowRight}</i>
+                </Flex>
+              </Button>
+            )}
+          </div>
+        </>
+      )}
+    </>
+  );
+};
 
 const CoursesPage: NextPage<{ siteConfig: PageSiteConfig; userRole: Role }> = ({ siteConfig, userRole }) => {
   const [allCourses, setAllCourses] = useState<Course[] | undefined>([]);
   const [messageApi, contextMessageHolder] = message.useMessage();
   const [loading, setLoading] = useState<boolean>(false);
+  const [courseLoading, setCourseLoading] = useState<boolean>(false);
+
   const router = useRouter();
+  const { globalState } = useAppContext();
 
   useEffect(() => {
     setLoading(true);
@@ -41,13 +76,18 @@ const CoursesPage: NextPage<{ siteConfig: PageSiteConfig; userRole: Role }> = ({
   }, []);
 
   const addCourse = () => {
+    setCourseLoading(true);
     ProgramService.createDraftCourses(
       undefined,
       (result) => {
+        setCourseLoading(false);
+
         messageApi.success(result.message);
         router.push(`/admin/content/course/${result.getCourse.courseId}/edit`);
       },
       (error) => {
+        setCourseLoading(false);
+
         messageApi.error(error);
       }
     );
@@ -61,30 +101,23 @@ const CoursesPage: NextPage<{ siteConfig: PageSiteConfig; userRole: Role }> = ({
           <section>
             <Flex align="center" justify="space-between" className={styles.courseContainer}>
               <h3>Courses</h3>
-              {userRole !== Role.STUDENT && (
-                <Button onClick={addCourse} type="primary">
+              {userRole === Role.ADMIN && allCourses && allCourses.length > 0 && (
+                <Button loading={courseLoading} onClick={addCourse} type="primary">
                   <Flex align="center" gap={10}>
-                    {" "}
                     <span>Add Course</span>
                     <i style={{ lineHeight: 0 }}>{SvgIcons.arrowRight}</i>
                   </Flex>
                 </Button>
               )}
             </Flex>
-            {!loading ? (
-              <>
-                {allCourses && allCourses.filter((c) => c.state === "ACTIVE").length > 0 ? (
-                  <Courses allCourses={allCourses.filter((c) => c.state === "ACTIVE")} userRole={userRole} />
-                ) : (
-                  <>
-                    <div className={styles.no_course_found}>
-                      <img src="/img/common/empty.svg" alt="" />
-                      <h2>No Courses were found</h2>
-                      <p>Contact support team for more information.</p>
-                    </div>
-                  </>
-                )}
-              </>
+            {!loading && allCourses ? (
+              <CoursesView
+                courses={allCourses}
+                role={userRole}
+                currentTheme={globalState.theme || "light"}
+                handleCourseCreate={addCourse}
+                siteConfig={siteConfig}
+              />
             ) : (
               <SpinLoader className="course__spinner" />
             )}
@@ -97,20 +130,14 @@ const CoursesPage: NextPage<{ siteConfig: PageSiteConfig; userRole: Role }> = ({
         >
           {contextMessageHolder}
           <section>
-            {!loading ? (
-              <>
-                {allCourses && allCourses.filter((c) => c.state === "ACTIVE").length > 0 ? (
-                  <Courses allCourses={allCourses.filter((c) => c.state === "ACTIVE")} userRole={userRole} />
-                ) : (
-                  <>
-                    <div className={styles.no_course_found}>
-                      <img src="/img/common/empty.svg" alt="" />
-                      <h2>No Courses were found</h2>
-                      <p>Contact support team for more information.</p>
-                    </div>
-                  </>
-                )}
-              </>
+            {!loading && allCourses ? (
+              <CoursesView
+                courses={allCourses}
+                role={userRole}
+                currentTheme={globalState.theme || "light"}
+                handleCourseCreate={addCourse}
+                siteConfig={siteConfig}
+              />
             ) : (
               <SpinLoader className="course__spinner" />
             )}
