@@ -10,6 +10,9 @@ import SvgIcons from "@/components/SvgIcons";
 const PaymentManagementSystem: FC<{ active: boolean }> = ({ active }) => {
   const [paymentAuthForm] = Form.useForm();
   const [paymentInfoForm] = Form.useForm();
+  const [verifyLoading, setVerifyLoading] = useState<boolean>(false);
+  const [saveLoading, setSaveLoading] = useState<boolean>(false);
+
   const paymentGateway = $Enums.gatewayProvider.CASHFREE;
   const [messageApi, contextHolder] = message.useMessage();
   const [current, setCurrent] = useState<number>(0);
@@ -24,6 +27,7 @@ const PaymentManagementSystem: FC<{ active: boolean }> = ({ active }) => {
   ];
 
   const verifyPaymentAuth = () => {
+    setVerifyLoading(true);
     let data: PaymentAuthConfig = {
       ...paymentAuthForm.getFieldsValue(),
       gateway: paymentGateway,
@@ -34,15 +38,20 @@ const PaymentManagementSystem: FC<{ active: boolean }> = ({ active }) => {
     paymentsClient.verifyPaymentGateway(
       data,
       (response) => {
+        setVerifyLoading(false);
+
         messageApi.success(response.message);
       },
       (error) => {
+        setVerifyLoading(false);
+
         messageApi.error(error);
       }
     );
   };
 
   const savePaymentConfiguration = () => {
+    setSaveLoading(true);
     let data: PaymentInfoConfig = {
       ...paymentInfoForm.getFieldsValue(),
       gateway: paymentGateway,
@@ -55,9 +64,13 @@ const PaymentManagementSystem: FC<{ active: boolean }> = ({ active }) => {
     paymentsClient.savePaymentGatewayConfig(
       data,
       (response) => {
+        setSaveLoading(false);
+
         messageApi.success(response.message);
       },
       (error) => {
+        setSaveLoading(false);
+
         messageApi.error(error);
       }
     );
@@ -181,7 +194,7 @@ const PaymentManagementSystem: FC<{ active: boolean }> = ({ active }) => {
                         </Flex>
                       </Tag>
                     ) : (
-                      <Button onClick={() => paymentAuthForm.submit()} type="primary">
+                      <Button loading={verifyLoading} onClick={() => paymentAuthForm.submit()} type="primary">
                         Connect
                       </Button>
                     )}
@@ -229,7 +242,7 @@ const PaymentManagementSystem: FC<{ active: boolean }> = ({ active }) => {
                       </Button>
                     }
 
-                    <Button onClick={() => paymentInfoForm.submit()} type="primary">
+                    <Button loading={saveLoading} onClick={() => paymentInfoForm.submit()} type="primary">
                       Save
                     </Button>
                   </Flex>

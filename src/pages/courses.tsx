@@ -55,6 +55,8 @@ const CoursesPage: NextPage<{ siteConfig: PageSiteConfig; userRole: Role }> = ({
   const [allCourses, setAllCourses] = useState<Course[] | undefined>([]);
   const [messageApi, contextMessageHolder] = message.useMessage();
   const [loading, setLoading] = useState<boolean>(false);
+  const [courseLoading, setCourseLoading] = useState<boolean>(false);
+
   const router = useRouter();
   const { globalState } = useAppContext();
 
@@ -74,13 +76,18 @@ const CoursesPage: NextPage<{ siteConfig: PageSiteConfig; userRole: Role }> = ({
   }, []);
 
   const addCourse = () => {
+    setCourseLoading(true);
     ProgramService.createDraftCourses(
       undefined,
       (result) => {
+        setCourseLoading(false);
+
         messageApi.success(result.message);
         router.push(`/admin/content/course/${result.getCourse.courseId}/edit`);
       },
       (error) => {
+        setCourseLoading(false);
+
         messageApi.error(error);
       }
     );
@@ -95,7 +102,7 @@ const CoursesPage: NextPage<{ siteConfig: PageSiteConfig; userRole: Role }> = ({
             <Flex align="center" justify="space-between" className={styles.courseContainer}>
               <h3>Courses</h3>
               {userRole === Role.ADMIN && allCourses && allCourses.length > 0 && (
-                <Button onClick={addCourse} type="primary">
+                <Button loading={courseLoading} onClick={addCourse} type="primary">
                   <Flex align="center" gap={10}>
                     <span>Add Course</span>
                     <i style={{ lineHeight: 0 }}>{SvgIcons.arrowRight}</i>

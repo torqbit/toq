@@ -25,9 +25,11 @@ const Blogs: FC<IBlogInfo> = ({ blogList, title, description, previewMode }) => 
           <div>
             <h2>{title}</h2>
           </div>
-          <Button type="link">
-            View all <i>{SvgIcons.arrowRight}</i>
-          </Button>
+          {blogList.length > 3 && (
+            <Button type="link">
+              View all <i>{SvgIcons.arrowRight}</i>
+            </Button>
+          )}
         </div>
         <p>{description}</p>
 
