@@ -66,38 +66,50 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   let cookieName = getCookieName();
   const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
 
-  if (user && params) {
-    const isCompleted = await prisma?.courseRegistration.findUnique({
+  if (user && params?.slug && typeof params.slug === "string") {
+    const findCourse = await prisma.course.findUnique({
       where: {
-        studentId_courseId: {
-          studentId: user.id,
-          courseId: Number(params.courseId),
-        },
+        slug: params.slug,
       },
       select: {
-        courseState: true,
-        course: {
-          select: {
-            name: true,
-          },
-        },
+        courseId: true,
+        name: true,
       },
     });
-
-    if (isCompleted?.courseState !== "COMPLETED") {
-      return {
-        redirect: {
-          permanent: false,
-          message: "you are not enrolled in this course",
-          destination: "/unauthorized",
+    if (findCourse) {
+      const isCompleted = await prisma?.courseRegistration.findUnique({
+        where: {
+          studentId_courseId: {
+            studentId: user.id,
+            courseId: Number(findCourse?.courseId),
+          },
         },
-      };
+        select: {
+          courseState: true,
+        },
+      });
+
+      if (isCompleted?.courseState !== "COMPLETED") {
+        return {
+          redirect: {
+            permanent: false,
+            message: "you are not enrolled in this course",
+            destination: "/unauthorized",
+          },
+        };
+      } else {
+        return {
+          props: {
+            siteConfig: site,
+            courseName: findCourse?.name,
+            userName: user.name,
+          },
+        };
+      }
     } else {
       return {
         props: {
           siteConfig: site,
-          courseName: isCompleted.course.name,
-          userName: user.name,
         },
       };
     }

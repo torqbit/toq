@@ -25,7 +25,6 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
       const arrayBuffer = getFile.body;
 
       const buffer = Buffer.from(arrayBuffer);
-      console.log(buffer);
 
       res.setHeader("Content-Type", "application/pdf");
       res.setHeader("Content-Disposition", `inline; `);

@@ -188,7 +188,7 @@ export class CashfreePaymentProvider implements PaymentServiceProvider {
         order_expiry_time: sessionExpiry.toISOString(),
       };
 
-      const paymentData = await Cashfree.PGCreateOrder(appConstant.payment.version, request)
+      const paymentData = await Cashfree.PGCreateOrder(this.apiVersion, request)
         .then(async (response: any) => {
           let a = response.data;
 
@@ -225,6 +225,7 @@ export class CashfreePaymentProvider implements PaymentServiceProvider {
           } as PaymentApiResponse;
         })
         .catch(async (error: any) => {
+          console.log(error, "error on cashfree");
           const orderDetail = await prisma.order.update({
             where: {
               id: orderId,
@@ -278,6 +279,7 @@ export class CashfreePaymentProvider implements PaymentServiceProvider {
     orderId: string
   ): Promise<PaymentApiResponse> {
     let currentTime = new Date();
+    console.log(orderId, "d");
     const orderDetail = await prisma.order.findUnique({
       where: {
         id: orderId,
@@ -286,7 +288,7 @@ export class CashfreePaymentProvider implements PaymentServiceProvider {
         latestStatus: true,
       },
     });
-
+    console.log(orderDetail, "odere");
     if (orderDetail?.latestStatus === $Enums.paymentStatus.PENDING) {
       let latestCashfreeOrder = await prisma.cashfreeOrder.findFirst({
         where: {

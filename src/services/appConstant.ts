@@ -140,7 +140,7 @@ export default {
   payment: {
     lockoutMinutes: 30 * 1000,
     sessionExpiryDuration: 24 * 60 * 60 * 1000,
-    version: "2022-09-01",
+
     taxRate: 18,
   },
 
