@@ -181,7 +181,7 @@ export class CashfreePaymentProvider implements PaymentServiceProvider {
         },
         order_meta: {
           return_url: `${process.env.NEXTAUTH_URL}/courses/${courseConfig.slug}?callback=payment`,
-          notify_url: `${process.env.NEXTAUTH_URL}/api/v1/course/payment/cashfree/webhook`,
+          notify_url: `https://dfaf-2401-4900-8836-634d-7008-3e4c-7f04-868e.ngrok-free.app/api/v1/course/payment/cashfree/webhook`,
           payment_methods: "upi, nb, cc, dc,app",
         },
         order_note: "",
@@ -225,6 +225,7 @@ export class CashfreePaymentProvider implements PaymentServiceProvider {
           } as PaymentApiResponse;
         })
         .catch(async (error: any) => {
+          console.log(error, "error on cashfree");
           const orderDetail = await prisma.order.update({
             where: {
               id: orderId,
@@ -278,6 +279,7 @@ export class CashfreePaymentProvider implements PaymentServiceProvider {
     orderId: string
   ): Promise<PaymentApiResponse> {
     let currentTime = new Date();
+    console.log(orderId, "d");
     const orderDetail = await prisma.order.findUnique({
       where: {
         id: orderId,
@@ -286,7 +288,7 @@ export class CashfreePaymentProvider implements PaymentServiceProvider {
         latestStatus: true,
       },
     });
-
+    console.log(orderDetail, "odere");
     if (orderDetail?.latestStatus === $Enums.paymentStatus.PENDING) {
       let latestCashfreeOrder = await prisma.cashfreeOrder.findFirst({
         where: {
