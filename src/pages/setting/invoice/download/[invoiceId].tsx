@@ -1,51 +1,42 @@
-import { getCookieName } from "@/lib/utils";
-import { GetServerSidePropsContext } from "next";
-import { getToken } from "next-auth/jwt";
-import {} from "next/router";
-import { FC } from "react";
+import { GetServerSidePropsContext, NextPage } from "next";
 import prisma from "@/lib/prisma";
+import { downloadPrivateFile } from "@/actions/downloadPrivateFile";
 
-const DownloadInvoice: FC<{ pdfPath: string }> = ({ pdfPath }) => {
-  return (
-    <section style={{ height: "100vh" }}>
-      <object data={pdfPath} type="application/pdf" width="100%" height="100%"></object>
-    </section>
-  );
-};
+const DownloadInvoice = () => null;
 
 export default DownloadInvoice;
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const { req } = ctx;
-  const params = ctx?.params;
-  let cookieName = getCookieName();
-  const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
+  const { req, res } = ctx;
 
-  if (user && params) {
-    const isInvoice = await prisma?.invoice.findUnique({
-      where: {
-        id: Number(params.invoiceId),
-      },
-      select: {
-        pdfPath: true,
-      },
-    });
+  const params = ctx?.query;
 
-    if (!isInvoice) {
+  const invoice = await prisma.invoice.findUnique({
+    where: {
+      id: Number(params.invoiceId),
+    },
+    select: {
+      pdfPath: true,
+    },
+  });
+
+  if (invoice?.pdfPath) {
+    const getFile = await downloadPrivateFile(invoice.pdfPath);
+
+    if (getFile.body) {
+      const arrayBuffer = getFile.body;
+
+      const buffer = Buffer.from(arrayBuffer);
+
+      res.setHeader("Content-Type", "application/pdf");
+      res.setHeader("Content-Disposition", `inline;`);
+
+      res.write(buffer);
+      res.end();
+
       return {
-        redirect: {
-          permanent: false,
-          message: "No invoice found",
-          destination: "/unauthorized",
-        },
-      };
-    } else {
-      return {
-        props: {
-          pdfPath: isInvoice.pdfPath,
-        },
+        props: {},
       };
     }
   }
-  return { props: {} };
 };

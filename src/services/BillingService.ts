@@ -8,6 +8,7 @@ import { createTempDir } from "@/actions/checkTempDirExist";
 import { ContentManagementService } from "./cms/ContentManagementService";
 import { FileObjectType } from "@/types/cms/common";
 import { APIResponse } from "@/types/apis";
+import os from "os";
 
 const fs = require("fs");
 const PDFDocument = require("pdfkit");
@@ -135,49 +136,52 @@ export class BillingService {
       };
     }
 
-    if (createTempDir(process.env.MEDIA_UPLOAD_PATH, appConstant.invoiceTempDir)) {
-      const amountDetail = calculateGst(Number(invoice.totalAmount), invoice.businessInfo.taxRate);
-      generateHeader(invoice);
-      generateBillTo(invoice);
-      generateCustomerInformation(invoice);
-      generateInvoiceTable(invoice);
-      if (invoice.businessInfo.taxIncluded) {
-        generatePriceSummary(
-          350,
-          "left",
-          "#666",
-          `Subtotal in ${invoice.currency}`,
-          `Integrated GST (${invoice.businessInfo.taxRate}%)`,
-          `Total in ${invoice.currency}`
-        );
+    const homeDir = os.homedir();
+    const dirPath = path.join(homeDir, `${appConstant.homeDirName}/${appConstant.staticFileDirName}`);
 
-        generatePriceSummary(
-          500,
-          "left",
-          "#000",
-          `${amountDetail.subtotal}`,
-          `${amountDetail.gstAmount}`,
-          `${invoice.totalAmount.toFixed(2)}`
-        );
-      }
-      return new Promise<string>((resolve, reject) => {
-        const outputStream = doc.pipe(fs.createWriteStream(savePath));
-
-        outputStream.on("error", (error: any) => {
-          reject(`Error writing file: ${error.message}`);
-        });
-
-        outputStream.on("finish", () => {
-          resolve(savePath);
-        });
-
-        doc.end(); // End the document after piping to the output stream
-      });
-    } else {
-      return new Promise<string>((resolve, reject) => {
-        reject("Directory not found");
+    if (!fs.existsSync(dirPath)) {
+      fs.mkdirSync(dirPath, {
+        recursive: true,
       });
     }
+
+    const amountDetail = calculateGst(Number(invoice.totalAmount), invoice.businessInfo.taxRate);
+    generateHeader(invoice);
+    generateBillTo(invoice);
+    generateCustomerInformation(invoice);
+    generateInvoiceTable(invoice);
+    if (invoice.businessInfo.taxIncluded) {
+      generatePriceSummary(
+        350,
+        "left",
+        "#666",
+        `Subtotal in ${invoice.currency}`,
+        `Integrated GST (${invoice.businessInfo.taxRate}%)`,
+        `Total in ${invoice.currency}`
+      );
+
+      generatePriceSummary(
+        500,
+        "left",
+        "#000",
+        `${amountDetail.subtotal}`,
+        `${amountDetail.gstAmount}`,
+        `${invoice.totalAmount.toFixed(2)}`
+      );
+    }
+    return new Promise<string>((resolve, reject) => {
+      const outputStream = doc.pipe(fs.createWriteStream(savePath));
+
+      outputStream.on("error", (error: any) => {
+        reject(`Error writing file: ${error.message}`);
+      });
+
+      outputStream.on("finish", () => {
+        resolve(savePath);
+      });
+
+      doc.end(); // End the document after piping to the output stream
+    });
   }
 
   async mailInvoice(pdfPath: string, invoice: InvoiceData) {
