@@ -83,8 +83,8 @@ const AddAssignment: FC<{
         break;
 
       case SubmissionType.PROGRAMMING_PROJECT: {
-        const { projectFramework, archiveUrl } = assignmentForm.getFieldsValue();
-        setArchiveUrl(archiveUrl);
+        const { projectFramework, archiveUrl: projectArchiveUrl } = assignmentForm.getFieldsValue();
+        setArchiveUrl(projectArchiveUrl);
         progAssignment = {
           ...baseAssignment,
           framework: projectFramework,
@@ -349,7 +349,6 @@ const AddAssignment: FC<{
               name="archiveUrl"
               valuePropName="archiveUrl"
               getValueFromEvent={normFile}
-              required
             >
               <Dragger {...props}>
                 <p className="ant-upload-drag-icon">
