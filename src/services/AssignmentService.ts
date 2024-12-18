@@ -1,4 +1,4 @@
-import { Assignment, AssignmentSubmission, submissionStatus, SubmissionType } from "@prisma/client";
+import { Assignment, AssignmentSubmission, submissionStatus } from "@prisma/client";
 import { getDelete, getFetch, postFetch } from "./request";
 import { IAssignmentDetail } from "@/types/courses/Course";
 import { IAssignmentSubmission } from "@/types/courses/assignment";
@@ -112,7 +112,6 @@ class AssignmentSerivce {
       title?: string;
       assignmentFiles?: string[];
       submissionConfig: IAssignmentSubmission;
-      submissionType: SubmissionType;
       isEdit: boolean;
       estimatedDuration: number;
     },
@@ -251,6 +250,26 @@ class AssignmentSerivce {
     onFailure: (message: string) => void
   ) => {
     getDelete(`/api/v1/resource/assignment/delete?assignment=${assignmentId}`).then((result) => {
+      if (result.status == 200) {
+        result.json().then((r) => {
+          const apiResponse = r as ApiResponse;
+          onSuccess(apiResponse);
+        });
+      } else {
+        result.json().then((r) => {
+          const failedResponse = r as FailedApiResponse;
+          onFailure(failedResponse.error);
+        });
+      }
+    });
+  };
+
+  deleteAssignmentArchive = (
+    archiveUrl: string,
+    onSuccess: (response: ApiResponse) => void,
+    onFailure: (message: string) => void
+  ) => {
+    getDelete(`/api/v1/resource/assignment/archive/delete?archiveUrl=${archiveUrl}`).then((result) => {
       if (result.status == 200) {
         result.json().then((r) => {
           const apiResponse = r as ApiResponse;

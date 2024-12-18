@@ -22,6 +22,7 @@ export enum SubmissionType {
   PROGRAMMING_PROJECT = "PROGRAMMING_PROJECT",
   TEXT = "TEXT",
   URL = "URL",
+  FILE = "FILE",
 }
 
 export enum ProjectFramework {
@@ -29,6 +30,8 @@ export enum ProjectFramework {
   REACTJS = "REACTJS",
   NEXT_APP = "NEXT_APP",
 }
+
+export type DocumentExtension = "pdf" | "doc" | "docx" | "xls" | "xlsx" | "ppt" | "pptx" | "txt" | "rtf" | "odt";
 
 export interface IAssignmentSubmission {
   _type: SubmissionType;
@@ -47,8 +50,8 @@ export interface IProgrammingProjectSubmission extends IAssignmentSubmission {
 export interface ITextSubmissionContent extends IAssignmentSubmission {
   text: string;
 }
-
-export interface IUrlSubmission extends IAssignmentSubmission {
-  service: string;
-  url: string;
+export interface IFileSubmission extends IAssignmentSubmission {
+  fileExts: DocumentExtension;
 }
+
+export interface IUrlSubmission extends IAssignmentSubmission {}

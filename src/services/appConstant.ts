@@ -5,6 +5,32 @@ export default {
   courseTags: ["HTML", "CSS", "JS", "ReactJS"],
   assignmentLang: ["html", "css", "javascript", "java", "python", "go", "nodejs", "reactjs"],
   assignmentFiles: ["index.html", "global.css", "index.js", , "index.ts", "index.tsx", "index.jsx"],
+  documentExtensions: [
+    { value: "pdf", label: "PDF" },
+    { value: "doc", label: "Word" },
+    { value: "docx", label: "Word (DOCX)" },
+    { value: "xls", label: "Excel" },
+    { value: "xlsx", label: "Excel (XLSX)" },
+    { value: "ppt", label: "PowerPoint" },
+    { value: "pptx", label: "PowerPoint (PPTX)" },
+    { value: "txt", label: "Text" },
+    { value: "rtf", label: "RTF" },
+    { value: "odt", label: "OpenDoc" },
+  ],
+  projectFramework: [
+    {
+      label: "Static Web",
+      value: "STATIC_WEB",
+    },
+    {
+      label: "ReactJS",
+      value: "REACTJS",
+    },
+    {
+      label: "Next App",
+      value: "NEXT_APP",
+    },
+  ],
   submissionTypes: [
     {
       label: "Programming Language",
