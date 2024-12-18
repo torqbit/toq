@@ -18,8 +18,19 @@ const Curriculum: FC<{
   handleEditChapter: (chapterId: number) => void;
   deleteRes: (id: number) => void;
   onSave: (value: string) => void;
-}> = ({ onSave, chapters, onRefresh, handleNewChapter, onAddResource, handleEditChapter, deleteRes, onEditResource, onDiscard }) => {
+}> = ({
+  onSave,
+  chapters,
+  onRefresh,
+  handleNewChapter,
+  onAddResource,
+  handleEditChapter,
+  deleteRes,
+  onEditResource,
+  onDiscard,
+}) => {
   const [collapse, setCollapse] = useState<boolean>(false);
+
   const [messageApi, contextHolder] = message.useMessage();
 
   const updateChapterState = (id: number, state: string) => {
@@ -60,6 +71,21 @@ const Curriculum: FC<{
       }
     );
   };
+  const onChange = (key: string | string[]) => {
+    if (typeof key === "string" && activeCollapseKey.includes(key)) {
+      let activeKeys = activeCollapseKey;
+
+      setActiveCollapseKey(activeKeys.filter((item) => item !== key));
+    } else {
+      typeof key === "string" && setActiveCollapseKey([key]);
+    }
+
+    if (key.length === items.length) {
+      setCollapse(false);
+    } else if (key.length === 0) {
+      setCollapse(true);
+    }
+  };
 
   const items = chapters.map((content, i) => {
     return {
@@ -68,10 +94,12 @@ const Curriculum: FC<{
         <ChapterLabel
           title={content.name}
           icon={SvgIcons.folder}
+          keyValue={`${i + 1}`}
           deleteItem={deleteChapter}
           onEditChapter={handleEditChapter}
           updateState={updateChapterState}
           onAddResource={onAddResource}
+          onChange={onChange}
           id={content.chapterId}
           state={content.state === "ACTIVE" ? "Published" : "Draft"}
         />
@@ -89,25 +117,16 @@ const Curriculum: FC<{
         </>
       ),
 
-      showArrow: false,
+      showArrow: true,
     };
   });
   const [activeCollapseKey, setActiveCollapseKey] = useState<string[]>(items.map((item, i) => `${i + 1}`));
-
-  const onChange = (key: string | string[]) => {
-    setActiveCollapseKey(key as string[]);
-    if (key.length === items.length) {
-      setCollapse(false);
-    } else if (key.length === 0) {
-      setCollapse(true);
-    }
-  };
 
   return (
     <section className={styles.curriculum}>
       {contextHolder}
       <div className={styles.curriculum_container}>
-        <Flex justify='space-between' align='center'>
+        <Flex justify="space-between" align="center">
           <h1>Curriculum</h1>
 
           {chapters.length > 0 && (
@@ -116,18 +135,20 @@ const Curriculum: FC<{
                 title={`Delete this course`}
                 description={`Are you sure to delete this entire course?`}
                 onConfirm={() => onDiscard()}
-                okText='Yes'
-                cancelText='No'>
+                okText="Yes"
+                cancelText="No"
+              >
                 <Button>Discard</Button>
               </Popconfirm>
 
               <Button
-                type='primary'
+                type="primary"
                 onClick={() => {
                   onRefresh();
                   onSave("3");
-                }}>
-                Save Curriculum <img style={{ marginLeft: 5 }} src='/img/program/arrow-right.png' alt='arrow' />
+                }}
+              >
+                Save Curriculum <img style={{ marginLeft: 5 }} src="/img/program/arrow-right.png" alt="arrow" />
               </Button>
             </Space>
           )}
@@ -135,14 +156,15 @@ const Curriculum: FC<{
       </div>
       <div>
         {chapters.length > 0 && (
-          <Flex justify='space-between' align='center'>
+          <Flex justify="space-between" align="center">
             <h4>{chapters.length ? chapters.length : 0} Chapters</h4>
             <Space>
               <Button
                 className={styles.add_btn}
                 onClick={() => {
                   handleNewChapter();
-                }}>
+                }}
+              >
                 {SvgIcons.plusBtn}
                 <div> Add Chapter</div>
               </Button>
@@ -152,13 +174,14 @@ const Curriculum: FC<{
                 onClick={() => {
                   collapse ? setActiveCollapseKey(items.map((item, i) => `${i + 1}`)) : setActiveCollapseKey([]);
                   setCollapse(!collapse);
-                }}>
+                }}
+              >
                 {!collapse ? (
-                  <Flex align='center' justify='center' gap={10}>
+                  <Flex align="center" justify="center" gap={10}>
                     {SvgIcons.barUpIcon} Collapse All
                   </Flex>
                 ) : (
-                  <Flex align='center' justify='center' gap={10}>
+                  <Flex align="center" justify="center" gap={10}>
                     {SvgIcons.barsArrowDown} Expand all
                   </Flex>
                 )}
@@ -171,8 +194,9 @@ const Curriculum: FC<{
         <div className={styles.chapter_list}>
           <Collapse
             destroyInactivePanel
+            collapsible={"icon"}
             onChange={onChange}
-            size='small'
+            size="small"
             activeKey={activeCollapseKey}
             accordion={false}
             items={items.map((item, i) => {
@@ -187,10 +211,10 @@ const Curriculum: FC<{
         </div>
       ) : (
         <div className={styles.no_chapter_btn}>
-          <img src='/img/common/empty.svg' alt='' />
+          <img src="/img/common/empty.svg" alt="" />
           <h4>No chapters were found</h4>
           <p>Start creating chapters and lessons to build your course curriculum</p>
-          <Button onClick={() => handleNewChapter()} type='primary'>
+          <Button onClick={() => handleNewChapter()} type="primary">
             Add Chapter
           </Button>
         </div>

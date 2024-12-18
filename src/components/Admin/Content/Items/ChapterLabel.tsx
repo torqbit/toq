@@ -7,23 +7,23 @@ import { FC, ReactNode } from "react";
 const ChapterLabel: FC<{
   title: string;
   id: number;
-
+  onChange: (key: string | string[]) => void;
   onAddResource: (id: number, content: ResourceContentType) => void;
   onEditChapter: (id: number, content: ResourceContentType) => void;
   icon: ReactNode;
   state: string;
   updateState: (id: number, state: string) => void;
   contentType?: ResourceContentType;
-
+  keyValue: string;
   deleteItem: (id: number) => void;
 }> = ({
   title,
-
+  onChange,
   onEditChapter,
   icon,
   onAddResource,
   state,
-
+  keyValue,
   deleteItem,
   id,
   updateState,
@@ -58,10 +58,10 @@ const ChapterLabel: FC<{
   return (
     <div className={styles.labelContainer}>
       <Flex justify="space-between" align="center">
-        <div>
-          <Flex gap={10} align="center">
+        <div style={{ cursor: "pointer" }}>
+          <Flex gap={10} align="center" onClick={() => onChange(keyValue)}>
             {icon}
-            <div style={{ cursor: "pointer" }}> {title}</div>
+            <div> {title}</div>
           </Flex>
         </div>
         <div>
