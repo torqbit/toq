@@ -59,6 +59,7 @@ const AddAssignment: FC<{
   onDeleteResource,
 }) => {
   const [assignmentForm] = Form.useForm();
+  const [loading, setLoading] = useState<boolean>(false);
   const [editorValue, setDefaultValue] = useState<string>();
   const [submissionType, setSubmissionType] = useState<SubmissionType>();
   const [programmingLang, setProgrammingLang] = useState<string>("");
@@ -68,6 +69,7 @@ const AddAssignment: FC<{
   const handleAssignment = () => {
     if (!archiveUrl) return message.error("Please upload starter project template");
     if (!submissionType) return message.error("Please select assignment type");
+      setLoading(true);
     let progAssignment: IAssignmentSubmission;
 
     // Base object with `_type` for all cases
@@ -133,11 +135,14 @@ const AddAssignment: FC<{
       (result) => {
         onClose(false);
         message.success(result.message);
+        setLoading(false);
       },
       (error) => {
+        setLoading(false);
         message.error(error);
       }
     );
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -266,7 +271,7 @@ const AddAssignment: FC<{
       open={showResourceDrawer}
       footer={
         <Space className={styles.footerBtn}>
-          <Button onClick={() => assignmentForm.submit()} type="primary">
+          <Button loading={loading} onClick={() => assignmentForm.submit()} type="primary">
             {isEdit ? "Update" : "Save Lesson"}
           </Button>
           <Button

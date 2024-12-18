@@ -26,6 +26,8 @@ const LoginPage: NextPage<{
   const router = useRouter();
   const [gitHubLoading, setGitHubLoading] = useState<boolean>(false);
   const [googleLoading, setGoogleLoading] = useState<boolean>(false);
+  const [loginLoading, setLoginLoading] = useState<boolean>(false);
+
   const [loading, setLoginProgress] = useState<{ provider?: string }>();
   const [emailLogin, setLoginWithEmail] = useState(router.query.provider == "email");
   const [loginError, setLoginError] = React.useState("");
@@ -65,6 +67,7 @@ const LoginPage: NextPage<{
   }
 
   const handleLogin = async () => {
+    setLoginLoading(true);
     signIn("credentials", {
       callbackUrl: "/",
       redirect: false,
@@ -73,8 +76,12 @@ const LoginPage: NextPage<{
     }).then(async (response) => {
       console.log(response);
       if (response && !response.ok) {
+        setLoginLoading(false);
+
         messageApi.error(response.error);
       } else if (response && response.ok && response.url) {
+        setLoginLoading(false);
+
         messageApi.loading(`You will be redirected to the platform`);
         router.push(`/login/redirect?redirect=${router.query.redirect}`);
       }
@@ -129,6 +136,7 @@ const LoginPage: NextPage<{
                 <Input.Password placeholder="Enter your password" style={{ height: 40, background: "transparent" }} />
               </Form.Item>
               <Button
+                loading={loginLoading}
                 onClick={() => {
                   loginForm.submit();
                 }}

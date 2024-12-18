@@ -5,6 +5,15 @@ import { withMethods } from "@/lib/api-middlewares/with-method";
 import { withUserAuthorized } from "@/lib/api-middlewares/with-authorized";
 import { createSlug, getCookieName } from "@/lib/utils";
 import { getToken } from "next-auth/jwt";
+import { APIResponse } from "@/types/apis";
+import { uploadThumbnail } from "@/actions/courses";
+import { FileObjectType } from "@/types/cms/common";
+import { readFieldWithFile } from "@/lib/upload/utils";
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
@@ -15,26 +24,51 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       secret: process.env.NEXT_PUBLIC_SECRET,
       cookieName,
     });
-    const body = await req.body;
-    const { contentType } = body;
+    const { fields, files } = (await readFieldWithFile(req)) as any;
 
-    const createBlog = await prisma.blog.create({
+    const body = JSON.parse(fields.blog[0]);
+    const { title, banner, state, content, blogId, contentType } = body;
+
+    const slug = title && createSlug(title);
+
+    let response: APIResponse<any>;
+    let thumbnail;
+
+    if (files.file) {
+      response = await uploadThumbnail(
+        files.file[0],
+        body.slug,
+        contentType === "UPDATE" ? FileObjectType.UPDATE : FileObjectType.BLOG,
+        "banner",
+        banner
+      );
+      if (response.success) {
+        thumbnail = response.body;
+      } else {
+        return res.status(response.status).json(response);
+      }
+    }
+
+    const updateBlog = await prisma.blog.create({
       data: {
+        title,
         authorId: String(token?.id),
-        state: "DRAFT",
-        banner: "",
-        slug: "",
-        content: "",
-        title: "Untitled",
-        contentType: String(contentType),
-      },
-      select: {
-        id: true,
+        content,
+        contentType,
+        state,
+        banner: thumbnail,
+        slug,
+        updatedAt: new Date(),
       },
     });
 
-    return res.status(200).json({ success: true, message: "Blog has been created", blog: createBlog });
+    return res.status(200).json({
+      success: true,
+      message: ` Blog has been ${updateBlog.state === "ACTIVE" ? "published" : "saved as draft"}`,
+      blog: updateBlog,
+    });
   } catch (error) {
+    console.log(error);
     return errorHandler(error, res);
   }
 };

@@ -4,7 +4,7 @@ import { errorHandler } from "@/lib/api-middlewares/errorHandler";
 import { withMethods } from "@/lib/api-middlewares/with-method";
 import { withAuthentication } from "@/lib/api-middlewares/with-authentication";
 import { ContentManagementService } from "@/services/cms/ContentManagementService";
-import url from "url";
+import appConstant from "@/services/appConstant";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
@@ -27,45 +27,27 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           error: "You need to delete the existing lessons, before deleting the course",
         });
       } else {
-        const parseUrl = findCourse.thumbnail && url.parse(findCourse.thumbnail);
-        const filePath = parseUrl && parseUrl.pathname;
-        const serviceProviderResponse = await prisma?.serviceProvider.findFirst({
-          where: {
-            service_type: "media",
-          },
-        });
-        const cms = new ContentManagementService();
-        const serviceProvider =
-          serviceProviderResponse &&
-          cms.getServiceProvider(serviceProviderResponse?.provider_name, serviceProviderResponse?.providerDetail);
-        if (serviceProviderResponse && findCourse.tvProviderId && serviceProvider) {
-          const deletionResponse = await cms.deleteVideo(
-            findCourse.tvProviderId,
-            Number(courseId),
-            "course",
-            serviceProvider
-          );
-          if (!deletionResponse.success) {
-            throw new Error(`Unable to delete the video due to : ${deletionResponse.message}`);
-          }
-        }
-        if (findCourse.thumbnail && serviceProvider) {
-          const deletionBannerResponse = await cms.deleteFile(`${filePath}`, serviceProvider);
-          if (!deletionBannerResponse.success) {
-            throw new Error(`Unable to delete the file due to : ${deletionBannerResponse.message}`);
-          }
-        }
-        const courseDeleted = await prisma.course.delete({
-          where: {
-            courseId: Number(courseId),
-          },
-        });
-        return res.status(200).json({
-          info: false,
-          success: true,
-          message: "Course has been deleted.",
-        });
+        const cms = new ContentManagementService().getCMS(appConstant.defaultCMSProvider);
+        const cmsConfig = (await cms.getCMSConfig()).body?.config;
+
+        findCourse.thumbnail && (await cms.deleteCDNImage(cmsConfig, findCourse.thumbnail));
+
+        findCourse.tvProviderId &&
+          (await cms.deleteVideo(cmsConfig, findCourse.tvProviderId, findCourse.courseId, "course"));
       }
+
+      await prisma.course.delete({
+        where: {
+          courseId: Number(courseId),
+        },
+      });
+      return res.status(200).json({
+        info: false,
+        success: true,
+        message: "Course has been deleted.",
+      });
+    } else {
+      return res.status(404).json({ success: false, error: "Course already deleted or not found" });
     }
   } catch (error) {
     return errorHandler(error, res);

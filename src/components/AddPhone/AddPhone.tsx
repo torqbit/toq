@@ -1,7 +1,7 @@
 import { IResponse, postFetch } from "@/services/request";
 import { Button, Form, FormInstance, InputNumber, message, Modal } from "antd";
 import { useSession } from "next-auth/react";
-import { FC } from "react";
+import { FC, useState } from "react";
 import { useAppContext } from "../ContextApi/AppContext";
 import ProgramService from "@/services/ProgramService";
 
@@ -12,9 +12,12 @@ const AddPhone: FC<{
 }> = ({ title, onCloseModal, open }) => {
   const { data: user, update } = useSession();
   const { globalState, dispatch } = useAppContext();
+  const [loading, setLoading] = useState<boolean>(false);
+
   const [form] = Form.useForm();
   const [messageApi, contextHolder] = message.useMessage();
   const addPhone = async () => {
+    setLoading(true);
     const formData = new FormData();
     formData.append(
       "userInfo",
@@ -28,9 +31,13 @@ const AddPhone: FC<{
         });
         dispatch({ type: "SET_USER", payload: { ...globalState.session, phone: form.getFieldsValue().phone } });
         onCloseModal();
+        setLoading(false);
+
         messageApi.success(result.message);
       },
       (error) => {
+        setLoading(false);
+
         messageApi.error(error);
       }
     );
@@ -56,7 +63,7 @@ const AddPhone: FC<{
         >
           <InputNumber addonBefore="+91" placeholder="9999000099" />
         </Form.Item>
-        <Button htmlType="submit" type="primary">
+        <Button loading={loading} htmlType="submit" type="primary">
           Submit
         </Button>
       </Form>

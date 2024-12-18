@@ -4,6 +4,7 @@ import { errorHandler } from "@/lib/api-middlewares/errorHandler";
 import { withMethods } from "@/lib/api-middlewares/with-method";
 import { withAuthentication } from "@/lib/api-middlewares/with-authentication";
 import { ContentManagementService } from "@/services/cms/ContentManagementService";
+import appConstant from "@/services/appConstant";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
@@ -24,24 +25,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         },
       });
       if (videoLesson) {
-        const serviceProviderResponse = await prisma?.serviceProvider.findFirst({
-          where: {
-            service_type: "media",
-          },
-        });
-        if (serviceProviderResponse && videoLesson.providerVideoId != null) {
-          const cms = new ContentManagementService();
+        if (videoLesson.providerVideoId != null) {
+          const cms = new ContentManagementService().getCMS(appConstant.defaultCMSProvider);
+          const cmsConfig = (await cms.getCMSConfig()).body?.config;
 
-          const serviceProvider = cms.getServiceProvider(
-            serviceProviderResponse?.provider_name,
-            serviceProviderResponse?.providerDetail
-          );
-          const deleteResponse = await cms.deleteVideo(
-            videoLesson.providerVideoId,
-            Number(resourceId),
-            "lesson",
-            serviceProvider
-          );
+          await cms.deleteVideo(cmsConfig, videoLesson.providerVideoId, Number(resourceId), "lesson");
         }
         const [updateSeq, deleteResource] = await prisma.$transaction([
           prisma.$executeRaw`UPDATE Resource SET sequenceId = sequenceId - 1  WHERE sequenceId > ${findResource.sequenceId}  AND  chapterId = ${findResource.chapterId};`,

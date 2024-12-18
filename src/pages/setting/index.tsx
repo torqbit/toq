@@ -25,7 +25,8 @@ const ProfileSetting: FC<{
   setUserProfile: (profile: string) => void;
   setFile: (file: File) => void;
   userProfile: string;
-}> = ({ user, onUpdateProfile, userProfile, setUserProfile, setFile }) => {
+  updateLoading: boolean;
+}> = ({ user, onUpdateProfile, userProfile, setUserProfile, setFile, updateLoading }) => {
   const [pageLoading, setPageLoading] = useState<boolean>(false);
   const [userProfileUploading, setuserProfileUploading] = useState<boolean>(false);
   const router = useRouter();
@@ -127,7 +128,7 @@ const ProfileSetting: FC<{
                   <InputNumber addonBefore="+91" placeholder="9999000099" />
                 </Form.Item>
                 <Form.Item noStyle>
-                  <Button type="primary" htmlType="submit">
+                  <Button loading={updateLoading} type="primary" htmlType="submit">
                     Update
                   </Button>
                 </Form.Item>
@@ -146,6 +147,8 @@ const Setting: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const [userProfile, setUserProfile] = useState<string>();
   const [activeKey, setActiveKey] = useState<string>("profile");
   const router = useRouter();
+  const [updateLoading, setUpdateLoading] = useState<boolean>(false);
+
   const [file, setFile] = useState<File>();
   const { dispatch, globalState } = useAppContext();
 
@@ -164,6 +167,7 @@ const Setting: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
     }
   };
   const onUpdateProfile = async (info: { name: string; phone: string; image: string }) => {
+    setUpdateLoading(true);
     const formData = new FormData();
     formData.append("userInfo", JSON.stringify({ name: info.name, phone: info.phone, image: user?.user?.image }));
     file && formData.append("file", file);
@@ -177,8 +181,11 @@ const Setting: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
         });
         dispatch({ type: "SET_USER", payload: { name: info.name, phone: `${info.phone}` } });
         messageApi.success(result.message);
+        setUpdateLoading(false);
       },
       (error) => {
+        setUpdateLoading(false);
+
         messageApi.error(error);
       }
     );
@@ -195,6 +202,7 @@ const Setting: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
           userProfile={String(userProfile)}
           setUserProfile={setUserProfile}
           setFile={setFile}
+          updateLoading={updateLoading}
         />
       ),
     },

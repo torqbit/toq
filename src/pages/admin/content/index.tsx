@@ -179,6 +179,8 @@ const Content: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [messageApi, contextMessageHolder] = message.useMessage();
   const [loading, setLoading] = useState<boolean>(false);
+  const [addLoading, setAddLoading] = useState<boolean>(false);
+
   const [activeTab, setActiveTab] = useState<string>("Add Course");
 
   const [coursesAuthored, setCoursesAuthored] = useState<{
@@ -328,32 +330,29 @@ const Content: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
     setIsModalOpen(false);
   };
 
-  const previousDraftBlog = (id: string) => {
-    router.push(`/admin/content/blog/${id}`);
-    setIsModalOpen(false);
-  };
-
   const handleOk = () => {
     setIsModalOpen(false);
-
+    setAddLoading(true);
     ProgramService.createDraftCourses(
       undefined,
       (result) => {
+        setAddLoading(false);
+
         router.push(`/admin/content/course/${result.getCourse.courseId}/edit`);
       },
-      (error) => {}
+      (error) => {
+        setAddLoading(false);
+
+        messageApi.error(error);
+      }
     );
   };
 
   const handleBlogOk = (contentType: string) => {
-    setIsModalOpen(false);
-
-    BlogService.createBlog(
-      contentType,
-      (result) => {
-        router.push(`/admin/content/blog/${result.blog.id}`);
-      },
-      (error) => {}
+    router.push(
+      `/admin/content/${contentType === "BLOG" ? "blog" : "update"}/${
+        contentType === "BLOG" ? "add-blog" : "add-update"
+      }`
     );
   };
 
@@ -391,52 +390,15 @@ const Content: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
     }
   };
 
-  const onCreateDraftBlog = (contentType: string) => {
-    showModal();
-    if (router.query.blogId) {
-      router.push(`/admin/content/blog/${router.query.blogId}`);
-    } else {
-      BlogService.getLatestDraftBlog(
-        contentType,
-        (result) => {
-          if (result.blog) {
-            modal.confirm({
-              title: "Choose from the below options?",
-              content: (
-                <>
-                  <p>
-                    You currently have unsaved changes that you had made while creating the {contentType.toLowerCase()}.
-                  </p>
-                </>
-              ),
-              footer: (
-                <Space>
-                  <Button type="primary" onClick={() => previousDraftBlog(result.blog.id)}>
-                    Previous draft {contentType.toLowerCase()}
-                  </Button>
-                  or
-                  <Button onClick={() => handleBlogOk(contentType)}>Create a new {contentType.toLowerCase()}</Button>
-                </Space>
-              ),
-            });
-          } else {
-            handleBlogOk(contentType);
-          }
-        },
-        (error) => {}
-      );
-    }
-  };
-
   const handleActionButton = () => {
     switch (activeTab) {
       case "Add Course":
         return onCreateDraftCourse();
 
       case "Add Blog":
-        return onCreateDraftBlog("BLOG");
+        return handleBlogOk("BLOG");
       case "Add Updates":
-        return onCreateDraftBlog("UPDATE");
+        return handleBlogOk("UPDATE");
       case "Add Event":
         return router.push(`/admin/content/events/add`);
     }
@@ -455,7 +417,14 @@ const Content: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
           tabBarExtraContent={
             <>
               {activeTab !== "Submission" && (
-                <Button type="primary" onClick={handleActionButton} className={styles.add_user_btn}>
+
+                <Button
+                  loading={addLoading}
+                  type="primary"
+                  onClick={handleActionButton}
+                  className={styles.add_user_btn}
+                >
+
                   <span>{activeTab}</span>
                   {SvgIcons.arrowRight}
                 </Button>

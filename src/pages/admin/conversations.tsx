@@ -10,8 +10,6 @@ import styles from "@/styles/Conversation.module.scss";
 import ConversationCard from "@/components/Conversation/ConversationCard";
 import SvgIcons from "@/components/SvgIcons";
 import { IConversationData } from "../api/v1/conversation/list";
-
-import { Scrollbars } from "react-custom-scrollbars";
 import { PageSiteConfig } from "@/services/siteConstant";
 import { getSiteConfig } from "@/services/getSiteConfig";
 import AppLayout from "@/components/Layouts/AppLayout";
@@ -83,23 +81,22 @@ const ConversationPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig
     <AppLayout siteConfig={siteConfig}>
       <Flex className={styles.conversationPageWrapper}>
         <div>
-          <Scrollbars style={{ height: "calc(100vh - 100px)", width: "calc(920px )" }}>
-            <div className={styles.selectedListWrapper}>
-              {selectedList?.map((list, i) => {
-                return (
-                  <ConversationCard
-                    name={list?.name}
-                    image={list?.image}
-                    comment={list?.comments}
-                    user={String(user?.id)}
-                    commentUser={list?.authorId}
-                    key={i}
-                    contentWidth={"500px"}
-                  />
-                );
-              })}
-            </div>
-          </Scrollbars>
+          <div className={styles.selectedListWrapper}>
+            {selectedList?.map((list, i) => {
+              return (
+                <ConversationCard
+                  name={list?.name}
+                  image={list?.image}
+                  comment={list?.comments}
+                  user={String(user?.id)}
+                  commentUser={list?.authorId}
+                  key={i}
+                  contentWidth={"500px"}
+                />
+              );
+            })}
+          </div>
+
           <Flex align="center" className={styles.commentInputWrapper}>
             {" "}
             <Input.TextArea

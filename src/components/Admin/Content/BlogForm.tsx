@@ -56,6 +56,41 @@ const BlogForm: FC<{
     }
   };
 
+  const onCreateBlog = (state: StateType, exit?: boolean) => {
+    if (!file) {
+      messageApi.warning(`${contentType.toLowerCase()} must have a banner`);
+      return;
+    }
+    setLoader({ ...loader, publish: true });
+    const data = {
+      title: blogTitle,
+      content: DOMPurify.sanitize(editorValue),
+      state,
+      banner: bannerImage,
+      contentType,
+      blogId: String(router.query.blogId),
+    };
+    const formData = new FormData();
+    formData.append("blog", JSON.stringify(data));
+    file && formData.append("file", file);
+    BlogService.createBlog(
+      formData,
+      (result) => {
+        messageApi.success(result.message);
+        setCurrentState(result.blog.state);
+        setLoader({ ...loader, publish: false });
+
+        result.blog.state === StateType.ACTIVE
+          ? router.push(`/blog/${result.blog.slug}`)
+          : router.push("admin/content");
+      },
+      (error) => {
+        messageApi.error(error);
+        setLoader({ ...loader, publish: false });
+      }
+    );
+  };
+
   const onPostBlog = (state: StateType, exit?: boolean) => {
     setLoader({ ...loader, publish: true });
     const data = {
@@ -75,9 +110,9 @@ const BlogForm: FC<{
         messageApi.success(result.message);
         setCurrentState(result.blog.state);
         setLoader({ ...loader, publish: false });
-        if (exit) {
-          router.push("/admin/content");
-        }
+        result.blog.state === StateType.ACTIVE
+          ? router.push(`/blog/${result.blog.slug}`)
+          : router.push("admin/content");
       },
       (error) => {
         messageApi.error(error);
@@ -103,16 +138,30 @@ const BlogForm: FC<{
     );
   };
 
+  const handleBlog = (state: StateType, action: string) => {
+    switch (action) {
+      case "create":
+        return onCreateBlog(state);
+
+      default:
+        return onPostBlog(state);
+    }
+  };
+
   return (
     <section className={styles.blogFormConatiner}>
-      <Form form={form}>
+      <Form form={form} requiredMark={false}>
         {contextHolder}
 
         <Flex className={styles.publishBtn} align="center" gap={10}>
           <Popconfirm
-            title={`Delete the blog`}
-            description={`Are you sure to delete this blog?`}
-            onConfirm={() => onDelete()}
+            title={`Delete the ${contentType.toLowerCase()}`}
+            description={`Are you sure to ${
+              router.query.blogId ? "delete" : "discard"
+            } this ${contentType.toLowerCase()}?`}
+            onConfirm={() => {
+              router.query.blogId ? onDelete() : router.push("/admin/content");
+            }}
             okText="Yes"
             cancelText="No"
           >
@@ -123,7 +172,12 @@ const BlogForm: FC<{
             loading={loader.publish}
             type="primary"
             onClick={() => {
-              currentState === "DRAFT" ? onPostBlog("ACTIVE") : onPostBlog("DRAFT");
+              form.submit();
+              form.getFieldsValue().title &&
+                handleBlog(
+                  currentState === StateType.DRAFT ? StateType.ACTIVE : StateType.DRAFT,
+                  router.query.blogId ? "update" : "create"
+                );
             }}
             icon={SvgIcons.chevronDown}
             menu={{
@@ -131,23 +185,28 @@ const BlogForm: FC<{
                 {
                   key: 1,
 
-                  label: currentState === "DRAFT" ? "Save and exit" : "Publish ",
+                  label: currentState === "DRAFT" ? "Save" : "Publish ",
                   onClick: () => {
-                    currentState === "DRAFT" ? onPostBlog("DRAFT", true) : onPostBlog("ACTIVE", true);
+                    form.submit();
+                    form.getFieldsValue().title &&
+                      handleBlog(
+                        currentState === StateType.DRAFT ? StateType.DRAFT : StateType.ACTIVE,
+                        router.query.blogId ? "update" : "create"
+                      );
                   },
                 },
               ],
             }}
           >
-            {currentState === "DRAFT" ? "  Publish " : "Save as Draft"}
+            {currentState === StateType.DRAFT ? "Publish " : "Save as Draft"}
           </Dropdown.Button>
         </Flex>
         <div className={styles.formContainer}>
-          <Form.Item name="title">
+          <Form.Item name="title" rules={[{ required: true, message: "Add a title" }]}>
             <Input
               onChange={(e) => setBlogTitle(e.target.value)}
               defaultValue={blogTitle}
-              placeholder="Set the title of the blog"
+              placeholder={`Set the title of the ${contentType.toLowerCase()}`}
             />
           </Form.Item>
           <div className={styles.video_container}>
