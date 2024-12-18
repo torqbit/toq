@@ -181,14 +181,14 @@ export class CashfreePaymentProvider implements PaymentServiceProvider {
         },
         order_meta: {
           return_url: `${process.env.NEXTAUTH_URL}/courses/${courseConfig.slug}?callback=payment`,
-          notify_url: `https://dfaf-2401-4900-8836-634d-7008-3e4c-7f04-868e.ngrok-free.app/api/v1/course/payment/cashfree/webhook`,
+          notify_url: `${process.env.NEXTAUTH_URL}/api/v1/course/payment/cashfree/webhook`,
           payment_methods: "upi, nb, cc, dc,app",
         },
         order_note: "",
         order_expiry_time: sessionExpiry.toISOString(),
       };
 
-      const paymentData = await Cashfree.PGCreateOrder(appConstant.payment.version, request)
+      const paymentData = await Cashfree.PGCreateOrder(this.apiVersion, request)
         .then(async (response: any) => {
           let a = response.data;
 
