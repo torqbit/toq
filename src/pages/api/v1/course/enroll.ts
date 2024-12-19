@@ -81,11 +81,22 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       // IF COURSE IS FREE
 
       if (courseType === $Enums.CourseType.FREE) {
+        const createOrder = await prisma.order.create({
+          data: {
+            studentId: token.id,
+            latestStatus: $Enums.paymentStatus.SUCCESS,
+            productId: courseId,
+            paymentMode: undefined,
+            amount: 0,
+          },
+        });
+
         await prisma.courseRegistration.create({
           data: {
             studentId: token.id,
             courseId: courseId,
             expireIn: expiryDate,
+            orderId: createOrder.id,
             courseState: $Enums.CourseState.ENROLLED,
           },
         });
