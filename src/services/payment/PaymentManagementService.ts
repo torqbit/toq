@@ -1,4 +1,4 @@
-import { $Enums, ConfigurationState, CourseRegistration, paymentMode, paymentStatus } from "@prisma/client";
+import { $Enums, ConfigurationState, CourseRegistration, Order, paymentMode, paymentStatus } from "@prisma/client";
 
 import prisma from "@/lib/prisma";
 import appConstant from "../appConstant";
@@ -248,7 +248,7 @@ export class PaymentManagemetService {
     }
   };
 
-  getLatestOrder = async (studentId: string, productId: number): Promise<OrderDetail | null> => {
+  getLatestOrder = async (studentId: string, productId: number): Promise<Order | undefined> => {
     const latestOrder = await prisma.order.findFirst({
       where: {
         studentId,
@@ -259,7 +259,7 @@ export class PaymentManagemetService {
         createdAt: "desc",
       },
     });
-    return latestOrder as OrderDetail | null;
+    return latestOrder || undefined;
   };
 
   getOrderHistoryByUser = async (studentId: string): Promise<OrderHistory[]> => {
