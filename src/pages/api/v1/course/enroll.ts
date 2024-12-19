@@ -90,19 +90,16 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               amount: 0,
             },
           });
-          if (createOrder.id) {
-            await prisma.courseRegistration.create({
-              data: {
-                studentId: token.id,
-                courseId: courseId,
-                expireIn: expiryDate,
-                orderId: createOrder.id,
-                courseState: $Enums.CourseState.ENROLLED,
-              },
-            });
-          } else {
-            return res.status(400).json({ success: false, error: "Unable to create order" });
-          }
+
+          await prisma.courseRegistration.create({
+            data: {
+              studentId: token.id,
+              courseId: courseId,
+              expireIn: expiryDate,
+              orderId: createOrder.id,
+              courseState: $Enums.CourseState.ENROLLED,
+            },
+          });
         });
 
         const configData = {
