@@ -1,13 +1,10 @@
 import { NextApiResponse, NextApiRequest } from "next";
 import prisma from "@/lib/prisma";
 import { addDays, generateDayAndYear } from "@/lib/utils";
-import MailerService from "@/services/MailerService";
 import { $Enums } from "@prisma/client";
 import { CashFreePaymentData, InvoiceData } from "@/types/payment";
 import appConstant from "@/services/appConstant";
-import fs from "fs";
 import { businessConfig } from "@/services/businessConfig";
-import { ContentManagementService } from "@/services/cms/ContentManagementService";
 import { BillingService } from "@/services/BillingService";
 import os from "os";
 import path from "path";
@@ -15,6 +12,21 @@ import { withMethods } from "@/lib/api-middlewares/with-method";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const body = req.body;
+
+  // 1. check if the body contains the order, else 200 "Order is missing"
+
+  // 2. verify the webhook request. If verfied, then proceed to step 3, else "Unable to verify the webhook signature"
+
+  // 3. Define the type using zod for the order type
+  // 4. Extract the fields and check the current status of that order.
+  // 5. if pending, then update with the webhook status
+  // if success, then ignore the webhook status
+  // if dropped, then ignore the webhook status
+  // if failed, then ignore the webhook status
+
+  // cashfreeService.handleWebhook(order: ZodOrder): Promise<CourseRegistration| undefined>
+  // billingService.sendCourseInvoice(cr: CourseRegistration): Promise<boolean>
+
   if (body.data.order) {
     const currentTime = new Date();
     const orderDetail = await prisma.order.findUnique({
@@ -30,7 +42,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             phone: true,
           },
         },
-        courseId: true,
+        productId: true,
         id: true,
         latestStatus: true,
       },
@@ -52,7 +64,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       if (body.data.payment.payment_status === $Enums.paymentStatus.SUCCESS) {
         const courseDetail = await prisma.course.findUnique({
           where: {
-            courseId: Number(orderDetail.courseId),
+            courseId: Number(orderDetail.productId),
           },
           select: {
             expiryInDays: true,
@@ -99,10 +111,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           prisma.courseRegistration.create({
             data: {
               studentId: orderDetail.user.id,
-              courseId: Number(orderDetail.courseId),
+              courseId: Number(orderDetail.productId),
               expireIn: courseExpiryDate,
               courseState: $Enums.CourseState.ENROLLED,
               courseType: $Enums.CourseType.PAID,
+              orderId: orderDetail.id,
             },
             select: {
               registrationId: true,

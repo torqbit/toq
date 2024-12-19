@@ -7,6 +7,7 @@ import { withUserAuthorized } from "@/lib/api-middlewares/with-authorized";
 import { getToken } from "next-auth/jwt";
 
 import { getCookieName } from "@/lib/utils";
+import { ProductType } from "@prisma/client";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
@@ -19,27 +20,16 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     });
 
     const authorId = token?.id;
-    const body = await req.body;
-    const { id } = body;
 
-    // CHECK IF COURSE EXIST WITH THIS NAME
-    if (id) {
-      const isCourseExist = await prisma.course.findUnique({
-        where: {
-          courseId: id,
-        },
-      });
-      if (isCourseExist) {
-        return res.status(400).json({
-          info: true,
-          success: false,
-          message: `Course already exist `,
-        });
-      }
-    }
+    const productCreate = await prisma.product.create({
+      data: {
+        ptype: ProductType.COURSE,
+      },
+    });
 
     let response = await prisma.course.create({
       data: {
+        courseId: productCreate.productId,
         name: "Untitled",
         description: "Description about the Untitled Course",
         slug: `untitled-${new Date().getTime()}`,

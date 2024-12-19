@@ -133,7 +133,7 @@ enum courseDifficultyType {
 }
 
 model Course {
-  courseId            Int         @id @default(autoincrement())
+  courseId            Int           @id
   name                String
   about               String      @db.Text()
   description         String      @db.Text()
@@ -163,7 +163,7 @@ model Course {
   totalResources    Int                   @default(0)
   state             StateType             @default(DRAFT)
   chapters          Chapter[]
-  CourseRegistraion CourseRegistration[]
+ 
   courseProgress    CourseProgress[]
 
   @@unique([slug])
@@ -254,7 +254,8 @@ enum CourseState {
 
 model CourseRegistration {
   registrationId Int                 @id @default(autoincrement())
-  courseId       Int
+  courseId       Int                 @unique
+  orderId        String              @unique
   studentId      String
   courseState    CourseState         @default(ENROLLED)
   courseType     CourseType          @default(FREE)
@@ -264,9 +265,9 @@ model CourseRegistration {
   createdAt      DateTime            @default(now())
   updatedAt      DateTime            @updatedAt
   expireIn       DateTime?
-  order          Order?
+  order          Order              @relation(fields: [orderId], references: [id], onDelete: Cascade)
   user           User                @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  course         Course              @relation(fields: [courseId], references: [courseId], onDelete: Cascade)
+  course         Product              @relation(fields: [courseId], references: [productId], onDelete: Cascade)
   certificate    CourseCertificates?
 
   @@unique([studentId, courseId])
@@ -467,13 +468,25 @@ enum paymentMode {
   ONLINE
 }
 
+enum ProductType {
+  COURSE
+  EVENT
+}
+
+model Product {
+  productId Int              @id @default(autoincrement())
+  ptype ProductType
+  courseRegistration CourseRegistration? 
+  orders Order[]
+}
+
 model Order {
   id               String              @id @default(cuid())
   orderId          String?             @unique
   latestStatus     paymentStatus?
   registrationId   Int?                @unique
   studentId        String
-  courseId         Int
+  productId         Int                @unique
   currency         String?
   paymentMode      paymentMode         @default(ONLINE)
   amount           Int?
@@ -481,7 +494,8 @@ model Order {
   updatedAt        DateTime            @default(now())
   paymentGateway   gatewayProvider?
   Invoice          Invoice?
-  registeredCourse CourseRegistration? @relation(fields: [registrationId], references: [registrationId], onDelete: Cascade)
+  registeredCourse CourseRegistration? 
+  product          Product             @relation(fields: [productId], references: [productId], onDelete: Cascade)
   user             User                @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
   @@index([studentId, orderId])

@@ -35,6 +35,7 @@ export const uploadThumbnail = async (
       }
       // upload thumbnail
       response = await cms.uploadCDNImage(cmsConfig, fileBuffer, objectType, fullName, fileType);
+      console.log(response, "thumbnail upload response");
       return response;
     } else {
       return new APIResponse(false, 400, "CMS configuration was not found");
