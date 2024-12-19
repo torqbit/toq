@@ -105,6 +105,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             },
             data: {
               ...cashfreePaymentData,
+              paymentId: Number(cashfreePaymentData.paymentId),
               updatedAt: currentTime,
             },
           }),

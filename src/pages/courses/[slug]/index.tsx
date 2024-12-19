@@ -20,6 +20,7 @@ import CoursePreview from "@/components/Marketing/Courses/CoursePreview";
 import HeroCoursePreview from "@/components/Marketing/Courses/HeroCoursePreview";
 import getCourseDetail, { extractLessonAndChapterDetail } from "@/actions/getCourseDetail";
 import prisma from "@/lib/prisma";
+import { PaymentManagemetService } from "@/services/payment/PaymentManagementService";
 
 const LearnCoursesPage: NextPage<{
   siteConfig: PageSiteConfig;
@@ -271,8 +272,11 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
 
   const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
   const siteConfig = getSiteConfig();
-
   const { site } = siteConfig;
+  if (query.order_id && typeof query.order_id === "string") {
+    const pms = new PaymentManagemetService();
+    const response = await pms.updateOrder(query.order_id);
+  }
 
   const courseInfo = await prisma?.course.findUnique({
     where: {

@@ -1,8 +1,15 @@
-import { Cashfree } from "cashfree-pg";
+import { Cashfree, OrderEntity } from "cashfree-pg";
 import prisma from "@/lib/prisma";
-import { $Enums } from "@prisma/client";
-import { PaymentApiResponse, CoursePaymentConfig, PaymentServiceProvider, UserConfig } from "@/types/payment";
+import { $Enums, cashfreePaymentStatus, paymentStatus } from "@prisma/client";
+import {
+  PaymentApiResponse,
+  CoursePaymentConfig,
+  PaymentServiceProvider,
+  UserConfig,
+  CashFreePaymentData,
+} from "@/types/payment";
 import appConstant from "../appConstant";
+import { APIResponse } from "@/types/apis";
 
 export class CashfreePaymentProvider implements PaymentServiceProvider {
   name: string = String(process.env.GATEWAY_PROVIDER_NAME);
@@ -13,6 +20,70 @@ export class CashfreePaymentProvider implements PaymentServiceProvider {
   constructor(clientId: string, secretId: string) {
     this.clientId = clientId;
     this.secretId = secretId;
+  }
+
+  async updateOrder(orderId: string, gatewayOrderId: string): Promise<APIResponse<paymentStatus>> {
+    if (orderId && gatewayOrderId) {
+      Cashfree.XClientId = this.clientId;
+      Cashfree.XClientSecret = this.secretId;
+      const detail = await Cashfree.PGOrderFetchPayments(this.apiVersion, gatewayOrderId);
+      if (detail.data.length > 0) {
+        let currentTime = new Date();
+        const paymentDetail = detail.data[0];
+        let cashfreePaymentData: CashFreePaymentData = {
+          paymentMethod: paymentDetail.payment_group,
+          gatewayOrderId: gatewayOrderId,
+          paymentId: paymentDetail.cf_payment_id,
+          currency: paymentDetail.payment_currency,
+          message: paymentDetail.payment_message,
+          bankReference: paymentDetail.bank_reference,
+          paymentTime: paymentDetail.payment_time,
+        };
+
+        const latestCashfreeOrder = await prisma.cashfreeOrder.findFirst({
+          where: {
+            orderId: orderId,
+          },
+          select: {
+            id: true,
+          },
+          orderBy: {
+            createdAt: "desc",
+          },
+        });
+
+        await prisma.$transaction([
+          prisma.order.update({
+            where: {
+              id: orderId,
+            },
+            data: {
+              latestStatus:
+                paymentDetail.payment_status === paymentStatus.SUCCESS ? paymentStatus.SUCCESS : paymentStatus.PENDING,
+              updatedAt: currentTime,
+              currency: paymentDetail.payment_currency,
+            },
+          }),
+          prisma.cashfreeOrder.update({
+            where: {
+              id: latestCashfreeOrder?.id,
+            },
+            data: {
+              ...cashfreePaymentData,
+              gatewayStatus: paymentDetail.payment_status as cashfreePaymentStatus,
+              paymentId: Number(cashfreePaymentData),
+              updatedAt: currentTime,
+            },
+          }),
+        ]);
+
+        return new APIResponse(true, 200, "Order has been updated");
+      } else {
+        return new APIResponse(false, 404, "Payment detail is missing");
+      }
+    } else {
+      return new APIResponse(false, 404, "Gateway order id  is missing");
+    }
   }
 
   async testClientCredentials(): Promise<number> {
@@ -95,7 +166,7 @@ export class CashfreePaymentProvider implements PaymentServiceProvider {
           data: {
             studentId: userConfig.studentId,
             latestStatus: $Enums.paymentStatus.INITIATED,
-            courseId: courseConfig.courseId,
+            productId: courseConfig.courseId,
             paymentGateway: $Enums.gatewayProvider.CASHFREE,
             amount: courseConfig.amount,
           },
@@ -180,7 +251,7 @@ export class CashfreePaymentProvider implements PaymentServiceProvider {
           customer_phone: userConfig.phone,
         },
         order_meta: {
-          return_url: `${process.env.NEXTAUTH_URL}/courses/${courseConfig.slug}?callback=payment`,
+          return_url: `${process.env.NEXTAUTH_URL}/courses/${courseConfig.slug}?callback=payment&order_id=${orderId}`,
           notify_url: `${process.env.NEXTAUTH_URL}/api/v1/course/payment/cashfree/webhook`,
           payment_methods: "upi, nb, cc, dc,app",
         },

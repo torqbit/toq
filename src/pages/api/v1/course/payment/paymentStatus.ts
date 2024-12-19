@@ -22,7 +22,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const latestOrder = await prisma.order.findFirst({
       where: {
-        courseId: Number(courseId),
+        productId: Number(courseId),
         studentId: String(token?.id),
       },
       orderBy: {

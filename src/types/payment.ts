@@ -1,5 +1,6 @@
-import { $Enums, Order, CashfreeOrder } from "@prisma/client";
+import { $Enums, Order, CashfreeOrder, paymentStatus } from "@prisma/client";
 import { z } from "zod";
+import { APIResponse } from "./apis";
 
 export interface CashFreeConfig extends GatewayConfig {
   clientId: string;
@@ -40,13 +41,14 @@ export interface PaymentServiceProvider {
     userConfig: UserConfig,
     orderId: string
   ): Promise<PaymentApiResponse>;
+  updateOrder(orderId: string, gatewayOrderId: string): Promise<APIResponse<paymentStatus>>;
 }
 
 export interface CashFreePaymentData {
   status?: $Enums.paymentStatus;
   paymentMethod?: string;
   gatewayOrderId?: string;
-  paymentId?: number;
+  paymentId?: string;
   currency?: string;
   message?: string;
   bankReference?: string;

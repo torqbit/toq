@@ -1,4 +1,4 @@
-import { $Enums, ConfigurationState, paymentMode } from "@prisma/client";
+import { $Enums, ConfigurationState, CourseRegistration, paymentMode, paymentStatus } from "@prisma/client";
 
 import prisma from "@/lib/prisma";
 import appConstant from "../appConstant";
@@ -144,6 +144,32 @@ export class PaymentManagemetService {
     }
   };
 
+  updateOrder = async (orderId: string): Promise<APIResponse<paymentStatus>> => {
+    const OrderDetail = await prisma.order.findUnique({
+      where: {
+        id: orderId,
+      },
+      select: {
+        paymentGateway: true,
+        orderId: true,
+      },
+    });
+    if (OrderDetail?.orderId) {
+      switch (OrderDetail?.paymentGateway) {
+        case $Enums.gatewayProvider.CASHFREE:
+          const cf = await this.getPaymentProvider({ name: OrderDetail.paymentGateway });
+          const response = await cf.updateOrder(orderId, OrderDetail.orderId);
+
+          return new APIResponse(response.success, response.status, response.message, response.body);
+
+        default:
+          return new APIResponse(false, 404, "Unable to find the payment provider! Contact your support team");
+      }
+    } else {
+      return new APIResponse(false, 404, "Order detail is missing");
+    }
+  };
+
   getPaymentStatus = async (
     gatewayProvider: $Enums.gatewayProvider,
     orderId: string
@@ -222,11 +248,11 @@ export class PaymentManagemetService {
     }
   };
 
-  getLatestOrder = async (studentId: string, courseId: number): Promise<OrderDetail | null> => {
+  getLatestOrder = async (studentId: string, productId: number): Promise<OrderDetail | null> => {
     const latestOrder = await prisma.order.findFirst({
       where: {
-        studentId: studentId,
-        courseId: courseId,
+        studentId,
+        productId,
       },
 
       orderBy: {
@@ -294,7 +320,7 @@ export class PaymentManagemetService {
           data: {
             studentId: userConfig.studentId,
             latestStatus: $Enums.paymentStatus.INITIATED,
-            courseId: courseConfig.courseId,
+            productId: courseConfig.courseId,
             paymentGateway: gatewayConfig.name as $Enums.gatewayProvider,
             amount: courseConfig.amount,
           },
