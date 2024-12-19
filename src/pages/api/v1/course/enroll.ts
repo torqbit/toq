@@ -81,24 +81,28 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       // IF COURSE IS FREE
 
       if (courseType === $Enums.CourseType.FREE) {
-        const createOrder = await prisma.order.create({
-          data: {
-            studentId: token.id,
-            latestStatus: $Enums.paymentStatus.SUCCESS,
-            productId: courseId,
-            paymentMode: undefined,
-            amount: 0,
-          },
-        });
-
-        await prisma.courseRegistration.create({
-          data: {
-            studentId: token.id,
-            courseId: courseId,
-            expireIn: expiryDate,
-            orderId: createOrder.id,
-            courseState: $Enums.CourseState.ENROLLED,
-          },
+        await prisma.$transaction(async (tx) => {
+          const createOrder = await tx.order.create({
+            data: {
+              studentId: token.id,
+              latestStatus: $Enums.paymentStatus.SUCCESS,
+              productId: courseId,
+              amount: 0,
+            },
+          });
+          if (createOrder.id) {
+            await prisma.courseRegistration.create({
+              data: {
+                studentId: token.id,
+                courseId: courseId,
+                expireIn: expiryDate,
+                orderId: createOrder.id,
+                courseState: $Enums.CourseState.ENROLLED,
+              },
+            });
+          } else {
+            return res.status(400).json({ success: false, error: "Unable to create order" });
+          }
         });
 
         const configData = {
