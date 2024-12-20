@@ -1,12 +1,14 @@
 import { Cashfree, OrderEntity } from "cashfree-pg";
 import prisma from "@/lib/prisma";
-import { $Enums, cashfreePaymentStatus, paymentStatus } from "@prisma/client";
+import { $Enums, CourseRegistration, orderStatus, paymentStatus } from "@prisma/client";
 import {
   PaymentApiResponse,
   CoursePaymentConfig,
   PaymentServiceProvider,
   UserConfig,
-  CashFreePaymentData,
+  OrderDetailStatus,
+  paymentCustomerDetail,
+  ISuccessPaymentData,
 } from "@/types/payment";
 import appConstant from "../appConstant";
 import { APIResponse } from "@/types/apis";
@@ -22,7 +24,16 @@ export class CashfreePaymentProvider implements PaymentServiceProvider {
     this.secretId = secretId;
   }
 
-  async updateOrder(orderId: string, gatewayOrderId: string): Promise<APIResponse<paymentStatus>> {
+  async updateOrder(
+    orderId: string,
+    gatewayOrderId: string,
+    onSuccess: (
+      productId: number,
+      customerDetail: paymentCustomerDetail,
+      orderId: string,
+      paymentData: ISuccessPaymentData
+    ) => Promise<APIResponse<CourseRegistration | undefined>>
+  ): Promise<APIResponse<paymentStatus>> {
     if (orderId && gatewayOrderId) {
       Cashfree.XClientId = this.clientId;
       Cashfree.XClientSecret = this.secretId;
@@ -30,54 +41,47 @@ export class CashfreePaymentProvider implements PaymentServiceProvider {
       if (detail.data.length > 0) {
         let currentTime = new Date();
         const paymentDetail = detail.data[0];
-        let cashfreePaymentData: CashFreePaymentData = {
-          paymentMethod: paymentDetail.payment_group,
-          gatewayOrderId: gatewayOrderId,
-          paymentId: paymentDetail.cf_payment_id,
-          currency: paymentDetail.payment_currency,
-          message: paymentDetail.payment_message,
-          bankReference: paymentDetail.bank_reference,
-          paymentTime: paymentDetail.payment_time,
-        };
 
-        const latestCashfreeOrder = await prisma.cashfreeOrder.findFirst({
-          where: {
-            orderId: orderId,
-          },
+        const updatedOrder = await prisma.order.update({
           select: {
-            id: true,
+            studentId: true,
+            user: true,
+            productId: true,
           },
-          orderBy: {
-            createdAt: "desc",
+          where: {
+            id: orderId,
+          },
+          data: {
+            orderStatus:
+              paymentDetail.payment_status === orderStatus.SUCCESS ? orderStatus.SUCCESS : orderStatus.PENDING,
+            updatedAt: currentTime,
+            currency: paymentDetail.payment_currency,
+            paymentStatus: paymentDetail.payment_status as paymentStatus,
+            paymentId: paymentDetail.cf_payment_id,
+            paymentTime: paymentDetail.payment_time,
+            message: paymentDetail.payment_message,
           },
         });
 
-        await prisma.$transaction([
-          prisma.order.update({
-            where: {
-              id: orderId,
-            },
-            data: {
-              latestStatus:
-                paymentDetail.payment_status === paymentStatus.SUCCESS ? paymentStatus.SUCCESS : paymentStatus.PENDING,
-              updatedAt: currentTime,
-              currency: paymentDetail.payment_currency,
-            },
-          }),
-          prisma.cashfreeOrder.update({
-            where: {
-              id: latestCashfreeOrder?.id,
-            },
-            data: {
-              ...cashfreePaymentData,
-              gatewayStatus: paymentDetail.payment_status as cashfreePaymentStatus,
-              paymentId: Number(cashfreePaymentData),
-              updatedAt: currentTime,
-            },
-          }),
-        ]);
+        if (paymentDetail.payment_status === paymentStatus.SUCCESS) {
+          let customerDetail: paymentCustomerDetail = {
+            id: updatedOrder.studentId,
+            name: String(updatedOrder.user.name),
+            email: String(updatedOrder.user.email),
+            phone: String(updatedOrder.user.phone),
+          };
 
-        return new APIResponse(true, 200, "Order has been updated");
+          let successPaymentData: ISuccessPaymentData = paymentDetail && {
+            amount: Number(paymentDetail.payment_amount),
+            currency: String(paymentDetail.payment_currency),
+            paymentTime: String(paymentDetail.payment_time),
+            gatewayOrderId: gatewayOrderId,
+          };
+          const response = await onSuccess(updatedOrder.productId, customerDetail, orderId, successPaymentData);
+          return new APIResponse(response.success, response.status, response.message);
+        }
+
+        return new APIResponse(true, 200, "Order has been updated", paymentDetail.payment_status as paymentStatus);
       } else {
         return new APIResponse(false, 404, "Payment detail is missing");
       }
@@ -97,61 +101,44 @@ export class CashfreePaymentProvider implements PaymentServiceProvider {
     }
   }
 
+  async getPaymentDetail(orderId: string): Promise<APIResponse<OrderEntity>> {
+    Cashfree.XClientId = this.clientId;
+    Cashfree.XClientSecret = this.secretId;
+    try {
+      const response = await Cashfree.PGFetchOrder(this.apiVersion, orderId);
+      return new APIResponse(
+        response.status === 200,
+        response.status,
+        response.status === 200 ? "fetched order detail" : "order detail is missing",
+        response.data
+      );
+    } catch (error) {
+      return (error as any).response.status;
+    }
+  }
+
   async processPendingPayment(
     orderId: string,
     userConfig: UserConfig,
     courseConfig: CoursePaymentConfig
-  ): Promise<PaymentApiResponse> {
+  ): Promise<APIResponse<PaymentApiResponse>> {
     let currentTime = new Date();
     const orderDetail = await prisma.order.findUnique({
       where: {
         id: orderId,
       },
       select: {
-        createdAt: true,
-      },
-    });
-    const latestCashfreeOrder = await prisma.cashfreeOrder.findFirst({
-      where: {
-        orderId: orderId,
-      },
-      select: {
-        createdAt: true,
-        sessionExpiry: true,
-        sessionId: true,
+        updatedAt: true,
         gatewayOrderId: true,
-        gatewayStatus: true,
-      },
-      orderBy: {
-        createdAt: "desc",
       },
     });
 
-    if (latestCashfreeOrder) {
-      const cashfreeOrderDetail = await prisma.cashfreeOrder.create({
-        data: {
-          studentId: userConfig.studentId,
-          amount: courseConfig.coursePrice,
-          courseId: courseConfig.courseId,
-          orderId: orderId,
-          sessionExpiry: latestCashfreeOrder.sessionExpiry,
-          sessionId: latestCashfreeOrder.sessionId,
-        },
-        select: {
-          orderId: true,
-          id: true,
-          createdAt: true,
-          sessionExpiry: true,
-          sessionId: true,
-        },
-      });
+    const latestOrderDetail = orderDetail?.gatewayOrderId && (await this.getPaymentDetail(orderDetail?.gatewayOrderId));
 
-      let orderCreatedTime = orderDetail?.createdAt.getTime();
-
+    if (latestOrderDetail && latestOrderDetail.body) {
       if (
-        cashfreeOrderDetail &&
-        cashfreeOrderDetail.sessionExpiry &&
-        cashfreeOrderDetail.sessionExpiry.getTime() < currentTime.getTime()
+        latestOrderDetail.body.order_status &&
+        latestOrderDetail.body.order_status === OrderDetailStatus.EXPIRED //expired
       ) {
         await prisma.order.update({
           where: {
@@ -159,13 +146,13 @@ export class CashfreePaymentProvider implements PaymentServiceProvider {
           },
           data: {
             updatedAt: currentTime,
-            latestStatus: $Enums.paymentStatus.FAILED,
+            orderStatus: orderStatus.FAILED,
           },
         });
         const order = await prisma.order.create({
           data: {
             studentId: userConfig.studentId,
-            latestStatus: $Enums.paymentStatus.INITIATED,
+            orderStatus: orderStatus.INITIATED,
             productId: courseConfig.courseId,
             paymentGateway: $Enums.gatewayProvider.CASHFREE,
             amount: courseConfig.amount,
@@ -173,44 +160,26 @@ export class CashfreePaymentProvider implements PaymentServiceProvider {
         });
 
         const paymentData = await this.createOrder(order.id, userConfig, courseConfig);
-        return paymentData;
+        return new APIResponse(true, 200, "Order has been created", paymentData);
       } else {
         await prisma.order.update({
           where: {
             id: orderId,
           },
           data: {
-            latestStatus: $Enums.paymentStatus.PENDING,
+            orderStatus: orderStatus.PENDING,
           },
         });
 
-        await prisma.cashfreeOrder.update({
-          where: {
-            id: cashfreeOrderDetail.id,
-          },
-          data: {
-            gatewayOrderId: latestCashfreeOrder.gatewayOrderId,
-            sessionId: latestCashfreeOrder.sessionId,
-            sessionExpiry: latestCashfreeOrder.sessionExpiry,
-            gatewayProvider: $Enums.gatewayProvider.CASHFREE,
-            updatedAt: currentTime,
-          },
-        });
-
-        return {
-          success: true,
-          message: "Redirecting to payment page",
+        return new APIResponse(true, 200, "Redirecting to payment page", {
           gatewayName: $Enums.gatewayProvider.CASHFREE,
           gatewayResponse: {
-            sessionId: String(cashfreeOrderDetail?.sessionId),
+            sessionId: String(latestOrderDetail?.body.payment_session_id),
           },
-        };
+        });
       }
     } else {
-      return {
-        success: false,
-        error: `Something went wrong, contact the support team.`,
-      };
+      return new APIResponse(false, 404, "Order detail is missing");
     }
   }
 
@@ -218,21 +187,8 @@ export class CashfreePaymentProvider implements PaymentServiceProvider {
     orderId: string,
     userConfig: UserConfig,
     courseConfig: CoursePaymentConfig
-  ): Promise<PaymentApiResponse> {
+  ): Promise<APIResponse<PaymentApiResponse>> {
     try {
-      const cashfreeOrderDetail = await prisma.cashfreeOrder.create({
-        data: {
-          studentId: userConfig.studentId,
-          amount: courseConfig.coursePrice,
-          courseId: courseConfig.courseId,
-          orderId: orderId,
-        },
-        select: {
-          orderId: true,
-          id: true,
-        },
-      });
-
       let currentTime = new Date();
       const sessionExpiry = new Date(currentTime.getTime() + appConstant.payment.sessionExpiryDuration);
 
@@ -260,29 +216,15 @@ export class CashfreePaymentProvider implements PaymentServiceProvider {
       };
 
       const paymentData = await Cashfree.PGCreateOrder(this.apiVersion, request)
-        .then(async (response: any) => {
+        .then(async (response) => {
           let a = response.data;
-
           await prisma.order.update({
             where: {
               id: orderId,
             },
             data: {
-              orderId: a.order_id,
-              latestStatus: $Enums.paymentStatus.PENDING,
-            },
-          });
-
-          await prisma.cashfreeOrder.update({
-            where: {
-              id: cashfreeOrderDetail.id,
-            },
-            data: {
               gatewayOrderId: a.order_id,
-              sessionId: a.payment_session_id,
-              sessionExpiry: sessionExpiry,
-              gatewayProvider: $Enums.gatewayProvider.CASHFREE,
-              updatedAt: date,
+              orderStatus: orderStatus.PENDING,
             },
           });
 
@@ -296,51 +238,26 @@ export class CashfreePaymentProvider implements PaymentServiceProvider {
           } as PaymentApiResponse;
         })
         .catch(async (error: any) => {
-          console.log(error, "error on cashfree");
-          const orderDetail = await prisma.order.update({
+          await prisma.order.update({
             where: {
               id: orderId,
             },
             data: {
-              latestStatus: $Enums.paymentStatus.FAILED,
+              orderStatus: orderStatus.FAILED,
+              paymentStatus: paymentStatus.FAILED,
               updatedAt: date,
+              message: error.response.data.message,
             },
             select: {
               id: true,
             },
           });
-
-          const latestCashfreeOrder = await prisma.cashfreeOrder.findFirst({
-            where: {
-              orderId: orderDetail.id,
-            },
-            select: {
-              id: true,
-            },
-            orderBy: {
-              createdAt: "desc",
-            },
-          });
-
-          if (latestCashfreeOrder) {
-            await prisma.cashfreeOrder.update({
-              where: {
-                id: latestCashfreeOrder.id,
-              },
-              data: {
-                gatewayStatus: $Enums.cashfreePaymentStatus.FAILED,
-
-                updatedAt: date,
-                message: error.response.data.message,
-              },
-            });
-          }
 
           return { success: false, error: error.response.data.message };
         });
-      return paymentData as PaymentApiResponse;
-    } catch (error) {
-      return { success: false, error: "error" };
+      return new APIResponse(true, 200, "Payment successfull", paymentData);
+    } catch (error: any) {
+      return new APIResponse(false, 500, error);
     }
   }
 
@@ -348,48 +265,37 @@ export class CashfreePaymentProvider implements PaymentServiceProvider {
     courseConfig: CoursePaymentConfig,
     userConfig: UserConfig,
     orderId: string
-  ): Promise<PaymentApiResponse> {
+  ): Promise<APIResponse<PaymentApiResponse>> {
     let currentTime = new Date();
-    console.log(orderId, "d");
     const orderDetail = await prisma.order.findUnique({
       where: {
         id: orderId,
       },
       select: {
-        latestStatus: true,
+        orderStatus: true,
+        paymentStatus: true,
+        updatedAt: true,
       },
     });
-    console.log(orderDetail, "odere");
-    if (orderDetail?.latestStatus === $Enums.paymentStatus.PENDING) {
-      let latestCashfreeOrder = await prisma.cashfreeOrder.findFirst({
-        where: {
-          orderId: orderId,
-        },
-        select: {
-          gatewayStatus: true,
-          createdAt: true,
-        },
-        orderBy: {
-          createdAt: "desc",
-        },
-      });
 
+    if (orderDetail && orderDetail?.orderStatus === orderStatus.PENDING) {
       if (
-        Number(latestCashfreeOrder?.createdAt) + appConstant.payment.lockoutMinutes > currentTime.getTime() &&
-        latestCashfreeOrder &&
-        latestCashfreeOrder.gatewayStatus !== $Enums.cashfreePaymentStatus.FAILED &&
-        latestCashfreeOrder.gatewayStatus !== $Enums.cashfreePaymentStatus.USER_DROPPED
+        new Date(orderDetail.updatedAt).getTime() + appConstant.payment.lockoutMinutes > currentTime.getTime() &&
+        orderDetail.paymentStatus !== paymentStatus.FAILED &&
+        orderDetail.paymentStatus !== paymentStatus.USER_DROPPED
       ) {
-        return {
-          success: false,
-          error: `Your payment session is still active .`,
-        };
+        return new APIResponse(false, 102, "Your payment session is still active.");
       }
       const paymentResponse = await this.processPendingPayment(orderId, userConfig, courseConfig);
-      return paymentResponse;
+      return new APIResponse(
+        paymentResponse.success,
+        paymentResponse.status,
+        paymentResponse.message,
+        paymentResponse.body
+      );
     } else {
       const response = await this.createOrder(orderId, userConfig, courseConfig);
-      return response;
+      return new APIResponse(response.success, response.status, response.message, response.body);
     }
   }
 }

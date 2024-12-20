@@ -1,4 +1,4 @@
-import { $Enums, ConfigurationState, CourseRegistration, Order, paymentMode, paymentStatus } from "@prisma/client";
+import { $Enums, ConfigurationState, CourseRegistration, Order, orderStatus, paymentStatus } from "@prisma/client";
 
 import prisma from "@/lib/prisma";
 import appConstant from "../appConstant";
@@ -8,14 +8,20 @@ import {
   PaymentServiceProvider,
   UserConfig,
   GatewayConfig,
-  CashFreeConfig,
-  OrderDetail,
   OrderHistory,
   CFPaymentsConfig,
+  InvoiceData,
+  paymentCustomerDetail,
+  ISuccessPaymentData,
 } from "@/types/payment";
 import { CashfreePaymentProvider } from "./CashfreePaymentProvider";
 import SecretsManager from "../secrets/SecretsManager";
 import { APIResponse } from "@/types/apis";
+import { BillingService } from "../BillingService";
+import { businessConfig } from "../businessConfig";
+import { addDays, generateDayAndYear } from "@/lib/utils";
+import os from "os";
+import path from "path";
 
 export const paymentsConstants = {
   CF_CLIENT_ID: "CLIENT_ID",
@@ -144,6 +150,110 @@ export class PaymentManagemetService {
     }
   };
 
+  async processRegistration(
+    productId: number,
+    customerDetail: paymentCustomerDetail,
+    orderId: string,
+    paymentData: ISuccessPaymentData
+  ): Promise<APIResponse<CourseRegistration | undefined>> {
+    try {
+      const courseDetail = await prisma.course.findUnique({
+        where: {
+          courseId: productId,
+        },
+        select: {
+          expiryInDays: true,
+          slug: true,
+          name: true,
+          thumbnail: true,
+          coursePrice: true,
+          courseId: true,
+        },
+      });
+
+      const courseExpiryDate = courseDetail && addDays(Number(courseDetail.expiryInDays));
+
+      const isRigistered = await prisma.courseRegistration.findUnique({
+        where: {
+          studentId_courseId: {
+            studentId: customerDetail.id,
+            courseId: productId,
+          },
+        },
+        select: {
+          registrationId: true,
+        },
+      });
+
+      const courseRegistrationDetail =
+        !isRigistered &&
+        (await prisma.courseRegistration.create({
+          data: {
+            studentId: customerDetail.id,
+            courseId: productId,
+            expireIn: courseExpiryDate,
+            courseState: $Enums.CourseState.ENROLLED,
+            courseType: $Enums.CourseType.PAID,
+            orderId: orderId,
+          },
+        }));
+
+      const invoiceData = await prisma.invoice.create({
+        data: {
+          studentId: customerDetail.id,
+          taxRate: appConstant.payment.taxRate,
+          taxIncluded: true,
+          paidDate: String(paymentData.paymentTime),
+          amountPaid: Number(paymentData.amount),
+          orderId: String(paymentData.gatewayOrderId),
+          items: { courses: [Number(courseDetail?.courseId)] },
+        },
+      });
+
+      const invoiceConfig: InvoiceData = {
+        courseDetail: {
+          courseId: Number(courseDetail?.courseId),
+          courseName: String(courseDetail?.name),
+          slug: String(courseDetail?.slug),
+          validUpTo: generateDayAndYear(addDays(Number(courseDetail?.expiryInDays))),
+          thumbnail: String(courseDetail?.thumbnail),
+        },
+
+        totalAmount: Number(paymentData.amount),
+        currency: String(paymentData.currency),
+        businessInfo: {
+          gstNumber: businessConfig.gstNumber,
+          panNumber: businessConfig.panNumber,
+          address: businessConfig.address,
+          state: businessConfig.state,
+          country: businessConfig.country,
+          taxRate: Number(invoiceData.taxRate),
+          taxIncluded: invoiceData.taxIncluded,
+          platformName: appConstant.platformName,
+        },
+        stundentInfo: {
+          name: customerDetail.name,
+          email: customerDetail.email,
+          phone: customerDetail.phone,
+        },
+
+        invoiceNumber: Number(invoiceData.id),
+      };
+
+      let homeDir = os.homedir();
+      const savePath = path.join(
+        homeDir,
+        `${appConstant.homeDirName}/${appConstant.staticFileDirName}/${invoiceData.id}_invoice.pdf`
+      );
+
+      await new BillingService().sendInvoice(invoiceConfig, savePath);
+
+      return new APIResponse(true, 200, "Course has been purchased", courseRegistrationDetail || undefined);
+    } catch (error: any) {
+      return new APIResponse(false, 400, error);
+    }
+  }
+
   updateOrder = async (orderId: string): Promise<APIResponse<paymentStatus>> => {
     const OrderDetail = await prisma.order.findUnique({
       where: {
@@ -151,14 +261,14 @@ export class PaymentManagemetService {
       },
       select: {
         paymentGateway: true,
-        orderId: true,
+        gatewayOrderId: true,
       },
     });
-    if (OrderDetail?.orderId) {
+    if (OrderDetail?.gatewayOrderId) {
       switch (OrderDetail?.paymentGateway) {
         case $Enums.gatewayProvider.CASHFREE:
           const cf = await this.getPaymentProvider({ name: OrderDetail.paymentGateway });
-          const response = await cf.updateOrder(orderId, OrderDetail.orderId);
+          const response = await cf.updateOrder(orderId, OrderDetail.gatewayOrderId, this.processRegistration);
 
           return new APIResponse(response.success, response.status, response.message, response.body);
 
@@ -183,39 +293,40 @@ export class PaymentManagemetService {
     switch (gatewayProvider) {
       case $Enums.gatewayProvider.CASHFREE:
         let currentTime = new Date().getTime();
-        const getDetail = await prisma.cashfreeOrder.findFirst({
+        const getDetail = await prisma.order.findFirst({
           where: {
             gatewayOrderId: orderId,
           },
           select: {
             createdAt: true,
-            gatewayStatus: true,
+            updatedAt: true,
+            paymentStatus: true,
           },
           orderBy: {
             createdAt: "desc",
           },
         });
         if (getDetail) {
-          let progressTime = getDetail.createdAt.getTime() + appConstant.payment.lockoutMinutes;
-          if (getDetail.gatewayStatus === $Enums.cashfreePaymentStatus.FAILED) {
+          let progressTime = getDetail.updatedAt.getTime() + appConstant.payment.lockoutMinutes;
+          if (getDetail.paymentStatus === paymentStatus.FAILED) {
             return {
-              status: getDetail.gatewayStatus,
+              status: getDetail.paymentStatus,
               paymentDisable: false,
               alertType: "error",
               alertMessage: "Payment Failed",
               alertDescription: "Your payment has failed. Please contact support if you have any questions",
             };
-          } else if (getDetail.gatewayStatus === $Enums.cashfreePaymentStatus.USER_DROPPED) {
+          } else if (getDetail.paymentStatus === paymentStatus.USER_DROPPED) {
             return {
-              status: getDetail.gatewayStatus,
+              status: getDetail.paymentStatus,
               paymentDisable: false,
               alertType: "warning",
               alertMessage: "Payment Dropped",
               alertDescription: "Your payment has been dropped. Please contact support if you have any questions",
             };
-          } else if (getDetail.gatewayStatus === $Enums.cashfreePaymentStatus.SUCCESS) {
+          } else if (getDetail.paymentStatus === paymentStatus.SUCCESS) {
             return {
-              status: getDetail.gatewayStatus as string,
+              status: getDetail.paymentStatus as string,
               paymentDisable: false,
               alertType: "success",
               alertMessage: "Payment Successful",
@@ -225,7 +336,7 @@ export class PaymentManagemetService {
             if (progressTime > currentTime) {
               let remainingTime = (progressTime - currentTime) / 1000;
               return {
-                status: getDetail.gatewayStatus,
+                status: getDetail.paymentStatus,
                 paymentDisable: remainingTime > 0 ? true : false,
                 alertType: "warning",
                 alertMessage: "Payment Pending",
@@ -233,7 +344,7 @@ export class PaymentManagemetService {
               };
             } else {
               return {
-                status: getDetail.gatewayStatus,
+                status: getDetail.paymentStatus,
                 paymentDisable: false,
                 alertType: "warning",
                 alertMessage: "Payment Pending",
@@ -265,12 +376,12 @@ export class PaymentManagemetService {
   getOrderHistoryByUser = async (studentId: string): Promise<OrderHistory[]> => {
     const orders = await prisma.$queryRaw<
       any[]
-    >`SELECT o.latestStatus as status,o.amount,o.updatedAt as paymentDate,o.courseId,o.orderId,o.currency,co.name as courseName,invoice.id as invoiceId FROM \`Order\` AS o  
-    INNER JOIN Course as co ON co.courseId = o.courseId
-       LEFT OUTER JOIN Invoice as invoice ON invoice.studentId = ${studentId}  AND invoice.orderId = o.orderId
+    >`SELECT o.orderStatus as status,o.amount,o.updatedAt as paymentDate,o.productId,o.gatewayOrderId,o.currency,co.name as courseName,invoice.id as invoiceId FROM \`Order\` AS o  
+    INNER JOIN Course as co ON co.courseId = o.productId
+       LEFT OUTER JOIN Invoice as invoice ON invoice.studentId = ${studentId}  AND invoice.orderId = o.gatewayOrderId
      WHERE o.studentId = ${studentId} AND o.updatedAt =  (SELECT MAX(updatedAt)
     FROM \`Order\` AS b 
-    WHERE o.courseId = b.courseId AND o.studentId = ${studentId}) ORDER BY o.updatedAt ASC`;
+    WHERE o.courseId = b.productId AND o.studentId = ${studentId}) ORDER BY o.updatedAt ASC`;
 
     return orders;
   };
@@ -279,7 +390,7 @@ export class PaymentManagemetService {
     userConfig: UserConfig,
     courseConfig: CoursePaymentConfig,
     gatewayConfig: GatewayConfig
-  ): Promise<PaymentApiResponse> => {
+  ): Promise<APIResponse<PaymentApiResponse>> => {
     const currentTime = new Date();
     const latestOrder = await this.getLatestOrder(userConfig.studentId, courseConfig.courseId);
 
@@ -287,25 +398,19 @@ export class PaymentManagemetService {
      * if payment is in success state
      */
 
-    if (latestOrder && latestOrder.latestStatus === $Enums.paymentStatus.SUCCESS) {
-      return {
-        success: false,
-        error: "You have already purchased this course",
-      };
+    if (latestOrder && latestOrder.orderStatus === orderStatus.SUCCESS) {
+      return new APIResponse(false, 208, `You have already purchased this course`);
     }
 
     /**
      *  if payment is in initiated state
      */
 
-    if (latestOrder && latestOrder.latestStatus === $Enums.paymentStatus.INITIATED) {
-      const orderCreatedTime = new Date(latestOrder.createdAt).getTime();
+    if (latestOrder && latestOrder.orderStatus === orderStatus.INITIATED) {
+      const orderCreatedTime = new Date(latestOrder.updatedAt).getTime();
 
       if (orderCreatedTime + appConstant.payment.lockoutMinutes > currentTime.getTime()) {
-        return {
-          success: false,
-          error: `Your payment session is still active.`,
-        };
+        return new APIResponse(false, 102, `Your payment session is still active.`);
       }
     }
 
@@ -315,11 +420,11 @@ export class PaymentManagemetService {
     try {
       const paymentProvider = await this.getPaymentProvider(gatewayConfig);
 
-      if (!latestOrder || latestOrder.latestStatus === $Enums.paymentStatus.FAILED) {
+      if (!latestOrder || latestOrder.orderStatus === orderStatus.FAILED) {
         const order = await prisma.order.create({
           data: {
             studentId: userConfig.studentId,
-            latestStatus: $Enums.paymentStatus.INITIATED,
+            orderStatus: orderStatus.INITIATED,
             productId: courseConfig.courseId,
             paymentGateway: gatewayConfig.name as $Enums.gatewayProvider,
             amount: courseConfig.amount,
@@ -337,19 +442,14 @@ export class PaymentManagemetService {
        *   if payment is in pending state
        */
 
-      if (latestOrder.latestStatus === $Enums.paymentStatus.PENDING) {
+      if (latestOrder.orderStatus === orderStatus.PENDING) {
         const pendingPaymentResponse = await paymentProvider.purchaseCourse(courseConfig, userConfig, latestOrder.id);
         return pendingPaymentResponse;
       }
-    } catch (error) {
-      console.log(error);
 
-      return {
-        success: false,
-        error: "Unable to find the payment provider.Contact the support team",
-      };
+      return new APIResponse(false, 500, "something went wrong.Contact the support team");
+    } catch (error: any) {
+      return new APIResponse(false, 500, error);
     }
-
-    return { success: false, error: "something went wrong" };
   };
 }

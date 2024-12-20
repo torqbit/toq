@@ -6,7 +6,7 @@ import { GetServerSidePropsContext, NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { load } from "@cashfreepayments/cashfree-js";
-import { $Enums, CourseState, Role } from "@prisma/client";
+import { $Enums, CourseState, orderStatus, Role } from "@prisma/client";
 import styles from "@/styles/Preview.module.scss";
 import appConstant from "@/services/appConstant";
 import AddPhone from "@/components/AddPhone/AddPhone";
@@ -55,7 +55,7 @@ const LearnCoursesPage: NextPage<{
     message: "",
   });
 
-  const [paymentStatus, setPaymentStatus] = useState<$Enums.paymentStatus>();
+  const [paymentStatus, setPaymentStatus] = useState<orderStatus>();
 
   const handleCheckout = async (sessionId: string, gatewayName: string) => {
     switch (gatewayName) {
@@ -71,7 +71,7 @@ const LearnCoursesPage: NextPage<{
         cashfree.checkout(checkoutOptions).then((result: any) => {
           if (result.paymentDetails) {
             setPaymentDisable(false);
-            setPaymentStatus($Enums.paymentStatus.SUCCESS);
+            setPaymentStatus(orderStatus.SUCCESS);
             setRefresh(!refresh);
           }
           setLoading(false);
@@ -208,6 +208,7 @@ const LearnCoursesPage: NextPage<{
               courseDetails={course}
               chapters={lessons}
               onEnrollCourse={() => {}}
+              paymentDisable={false}
             />
           </MarketingLayout>
         </>
@@ -255,6 +256,9 @@ const LearnCoursesPage: NextPage<{
               chapters={lessons}
               onEnrollCourse={onEnrollCourse}
               userRole={userRole}
+              loading={loading}
+              paymentStatus={paymentStatus}
+              paymentDisable={paymentDisable}
             />
           </>
 

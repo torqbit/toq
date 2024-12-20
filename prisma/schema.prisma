@@ -133,7 +133,7 @@ enum courseDifficultyType {
 }
 
 model Course {
-  courseId            Int           @id
+  courseId            Int         @id
   name                String
   about               String      @db.Text()
   description         String      @db.Text()
@@ -156,15 +156,15 @@ model Course {
   sequenceId          Int?
   previewMode         Boolean?
 
-  expiryInDays      Int                   @default(365)
-  difficultyLevel   courseDifficultyType?
-  durationInMonths  Int                   @default(12)
-  user              User                  @relation(name: "userCourse", fields: [authorId], references: [id])
-  totalResources    Int                   @default(0)
-  state             StateType             @default(DRAFT)
-  chapters          Chapter[]
- 
-  courseProgress    CourseProgress[]
+  expiryInDays     Int                   @default(365)
+  difficultyLevel  courseDifficultyType?
+  durationInMonths Int                   @default(12)
+  user             User                  @relation(name: "userCourse", fields: [authorId], references: [id])
+  totalResources   Int                   @default(0)
+  state            StateType             @default(DRAFT)
+  chapters         Chapter[]
+
+  courseProgress CourseProgress[]
 
   @@unique([slug])
   @@unique([courseId, name])
@@ -265,9 +265,9 @@ model CourseRegistration {
   createdAt      DateTime            @default(now())
   updatedAt      DateTime            @updatedAt
   expireIn       DateTime?
-  order          Order              @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  order          Order               @relation(fields: [orderId], references: [id], onDelete: Cascade)
   user           User                @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  course         Product              @relation(fields: [courseId], references: [productId], onDelete: Cascade)
+  course         Product             @relation(fields: [courseId], references: [productId], onDelete: Cascade)
   certificate    CourseCertificates?
 
   @@unique([studentId, courseId])
@@ -443,14 +443,14 @@ model Blog {
   @@index([authorId])
 }
 
-enum paymentStatus {
+enum orderStatus {
   PENDING
   SUCCESS
   FAILED
   INITIATED
 }
 
-enum cashfreePaymentStatus {
+enum paymentStatus {
   SUCCESS
   FAILED
   USER_DROPPED
@@ -474,57 +474,35 @@ enum ProductType {
 }
 
 model Product {
-  productId Int              @id @default(autoincrement())
-  ptype ProductType
-  courseRegistration CourseRegistration? 
-  orders Order[]
+  productId          Int                 @id @default(autoincrement())
+  ptype              ProductType
+  courseRegistration CourseRegistration?
+  orders             Order[]
 }
 
 model Order {
   id               String              @id @default(cuid())
-  orderId          String?             @unique
-  latestStatus     paymentStatus?
-  registrationId   Int?                @unique
+  gatewayOrderId   String?             @unique
+  orderStatus      orderStatus?
+  paymentStatus    paymentStatus?
   studentId        String
-  productId         Int                @unique
+  productId        Int                 @unique
   currency         String?
   paymentMode      paymentMode         @default(ONLINE)
   amount           Int?
+  paymentId        String?
+  message          String?             @db.VarChar(500)
+  paymentChannel   String?
+  paymentTime      DateTime?
   createdAt        DateTime            @default(now())
   updatedAt        DateTime            @default(now())
   paymentGateway   gatewayProvider?
   Invoice          Invoice?
-  registeredCourse CourseRegistration? 
+  registeredCourse CourseRegistration?
   product          Product             @relation(fields: [productId], references: [productId], onDelete: Cascade)
   user             User                @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
-  @@index([studentId, orderId])
-}
-
-model CashfreeOrder {
-  id              String                 @id @default(cuid())
-  studentId       String
-  amount          Int
-  createdAt       DateTime               @default(now())
-  updatedAt       DateTime               @default(now())
-  paymentMethod   String?
-  gatewayStatus   cashfreePaymentStatus?
-  courseId        Int
-  gatewayProvider gatewayProvider?
-  orderId         String?
-  gatewayOrderId  String?
-  paymentId       BigInt?
-  currency        String?
-  message         String?                @db.VarChar(500)
-  paymentChannel  String?
-  bankReference   String?
-  paymentTime     DateTime?
-  sessionId       String?
-  sessionExpiry   DateTime?
-  errorDetails    Json?
-
   @@index([studentId, gatewayOrderId])
-  @@index([orderId])
 }
 
 model Invoice {
@@ -539,7 +517,7 @@ model Invoice {
   pdfPath     String?  @db.VarChar(500)
   orderId     String   @unique
   user        User     @relation(fields: [studentId], references: [id])
-  order       Order    @relation(fields: [orderId], references: [orderId])
+  order       Order    @relation(fields: [orderId], references: [gatewayOrderId])
 
   @@index([studentId])
   @@index([orderId])

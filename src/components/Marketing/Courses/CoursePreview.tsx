@@ -5,7 +5,16 @@ import { Button, Collapse, Divider, Flex, Form, Input, Space, Tag, message } fro
 import { FC, ReactNode, useEffect, useState } from "react";
 import MarketingSvgIcons from "../MarketingSvgIcons";
 import { CourseLessons, ICoursePriviewInfo } from "@/types/courses/Course";
-import { $Enums, CourseState, CourseType, ResourceContentType, Role, User } from "@prisma/client";
+import {
+  $Enums,
+  CourseState,
+  CourseType,
+  orderStatus,
+  ResourceContentType,
+  Role,
+  StateType,
+  User,
+} from "@prisma/client";
 import Link from "next/link";
 import Image from "next/image";
 import NotificationService from "@/services/NotificationService";
@@ -41,9 +50,23 @@ const CoursePreview: FC<{
   nextLessonId?: number;
   courseDetails: ICoursePriviewInfo;
   chapters: CourseLessons[];
+  paymentDisable: boolean;
+  loading?: boolean;
+  paymentStatus?: orderStatus;
   onEnrollCourse: () => void;
   userRole?: Role;
-}> = ({ user, courseId, courseDetails, nextLessonId, chapters, userRole, onEnrollCourse }) => {
+}> = ({
+  user,
+  courseId,
+  courseDetails,
+  nextLessonId,
+  chapters,
+  loading,
+  paymentDisable,
+  paymentStatus,
+  userRole,
+  onEnrollCourse,
+}) => {
   const { data: session, status } = useSession();
   const [notificationLoading, setNotificationLoading] = useState<boolean>(false);
   const [isNotified, setNotified] = useState<boolean>(false);
@@ -283,7 +306,7 @@ const CoursePreview: FC<{
                   </div>
                 </div>
                 <Divider />
-                {courseDetails.courseState === "ACTIVE" ? (
+                {courseDetails.courseState === StateType.ACTIVE ? (
                   <>
                     {(courseDetails.userRole === Role.ADMIN || courseDetails.userRole === Role.AUTHOR) &&
                       status === "authenticated" && (
@@ -325,20 +348,41 @@ const CoursePreview: FC<{
                       </>
                     )}
 
-                    {/* need to fix */}
-
                     {courseDetails.userRole === "NOT_ENROLLED" && status === "authenticated" && (
                       <div className={styles.buttonWrapper}>
                         {courseDetails.courseType === CourseType.PAID ? (
-                          <Button type="primary" onClick={onEnrollCourse}>
-                            <Flex align="center" gap={5} justify="center">
-                              {SvgIcons.lock}
-                              <span>Buy Now</span>
-                            </Flex>
+                          <Button
+                            loading={loading}
+                            className={styles.save_btn}
+                            disabled={paymentDisable}
+                            type="primary"
+                            onClick={onEnrollCourse}
+                          >
+                            {paymentDisable ? (
+                              "Payment  in Progress"
+                            ) : (
+                              <>
+                                {paymentStatus === orderStatus.PENDING ? (
+                                  "Complete the payment"
+                                ) : (
+                                  <>
+                                    {courseDetails.courseType === CourseType.PAID && (
+                                      <Flex align="center" gap={10}>
+                                        <i className={styles.lockIcon}>{SvgIcons.lock}</i>
+                                        <div> Buy Course</div>
+                                      </Flex>
+                                    )}
+                                  </>
+                                )}
+                              </>
+                            )}
                           </Button>
                         ) : (
-                          <Button type="primary" onClick={onEnrollCourse}>
-                            {courseDetails.previewMode ? "Preview Course" : "Enroll for Free"}
+                          <Button loading={loading} className={styles.save_btn} type="primary" onClick={onEnrollCourse}>
+                            <Flex align="center" gap={10}>
+                              {courseDetails.previewMode ? " Preview Course" : " Enroll Course"}
+                              {SvgIcons.arrowRight}
+                            </Flex>
                           </Button>
                         )}
                       </div>

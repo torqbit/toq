@@ -5,7 +5,7 @@ import { convertSecToHourandMin } from "@/pages/admin/content";
 import ProgramService from "@/services/ProgramService";
 import styles from "@/styles/Preview.module.scss";
 import { CourseLessonAPIResponse, VideoLesson } from "@/types/courses/Course";
-import { $Enums, CourseState, CourseType, ResourceContentType, Role } from "@prisma/client";
+import { $Enums, CourseState, CourseType, orderStatus, ResourceContentType, Role } from "@prisma/client";
 import { Breadcrumb, Button, Collapse, Flex, Space, Tag } from "antd";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -46,7 +46,7 @@ const Preview: FC<{
   paymentDisable?: boolean;
   paymentStatusLoading?: boolean;
   loading?: boolean;
-  paymentStatus?: $Enums.paymentStatus;
+  paymentStatus?: orderStatus;
 }> = ({
   addContentPreview,
   videoUrl,
@@ -218,7 +218,7 @@ const Preview: FC<{
                       "Payment  in Progress"
                     ) : (
                       <>
-                        {paymentStatus === $Enums.paymentStatus.PENDING ? (
+                        {paymentStatus === orderStatus.PENDING ? (
                           "Complete the payment"
                         ) : (
                           <>
