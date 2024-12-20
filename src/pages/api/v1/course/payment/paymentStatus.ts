@@ -29,19 +29,19 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         createdAt: "desc",
       },
       select: {
-        latestStatus: true,
+        orderStatus: true,
         paymentGateway: true,
-        orderId: true,
+        gatewayOrderId: true,
       },
     });
 
-    if (latestOrder) {
+    if (latestOrder && latestOrder.gatewayOrderId) {
       new PaymentManagemetService()
-        .getPaymentStatus(latestOrder?.paymentGateway as $Enums.gatewayProvider, latestOrder.orderId as string)
+        .getPaymentStatus(latestOrder?.paymentGateway as $Enums.gatewayProvider, latestOrder.gatewayOrderId)
         .then((result) => {
           return res.status(200).json({
             success: true,
-            status: latestOrder.latestStatus,
+            status: latestOrder.orderStatus,
             gatewayStatus: result.status,
             paymentDisable: result.paymentDisable,
             alertType: result.alertType,
@@ -50,10 +50,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           });
         })
         .catch((error) => {
-          return res.status(400).json({ success: false, status: latestOrder.latestStatus, paymentDisable: false });
+          return res.status(200).json({ success: false, status: latestOrder.orderStatus, paymentDisable: false });
         });
     } else {
-      return res.status(400).json({ success: false, remainingTime: 0 });
+      return res.status(200).json({ success: false, remainingTime: 0 });
     }
   } catch (error) {
     return errorHandler(error, res);

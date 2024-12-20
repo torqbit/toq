@@ -1,4 +1,4 @@
-import { $Enums, Order, CashfreeOrder, paymentStatus } from "@prisma/client";
+import { $Enums, CourseRegistration, Order, orderStatus, paymentStatus } from "@prisma/client";
 import { z } from "zod";
 import { APIResponse } from "./apis";
 
@@ -26,7 +26,7 @@ export interface GatewayResponse {
 }
 
 export interface PaymentApiResponse {
-  success: boolean;
+  success?: boolean;
   message?: string;
   error?: string;
   gatewayName?: string;
@@ -40,12 +40,40 @@ export interface PaymentServiceProvider {
     courseConfig: CoursePaymentConfig,
     userConfig: UserConfig,
     orderId: string
-  ): Promise<PaymentApiResponse>;
-  updateOrder(orderId: string, gatewayOrderId: string): Promise<APIResponse<paymentStatus>>;
+  ): Promise<APIResponse<PaymentApiResponse>>;
+  updateOrder(
+    orderId: string,
+    gatewayOrderId: string,
+    onSuccess: (
+      productId: number,
+      customerDetail: paymentCustomerDetail,
+      orderId: string,
+      paymentData: ISuccessPaymentData
+    ) => Promise<APIResponse<CourseRegistration | undefined>>
+  ): Promise<APIResponse<paymentStatus>>;
+}
+export enum OrderDetailStatus {
+  ACTIVE = "ACTIVE",
+  PAID = "PAID",
+  EXPIRED = "EXPIRED",
+}
+
+export interface ISuccessPaymentData {
+  amount: number;
+  currency: string;
+  paymentTime: string;
+  gatewayOrderId: string;
+}
+
+export interface paymentCustomerDetail {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
 }
 
 export interface CashFreePaymentData {
-  status?: $Enums.paymentStatus;
+  status?: orderStatus;
   paymentMethod?: string;
   gatewayOrderId?: string;
   paymentId?: string;
@@ -53,11 +81,11 @@ export interface CashFreePaymentData {
   message?: string;
   bankReference?: string;
   paymentTime?: string;
-  gatewayStatus?: $Enums.cashfreePaymentStatus;
+  gatewayStatus?: paymentStatus;
 }
 
 export interface OrderDetail extends Order {
-  gatewayOrder: CashfreeOrder[];
+  // gatewayOrder: CashfreeOrder[];
 }
 
 export interface InvoiceData {

@@ -8,7 +8,7 @@ import { errorHandler } from "@/lib/api-middlewares/errorHandler";
 import { getToken } from "next-auth/jwt";
 import { addDays, getCookieName } from "@/lib/utils";
 import MailerService from "@/services/MailerService";
-import { $Enums } from "@prisma/client";
+import { $Enums, CourseState, CourseType, orderStatus } from "@prisma/client";
 import { PaymentManagemetService } from "@/services/payment/PaymentManagementService";
 import { CashFreeConfig, CoursePaymentConfig, UserConfig } from "@/types/payment";
 
@@ -80,12 +80,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       const expiryDate = addDays(Number(course.expiryInDays));
       // IF COURSE IS FREE
 
-      if (courseType === $Enums.CourseType.FREE) {
+      if (courseType === CourseType.FREE) {
         await prisma.$transaction(async (tx) => {
           const createOrder = await tx.order.create({
             data: {
               studentId: token.id,
-              latestStatus: $Enums.paymentStatus.SUCCESS,
+              orderStatus: orderStatus.SUCCESS,
               productId: courseId,
               amount: 0,
             },
@@ -97,7 +97,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               courseId: courseId,
               expireIn: expiryDate,
               orderId: createOrder.id,
-              courseState: $Enums.CourseState.ENROLLED,
+              courseState: CourseState.ENROLLED,
             },
           });
         });
@@ -125,7 +125,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
       // IF COURSE IS PAID
 
-      if (courseType === $Enums.CourseType.PAID) {
+      if (courseType === CourseType.PAID) {
         if (!token.phone) {
           return res.status(400).json({ success: false, error: "Missing phone number", phoneNotFound: true });
         } else if (token.phone.length > 10 || token.phone.length < 10) {
@@ -156,7 +156,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
           const paymentData = await pms.processPayment(userConfig, courseConfig, gatewayConfig);
 
-          return res.status(paymentData.success ? 200 : 400).json(paymentData);
+          if (paymentData.success) {
+            return res.status(paymentData.status).json({ ...paymentData.body, success: paymentData.success });
+          } else {
+            return res.status(paymentData.status).json({ success: paymentData.success, error: paymentData.message });
+          }
         }
       }
     }
