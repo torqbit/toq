@@ -8,14 +8,20 @@ import {
   PaymentServiceProvider,
   UserConfig,
   GatewayConfig,
-  CashFreeConfig,
-  OrderDetail,
   OrderHistory,
   CFPaymentsConfig,
+  paymentCustomerDetail,
+  ISuccessPaymentData,
+  InvoiceData,
 } from "@/types/payment";
 import { CashfreePaymentProvider } from "./CashfreePaymentProvider";
 import SecretsManager from "../secrets/SecretsManager";
 import { APIResponse } from "@/types/apis";
+import { addDays, generateDayAndYear } from "@/lib/utils";
+import { businessConfig } from "../businessConfig";
+import os from "os";
+import path from "path";
+import { BillingService } from "../BillingService";
 
 export const paymentsConstants = {
   CF_CLIENT_ID: "CLIENT_ID",
@@ -144,6 +150,110 @@ export class PaymentManagemetService {
     }
   };
 
+  async processRegistration(
+    productId: number,
+    customerDetail: paymentCustomerDetail,
+    orderId: string,
+    paymentData: ISuccessPaymentData
+  ): Promise<APIResponse<CourseRegistration | undefined>> {
+    try {
+      const courseDetail = await prisma.course.findUnique({
+        where: {
+          courseId: productId,
+        },
+        select: {
+          expiryInDays: true,
+          slug: true,
+          name: true,
+          thumbnail: true,
+          coursePrice: true,
+          courseId: true,
+        },
+      });
+
+      const courseExpiryDate = courseDetail && addDays(Number(courseDetail.expiryInDays));
+
+      const isRigistered = await prisma.courseRegistration.findUnique({
+        where: {
+          studentId_courseId: {
+            studentId: customerDetail.id,
+            courseId: productId,
+          },
+        },
+        select: {
+          registrationId: true,
+        },
+      });
+
+      const courseRegistrationDetail =
+        !isRigistered &&
+        (await prisma.courseRegistration.create({
+          data: {
+            studentId: customerDetail.id,
+            courseId: productId,
+            expireIn: courseExpiryDate,
+            courseState: $Enums.CourseState.ENROLLED,
+            courseType: $Enums.CourseType.PAID,
+            orderId: orderId,
+          },
+        }));
+
+      const invoiceData = await prisma.invoice.create({
+        data: {
+          studentId: customerDetail.id,
+          taxRate: appConstant.payment.taxRate,
+          taxIncluded: true,
+          paidDate: String(paymentData.paymentTime),
+          amountPaid: Number(paymentData.amount),
+          orderId: String(paymentData.gatewayOrderId),
+          items: { courses: [Number(courseDetail?.courseId)] },
+        },
+      });
+
+      const invoiceConfig: InvoiceData = {
+        courseDetail: {
+          courseId: Number(courseDetail?.courseId),
+          courseName: String(courseDetail?.name),
+          slug: String(courseDetail?.slug),
+          validUpTo: generateDayAndYear(addDays(Number(courseDetail?.expiryInDays))),
+          thumbnail: String(courseDetail?.thumbnail),
+        },
+
+        totalAmount: Number(paymentData.amount),
+        currency: String(paymentData.currency),
+        businessInfo: {
+          gstNumber: businessConfig.gstNumber,
+          panNumber: businessConfig.panNumber,
+          address: businessConfig.address,
+          state: businessConfig.state,
+          country: businessConfig.country,
+          taxRate: Number(invoiceData.taxRate),
+          taxIncluded: invoiceData.taxIncluded,
+          platformName: appConstant.platformName,
+        },
+        stundentInfo: {
+          name: customerDetail.name,
+          email: customerDetail.email,
+          phone: customerDetail.phone,
+        },
+
+        invoiceNumber: Number(invoiceData.id),
+      };
+
+      let homeDir = os.homedir();
+      const savePath = path.join(
+        homeDir,
+        `${appConstant.homeDirName}/${appConstant.staticFileDirName}/${invoiceData.id}_invoice.pdf`
+      );
+
+      await new BillingService().sendInvoice(invoiceConfig, savePath);
+
+      return new APIResponse(true, 200, "Course has been purchased", courseRegistrationDetail || undefined);
+    } catch (error: any) {
+      return new APIResponse(false, 400, error);
+    }
+  }
+
   updateOrder = async (orderId: string): Promise<APIResponse<paymentStatus>> => {
     const orderDetail = await prisma.order.findUnique({
       where: {
@@ -159,7 +269,12 @@ export class PaymentManagemetService {
       switch (orderDetail?.paymentGateway) {
         case $Enums.gatewayProvider.CASHFREE:
           const cf = await this.getPaymentProvider({ name: orderDetail.paymentGateway });
-          const response = await cf.updateOrder(orderId, orderDetail.orderId, orderDetail.latestStatus || undefined);
+          const response = await cf.updateOrder(
+            orderId,
+            orderDetail.orderId,
+            this.processRegistration,
+            orderDetail.latestStatus || undefined
+          );
 
           return new APIResponse(response.success, response.status, response.message, response.body);
 

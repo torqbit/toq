@@ -1,22 +1,17 @@
-import { Cashfree, OrderEntity } from "cashfree-pg";
+import { Cashfree } from "cashfree-pg";
 import prisma from "@/lib/prisma";
-import { $Enums, cashfreePaymentStatus, paymentStatus } from "@prisma/client";
-import os from "os";
-import path from "path";
+import { $Enums, cashfreePaymentStatus, CourseRegistration, paymentStatus } from "@prisma/client";
 import {
   PaymentApiResponse,
   CoursePaymentConfig,
   PaymentServiceProvider,
   UserConfig,
   CashFreePaymentData,
-  InvoiceData,
   paymentCustomerDetail,
+  ISuccessPaymentData,
 } from "@/types/payment";
 import appConstant from "../appConstant";
 import { APIResponse } from "@/types/apis";
-import { addDays, generateDayAndYear } from "@/lib/utils";
-import { BillingService } from "../BillingService";
-import { businessConfig } from "../businessConfig";
 
 export class CashfreePaymentProvider implements PaymentServiceProvider {
   name: string = String(process.env.GATEWAY_PROVIDER_NAME);
@@ -29,115 +24,15 @@ export class CashfreePaymentProvider implements PaymentServiceProvider {
     this.secretId = secretId;
   }
 
-  async successCallback(
-    productId: number,
-    customerDetail: paymentCustomerDetail,
-    orderId: string,
-    paymentData: CashFreePaymentData
-  ): Promise<APIResponse<string>> {
-    try {
-      const courseDetail = await prisma.course.findUnique({
-        where: {
-          courseId: productId,
-        },
-        select: {
-          expiryInDays: true,
-          slug: true,
-          name: true,
-          thumbnail: true,
-          coursePrice: true,
-          courseId: true,
-        },
-      });
-
-      const courseExpiryDate = courseDetail && addDays(Number(courseDetail.expiryInDays));
-
-      const isRigistered = await prisma.courseRegistration.findUnique({
-        where: {
-          studentId_courseId: {
-            studentId: customerDetail.id,
-            courseId: productId,
-          },
-        },
-        select: {
-          registrationId: true,
-        },
-      });
-
-      !isRigistered &&
-        (await prisma.courseRegistration.create({
-          data: {
-            studentId: customerDetail.id,
-            courseId: productId,
-            expireIn: courseExpiryDate,
-            courseState: $Enums.CourseState.ENROLLED,
-            courseType: $Enums.CourseType.PAID,
-            orderId: orderId,
-          },
-          select: {
-            registrationId: true,
-          },
-        }));
-
-      const invoiceData = await prisma.invoice.create({
-        data: {
-          studentId: customerDetail.id,
-          taxRate: appConstant.payment.taxRate,
-          taxIncluded: true,
-          paidDate: String(paymentData.paymentTime),
-          amountPaid: Number(paymentData.amount),
-          orderId: String(paymentData.gatewayOrderId),
-          items: { courses: [Number(courseDetail?.courseId)] },
-        },
-      });
-
-      const invoiceConfig: InvoiceData = {
-        courseDetail: {
-          courseId: Number(courseDetail?.courseId),
-          courseName: String(courseDetail?.name),
-          slug: String(courseDetail?.slug),
-          validUpTo: generateDayAndYear(addDays(Number(courseDetail?.expiryInDays))),
-          thumbnail: String(courseDetail?.thumbnail),
-        },
-
-        totalAmount: Number(paymentData.amount),
-        currency: String(paymentData.currency),
-        businessInfo: {
-          gstNumber: businessConfig.gstNumber,
-          panNumber: businessConfig.panNumber,
-          address: businessConfig.address,
-          state: businessConfig.state,
-          country: businessConfig.country,
-          taxRate: Number(invoiceData.taxRate),
-          taxIncluded: invoiceData.taxIncluded,
-          platformName: appConstant.platformName,
-        },
-        stundentInfo: {
-          name: customerDetail.name,
-          email: customerDetail.email,
-          phone: customerDetail.phone,
-        },
-
-        invoiceNumber: Number(invoiceData.id),
-      };
-
-      let homeDir = os.homedir();
-      const savePath = path.join(
-        homeDir,
-        `${appConstant.homeDirName}/${appConstant.staticFileDirName}/${invoiceData.id}_invoice.pdf`
-      );
-
-      await new BillingService().sendInvoice(invoiceConfig, savePath);
-
-      return new APIResponse(true, 200, "Course has been purchased");
-    } catch (error: any) {
-      return new APIResponse(false, 400, error);
-    }
-  }
-
   async updateOrder(
     orderId: string,
     gatewayOrderId: string,
+    onSuccess: (
+      productId: number,
+      customerDetail: paymentCustomerDetail,
+      orderId: string,
+      paymentData: ISuccessPaymentData
+    ) => Promise<APIResponse<CourseRegistration | undefined>>,
     currentStatus: paymentStatus
   ): Promise<APIResponse<paymentStatus>> {
     if (orderId && gatewayOrderId) {
@@ -219,12 +114,14 @@ export class CashfreePaymentProvider implements PaymentServiceProvider {
             email: String(updateOrder.user.email),
             phone: String(updateOrder.user.phone),
           };
-          const response = await this.successCallback(
-            updateOrder.productId,
-            customerDetail,
-            orderId,
-            cashfreePaymentData
-          );
+
+          let successPaymentData: ISuccessPaymentData = cashfreePaymentData && {
+            amount: Number(cashfreePaymentData.amount),
+            currency: String(cashfreePaymentData.currency),
+            paymentTime: String(cashfreePaymentData.paymentTime),
+            gatewayOrderId: gatewayOrderId,
+          };
+          const response = await onSuccess(updateOrder.productId, customerDetail, orderId, successPaymentData);
           return new APIResponse(response.success, response.status, response.message);
         }
 

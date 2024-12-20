@@ -1,4 +1,4 @@
-import { $Enums, Order, CashfreeOrder, paymentStatus } from "@prisma/client";
+import { $Enums, Order, CashfreeOrder, paymentStatus, CourseRegistration } from "@prisma/client";
 import { z } from "zod";
 import { APIResponse } from "./apis";
 
@@ -44,8 +44,21 @@ export interface PaymentServiceProvider {
   updateOrder(
     orderId: string,
     gatewayOrderId: string,
+    onSuccess: (
+      productId: number,
+      customerDetail: paymentCustomerDetail,
+      orderId: string,
+      paymentData: ISuccessPaymentData
+    ) => Promise<APIResponse<CourseRegistration | undefined>>,
     currentStatus?: paymentStatus
   ): Promise<APIResponse<paymentStatus>>;
+}
+
+export interface ISuccessPaymentData {
+  amount: number;
+  currency: string;
+  paymentTime: string;
+  gatewayOrderId: string;
 }
 
 export interface paymentCustomerDetail {
