@@ -10,19 +10,13 @@ import {
   UserConfig,
   CashFreePaymentData,
   InvoiceData,
+  paymentCustomerDetail,
 } from "@/types/payment";
 import appConstant from "../appConstant";
 import { APIResponse } from "@/types/apis";
 import { addDays, generateDayAndYear } from "@/lib/utils";
 import { BillingService } from "../BillingService";
 import { businessConfig } from "../businessConfig";
-
-export interface paymentCustomerDetail {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-}
 
 export class CashfreePaymentProvider implements PaymentServiceProvider {
   name: string = String(process.env.GATEWAY_PROVIDER_NAME);

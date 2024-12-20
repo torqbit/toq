@@ -48,6 +48,13 @@ export interface PaymentServiceProvider {
   ): Promise<APIResponse<paymentStatus>>;
 }
 
+export interface paymentCustomerDetail {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+}
+
 export interface CashFreePaymentData {
   status?: $Enums.paymentStatus;
   paymentMethod?: string;
