@@ -254,7 +254,7 @@ enum CourseState {
 
 model CourseRegistration {
   registrationId Int                 @id @default(autoincrement())
-  courseId       Int                 @unique
+  courseId       Int                 
   orderId        String              @unique
   studentId      String
   courseState    CourseState         @default(ENROLLED)
@@ -267,7 +267,7 @@ model CourseRegistration {
   expireIn       DateTime?
   order          Order              @relation(fields: [orderId], references: [id], onDelete: Cascade)
   user           User                @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  course         Product              @relation(fields: [courseId], references: [productId], onDelete: Cascade)
+  course         Product?              @relation(fields: [courseId], references: [productId], onDelete: Cascade)
   certificate    CourseCertificates?
 
   @@unique([studentId, courseId])
@@ -476,7 +476,8 @@ enum ProductType {
 model Product {
   productId Int              @id @default(autoincrement())
   ptype ProductType
-  courseRegistration CourseRegistration? 
+  courseRegistration CourseRegistration[]  
+  eventRegistrations EventRegistration[]
   orders Order[]
 }
 
@@ -486,7 +487,7 @@ model Order {
   latestStatus     paymentStatus?
   registrationId   Int?                @unique
   studentId        String
-  productId         Int                @unique
+  productId         Int               
   currency         String?
   paymentMode      paymentMode         @default(ONLINE)
   amount           Int?
@@ -499,6 +500,7 @@ model Order {
   user             User                @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
   @@index([studentId, orderId])
+  @@index([productId])
 }
 
 model CashfreeOrder {
@@ -615,7 +617,7 @@ enum EventMode {
 }
 
 model Events {
-  id                  Int                 @id @default(autoincrement())
+  id                  Int                 @id
   title               String?             @unique
   banner              String?
   slug                String?             @unique
@@ -637,7 +639,7 @@ model Events {
   authorId            String
   user                User                @relation(fields: [authorId], references: [id])
   attendees           EventRegistration[]
-
+  
   @@index([authorId])
 }
 
@@ -662,11 +664,11 @@ model EventRegistration {
   createdAt          DateTime    @default(now())
   updatedAt          DateTime    @default(now())
   user               User?       @relation(fields: [email], references: [email])
-  event              Events      @relation(fields: [eventId], references: [id], onDelete: Cascade)
-
+  event              Product?              @relation(fields: [eventId], references: [productId])
   @@unique([eventId, email])
   @@index([email])
   @@index([eventId])
+  Events Events[]
 }
 
 model SecretStore {
