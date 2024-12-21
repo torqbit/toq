@@ -486,7 +486,7 @@ model Order {
   orderStatus      orderStatus?
   paymentStatus    paymentStatus?
   studentId        String
-  productId        Int                 @unique
+  productId        Int                 
   currency         String?
   paymentMode      paymentMode         @default(ONLINE)
   amount           Int?
@@ -503,6 +503,7 @@ model Order {
   user             User                @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
   @@index([studentId, gatewayOrderId])
+  @@index([productId])
 }
 
 model Invoice {

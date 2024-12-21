@@ -1,27 +1,12 @@
-/*
-  Warnings:
-
-  - You are about to drop the column `courseId` on the `Order` table. All the data in the column will be lost.
-  - You are about to drop the column `latestStatus` on the `Order` table. All the data in the column will be lost.
-  - You are about to drop the column `orderId` on the `Order` table. All the data in the column will be lost.
-  - You are about to drop the column `registrationId` on the `Order` table. All the data in the column will be lost.
-  - You are about to drop the `CashfreeOrder` table. If the table is not empty, all the data it contains will be lost.
-  - A unique constraint covering the columns `[courseId]` on the table `CourseRegistration` will be added. If there are existing duplicate values, this will fail.
-  - A unique constraint covering the columns `[orderId]` on the table `CourseRegistration` will be added. If there are existing duplicate values, this will fail.
-  - A unique constraint covering the columns `[gatewayOrderId]` on the table `Order` will be added. If there are existing duplicate values, this will fail.
-  - A unique constraint covering the columns `[productId]` on the table `Order` will be added. If there are existing duplicate values, this will fail.
-  - Added the required column `orderId` to the `CourseRegistration` table without a default value. This is not possible if the table is not empty.
-  - Added the required column `productId` to the `Order` table without a default value. This is not possible if the table is not empty.
-
-*/
--- DropIndex
-DROP INDEX `Order_orderId_key` ON `Order`;
 
 -- DropIndex
-DROP INDEX `Order_registrationId_key` ON `Order`;
+DROP INDEX  `Order_orderId_key` ON `Order`;
 
 -- DropIndex
-DROP INDEX `Order_studentId_orderId_idx` ON `Order`;
+DROP INDEX  `Order_registrationId_key` ON `Order`;
+
+-- DropIndex
+DROP INDEX  `Order_studentId_orderId_idx` ON `Order`;
 
 -- AlterTable
 ALTER TABLE `Assignment` ADD COLUMN `submissionConfig` JSON NULL;
@@ -47,27 +32,22 @@ ALTER TABLE `Order` DROP COLUMN `courseId`,
     ADD COLUMN `productId` INTEGER NOT NULL;
 
 -- DropTable
-DROP TABLE `CashfreeOrder`;
+DROP TABLE IF EXISTS `CashfreeOrder`;
 
 -- CreateTable
-CREATE TABLE `Product` (
+CREATE TABLE IF NOT EXISTS `Product` (
     `productId` INTEGER NOT NULL AUTO_INCREMENT,
     `ptype` ENUM('COURSE', 'EVENT') NOT NULL,
 
     PRIMARY KEY (`productId`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
--- CreateIndex
-CREATE UNIQUE INDEX `CourseRegistration_courseId_key` ON `CourseRegistration`(`courseId`);
 
--- CreateIndex
-CREATE UNIQUE INDEX `CourseRegistration_orderId_key` ON `CourseRegistration`(`orderId`);
+
 
 -- CreateIndex
 CREATE UNIQUE INDEX `Order_gatewayOrderId_key` ON `Order`(`gatewayOrderId`);
 
--- CreateIndex
-CREATE UNIQUE INDEX `Order_productId_key` ON `Order`(`productId`);
 
 -- CreateIndex
 CREATE INDEX `Order_studentId_gatewayOrderId_idx` ON `Order`(`studentId`, `gatewayOrderId`);
