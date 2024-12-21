@@ -46,7 +46,6 @@ model User {
   discussion           Discussion[]
   fromUserNotification Notification[]         @relation("fromUser")
   toUserNotification   Notification[]         @relation("toUser")
-  courseCertificate    CourseCertificates[]
   CourseProgress       CourseProgress[]
   conversation         Conversation[]
   blogs                Blog[]
@@ -163,6 +162,7 @@ model Course {
   totalResources   Int                   @default(0)
   state            StateType             @default(DRAFT)
   chapters         Chapter[]
+  product          Product              @relation(name: "course_product", fields: [courseId], references: [productId])
 
   courseProgress CourseProgress[]
 
@@ -254,7 +254,6 @@ enum CourseState {
 
 model CourseRegistration {
   registrationId Int                 @id @default(autoincrement())
-  courseId       Int                 @unique
   orderId        String              @unique
   studentId      String
   courseState    CourseState         @default(ENROLLED)
@@ -267,12 +266,10 @@ model CourseRegistration {
   expireIn       DateTime?
   order          Order               @relation(fields: [orderId], references: [id], onDelete: Cascade)
   user           User                @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  course         Product             @relation(fields: [courseId], references: [productId], onDelete: Cascade)
   certificate    CourseCertificates?
 
-  @@unique([studentId, courseId])
+  @@unique([studentId, orderId])
   @@index([studentId])
-  @@index([courseId])
 }
 
 //****** CourseRegistration Schema End******//
@@ -402,16 +399,11 @@ model ServiceProvider {
 
 model CourseCertificates {
   id               String             @id @default(cuid())
-  studentId        String
-  courseId         Int
+  registrationId   Int                @unique
   imagePath        String?
   pdfPath          String?
   issueDate        DateTime           @default(now())
-  student          User               @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  RegisteredCourse CourseRegistration @relation(fields: [courseId, studentId], references: [courseId, studentId], onDelete: Cascade)
-
-  @@unique([courseId, studentId])
-  @@index([studentId])
+  RegisteredCourse CourseRegistration @relation(fields: [registrationId], references: [registrationId], onDelete: Cascade)
 }
 
 model CourseNotification {
@@ -476,8 +468,8 @@ enum ProductType {
 model Product {
   productId          Int                 @id @default(autoincrement())
   ptype              ProductType
-  courseRegistration CourseRegistration?
   orders             Order[]
+  course             Course? @relation(name: "course_product")
 }
 
 model Order {
