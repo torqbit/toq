@@ -14,6 +14,7 @@ import { CashFreeConfig, CoursePaymentConfig, UserConfig } from "@/types/payment
 
 export const validateReqBody = z.object({
   courseId: z.number(),
+  orderId: z.string().optional(),
 });
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
