@@ -8,7 +8,7 @@ import { errorHandler } from "@/lib/api-middlewares/errorHandler";
 import { getToken } from "next-auth/jwt";
 import { addDays, getCookieName } from "@/lib/utils";
 import MailerService from "@/services/MailerService";
-import { $Enums, CourseState, CourseType, orderStatus } from "@prisma/client";
+import { CourseState, CourseType, orderStatus } from "@prisma/client";
 import { PaymentManagemetService } from "@/services/payment/PaymentManagementService";
 import { CashFreeConfig, CoursePaymentConfig, UserConfig } from "@/types/payment";
 
@@ -28,7 +28,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const body = await req.body;
 
-    const { courseId } = body;
+    const { courseId, orderId } = body;
 
     // check is user Active
 
@@ -41,17 +41,16 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     // check user already enrolled
 
-    const alreadyEnrolled = await prisma.courseRegistration.findUnique({
-      where: {
-        studentId_courseId: {
-          courseId: Number(courseId),
-          studentId: String(token?.id),
+    const alreadyEnrolled =
+      orderId &&
+      (await prisma.courseRegistration.findUnique({
+        where: {
+          orderId,
         },
-      },
-      select: {
-        registrationId: true,
-      },
-    });
+        select: {
+          registrationId: true,
+        },
+      }));
 
     if (alreadyEnrolled) {
       return res.status(400).json({
@@ -94,7 +93,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           await prisma.courseRegistration.create({
             data: {
               studentId: token.id,
-              courseId: courseId,
               expireIn: expiryDate,
               orderId: createOrder.id,
               courseState: CourseState.ENROLLED,
