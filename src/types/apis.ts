@@ -22,7 +22,6 @@ export class APIResponse<T> {
       this.body = body;
     }
     if (!success) {
-      console.log(`success: ${success} error: ${message}`);
       this.error = message;
     }
   }
