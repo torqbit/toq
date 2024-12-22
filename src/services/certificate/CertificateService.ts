@@ -15,6 +15,7 @@ import { FileObjectType } from "@/types/cms/common";
 import { IEventEmailConfig } from "@/lib/emailConfig";
 import MailerService from "../MailerService";
 import { getDateAndYear } from "@/lib/utils";
+import { $Enums } from "@prisma/client";
 const homeDir = os.homedir();
 const dirPath = path.join(homeDir, `${appConstant.homeDirName}/${appConstant.staticFileDirName}`);
 if (!fs.existsSync(dirPath)) {
@@ -107,62 +108,74 @@ export class CeritificateService {
   };
 
   generateCertificate = async (
-    certificateIssueId: string,
+    registrationId: number,
     descripition1: string,
     descripition2: string,
     studentName: string,
     authorName: string,
     dateOfCompletion: string,
-    certificateId: string,
-    onComplete: (pdfTempPath: string, imgPath: string) => Promise<APIResponse<string>>,
+    certificateTemplateId: string,
+    onComplete: (registrationId: number, certificateIssueId: string, pdfTempPath: string, imgPath: string) => Promise<APIResponse<string>>,
     onReject: (error: string) => void
   ): Promise<APIResponse<string>> => {
-    const imgUploadPath = await this.onCreateImg(
-      descripition1,
-      descripition2,
-      studentName,
-      authorName,
-      certificateIssueId,
-      dateOfCompletion,
-      certificateId
-    );
+    const issueCertificate = await prisma.courseCertificates.create({
+      data: {
+        registrationId: registrationId
+      }
+    })
 
-    if (!imgUploadPath.body) {
-      return new APIResponse(false, 400, "Failed to generate image upload path.");
+    if (issueCertificate) {
+      const imgUploadPath = await this.onCreateImg(
+        descripition1,
+        descripition2,
+        studentName,
+        authorName,
+        issueCertificate.id,
+        dateOfCompletion,
+        certificateTemplateId
+      );
+
+      if (!imgUploadPath.body) {
+        return new APIResponse(false, 400, "Failed to generate image upload path.");
+      }
+
+      // Create a PDF document
+      const doc = new PDFDocument({ size: "A4", margin: 0, layout: "landscape" });
+      const uploadPdfPath = path.join(dirPath, `${issueCertificate.id}.pdf`);
+      const outputStream = doc.pipe(fs.createWriteStream(uploadPdfPath));
+
+      doc
+        .image(imgUploadPath.body, 0, 0, {
+          width: 841,
+          height: 595,
+          align: "center",
+          valign: "center",
+        })
+        .save();
+
+      doc.end();
+      return new Promise<APIResponse<string>>((resolve, reject) => {
+        outputStream.on("finish", async () => {
+          try {
+            const response = imgUploadPath.body && (await onComplete(registrationId, issueCertificate.id, uploadPdfPath, imgUploadPath.body));
+            response && resolve(new APIResponse(response.success, response.status, response.message, response.body));
+          } catch (error) {
+            reject(new APIResponse(false, 500, "Error in onComplete callback", error));
+          }
+        });
+
+        outputStream.on("error", (error: any) => {
+          reject(new APIResponse(false, 500, error.message));
+        });
+      });
+    } else {
+      return new APIResponse(false, 500, "Failed to issue the certificate. Contact support.")
     }
 
-    // Create a PDF document
-    const doc = new PDFDocument({ size: "A4", margin: 0, layout: "landscape" });
-    const uploadPdfPath = path.join(dirPath, `${certificateIssueId}.pdf`);
-    const outputStream = doc.pipe(fs.createWriteStream(uploadPdfPath));
 
-    doc
-      .image(imgUploadPath.body, 0, 0, {
-        width: 841,
-        height: 595,
-        align: "center",
-        valign: "center",
-      })
-      .save();
-
-    doc.end();
-    return new Promise<APIResponse<string>>((resolve, reject) => {
-      outputStream.on("finish", async () => {
-        try {
-          const response = imgUploadPath.body && (await onComplete(uploadPdfPath, imgUploadPath.body));
-          response && resolve(new APIResponse(response.success, response.status, response.message, response.body));
-        } catch (error) {
-          reject(new APIResponse(false, 500, "Error in onComplete callback", error));
-        }
-      });
-
-      outputStream.on("error", (error: any) => {
-        reject(new APIResponse(false, 500, error.message));
-      });
-    });
   };
 
-  getCertificateDescripiton1 = (objectType: string, objectTitle: string) => {
+  getCertificateDescripiton1 = (objectType: $Enums.ProductType, objectTitle: string) => {
     switch (objectType) {
       case "COURSE":
         return `who has successfully completed the course ${objectTitle} `;
@@ -175,155 +188,133 @@ export class CeritificateService {
     }
   };
 
-  getCertificateDescripiton2 = (objectType: string, authorName: string) => {
+  getCertificateDescripiton2 = (objectType: $Enums.ProductType, authorName: string, brandName: string) => {
     switch (objectType) {
       case "COURSE":
-        return ` authored by ${authorName} and offered by Torqbit`;
+        return ` authored by ${authorName} and offered by ${brandName}`;
 
       case "EVENT":
-        return ` lead by ${authorName} and organized by ${appConstant.platformName} `;
+        return ` lead by ${authorName} and organized by ${brandName} `;
 
       default:
         return "";
     }
   };
 
-  courseCertificate = async (certificatInfo: ICertificateInfo): Promise<APIResponse<string>> => {
-    const { site }: { site: PageSiteConfig } = getSiteConfig();
-    const findExistingCertificate = await prisma.courseCertificates.findFirst({
-      where: {
-        studentId: certificatInfo.studentId,
-        courseId: certificatInfo.courseId,
-      },
-    });
-    if (findExistingCertificate && findExistingCertificate.imagePath && findExistingCertificate.pdfPath) {
-      return new APIResponse(true, 200, "Certificate already generated", findExistingCertificate.id);
-    } else {
-      if (findExistingCertificate) {
-        await prisma.courseCertificates.delete({
+
+  handleCertificateFailure = (error: string) => {
+    return new APIResponse(false, 400, error);
+  };
+
+  handleCertficateGenSuccess = async (registrationId: number, certificateIssueId: string, pdfTempPath: string, imgPath: string): Promise<APIResponse<string>> => {
+    let response: APIResponse<any>;
+
+    const cms = new ContentManagementService().getCMS(appConstant.defaultCMSProvider);
+    const cmsConfig = (await cms.getCMSConfig()).body?.config;
+
+    if (cmsConfig && pdfTempPath && imgPath) {
+      const pdfBuffer = fs.readFileSync(pdfTempPath);
+
+      const imgBuffer = fs.readFileSync(imgPath as string);
+      let imgName = `${certificateIssueId}.png`;
+      let pdfName = `${certificateIssueId}.pdf`;
+      const fileImgPath = path.join(dirPath, imgName);
+      const pdfPath = path.join(dirPath, pdfName);
+      const fileArray = [
+        {
+          fileBuffer: imgBuffer,
+          fullName: imgName,
+          filePath: fileImgPath,
+          name: "img",
+        },
+        {
+          fileBuffer: pdfBuffer,
+          fullName: pdfName,
+          filePath: pdfPath,
+          name: "pdf",
+        },
+      ];
+
+      fileArray.forEach(async (file) => {
+        response = await cms.uploadPrivateFile(
+          cmsConfig,
+          file.fileBuffer,
+          FileObjectType.CERTIFICATE,
+          file.fullName,
+          file.name === "pdf" ? "pdf" : "thumbnail"
+        );
+        let data =
+          file.name === "img"
+            ? {
+              imagePath: response.body,
+            }
+            : {
+              pdfPath: response.body,
+            };
+
+        await prisma.courseCertificates.update({
           where: {
-            id: findExistingCertificate.id,
+            id: certificateIssueId,
           },
+          data,
         });
+      });
+      if (pdfTempPath && imgPath) {
+        fs.unlinkSync(imgPath);
+        fs.unlinkSync(pdfTempPath);
       }
-      const createCertificate = await prisma.courseCertificates.create({
+
+      await prisma.courseRegistration.update({
+        where: {
+          registrationId: registrationId,
+        },
         data: {
-          courseId: certificatInfo.courseId,
-          studentId: certificatInfo.studentId,
+          courseState: "COMPLETED",
         },
       });
-      const onReject = (error: string) => {
-        return new APIResponse(false, 400, error);
-      };
-      const onComplete = async (pdfTempPath: string, imgPath: string): Promise<APIResponse<string>> => {
-        let response: APIResponse<any>;
-
-        const cms = new ContentManagementService().getCMS(appConstant.defaultCMSProvider);
-        const cmsConfig = (await cms.getCMSConfig()).body?.config;
-
-        if (cmsConfig && pdfTempPath && imgPath) {
-          const pdfBuffer = fs.readFileSync(pdfTempPath);
-
-          const imgBuffer = fs.readFileSync(imgPath as string);
-          let imgName = `${createCertificate.id}.png`;
-          let pdfName = `${createCertificate.id}.pdf`;
-          const fileImgPath = path.join(dirPath, imgName);
-          const pdfPath = path.join(dirPath, pdfName);
-          const fileArray = [
-            {
-              fileBuffer: imgBuffer,
-              fullName: imgName,
-              filePath: fileImgPath,
-              name: "img",
-            },
-            {
-              fileBuffer: pdfBuffer,
-              fullName: pdfName,
-              filePath: pdfPath,
-              name: "pdf",
-            },
-          ];
-
-          fileArray.forEach(async (file) => {
-            response = await cms.uploadPrivateFile(
-              cmsConfig,
-              file.fileBuffer,
-              FileObjectType.CERTIFICATE,
-              file.fullName,
-              file.name === "pdf" ? "pdf" : "thumbnail"
-            );
-            let data =
-              file.name === "img"
-                ? {
-                    imagePath: response.body,
-                  }
-                : {
-                    pdfPath: response.body,
-                  };
-
-            await prisma.courseCertificates.update({
-              where: {
-                id: createCertificate.id,
-              },
-
-              data,
-            });
-          });
-          if (pdfTempPath && imgPath) {
-            fs.unlinkSync(imgPath);
-            fs.unlinkSync(pdfTempPath);
-          }
-
-          await prisma.courseRegistration.update({
-            where: {
-              studentId_courseId: {
-                courseId: certificatInfo.courseId,
-                studentId: certificatInfo.studentId,
-              },
-            },
-            data: {
-              courseState: "COMPLETED",
-            },
-          });
-
-          const configData = {
-            name: certificatInfo.authorName,
-            email: certificatInfo.studentEmail,
-            courseName: certificatInfo.courseName,
-            productName: site.brand?.name,
-            url: `${process.env.NEXTAUTH_URL}/courses/${certificatInfo.slug}/certificate/${createCertificate.id}`,
-          };
-
-          // MailerService.sendMail("COURSE_COMPLETION", configData).then((result) => {
-          //   console.log(result.error);
-          // });
-
-          return new APIResponse(true, 200, "Certificate has been created ", createCertificate.id);
-
-          // upload thumbnail
-        } else {
-          throw new Error("No Media Provder has been configured");
-        }
-      };
-
-      let description1 = this.getCertificateDescripiton1("COURSE", certificatInfo?.courseName);
-      let description2 = this.getCertificateDescripiton2("COURSE", certificatInfo.authorName);
-
-      const certificateResponse = await this.generateCertificate(
-        createCertificate.id,
-        description1,
-        description2,
-        certificatInfo.studentName as string,
-        certificatInfo.authorName as string,
-        getDateAndYear(),
-        String(certificatInfo?.certificateTemplate),
-        onComplete,
-        onReject
-      );
-      return certificateResponse;
+      return new APIResponse(true, 200, "Certificate has been created ", certificateIssueId);
+    } else {
+      throw new Error("No Media Provder has been configured");
     }
   };
+
+  generateCourseCertificate = async (registrationId: number, courseId: number, studentName: string): Promise<APIResponse<string>> => {
+    const { site }: { site: PageSiteConfig } = getSiteConfig();
+    const courseDetails = await prisma.course.findUnique({
+      select: {
+        name: true,
+        certificateTemplate: true,
+        user: true
+      },
+      where: {
+        courseId: courseId
+      }
+    })
+
+    if (courseDetails && courseDetails.user) {
+      let description1 = this.getCertificateDescripiton1("COURSE", courseDetails.name);
+      let description2 = this.getCertificateDescripiton2("COURSE", courseDetails.user.name, site.brand?.name || appConstant.platformName);
+
+      const certificateResponse = await this.generateCertificate(
+        registrationId,
+        description1,
+        description2,
+        studentName,
+        courseDetails.user.name,
+        getDateAndYear(),
+        courseDetails.certificateTemplate || appConstant.certificateTemplate,
+        this.handleCertficateGenSuccess,
+        this.handleCertificateFailure
+      );
+      return certificateResponse;
+    } else {
+      return new APIResponse(false, 400, "Unable to find the course details, for which certificate is being issued")
+    }
+  }
+
+
   eventCertificate = async (certificatInfo: IEventCertificateInfo): Promise<APIResponse<string>> => {
+    const { site }: { site: PageSiteConfig } = getSiteConfig();
     const sendMail = async (certificatePdfPath: string): Promise<APIResponse<string>> => {
       const configData: IEventEmailConfig = {
         name: certificatInfo.studentName,
@@ -399,11 +390,11 @@ export class CeritificateService {
             let data =
               file.name === "img"
                 ? {
-                    certificate: response.body,
-                  }
+                  certificate: response.body,
+                }
                 : {
-                    certificatePdfPath: response.body,
-                  };
+                  certificatePdfPath: response.body,
+                };
 
             await prisma.eventRegistration
               .update({
@@ -432,17 +423,18 @@ export class CeritificateService {
       };
 
       let description1 = this.getCertificateDescripiton1("EVENT", String(certificatInfo?.eventName));
-      let description2 = this.getCertificateDescripiton2("EVENT", String(certificatInfo.authorName));
+      let description2 = this.getCertificateDescripiton2("EVENT", String(certificatInfo.authorName), site.brand?.name || appConstant.platformName);
 
+      //TODO: Need to use the event registration id while generating the certificate
       const certificateResponse = await this.generateCertificate(
-        `${certificatInfo.registrationId}`,
+        Number(`${certificatInfo.registrationId}`),
         description1,
         description2,
         certificatInfo.studentName as string,
         certificatInfo.authorName as string,
         getDateAndYear(),
         String(certificatInfo?.certificateTemplate),
-        onComplete,
+        (n: number, s1: string, s2: string, s3: string) => new Promise((res) => res(new APIResponse(true, 200, "Dummy response"))),
         onReject
       );
       return certificateResponse;
