@@ -7,11 +7,11 @@ const lessonForStudent = async (
   userId: string
 ): Promise<{ lessonDetail: ILessonPreviewDetail[]; userRole: string }> => {
   return new Promise(async (resolve, reject) => {
-    const isCourseRegistered = await prisma.courseRegistration.findUnique({
+    const isCourseRegistered = await prisma.courseRegistration.findFirst({
       where: {
-        studentId_courseId: {
-          studentId: userId,
-          courseId: courseId,
+        studentId: userId,
+        order: {
+          productId: courseId,
         },
       },
       select: {
@@ -24,7 +24,8 @@ const lessonForStudent = async (
       >`SELECT  ch.sequenceId as chapterSeq, re.sequenceId as resourceSeq, re.resourceId, re.name as lessonName, co.name as courseName, co.description,co.previewMode,
         re.description as lessonDescription, vi.id as videoId, vi.videoUrl, vi.videoDuration, ch.chapterId,re.contentType as contentType , assign.estimatedDuration,
         ch.name as chapterName, cp.resourceId as watchedRes FROM Course as co 
-        INNER JOIN CourseRegistration as cr ON co.courseId = cr.courseId
+        INNER JOIN \`Order\` as ord ON ord.productId = co.courseId
+        INNER JOIN CourseRegistration as cr ON   cr.orderId = ord.id
         INNER JOIN Chapter as ch ON co.courseId = ch.courseId
         INNER JOIN Resource as re ON ch.chapterId = re.chapterId
         LEFT OUTER JOIN Video as vi ON re.resourceId = vi.resourceId
@@ -40,7 +41,8 @@ const lessonForStudent = async (
       >`SELECT  ch.sequenceId as chapterSeq, re.sequenceId as resourceSeq, re.resourceId, re.name as lessonName, co.name as courseName, co.description,co.previewMode,
         re.description as lessonDescription, vi.id as videoId, vi.videoUrl, vi.videoDuration, ch.chapterId,re.contentType as contentType ,assign.estimatedDuration,
         ch.name as chapterName, cp.resourceId as watchedRes FROM Course as co 
-        INNER JOIN CourseRegistration as cr ON co.courseId = cr.courseId
+        INNER JOIN \`Order\` as ord ON ord.productId = co.courseId
+        INNER JOIN CourseRegistration as cr ON   cr.orderId = ord.id
         INNER JOIN Chapter as ch ON co.courseId = ch.courseId
         INNER JOIN Resource as re ON ch.chapterId = re.chapterId
         LEFT OUTER JOIN Assignment as assign ON re.resourceId = assign.lessonId

@@ -19,16 +19,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const userId = token?.id;
   const { courseId } = req.query;
   try {
-    const alreadyRegisterd = await prisma.courseRegistration.findUnique({
+    const alreadyRegisterd = await prisma.courseRegistration.findFirst({
       where: {
-        studentId_courseId: {
-          studentId: String(userId),
-          courseId: Number(courseId),
+        studentId: userId,
+        order: {
+          productId: Number(courseId),
         },
       },
-
       select: {
-        courseId: true,
         courseState: true,
       },
     });
@@ -39,7 +37,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           createdAt: "desc",
         },
         where: {
-          courseId: alreadyRegisterd.courseId,
+          courseId: Number(courseId),
           studentId: token?.id,
         },
         select: {

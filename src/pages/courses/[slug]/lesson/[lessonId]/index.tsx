@@ -97,6 +97,8 @@ const LessonPage: NextPage<{ siteConfig: PageSiteConfig; courseId: number }> = (
   const isMobile = useMediaQuery({ query: "(max-width: 933px)" });
   const { globalState } = useAppContext();
   const [loading, setLoading] = useState<boolean>(false);
+  const [markAsLoading, setMarkAsLoading] = useState<boolean>(false);
+
   const [courseDetail, setCourseDetails] = useState<{
     name: string;
     description: string;
@@ -112,7 +114,7 @@ const LessonPage: NextPage<{ siteConfig: PageSiteConfig; courseId: number }> = (
   const [messageApi, contextMessageHolder] = message.useMessage();
   const [loadingLesson, setLessonLoading] = useState<boolean>(false);
   const { data: session } = useSession();
-  const [loadingBtn, setLoadingBtn] = useState<boolean>(false);
+
   const [refresh, setRefresh] = useState<boolean>(false);
   const [certificateData, setCertificateData] = useState<ICertficateData>();
   const [assignmentDetail, setAssignmentDetail] = useState<IAssignmentDetail>();
@@ -443,6 +445,7 @@ const LessonPage: NextPage<{ siteConfig: PageSiteConfig; courseId: number }> = (
 
   const onMarkAsCompleted = async () => {
     try {
+      setMarkAsLoading(true);
       const res = await postFetch(
         {
           courseId: Number(courseId),
@@ -454,11 +457,14 @@ const LessonPage: NextPage<{ siteConfig: PageSiteConfig; courseId: number }> = (
       if (res.ok && result.success) {
         messageApi.success(result.message);
         moveToNextLesson(Number(router.query.lessonId), result.progress.lessonsCompleted, result.progress.totalLessons);
+        setMarkAsLoading(false);
       } else {
         messageApi.error(result.error);
+        setMarkAsLoading(false);
       }
     } catch (err) {
       messageApi.error(appConstant.cmnErrorMsg);
+      setMarkAsLoading(false);
     }
   };
 
@@ -537,7 +543,7 @@ const LessonPage: NextPage<{ siteConfig: PageSiteConfig; courseId: number }> = (
                         </Button>
                       )}
                       {!currentLesson?.lesson?.isWatched && (
-                        <Button loading={loadingBtn} type="primary" onClick={onMarkAsCompleted}>
+                        <Button loading={markAsLoading} type="primary" onClick={onMarkAsCompleted}>
                           Mark as Completed
                         </Button>
                       )}
@@ -663,7 +669,7 @@ const LessonPage: NextPage<{ siteConfig: PageSiteConfig; courseId: number }> = (
                               </Button>
                             )}
                             {!currentLesson?.lesson?.isWatched && (
-                              <Button loading={loadingBtn} type="primary" onClick={onMarkAsCompleted}>
+                              <Button loading={markAsLoading} type="primary" onClick={onMarkAsCompleted}>
                                 Mark as Completed
                               </Button>
                             )}

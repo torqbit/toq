@@ -27,24 +27,27 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const userId = token?.id;
     const body = await req.body;
     const { resourceId, courseId } = body;
-    const isEnrolled = await prisma.courseRegistration.findUnique({
+    const isEnrolled = await prisma.courseRegistration.findFirst({
       where: {
-        studentId_courseId: {
-          studentId: String(userId),
-          courseId: Number(courseId),
+        studentId: userId,
+        order: {
+          productId: Number(courseId),
         },
       },
       select: {
-        courseId: true,
+        certificate: true,
+        registrationId: true,
       },
     });
 
-    if (isEnrolled?.courseId) {
+    if (isEnrolled) {
       const courseProgress = await updateCourseProgress(
         Number(courseId),
         Number(resourceId),
         String(token?.id),
-        ResourceContentType.Video
+        ResourceContentType.Video,
+        isEnrolled.registrationId,
+        isEnrolled.certificate ? true : false
       );
 
       if (courseProgress) {
@@ -57,7 +60,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           },
         });
       } else {
-        res.status(400).json({ success: false, error: "You are not enrolled in this course" });
+        res.status(400).json({ success: false, error: "Unable to update the course progress" });
       }
     } else {
       res.status(400).json({ success: false, error: "You are not enrolled in this course" });

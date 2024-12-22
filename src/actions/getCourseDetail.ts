@@ -71,11 +71,11 @@ const courseDetailForStudent = async (
   userRole: Role;
   userStatus?: CourseState;
 }> => {
-  const isCourseRegistered = await prisma.courseRegistration.findUnique({
+  const isCourseRegistered = await prisma.courseRegistration.findFirst({
     where: {
-      studentId_courseId: {
-        studentId: userId,
-        courseId: courseId,
+      studentId: userId,
+      order: {
+        productId: courseId,
       },
     },
     select: {
@@ -93,7 +93,8 @@ const courseDetailForStudent = async (
         co.thumbnail as thumbnail,co.difficultyLevel,u.name as authorName,u.image as authorImage,assign.estimatedDuration,
         vi.videoDuration, ch.chapterId, 
         ch.name as chapterName, cp.resourceId as watchedRes FROM Course as co 
-        INNER JOIN CourseRegistration as cr ON co.courseId = cr.courseId
+        INNER JOIN \`Order\` as ord ON ord.productId = co.courseId
+        INNER JOIN CourseRegistration as cr ON  cr.orderId = ord.id
         INNER JOIN Chapter as ch ON co.courseId = ch.courseId
         INNER JOIN Resource as re ON ch.chapterId = re.chapterId
         LEFT OUTER JOIN Video as vi ON re.resourceId = vi.resourceId
@@ -116,7 +117,8 @@ const courseDetailForStudent = async (
         co.thumbnail as thumbnail,co.difficultyLevel,u.name as authorName,u.image as authorImage,assign.estimatedDuration,
          vi.videoDuration, ch.chapterId, 
         ch.name as chapterName, cp.resourceId as watchedRes FROM Course as co 
-        INNER JOIN CourseRegistration as cr ON co.courseId = cr.courseId
+        INNER JOIN \`Order\` as ord ON ord.productId = co.courseId
+        INNER JOIN CourseRegistration as cr ON   cr.orderId = ord.id
         INNER JOIN Chapter as ch ON co.courseId = ch.courseId
         INNER JOIN Resource as re ON ch.chapterId = re.chapterId
         INNER JOIN User as u ON u.id = co.authorId
