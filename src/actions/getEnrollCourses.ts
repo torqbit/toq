@@ -5,42 +5,50 @@ export interface IListingsCourses {
   pageNo?: number;
   pageSize?: number;
 }
-
+/**
+ * List all the course Ids, that this user has enrolled
+ * @param userId 
+ * @returns 
+ */
 export const getUserEnrolledUserId = async (userId: string) => {
   try {
-    const coursesId = await prisma.courseRegistration.findMany({
+    const courseOrders = await prisma.courseRegistration.findMany({
       where: {
         studentId: userId,
       },
       select: {
-        courseId: true,
+        order: true,
       },
     });
 
-    return coursesId.map((c, i) => c.courseId.toString());
+    if (courseOrders) {
+      return courseOrders.map(co => co.order.productId)
+    } else {
+      throw new Error("Unable to find course enrolments")
+    }
   } catch (error: any) {
     throw new Error(error);
   }
 };
+
+/**
+ * 
+ * @param courseId 
+ * @param userId 
+ * @returns 
+ */
 export const getUserEnrolledCoursesId = async (courseId: number, userId: string) => {
   try {
-    const course = await prisma.courseRegistration.findUnique({
+    const registrations = await prisma.courseRegistration.count({
       where: {
-        studentId_courseId: {
-          studentId: userId,
-          courseId: courseId,
+        studentId: userId,
+        order: {
+          productId: courseId
         },
-      },
-      select: {
-        courseId: true,
       },
     });
 
-    if (course?.courseId) {
-      return true;
-    } else {
-      return false;
-    }
+    return registrations > 0;
   } catch (error: any) {
     throw new Error(error);
   }
