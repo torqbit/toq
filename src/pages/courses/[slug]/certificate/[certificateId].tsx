@@ -47,6 +47,7 @@ const ShowCertificate: FC<{ siteConfig: PageSiteConfig; courseName: string; user
               router.push(`/courses/${router.query.slug}/certificate/download/${String(router.query.certificateId)}`);
             }}
             type="primary"
+            target="_blank"
           >
             <div> Download Certificate </div>
             <i>{SvgIcons.arrowRight}</i>
@@ -77,11 +78,12 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
       },
     });
     if (findCourse) {
-      const isCompleted = await prisma?.courseRegistration.findUnique({
+      const isCompleted = await prisma?.courseRegistration.findFirst({
         where: {
-          studentId_courseId: {
-            studentId: user.id,
-            courseId: Number(findCourse?.courseId),
+          studentId: user.id,
+
+          order: {
+            productId: Number(findCourse?.courseId),
           },
         },
         select: {

@@ -34,17 +34,25 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const body = await req.body;
     const { lessonId, courseId, comment, parentCommentId } = body;
 
-    const isEnrolled = await prisma.courseRegistration.findUnique({
+    const isEnrolled = await prisma.courseRegistration.findFirst({
       where: {
-        studentId_courseId: {
-          studentId: String(token?.id),
-          courseId: Number(courseId),
+        studentId: String(token?.id),
+        order: {
+          productId: Number(courseId),
         },
       },
       select: {
-        course: {
+        order: {
           select: {
-            authorId: true,
+            product: {
+              select: {
+                course: {
+                  select: {
+                    authorId: true,
+                  },
+                },
+              },
+            },
           },
         },
       },
@@ -95,13 +103,17 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       });
 
       let courseAuthor = {
-        userId: String(isEnrolled?.course.authorId),
+        userId: String(isEnrolled?.order.product.course?.authorId),
         resourceId: lessonId,
       };
 
       queryAuthor &&
         repliesAuthors
-          .concat(queryAuthor.userId === isEnrolled?.course.authorId ? [queryAuthor] : [queryAuthor, courseAuthor])
+          .concat(
+            queryAuthor.userId === isEnrolled?.order.product.course?.authorId
+              ? [queryAuthor]
+              : [queryAuthor, courseAuthor]
+          )
           .filter((u) => u.userId !== token?.id)
           .map(async (user) => {
             return prisma.notification.create({

@@ -35,23 +35,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const body = await req.body;
     const { lessonId, courseId, comment } = body;
 
-    const isEnrolled = await prisma.courseRegistration.findUnique({
+    const isEnrolled = await prisma.courseRegistration.findFirst({
       where: {
-        studentId_courseId: {
-          studentId: String(token?.id),
-          courseId: Number(courseId),
+        studentId: String(token?.id),
+        order: {
+          productId: Number(courseId),
         },
       },
       select: {
-        course: {
-          select: {
-            user: {
-              select: {
-                id: true,
-              },
-            },
-          },
-        },
+        user: true,
       },
     });
 
@@ -74,11 +66,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           },
         },
       });
-      if (isEnrolled && isEnrolled.course.user.id != token?.id) {
+      if (isEnrolled && isEnrolled.user.id != token?.id) {
         await prisma.notification.create({
           data: {
             notificationType: "COMMENT",
-            toUserId: isEnrolled.course.user.id,
+            toUserId: isEnrolled.user.id,
             commentId: addDiscussion.id,
             fromUserId: String(token?.id) || "",
             resourceId: lessonId,
