@@ -1,89 +1,70 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "../styles/Dashboard.module.scss";
-import { useSession } from "next-auth/react";
-import { List, Space, Spin, Tabs, TabsProps } from "antd";
-import SvgIcons from "@/components/SvgIcons";
-import ProgramService from "@/services/ProgramService";
-import Link from "next/link";
+import { Flex, message, Switch } from "antd";
 import { GetServerSidePropsContext, NextPage } from "next";
-
-import SpinLoader from "@/components/SpinLoader/SpinLoader";
 import AppLayout from "@/components/Layouts/AppLayout";
 import { getSiteConfig } from "@/services/getSiteConfig";
 import { PageSiteConfig } from "@/services/siteConstant";
+import { Role } from "@prisma/client";
+import { getCookieName } from "@/lib/utils";
+import { getToken } from "next-auth/jwt";
+import StudentDashboard from "@/components/Dashboard/StudentDashboard";
+import AdminDashboard from "@/components/Dashboard/AdminDashboard";
+import ProgramService from "@/services/ProgramService";
 
-const EnrolledCourseList: FC<{
-  courseData: { courseName: string; progress: string; courseId: number; slug: string }[];
-  pageLoading: boolean;
-}> = ({ courseData, pageLoading }) => {
-  return (
-    <>
-      {pageLoading ? (
-        <>
-          <SpinLoader />
-        </>
-      ) : (
-        <List
-          size="small"
-          header={false}
-          footer={false}
-          bordered={false}
-          dataSource={courseData}
-          className={styles.enrolled_course_list}
-          renderItem={(item) => (
-            <Link href={`/courses/${item.slug}`}>
-              <List.Item className={styles.enroll_course_item}>
-                <div>{item.courseName}</div>
-                <Space className={styles.completed_course} size={5}>
-                  <span>{item.progress}</span> <span>Completed</span>
-                </Space>
-              </List.Item>
-            </Link>
-          )}
-        />
-      )}
-    </>
-  );
-};
-
-const Dashboard: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
-  const { data: user } = useSession();
+const Dashboard: NextPage<{ siteConfig: PageSiteConfig; userRole: Role }> = ({ siteConfig, userRole }) => {
   const [pageLoading, setPageLoading] = useState<boolean>(false);
-
+  const [messageApi, contextHolder] = message.useMessage();
   const [allRegisterCourse, setAllRegisterCourse] = useState<
     { courseName: string; progress: string; courseId: number; slug: string }[]
   >([]);
+  const [viewMode, setViewMode] = useState<Role>(userRole);
 
-  const onChange = (key: string) => {};
-
-  const items: TabsProps["items"] = [
-    {
-      key: "1",
-      label: "Enrolled Courses",
-      className: "some-class",
-      icon: SvgIcons.courses,
-      children: <EnrolledCourseList courseData={allRegisterCourse} pageLoading={pageLoading} />,
-    },
-  ];
   useEffect(() => {
-    setPageLoading(true);
-    ProgramService.getRegisterCourses(
-      (result) => {
-        setAllRegisterCourse(result.progress);
-        setPageLoading(false);
-      },
-      (error) => {
-        setPageLoading(false);
-      }
-    );
-  }, []);
+    if (viewMode !== Role.ADMIN) {
+      setPageLoading(true);
+      ProgramService.getRegisterCourses(
+        (result) => {
+          setAllRegisterCourse(result.progress);
+          setPageLoading(false);
+        },
+        (error) => {
+          messageApi.error(error);
+          setPageLoading(false);
+        }
+      );
+    }
+  }, [viewMode]);
 
   return (
     <AppLayout siteConfig={siteConfig}>
+      {contextHolder}
       <section className={styles.dashboard_content}>
-        <h3>Dashboard</h3>
-
-        <Tabs defaultActiveKey="1" className="content_tab" items={items} onChange={onChange} />
+        <Flex justify="space-between">
+          <h3>{viewMode === Role.ADMIN ? "Admin Dashboard" : "Dashboard"}</h3>
+          <>
+            {userRole === Role.ADMIN && (
+              <Flex gap={50} align="center">
+                <div>
+                  <h5>Student Mode</h5>
+                  <p style={{ margin: 0 }}>View the dashboard as student</p>
+                </div>
+                <Switch
+                  size="small"
+                  checked={viewMode !== Role.ADMIN}
+                  onChange={(value) => {
+                    setViewMode(value ? Role.STUDENT : Role.ADMIN);
+                  }}
+                />
+              </Flex>
+            )}
+          </>
+        </Flex>
+        {viewMode === Role.ADMIN ? (
+          <AdminDashboard siteConfig={siteConfig} />
+        ) : (
+          <StudentDashboard siteConfig={siteConfig} allRegisterCourse={allRegisterCourse} pageLoading={pageLoading} />
+        )}
       </section>
     </AppLayout>
   );
@@ -92,11 +73,25 @@ const Dashboard: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => 
 export default Dashboard;
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+  const { req } = ctx;
   const siteConfig = getSiteConfig();
+
+  let cookieName = getCookieName();
+
+  const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
   const { site } = siteConfig;
-  return {
-    props: {
-      siteConfig: site,
-    },
-  };
+  if (user) {
+    return {
+      props: {
+        siteConfig: site,
+        userRole: user.role,
+      },
+    };
+  } else {
+    return {
+      props: {
+        siteConfig: site,
+      },
+    };
+  }
 };
