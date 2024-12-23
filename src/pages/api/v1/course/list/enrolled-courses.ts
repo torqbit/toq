@@ -32,7 +32,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       any[]
     >`select co.courseId, co.name,co.slug, COUNT(re.resourceId) as lessons, COUNT(cp.resourceId) as watched_lessons FROM Course as co
   INNER JOIN Chapter as ch ON co.courseId = ch.courseId 
-  INNER JOIN \`order\` as ord ON ord.productId = co.courseId
+  INNER JOIN \`Order\` as ord ON ord.productId = co.courseId
   INNER JOIN CourseRegistration as cr ON ord.id = cr.orderId
   INNER JOIN Resource as re ON ch.chapterId = re.chapterId
   LEFT OUTER JOIN CourseProgress as cp ON re.resourceId = cp.resourceId AND cr.studentId = cp.studentId
@@ -64,7 +64,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       info: false,
       success: true,
       message: "registered courses successfully fetched",
-
       progress: courseProgress,
     });
   } catch (error) {
