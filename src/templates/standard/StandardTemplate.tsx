@@ -17,60 +17,12 @@ interface IStandardTemplateProps {
   user: User;
   siteConfig: PageSiteConfig;
   previewMode?: boolean;
+  courseList: ICourseCard[];
 }
 
-const StandardTemplate: FC<IStandardTemplateProps> = ({ user, siteConfig, previewMode }) => {
+const StandardTemplate: FC<IStandardTemplateProps> = ({ user, siteConfig, courseList, previewMode }) => {
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
-  const [loading, setLoading] = useState<boolean>(false);
-  const [courseList, setCourseList] = useState<ICourseCard[]>([]);
-  const [messageApi, contextHolder] = message.useMessage();
   const featureInfo = siteConfig.sections?.features;
-
-  useEffect(() => {
-    if (siteConfig.sections?.courses?.enable) {
-      setLoading(true);
-      ProgramService.getCoursesByAuthor(
-        true,
-        (res) => {
-          let listData =
-            res.courses.length > 0
-              ? res.courses
-                  .filter((c) => c.state === StateType.ACTIVE)
-                  .map((course: any) => {
-                    let totalDuration = 0;
-                    course.chapters.forEach((chap: any) => {
-                      chap.resource.forEach((r: any) => {
-                        if (r.video) {
-                          totalDuration = totalDuration + r.video?.videoDuration;
-                        } else if (r.assignment) {
-                          totalDuration = totalDuration + Number(r.assignment.estimatedDuration) * 60;
-                        }
-                      });
-                    });
-                    let duration = convertSecToHourandMin(totalDuration);
-                    return {
-                      title: course.name,
-                      thumbnail: course.thumbnail || "",
-                      duration: `${duration}`,
-                      description: course.description,
-                      link: `/courses/${course.slug}`,
-                      courseType: course.courseType,
-                      price: Number(course.coursePrice),
-                      difficulty: course.difficultyLevel as courseDifficultyType,
-                    };
-                  })
-              : [];
-
-          setCourseList(listData);
-          setLoading(false);
-        },
-        (err) => {
-          setLoading(false);
-          messageApi.error(`Unable to get the courses due to ${err}`);
-        }
-      );
-    }
-  }, []);
 
   return (
     <MarketingLayout
@@ -79,7 +31,6 @@ const StandardTemplate: FC<IStandardTemplateProps> = ({ user, siteConfig, previe
       heroSection={<Hero siteConfig={siteConfig} isMobile={isMobile} user={user} />}
     >
       {/* <SetupPlatform /> */}
-      {contextHolder}
       <Features
         title={featureInfo?.title ? featureInfo.title : DEFAULT_THEME.sections.features.title}
         description={featureInfo?.description ? featureInfo.description : DEFAULT_THEME.sections.features.description}
@@ -97,7 +48,6 @@ const StandardTemplate: FC<IStandardTemplateProps> = ({ user, siteConfig, previe
               : DEFAULT_THEME.sections.courses.description
           }
           courseList={courseList}
-          loading={loading}
           previewMode={previewMode}
           brand={siteConfig.brand}
         />

@@ -20,7 +20,6 @@ export interface ICourseInfo {
   description: string;
   courseList: ICourseCard[];
   brand: IBrandConfig;
-  loading?: boolean;
 
   previewMode?: boolean;
 }

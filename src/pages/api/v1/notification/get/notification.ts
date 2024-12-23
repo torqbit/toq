@@ -28,6 +28,11 @@ export const getNotifi = async (userId: string, limit: number, offSet: number) =
           chapter: {
             select: {
               courseId: true,
+              course: {
+                select: {
+                  slug: true,
+                },
+              },
             },
           },
         },
@@ -43,6 +48,11 @@ export const getNotifi = async (userId: string, limit: number, offSet: number) =
                 select: {
                   courseId: true,
                   chapterId: true,
+                  course: {
+                    select: {
+                      slug: true,
+                    },
+                  },
                 },
               },
             },
