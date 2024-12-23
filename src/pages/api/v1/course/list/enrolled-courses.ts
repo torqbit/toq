@@ -67,7 +67,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       progress: courseProgress,
     });
   } catch (error) {
-    console.log(error);
     return errorHandler(error, res);
   }
 };
