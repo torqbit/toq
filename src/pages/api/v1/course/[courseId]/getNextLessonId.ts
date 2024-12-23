@@ -7,6 +7,7 @@ import { withAuthentication } from "@/lib/api-middlewares/with-authentication";
 import { errorHandler } from "@/lib/api-middlewares/errorHandler";
 
 import { getCookieName } from "@/lib/utils";
+import { StateType } from "@prisma/client";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   let cookieName = getCookieName();
@@ -52,12 +53,18 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         const firstResource = await prisma.chapter.findFirst({
           where: {
             courseId: Number(courseId),
-            sequenceId: 1,
+            state: StateType.ACTIVE,
+          },
+          orderBy: {
+            sequenceId: "asc",
           },
           select: {
             resource: {
               where: {
-                sequenceId: 1,
+                state: StateType.ACTIVE,
+              },
+              orderBy: {
+                sequenceId: "asc",
               },
               select: {
                 resourceId: true,
@@ -76,8 +83,20 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         select: {
           authorId: true,
           chapters: {
+            where: {
+              state: StateType.ACTIVE,
+            },
+            orderBy: {
+              sequenceId: "asc",
+            },
             select: {
               resource: {
+                where: {
+                  state: StateType.ACTIVE,
+                },
+                orderBy: {
+                  sequenceId: "asc",
+                },
                 select: {
                   resourceId: true,
                 },

@@ -1,7 +1,7 @@
 import MarketingLayout from "@/components/Layouts/MarketingLayout";
 import { DEFAULT_THEME, PageSiteConfig } from "@/services/siteConstant";
-import { User } from "@prisma/client";
-import { FC } from "react";
+import { courseDifficultyType, StateType, User } from "@prisma/client";
+import { FC, useEffect, useState } from "react";
 
 import { useMediaQuery } from "react-responsive";
 import SetupPlatform from "./components/Setup/SetupPlatform";
@@ -9,13 +9,18 @@ import Hero from "./components/Hero/Hero";
 import Blogs from "@/templates/standard/components/Blog/Blogs";
 import Features from "./components/Feature/Features";
 import CourseList from "@/templates/standard/components/Courses/Courses";
+import ProgramService from "@/services/ProgramService";
+import { ICourseCard } from "@/types/landing/courses";
+import { message } from "antd";
+import { convertSecToHourandMin } from "@/pages/admin/content";
 interface IStandardTemplateProps {
   user: User;
   siteConfig: PageSiteConfig;
   previewMode?: boolean;
+  courseList: ICourseCard[];
 }
 
-const StandardTemplate: FC<IStandardTemplateProps> = ({ user, siteConfig, previewMode }) => {
+const StandardTemplate: FC<IStandardTemplateProps> = ({ user, siteConfig, courseList, previewMode }) => {
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
   const featureInfo = siteConfig.sections?.features;
 
@@ -32,7 +37,7 @@ const StandardTemplate: FC<IStandardTemplateProps> = ({ user, siteConfig, previe
         items={featureInfo?.items && featureInfo?.items.length > 0 ? featureInfo?.items : []}
       />
 
-      {siteConfig.sections?.courses?.enable && (
+      {siteConfig.sections?.courses?.enable && siteConfig.brand && (
         <CourseList
           title={
             siteConfig.sections.courses.title ? siteConfig.sections.courses.title : DEFAULT_THEME.sections.courses.title
@@ -42,8 +47,9 @@ const StandardTemplate: FC<IStandardTemplateProps> = ({ user, siteConfig, previe
               ? siteConfig.sections.courses.description
               : DEFAULT_THEME.sections.courses.description
           }
-          courseList={[]}
+          courseList={courseList}
           previewMode={previewMode}
+          brand={siteConfig.brand}
         />
       )}
       {siteConfig.sections?.blog?.enable && (

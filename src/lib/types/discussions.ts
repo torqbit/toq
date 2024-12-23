@@ -14,6 +14,9 @@ export interface INotification extends Notification {
     chapterId: number;
     chapter: {
       courseId: number;
+      course: {
+        slug: string;
+      };
     };
   };
   fromUser: {

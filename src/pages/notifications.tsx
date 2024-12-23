@@ -62,11 +62,13 @@ const NotificationList: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) =>
         ? `/api/v1/notification/updateMany/update?tagCommentId=${item.tagCommentId}`
         : `/api/v1/notification/update/${item.id}`;
       getFetch(apiPath);
-      let courseId = item.tagCommentId ? item.tagComment?.resource?.chapter?.courseId : item.resource.chapter.courseId;
+      let courseSlug = item.tagCommentId
+        ? item.tagComment?.resource?.chapter?.course.slug
+        : item.resource.chapter.course.slug;
       let resourceId = item.comment.resourceId;
       item.tagCommentId
-        ? router.push(`/courses/${courseId}/lesson/${resourceId}?tab=discussions&threadId=${item?.tagCommentId}`)
-        : router.push(`/courses/${courseId}/lesson/${resourceId}?tab=discussions&queryId=${item?.commentId}`);
+        ? router.push(`/courses/${courseSlug}/lesson/${resourceId}?tab=discussions&threadId=${item?.tagCommentId}`)
+        : router.push(`/courses/${courseSlug}/lesson/${resourceId}?tab=discussions&queryId=${item?.commentId}`);
     } catch (err) {}
   };
 
