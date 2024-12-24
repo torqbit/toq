@@ -143,7 +143,7 @@ const QADiscssionTab: FC<{ resourceId?: number; loading: boolean }> = ({
       setLoading(true);
       DiscussionsService.postQuery(
         Number(resourceId),
-        Number(router.query.courseId),
+        String(router.query.slug),
         comment,
         (result) => {
           message.success(result.message);

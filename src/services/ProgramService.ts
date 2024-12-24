@@ -256,7 +256,7 @@ class ProgramService {
     });
   };
 
-  getCoursesByAuthor = (
+  getCourseList = (
     courseListPreview: boolean,
     onSuccess: (response: ApiResponse) => void,
     onFailure: (message: string) => void

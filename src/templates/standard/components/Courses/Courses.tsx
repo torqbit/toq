@@ -57,7 +57,7 @@ const CourseList: FC<ICourseInfo> = ({ title, description, courseList, previewMo
               }}
               className={`${styles.courses} ${styles.courses__triple}`}
             >
-              {previewMode ? (
+              {previewMode && courseList.length === 0 ? (
                 <>
                   <CourseSkeleton size={3} />
                 </>

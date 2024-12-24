@@ -1,7 +1,7 @@
-import { FC, forwardRef, useEffect } from "react";
+import { forwardRef, IframeHTMLAttributes } from "react";
 import styles from "./PreviewSite.module.scss";
 
-const PreviewSite = forwardRef<HTMLIFrameElement>((props, ref) => {
+const PreviewSite = forwardRef<HTMLIFrameElement, IframeHTMLAttributes<HTMLIFrameElement>>((props, ref) => {
   return (
     <>
       <div className={styles.site__preview__container}>
@@ -15,7 +15,7 @@ const PreviewSite = forwardRef<HTMLIFrameElement>((props, ref) => {
           loading="lazy"
           style={{ transform: "scale(0.9)", width: "111%" }}
           className={styles.site__preview__iframe}
-          src={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/admin/site/preview`}
+          {...props}
         ></iframe>
       </div>
     </>

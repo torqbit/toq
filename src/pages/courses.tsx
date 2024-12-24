@@ -62,7 +62,7 @@ const CoursesPage: NextPage<{ siteConfig: PageSiteConfig; userRole: Role }> = ({
 
   useEffect(() => {
     setLoading(true);
-    ProgramService.getCoursesByAuthor(
+    ProgramService.getCourseList(
       true,
       (res) => {
         setAllCourses(res.courses);
