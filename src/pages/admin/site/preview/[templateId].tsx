@@ -9,15 +9,15 @@ import { getSiteConfig } from "@/services/getSiteConfig";
 import { ICourseCard } from "@/types/landing/courses";
 import getCourseList from "@/actions/getCourseList";
 import { useRouter } from "next/router";
-import { LandingPageTemplates } from "@/types/template";
+import dynamic from "next/dynamic";
 
-const PreviewPage: FC<{ user: User; siteConfig: PageSiteConfig; allCourses: ICourseCard[] }> = ({
+const PreviewPage: FC<{ user: User; siteConfig: PageSiteConfig; courseList: ICourseCard[] }> = ({
   user,
   siteConfig,
-  allCourses,
+  courseList,
 }) => {
   const [config, setConfig] = useState<PageSiteConfig>(siteConfig);
-  const router = useRouter();
+
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       if (event.data.type === "SITE_CONFIG") {
@@ -32,13 +32,7 @@ const PreviewPage: FC<{ user: User; siteConfig: PageSiteConfig; allCourses: ICou
     };
   }, []);
 
-  switch (String(router.query.templateId)) {
-    case LandingPageTemplates.STANDARD:
-      return <StandardTemplate user={user} siteConfig={config} previewMode courseList={allCourses} />;
-
-    default:
-      return <StandardTemplate user={user} siteConfig={config} previewMode courseList={allCourses} />;
-  }
+  return <StandardTemplate user={user} siteConfig={siteConfig} courseList={courseList} />;
 };
 export default PreviewPage;
 
@@ -55,7 +49,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
     props: {
       user,
       siteConfig: site,
-      allCourses: allCourses || [],
+      courseList: allCourses || [],
     },
   };
 };
