@@ -3,7 +3,7 @@ import PreviewSite from "@/components/PreviewCode/PreviewSite";
 import SiteBuilder from "@/components/SiteBuilder/SiteBuilder";
 import { getSiteConfig } from "@/services/getSiteConfig";
 import { postFetch } from "@/services/request";
-import { DEFAULT_THEME, PageSiteConfig } from "@/services/siteConstant";
+import { PageSiteConfig } from "@/services/siteConstant";
 import { Button, Flex, message } from "antd";
 import { GetServerSidePropsContext, NextPage } from "next";
 import { useEffect, useRef, useState } from "react";
@@ -59,7 +59,10 @@ const SiteDesign: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) =>
             Save
           </Button>
         </div>
-        <PreviewSite ref={iframeRef} />
+        <PreviewSite
+          ref={iframeRef}
+          src={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/admin/site/preview/${siteConfig.template}`}
+        />
       </Flex>
     </SiteBuilderLayout>
   );
