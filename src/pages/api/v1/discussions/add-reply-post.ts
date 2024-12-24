@@ -32,13 +32,17 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       cookieName,
     });
     const body = await req.body;
-    const { lessonId, courseId, comment, parentCommentId } = body;
+    const { lessonId, slug, comment, parentCommentId } = body;
 
     const isEnrolled = await prisma.courseRegistration.findFirst({
       where: {
         studentId: String(token?.id),
         order: {
-          productId: Number(courseId),
+          product: {
+            course: {
+              slug,
+            },
+          },
         },
       },
       select: {

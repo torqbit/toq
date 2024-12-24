@@ -83,7 +83,7 @@ const ReplyDrawer: FC<{
       setLoading(true);
       DiscussionsService.postReply(
         resourceId,
-        Number(router.query.courseId),
+        String(router.query.slug),
         comment,
         Number(sltComment?.id),
         (result) => {

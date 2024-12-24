@@ -24,7 +24,7 @@ const PreviewPage: FC<{ user: User; siteConfig: PageSiteConfig }> = ({ user, sit
     };
   }, []);
 
-  return <StandardTemplate user={user} siteConfig={config} previewMode />;
+  return <StandardTemplate user={user} siteConfig={config} previewMode courseList={[]} />;
 };
 export default PreviewPage;
 

@@ -26,38 +26,36 @@ type FailedApiResponse = {
 class DiscussionsSerivice {
   postQuery = (
     lessonId: number,
-    courseId: number,
+    slug: string,
     comment: string,
     onSuccess: (response: ApiResponse) => void,
     onFailure: (message: string) => void
   ) => {
-    postFetch({ lessonId: lessonId, courseId: courseId, comment: comment }, `/api/v1/discussions/post/`).then(
-      (result) => {
-        if (result.status == 400) {
-          result.json().then((r) => {
-            const failedResponse = r as FailedApiResponse;
-            onFailure(failedResponse.error);
-          });
-        } else if (result.status == 200) {
-          result.json().then((r) => {
-            const apiResponse = r as ApiResponse;
-            onSuccess(apiResponse);
-          });
-        }
+    postFetch({ lessonId: lessonId, slug: slug, comment: comment }, `/api/v1/discussions/post/`).then((result) => {
+      if (result.status == 400) {
+        result.json().then((r) => {
+          const failedResponse = r as FailedApiResponse;
+          onFailure(failedResponse.error);
+        });
+      } else if (result.status == 200) {
+        result.json().then((r) => {
+          const apiResponse = r as ApiResponse;
+          onSuccess(apiResponse);
+        });
       }
-    );
+    });
   };
 
   postReply = (
     lessonId: number,
-    courseId: number,
+    slug: string,
     comment: string,
     parentCommentId: number,
     onSuccess: (response: ApiResponse) => void,
     onFailure: (message: string) => void
   ) => {
     postFetch(
-      { lessonId: lessonId, courseId: courseId, comment: comment, parentCommentId: parentCommentId },
+      { lessonId: lessonId, slug, comment: comment, parentCommentId: parentCommentId },
       `/api/v1/discussions/add-reply-post/`
     ).then((result) => {
       if (result.status == 400) {
