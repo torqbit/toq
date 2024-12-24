@@ -19,7 +19,7 @@ const PreviewPage: FC<{ user: User; siteConfig: PageSiteConfig }> = ({ user, sit
   const [messageApi, contextHolder] = message.useMessage();
 
   const getCourseList = () => {
-    ProgramService.getCoursesByAuthor(
+    ProgramService.getCourseList(
       true,
       (res) => {
         let listData =

@@ -22,7 +22,7 @@ const LandingPage: FC<IProps> = ({ user, siteConfig }) => {
 
   useEffect(() => {
     if (siteConfig.sections?.courses?.enable) {
-      ProgramService.getCoursesByAuthor(
+      ProgramService.getCourseList(
         true,
         (res) => {
           let listData =

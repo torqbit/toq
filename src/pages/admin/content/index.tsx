@@ -233,7 +233,7 @@ const Content: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   useEffect(() => {
     setLoading(true);
 
-    ProgramService.getCoursesByAuthor(
+    ProgramService.getCourseList(
       false,
       (res) => {
         setCoursesAuthored({
@@ -417,14 +417,12 @@ const Content: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
           tabBarExtraContent={
             <>
               {activeTab !== "Submission" && (
-
                 <Button
                   loading={addLoading}
                   type="primary"
                   onClick={handleActionButton}
                   className={styles.add_user_btn}
                 >
-
                   <span>{activeTab}</span>
                   {SvgIcons.arrowRight}
                 </Button>
