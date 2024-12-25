@@ -30,8 +30,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       homeDir,
       `${appConstant.homeDirName}/${appConstant.staticFileDirName}/${fields.previousPath[0]}`
     );
-
-    if (fs.existsSync(previousImgPath)) {
+    if (fs.existsSync(previousImgPath) && fs.statSync(previousImgPath).isFile()) {
       fs.unlinkSync(previousImgPath);
     }
 

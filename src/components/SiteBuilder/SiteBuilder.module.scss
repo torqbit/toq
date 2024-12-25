@@ -18,12 +18,12 @@
     .collapse__header {
       padding: 5px 0px 0px 0px;
 
-      >div:first-child {
-        >div:first-child {
+      > div:first-child {
+        > div:first-child {
           height: 33px;
         }
 
-        >div:nth-child(3) {
+        > div:nth-child(3) {
           margin-top: 4px;
         }
       }
@@ -53,6 +53,22 @@
       height: 100%;
       border: none;
       border-radius: 0px;
+    }
+  }
+
+  .segment {
+    background-color: var(--bg-segment);
+    color: var(--font-secondary);
+
+    .segment__labels {
+      line-height: 0;
+      padding: 5px 0px;
+
+      > div {
+        padding: 0px 17px;
+        line-height: 0;
+        min-height: 0;
+      }
     }
   }
 }

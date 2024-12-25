@@ -26,6 +26,9 @@ export const DEFAULT_THEME = {
     name: "TORQBIT",
     logo: "/icon/torqbit.png",
     darkLogo: "/icon/torqbit.png",
+    defaultTheme: "light",
+    themeSwitch: true,
+    icon: "/icon/torqbit.png",
     title: "Become a Pro Product Builder",
     description: "Master the art of product building and turn your ideas into successful, scalable products",
     ogImage: "/icon/torqbit.png",
@@ -76,24 +79,21 @@ export const DEFAULT_THEME = {
         {
           img: "/img/landing/auth.png",
           title: "Authentication",
-          description:
-            "Configure authentication with Google, Github or any other auth provider supported by NextAuth",
+          description: "Configure authentication with Google, Github or any other auth provider supported by NextAuth",
           link: "/docs/auth",
           cardClass: "steps__card__small",
         },
         {
           img: "/img/landing/auth.png",
           title: "Authentication",
-          description:
-            "Configure authentication with Google, Github or any other auth provider supported by NextAuth",
+          description: "Configure authentication with Google, Github or any other auth provider supported by NextAuth",
           link: "/docs/auth",
           cardClass: "steps__card__small",
         },
         {
           img: "/img/landing/auth.png",
           title: "Authentication",
-          description:
-            "Configure authentication with Google, Github or any other auth provider supported by NextAuth",
+          description: "Configure authentication with Google, Github or any other auth provider supported by NextAuth",
           link: "/docs/auth",
           cardClass: "steps__card__small",
         },

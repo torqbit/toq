@@ -8,8 +8,6 @@ import { FC, useEffect, useState } from "react";
 import { getSiteConfig } from "@/services/getSiteConfig";
 import { ICourseCard } from "@/types/landing/courses";
 import getCourseList from "@/actions/getCourseList";
-import { useRouter } from "next/router";
-import dynamic from "next/dynamic";
 
 const PreviewPage: FC<{ user: User; siteConfig: PageSiteConfig; courseList: ICourseCard[] }> = ({
   user,
@@ -32,7 +30,7 @@ const PreviewPage: FC<{ user: User; siteConfig: PageSiteConfig; courseList: ICou
     };
   }, []);
 
-  return <StandardTemplate user={user} siteConfig={siteConfig} courseList={courseList} />;
+  return <StandardTemplate user={user} siteConfig={config} courseList={courseList} />;
 };
 export default PreviewPage;
 

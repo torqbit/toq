@@ -15,6 +15,8 @@ site:
     description: Master the art of product building and turn your ideas into
       successful, scalable products
     ogImage: /icon/torqbit.png
+    themeSwitch: false
+    defaultTheme: dark
     favicon: /favicon.ico
     socialLinks:
       discord: https://discord.gg/NserMXcx
