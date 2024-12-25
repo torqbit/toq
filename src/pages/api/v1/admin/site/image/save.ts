@@ -51,18 +51,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     if (isResize) {
       const imageBuffer = await fs.promises.readFile(sourcePath);
-      const resizedImageBuffer = await sharp(imageBuffer)
-        .resize({ height: 40 })
-        .png({ quality: 90 })
-        .composite([
-          {
-            input: Buffer.from(
-              '<svg><rect x="0" y="0" width="100%" height="100%" fill="black" fill-opacity="0.5" /></svg>'
-            ),
-            blend: "over",
-          },
-        ])
-        .toBuffer();
+      const resizedImageBuffer = await sharp(imageBuffer).resize({ height: 40 }).png({ quality: 90 }).toBuffer();
       fs.promises.writeFile(filePath, new Uint8Array(resizedImageBuffer));
     } else {
       fs.copyFileSync(sourcePath, filePath);
