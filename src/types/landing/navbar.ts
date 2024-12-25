@@ -3,8 +3,10 @@ import { User } from "next-auth";
 import { ReactNode } from "react";
 export interface IBrandInfo {
   name: string;
+
+  icon: ReactNode | string;
   logo: ReactNode | string;
-  darkLogo: string | ReactNode
+  darkLogo: string | ReactNode;
 }
 export interface INavBarProps {
   user?: User;

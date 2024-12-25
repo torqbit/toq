@@ -60,11 +60,32 @@ const Sidebar: FC<{ menu: MenuProps["items"]; siteConfig: PageSiteConfig }> = ({
         <div className={styles.logo}>
           <Link href="/">
             {globalState.collapsed ? (
-              <Image src="/icon/torqbit.png" alt="torq" width={40} height={40} />
+              <img
+                src={`${siteConfig?.brand?.icon}`}
+                style={{ width: "auto", height: 40 }}
+                alt={`logo of ${siteConfig?.brand?.name}`}
+              />
             ) : (
               <Flex align="center" gap={5}>
-                <Image src={`/icon/torqbit.png`} alt="torq" width={40} height={40} />
-                <h4 className={styles.logoText}>{brand?.name}</h4>
+                {typeof siteConfig?.brand?.logo === "string" && typeof siteConfig.brand.darkLogo === "string" ? (
+                  <img
+                    src={globalState.theme == "dark" ? siteConfig?.brand?.darkLogo : siteConfig?.brand?.logo}
+                    style={{ width: "auto", height: 30 }}
+                    alt={`logo of ${siteConfig.brand.name}`}
+                  />
+                ) : (
+                  siteConfig?.brand?.logo
+                )}
+                {!siteConfig?.brand?.logo && (
+                  <Flex align="center" gap={10}>
+                    <img
+                      src={`${siteConfig?.brand?.icon}`}
+                      style={{ width: "auto", height: 30 }}
+                      alt={`logo of ${siteConfig?.brand?.name}`}
+                    />
+                    <h1 className="font-brand">{siteConfig?.brand?.name}</h1>
+                  </Flex>
+                )}
               </Flex>
             )}
           </Link>

@@ -357,3 +357,23 @@ export const getDateAndYear = (dateInfo?: Date) => {
   const monthName = date.toLocaleString("default", { month: "long" });
   return `${monthName} ${day}, ${year}`;
 };
+
+export const checkIfImageIsSquare = (file: File) => {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const objectURL = URL.createObjectURL(file);
+
+    img.onload = () => {
+      const { width, height } = img;
+      URL.revokeObjectURL(objectURL); // Cleanup the object URL
+      resolve(width === height);
+    };
+
+    img.onerror = (error) => {
+      URL.revokeObjectURL(objectURL); // Cleanup the object URL
+      reject(error);
+    };
+
+    img.src = objectURL; // Trigger the load
+  });
+};
