@@ -9,22 +9,18 @@ const constants = {
 };
 
 export async function toIco(image: Sharp, sizeList: number[]) {
-  try {
-    const { info } = await image.toBuffer({ resolveWithObject: true });
-    const size = info.width;
-    if (info.format !== "png" || size !== info.height) throw new Error("Please give me a square PNG image.");
+  const { info } = await image.toBuffer({ resolveWithObject: true });
+  const size = info.width;
+  if (info.format !== "png" || size !== info.height) throw new Error("Please give me a square PNG image.");
 
-    const resizedImages = sizeList.map((targetSize) =>
-      image.clone().resize(targetSize, targetSize, {
-        kernel: "cubic",
-        // Jimp.RESIZE_BICUBIC
-      })
-    );
+  const resizedImages = sizeList.map((targetSize) =>
+    image.clone().resize(targetSize, targetSize, {
+      kernel: "cubic",
+      // Jimp.RESIZE_BICUBIC
+    })
+  );
 
-    return await imagesToIco(resizedImages);
-  } catch (error) {
-    console.log(error);
-  }
+  return await imagesToIco(resizedImages);
 }
 
 async function imagesToIco(images: Sharp[]) {
