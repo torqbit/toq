@@ -35,6 +35,7 @@ const MarketingLayout: FC<{
   let brandInfo: IBrandInfo = {
     logo: siteConfig.brand?.logo ?? DEFAULT_THEME.brand.logo,
     name: siteConfig.brand?.name ?? DEFAULT_THEME.brand.name,
+    icon: siteConfig.brand?.icon ?? DEFAULT_THEME.brand.icon,
     darkLogo: siteConfig.brand?.darkLogo || DEFAULT_THEME.brand.darkLogo,
   };
 
