@@ -266,6 +266,35 @@ export class BunnyClient {
     }
   };
 
+  getPullZoneDetails = async (pullZoneId: number): Promise<APIResponse<PullZone | undefined>> => {
+    const url = `https://api.bunny.net/pullzone/${pullZoneId}?includeCertificate=false`;
+    const options = {
+      method: "GET",
+      headers: {
+        accept: "application/json",
+        AccessKey: this.accessKey,
+      },
+    };
+    try {
+      const result = await fetch(url, options);
+      if (result.status == 200) {
+        const pullZoneDetails = (await result.json()) as PullZone;
+        return new APIResponse(true, result.status, `Successfully fetched the PullZone details`, pullZoneDetails);
+      } else if (result.status >= 400) {
+        const reqError = (await result.json()) as BunnyRequestError;
+        return new APIResponse(
+          false,
+          result.status,
+          `Failed to fetch the pull zone details, with error : ${reqError.Message}`
+        );
+      } else {
+        return new APIResponse(false, result.status, "Failed to get response from Bunny Server");
+      }
+    } catch (err: any) {
+      return new APIResponse(false, 400, err);
+    }
+  };
+
   listVideoLibraries = async () => {
     const url = "https://api.bunny.net/videolibrary?page=1&perPage=1000&includeAccessKey=false";
     const options = {
@@ -395,6 +424,7 @@ export class BunnyClient {
     isCDN: boolean
   ): Promise<APIResponse<StorageZone>> => {
     const url = "https://api.bunny.net/storagezone";
+    console.log(`storage zone name: ${this.getStorageZoneName(brandName, isCDN)}`);
     const options = {
       method: "POST",
       headers: this.getClientHeaders(),
