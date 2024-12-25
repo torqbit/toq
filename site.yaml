@@ -20,8 +20,8 @@ site:
       discord: https://discord.gg/NserMXcx
       github: https://github.com/torqbit
       youtube: https://www.youtube.com/@torqbit
-    name: Learn Online
-    brandColor: "#df54ac"
+    name: Torqbit
+    brandColor: "#8980fd"
     title: Making online fun and easy
     icon: /icon/torqbit.png
   darkMode: true

@@ -25,7 +25,7 @@ const SiteSetupPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig })
       title: "Content Management",
       description:
         "Configure video streaming, image and other file storage that will be used when creating lessons, assignments and certificates",
-      link: "/admin/settings?tab=content",
+      link: "/admin/settings?tab=cms",
     },
     {
       icon: "/img/landing/payment.png",

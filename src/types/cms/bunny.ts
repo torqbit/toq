@@ -41,6 +41,10 @@ export type BunnyCMSConfig = {
     vidLibraryId: number;
     replicatedRegions: string[];
     videoResolutions: string[];
+    pullZone: {
+      id: number;
+      hostnames: string[];
+    };
     watermarkUrl?: string;
   };
   cdnConfig?: {

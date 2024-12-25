@@ -179,7 +179,11 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
             );
 
             //update the allowed domains
-            await bunny.addAllowedDomainsVOD(bunnyConfig.vodConfig.vidLibraryId, hostURL.hostname);
+            let allowedDomain = hostURL.hostname;
+            if (allowedDomain.startsWith("local")) {
+              allowedDomain = `${allowedDomain}:${hostURL.port}`;
+            }
+            await bunny.addAllowedDomainsVOD(bunnyConfig.vodConfig.vidLibraryId, allowedDomain);
             const updatedBunnyConfig = {
               ...bunnyConfig,
               vodConfig: {
@@ -195,7 +199,7 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
           }
         } else {
           //Unable to find the VOD Config. Create a new VOD configuration
-          return bunny.createVideoLibrary(brandName, replicatedRegions).then((result) => {
+          return bunny.createVideoLibrary(brandName, replicatedRegions).then(async (result) => {
             if (result.success && result.body) {
               //upload the watermark url
               if (watermarkUrl && watermarkUrl.startsWith("http")) {
@@ -211,6 +215,9 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
               //add the VOD access key
               secretsStore.put(BunnyConstants.vodAccessKey, result.body.ApiKey);
 
+              //get the details of the pullzone Id
+              const pullZone = await bunny.getPullZoneDetails(result.body.PullZoneId);
+
               //save the bunny config
               const bunnyConfig: BunnyCMSConfig = {
                 ...baseBunnyConfig,
@@ -219,6 +226,10 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
                   replicatedRegions: replicatedRegions,
                   videoResolutions: videoResolutions,
                   watermarkUrl: watermarkUrl,
+                  pullZone: {
+                    id: result.body.PullZoneId,
+                    hostnames: (pullZone.body?.Hostnames || []).map((h) => h.Value),
+                  },
                 },
               };
               this.saveConfiguration(bunnyConfig);
@@ -532,7 +543,7 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
         file,
         cmsConfig.vodConfig.vidLibraryId,
         title,
-        cmsConfig.cdnConfig.linkedHostname
+        cmsConfig.vodConfig.pullZone.hostnames[0]
       );
       if (!response.success || !response.body) {
         return new APIResponse(false, 400, "Unable to upload the video");
