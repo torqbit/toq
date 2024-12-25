@@ -31,20 +31,31 @@ const BrandForm: FC<{
 }> = ({ updateSiteConfig, config }) => {
   const [form] = Form.useForm();
   const [brandConfig, setBrandConfig] = useState<IBrandConfig | undefined>(config.brand);
-  const [brandImage, setBrandImage] = useState<{ logo: string; icon: string }>({
+  const [brandImage, setBrandImage] = useState<{ logo: string; icon: string; darkLogo: string }>({
     logo: config.brand?.logo ? (config.brand.logo as string) : "",
+    darkLogo: config.brand?.darkLogo ? (config.brand.darkLogo as string) : "",
+
     icon: config.brand?.icon ? (config.brand?.icon as string) : "",
   });
-  const [selectedSegment, setSelectedSegment] = useState<string>("discord");
 
-  const beforeUpload = async (file: File, imageType: string) => {
+  const [selectedSegment, setSelectedSegment] = useState<string>("discord");
+  const [segmentLogoValue, setSegmentLogoValue] = useState<string | undefined>(config.brand?.defaultTheme);
+
+  const beforeUpload = async (file: File, imageType: string, mode: string) => {
     const getImageName = () => {
       if (imageType === "icon" && typeof brandConfig?.icon === "string") {
         const name = brandConfig.icon.split("/").pop();
         return name as string;
-      } else if (imageType === "logo" && typeof brandConfig?.logo === "string") {
-        const name = brandConfig.logo.split("/").pop();
-        return name as string;
+      } else if (imageType.includes("logo")) {
+        if (mode === "light" && typeof brandConfig?.logo === "string") {
+          const name = brandConfig.logo.split("/").pop();
+          return name as string;
+        }
+        if (mode === "dark" && typeof brandConfig?.darkLogo === "string") {
+          const name = brandConfig.darkLogo.split("/").pop();
+          return name as string;
+        }
+        return "";
       } else {
         return "";
       }
@@ -52,7 +63,7 @@ const BrandForm: FC<{
 
     try {
       if (file) {
-        const imgName = `${imageType}.${getExtension(file.name)}`;
+        const imgName = `${imageType}-${mode}.${getExtension(file.name)}`;
         const formData = new FormData();
         formData.append("file", file);
         formData.append("imgName", imgName);
@@ -83,6 +94,48 @@ const BrandForm: FC<{
       setBrandConfig({ ...brandConfig, [key]: value });
     }
   };
+
+  const darkLogo = (
+    <ImgCrop rotationSlider aspect={2 / 1}>
+      <Upload
+        showUploadList={false}
+        maxCount={1}
+        beforeUpload={(file: RcFile) => beforeUpload(file, "darkLogo", "dark")}
+      >
+        {brandImage.logo === "" ? (
+          <Button icon={<UploadOutlined />} style={{ width: 100 }}>
+            Dark Logo
+          </Button>
+        ) : (
+          <Tooltip title="Upload dark logo">
+            <Image
+              src={`${brandConfig?.darkLogo}`}
+              height={100}
+              width={200}
+              alt="image"
+              style={{ cursor: "pointer" }}
+            />
+          </Tooltip>
+        )}
+      </Upload>
+    </ImgCrop>
+  );
+
+  const lightLogo = (
+    <ImgCrop rotationSlider aspect={2 / 1}>
+      <Upload showUploadList={false} maxCount={1} beforeUpload={(file: RcFile) => beforeUpload(file, "logo", "light")}>
+        {brandImage.logo === "" ? (
+          <Button icon={<UploadOutlined />} style={{ width: 100 }}>
+            Light Logo
+          </Button>
+        ) : (
+          <Tooltip title="Upload light logo">
+            <Image src={`${brandConfig?.logo}`} height={100} width={200} alt="image" style={{ cursor: "pointer" }} />
+          </Tooltip>
+        )}
+      </Upload>
+    </ImgCrop>
+  );
 
   useEffect(() => {
     updateSiteConfig({ ...config, brand: brandConfig });
@@ -156,11 +209,15 @@ const BrandForm: FC<{
 
       input: (
         <ImgCrop rotationSlider aspect={1 / 1}>
-          <Upload showUploadList={false} maxCount={1} beforeUpload={(file: RcFile) => beforeUpload(file, "icon")}>
+          <Upload
+            showUploadList={false}
+            maxCount={1}
+            beforeUpload={(file: RcFile) => beforeUpload(file, "icon", "light")}
+          >
             {brandImage.icon === "" ? (
               <Button icon={<UploadOutlined />} style={{ width: 60, height: 60 }}></Button>
             ) : (
-              <Tooltip title="Upload icon">
+              <Tooltip title="Upload light icon">
                 <Image
                   src={`${brandConfig?.icon}`}
                   height={60}
@@ -181,25 +238,37 @@ const BrandForm: FC<{
 
       description: "The primary logo should be transparent and at least 600 x 72px.",
       input: (
-        <ImgCrop rotationSlider aspect={2 / 1}>
-          <Upload showUploadList={false} maxCount={1} beforeUpload={(file: RcFile) => beforeUpload(file, "logo")}>
-            {brandImage.logo === "" ? (
-              <Button icon={<UploadOutlined />} style={{ width: 100 }}>
-                Logo
-              </Button>
-            ) : (
-              <Tooltip title="Upload logo">
-                <Image
-                  src={`${brandConfig?.logo}`}
-                  height={100}
-                  width={200}
-                  alt="image"
-                  style={{ cursor: "pointer" }}
-                />
-              </Tooltip>
-            )}
-          </Upload>
-        </ImgCrop>
+        <Flex vertical gap={20}>
+          {config.brand?.themeSwitch && (
+            <Segmented
+              className={`${styles.segment}`}
+              defaultValue={segmentLogoValue}
+              options={[
+                {
+                  label: "Light logo",
+
+                  value: "light",
+                },
+                {
+                  label: "Dark logo",
+                  value: "dark",
+                },
+              ]}
+              onChange={(value) => {
+                setSegmentLogoValue(value);
+              }}
+            />
+          )}
+          {config.brand?.themeSwitch ? (
+            <>{segmentLogoValue === "dark" ? darkLogo : lightLogo}</>
+          ) : (
+            <Flex vertical gap={0}>
+              <p>Upload logo for {config.brand?.defaultTheme} theme</p>
+
+              {config.brand?.defaultTheme === "dark" ? darkLogo : lightLogo}
+            </Flex>
+          )}
+        </Flex>
       ),
       inputName: "logo",
     },
@@ -210,9 +279,9 @@ const BrandForm: FC<{
       description: "Add social links ",
       layout: "vertical",
       input: (
-        <Flex vertical gap={10}>
+        <Flex vertical gap={10} align="center">
           <Segmented
-            className={`${styles.segment} segment__wrapper`}
+            className={`${styles.segment}`}
             onChange={(value) => {
               setSelectedSegment(value);
 

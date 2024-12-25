@@ -35,7 +35,7 @@ const MarketingLayout: FC<{
   let brandInfo: IBrandInfo = {
     logo: siteConfig.brand?.logo ?? DEFAULT_THEME.brand.logo,
     name: siteConfig.brand?.name ?? DEFAULT_THEME.brand.name,
-    darkLogo: siteConfig.brand?.darkLogo || DEFAULT_THEME.brand.darkLogo
+    darkLogo: siteConfig.brand?.darkLogo || DEFAULT_THEME.brand.darkLogo,
   };
 
   const setGlobalTheme = (theme: Theme) => {
@@ -46,11 +46,19 @@ const MarketingLayout: FC<{
   };
 
   const onCheckTheme = () => {
-    const currentTheme = localStorage.getItem("theme");
-    if (currentTheme === "dark" && siteConfig.darkMode) {
-      localStorage.setItem("theme", "dark");
-    } else if (!currentTheme || currentTheme === "light" || !siteConfig.darkMode) {
-      localStorage.setItem("theme", "light");
+    if (siteConfig.brand?.themeSwitch) {
+      const currentTheme = localStorage.getItem("theme");
+      if (currentTheme === "dark") {
+        localStorage.setItem("theme", "dark");
+      } else {
+        localStorage.setItem("theme", "light");
+      }
+    } else {
+      if (siteConfig.brand?.defaultTheme) {
+        localStorage.setItem("theme", siteConfig.brand?.defaultTheme);
+      } else {
+        localStorage.setItem("theme", "light");
+      }
     }
     setGlobalTheme(localStorage.getItem("theme") as Theme);
     dispatch({
@@ -65,7 +73,7 @@ const MarketingLayout: FC<{
 
   useEffect(() => {
     onCheckTheme();
-  }, []);
+  }, [siteConfig.brand?.defaultTheme]);
 
   return (
     <>
@@ -101,7 +109,7 @@ const MarketingLayout: FC<{
               user={user}
               isMobile={isMobile}
               items={siteConfig.navBar?.links ?? []}
-              showThemeSwitch={siteConfig.darkMode ?? DEFAULT_THEME.darkMode}
+              showThemeSwitch={siteConfig.brand?.themeSwitch ?? DEFAULT_THEME.brand.themeSwitch}
               activeTheme={globalState.theme ?? "light"}
               brand={brandInfo}
             />

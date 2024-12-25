@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from "react";
 import styles from "./HeroForm.module.scss";
-import { Button, Divider, Flex, Form, Input, message, Radio, Tooltip, Upload } from "antd";
+import { Button, Divider, Flex, Form, Input, message, Radio, Segmented, Tooltip, Upload } from "antd";
 import ConfigForm from "@/components/Configuration/ConfigForm";
 import { IConfigForm } from "@/components/Configuration/CMS/ContentManagementSystem";
 import { UploadOutlined } from "@ant-design/icons";
@@ -16,6 +16,7 @@ const HeroForm: FC<{
   updateSiteConfig: (config: PageSiteConfig) => void;
 }> = ({ updateSiteConfig, config }) => {
   const [form] = Form.useForm();
+  const [segmentValue, setSegmentValue] = useState<string | undefined>(config.brand?.defaultTheme);
   const [heroConfig, setHeroConfig] = useState<IHeroConfig | undefined>(config.heroSection);
   const [heroImages, setHeroImages] = useState<{ lightModePath: string; darkModePath: string }>({
     lightModePath: heroConfig?.banner?.lightModePath ? heroConfig.banner.lightModePath : "",
@@ -92,6 +93,49 @@ const HeroForm: FC<{
     updateSiteConfig({ ...config, heroSection: heroConfig });
   }, [heroConfig]);
 
+  const lightHeroImage = (
+    <ImgCrop rotationSlider aspect={2 / 1}>
+      <Upload maxCount={1} showUploadList={false} beforeUpload={(file) => beforeUpload(file, "lightModePath")}>
+        {heroImages.lightModePath === "" ? (
+          <Button icon={<UploadOutlined />} style={{ width: 240, height: 120 }}>
+            Light Hero banner
+          </Button>
+        ) : (
+          <Tooltip title="Upload light mode banner">
+            <Image
+              src={`${heroConfig?.banner?.lightModePath}`}
+              height={120}
+              width={240}
+              alt="image"
+              style={{ cursor: "pointer" }}
+            />
+          </Tooltip>
+        )}
+      </Upload>
+    </ImgCrop>
+  );
+
+  const darkHeroImage = (
+    <ImgCrop rotationSlider aspect={2 / 1}>
+      <Upload maxCount={1} showUploadList={false} beforeUpload={(file) => beforeUpload(file, "darkModePath")}>
+        {heroImages.darkModePath === "" ? (
+          <Button icon={<UploadOutlined />} style={{ width: 240, height: 120 }}>
+            Dark Hero banner
+          </Button>
+        ) : (
+          <Tooltip title="Upload dark mode banner">
+            <Image
+              src={`${heroConfig?.banner?.darkModePath}`}
+              height={120}
+              width={240}
+              alt="image"
+              style={{ cursor: "pointer" }}
+            />
+          </Tooltip>
+        )}
+      </Upload>
+    </ImgCrop>
+  );
   const heroItems: IConfigForm[] = [
     {
       title: "Title",
@@ -174,45 +218,35 @@ const HeroForm: FC<{
       description: "The hero image should be  at least 1200 x 600px.",
       input: (
         <Flex align="center" vertical gap={20}>
-          <ImgCrop rotationSlider aspect={2 / 1}>
-            <Upload maxCount={1} showUploadList={false} beforeUpload={(file) => beforeUpload(file, "lightModePath")}>
-              {heroImages.lightModePath === "" ? (
-                <Button icon={<UploadOutlined />} style={{ width: 240, height: 120 }}>
-                  Light Hero banner
-                </Button>
-              ) : (
-                <Tooltip title="Upload light mode banner">
-                  <Image
-                    src={`${heroConfig?.banner?.lightModePath}`}
-                    height={120}
-                    width={240}
-                    alt="image"
-                    style={{ cursor: "pointer" }}
-                  />
-                </Tooltip>
-              )}
-            </Upload>
-          </ImgCrop>
-          {config.darkMode && (
-            <ImgCrop rotationSlider aspect={2 / 1}>
-              <Upload maxCount={1} showUploadList={false} beforeUpload={(file) => beforeUpload(file, "darkModePath")}>
-                {heroImages.darkModePath === "" ? (
-                  <Button icon={<UploadOutlined />} style={{ width: 240, height: 120 }}>
-                    Dark Hero banner
-                  </Button>
-                ) : (
-                  <Tooltip title="Upload dark mode banner">
-                    <Image
-                      src={`${heroConfig?.banner?.darkModePath}`}
-                      height={120}
-                      width={240}
-                      alt="image"
-                      style={{ cursor: "pointer" }}
-                    />
-                  </Tooltip>
-                )}
-              </Upload>
-            </ImgCrop>
+          {config.brand?.themeSwitch && (
+            <Segmented
+              className={`${styles.segment} `}
+              defaultValue={segmentValue}
+              options={[
+                {
+                  label: "Light banner",
+                  value: "light",
+                  disabled: config.brand?.defaultTheme === "dark" && !config.brand.themeSwitch,
+                },
+                {
+                  label: "Dark banner",
+                  value: "dark",
+                  disabled: config.brand?.defaultTheme !== "dark" && !config.brand?.themeSwitch,
+                },
+              ]}
+              onChange={(value) => {
+                setSegmentValue(value);
+              }}
+            />
+          )}
+          {config.brand?.themeSwitch ? (
+            <>{segmentValue === "dark" ? darkHeroImage : lightHeroImage}</>
+          ) : (
+            <Flex vertical gap={0}>
+              <p>Upload hero image for {config.brand?.defaultTheme} theme</p>
+
+              {config.brand?.defaultTheme === "dark" ? darkHeroImage : lightHeroImage}
+            </Flex>
           )}
         </Flex>
       ),

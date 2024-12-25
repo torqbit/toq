@@ -166,12 +166,21 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
   };
 
   const onCheckTheme = () => {
-    const currentTheme = localStorage.getItem("theme");
-    if (currentTheme === "dark" && siteConfig.darkMode) {
-      localStorage.setItem("theme", "dark");
-    } else if (!currentTheme || currentTheme === "light" || !siteConfig.darkMode) {
-      localStorage.setItem("theme", "light");
+    if (siteConfig.brand?.themeSwitch) {
+      const currentTheme = localStorage.getItem("theme");
+      if (currentTheme === "dark") {
+        localStorage.setItem("theme", "dark");
+      } else {
+        localStorage.setItem("theme", "light");
+      }
+    } else {
+      if (siteConfig.brand?.defaultTheme) {
+        localStorage.setItem("theme", siteConfig.brand?.defaultTheme);
+      } else {
+        localStorage.setItem("theme", "light");
+      }
     }
+
     setGlobalTheme(localStorage.getItem("theme") as Theme);
   };
 

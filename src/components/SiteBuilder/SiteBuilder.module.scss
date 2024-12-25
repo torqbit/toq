@@ -5,7 +5,7 @@
   bottom: 0;
   top: 0;
   background-color: var(--bg-primary);
-  width: 300px;
+  width: 350px;
   overflow-y: auto;
 
   .side__bar__breadcrumb {
@@ -18,12 +18,12 @@
     .collapse__header {
       padding: 5px 0px 0px 0px;
 
-      >div:first-child {
-        >div:first-child {
+      > div:first-child {
+        > div:first-child {
           height: 33px;
         }
 
-        >div:nth-child(3) {
+        > div:nth-child(3) {
           margin-top: 4px;
         }
       }
@@ -55,4 +55,9 @@
       border-radius: 0px;
     }
   }
+}
+
+.segment {
+  background-color: var(--segment-bg);
+  color: var(--font-secondary);
 }

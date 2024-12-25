@@ -1,6 +1,6 @@
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import styles from "./SiteBuilder.module.scss";
-import { Breadcrumb, Collapse, CollapseProps, Flex, Form, Switch } from "antd";
+import { Breadcrumb, Collapse, CollapseProps, Flex, Form, Segmented, Switch } from "antd";
 import SvgIcons from "../SvgIcons";
 
 import { PageSiteConfig } from "@/services/siteConstant";
@@ -9,11 +9,14 @@ import HeroForm from "./sections/Hero/HeroForm";
 import FeatureForm from "./sections/Feature/FeatureForm";
 import CourseForm from "./sections/Courses/CourseForm";
 import BlogForm from "./sections/Blog/BlogForm";
+import { Theme } from "@/types/theme";
+import { useAppContext } from "../ContextApi/AppContext";
 
 const SiteBuilder: FC<{
   config: PageSiteConfig;
   updateSiteConfig: (config: PageSiteConfig) => void;
 }> = ({ config, updateSiteConfig }) => {
+  const { dispatch } = useAppContext();
   const collapseHeader = (title: string, icon?: React.ReactNode) => {
     return (
       <Flex className={styles.collapse__header} justify="space-between" align="center">
@@ -72,6 +75,24 @@ const SiteBuilder: FC<{
     },
   ];
 
+  const onCheckTheme = (theme: Theme) => {
+    if (theme === "dark") {
+      localStorage.setItem("theme", "dark");
+    } else {
+      localStorage.setItem("theme", "light");
+    }
+
+    dispatch({
+      type: "SWITCH_THEME",
+      payload: theme,
+    });
+    updateSiteConfig({ ...config, brand: { ...config.brand, defaultTheme: theme } });
+  };
+
+  useEffect(() => {
+    config.brand?.defaultTheme && onCheckTheme(config.brand?.defaultTheme);
+  }, []);
+
   return (
     <div className={styles.side__bar__container}>
       <h4 style={{ padding: "10px 20px" }}>Site Design</h4>
@@ -82,8 +103,25 @@ const SiteBuilder: FC<{
           <Switch
             size="small"
             className={styles.switch}
-            checked={config.darkMode}
-            onChange={() => updateSiteConfig({ ...config, darkMode: !config.darkMode })}
+            checked={config.brand?.themeSwitch}
+            onChange={() =>
+              updateSiteConfig({ ...config, brand: { ...config.brand, themeSwitch: !config.brand?.themeSwitch } })
+            }
+          />
+        </div>
+
+        <div className={styles.darkmode__switch}>
+          <p>Default Theme</p>
+          <Segmented
+            className={`${styles.segment} `}
+            defaultValue={config.brand?.defaultTheme}
+            options={[
+              { label: "Dark", value: "dark" },
+              { label: "Light", value: "light" },
+            ]}
+            onChange={(value: Theme) => {
+              onCheckTheme(value);
+            }}
           />
         </div>
         <Collapse

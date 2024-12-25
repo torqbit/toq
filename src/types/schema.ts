@@ -1,6 +1,7 @@
 import { FC, ReactNode } from "react";
 import { IFeatureCard, IFeatureInfo } from "./landing/feature";
 export type bannerAlignment = "left" | "right" | "bottom" | "background";
+import { Theme } from "@/types/theme";
 
 export interface ISocialLinks {
   github?: string;
@@ -12,8 +13,10 @@ export interface ISocialLinks {
 export interface IBrandConfig {
   logo?: string | ReactNode;
   icon?: string | ReactNode;
+  themeSwitch?: boolean;
   darkLogo?: string | ReactNode;
   name?: string;
+  defaultTheme?: Theme;
   title?: string;
   description?: string;
   ogImage?: string;
