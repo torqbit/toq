@@ -8,7 +8,8 @@ import os from "os";
 import appConstant from "@/services/appConstant";
 import { readFieldWithFile } from "@/lib/upload/utils";
 import sharp from "sharp";
-import { toIco } from "@/services/pngToIco";
+import { toIco } from "@/actions/pngToIco";
+
 export const config = {
   api: {
     bodyParser: false,
@@ -45,7 +46,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       const icoFilePath = path.join(dirPath, icoFileName);
       const fileBuffer = await fs.promises.readFile(sourcePath);
       const image = sharp(fileBuffer);
-      const icoBuffer = await toIco(image);
+      const icoBuffer = await toIco(image, [16, 32]);
       icoBuffer && fs.promises.writeFile(icoFilePath, new Uint8Array(icoBuffer));
     }
 

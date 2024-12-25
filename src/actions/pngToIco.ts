@@ -1,7 +1,6 @@
 // https://github.com/steambap/png-to-ico
 import type { OutputInfo, Sharp } from "sharp";
 
-const sizeList = [32, 16];
 const constants = {
   bitmapSize: 40,
   colorMode: 0,
@@ -9,7 +8,7 @@ const constants = {
   headerSize: 6,
 };
 
-export async function toIco(image: Sharp) {
+export async function toIco(image: Sharp, sizeList: number[]) {
   try {
     const { info } = await image.toBuffer({ resolveWithObject: true });
     const size = info.width;
