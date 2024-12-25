@@ -222,7 +222,6 @@ const HeroForm: FC<{
             <Segmented
               className={`${styles.segment} `}
               defaultValue={segmentValue}
-              size="small"
               options={[
                 {
                   label: "Light banner",

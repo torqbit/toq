@@ -193,6 +193,7 @@ const darkThemeConfig = (siteConfig: PageSiteConfig) => {
       Segmented: {
         itemSelectedBg: "#283040",
         itemHoverColor: "#fff",
+        trackBg: "#202124f5",
         controlPaddingHorizontal: 30,
         itemColor: "#000",
       },

@@ -104,6 +104,7 @@ const antThemeConfig = (siteConfig: PageSiteConfig) => {
       },
       Segmented: {
         itemSelectedBg: "#fff",
+        trackBg: "#e7e7e7",
         controlPaddingHorizontal: 30,
         marginSM: 10,
       },

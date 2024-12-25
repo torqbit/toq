@@ -243,7 +243,6 @@ const BrandForm: FC<{
             <Segmented
               className={`${styles.segment}`}
               defaultValue={segmentLogoValue}
-              size="small"
               options={[
                 {
                   label: "Light logo",
@@ -280,9 +279,9 @@ const BrandForm: FC<{
       description: "Add social links ",
       layout: "vertical",
       input: (
-        <Flex vertical gap={10}>
+        <Flex vertical gap={10} align="center">
           <Segmented
-            className={`${styles.segment} segment__wrapper`}
+            className={`${styles.segment}`}
             onChange={(value) => {
               setSelectedSegment(value);
 

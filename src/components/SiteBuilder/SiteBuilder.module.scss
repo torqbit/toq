@@ -5,7 +5,7 @@
   bottom: 0;
   top: 0;
   background-color: var(--bg-primary);
-  width: 300px;
+  width: 350px;
   overflow-y: auto;
 
   .side__bar__breadcrumb {
@@ -55,20 +55,9 @@
       border-radius: 0px;
     }
   }
+}
 
-  .segment {
-    background-color: var(--bg-segment);
-    color: var(--font-secondary);
-
-    .segment__labels {
-      line-height: 0;
-      padding: 5px 0px;
-
-      > div {
-        padding: 0px 17px;
-        line-height: 0;
-        min-height: 0;
-      }
-    }
-  }
+.segment {
+  background-color: var(--segment-bg);
+  color: var(--font-secondary);
 }

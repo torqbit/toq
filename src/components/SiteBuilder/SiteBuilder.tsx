@@ -115,7 +115,6 @@ const SiteBuilder: FC<{
           <Segmented
             className={`${styles.segment} `}
             defaultValue={config.brand?.defaultTheme}
-            size="small"
             options={[
               { label: "Dark", value: "dark" },
               { label: "Light", value: "light" },
