@@ -810,10 +810,10 @@ export default {
       xmlns="http://www.w3.org/2000/svg"
       width="1em"
       height="1em"
-      fill="inherit"
+      fill="currentColor"
       viewBox="0 0 24 24"
       strokeWidth={1.5}
-      stroke="inherit"
+      stroke="currentColor"
       className="cross_svg_icon"
     >
       <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
@@ -1184,6 +1184,19 @@ export default {
       stroke="currentColor"
       height={20}
       width={20}
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+    </svg>
+  ),
+  chevronDownOutline: (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      strokeWidth={1.5}
+      stroke="currentColor"
+      height={"1em"}
+      width={"1em"}
     >
       <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
     </svg>

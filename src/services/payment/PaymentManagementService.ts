@@ -1,4 +1,12 @@
-import { $Enums, ConfigurationState, CourseRegistration, Order, orderStatus, paymentStatus } from "@prisma/client";
+import {
+  $Enums,
+  ConfigurationState,
+  CourseRegistration,
+  Order,
+  orderStatus,
+  paymentStatus,
+  ServiceType,
+} from "@prisma/client";
 
 import prisma from "@/lib/prisma";
 import appConstant from "../appConstant";
@@ -28,7 +36,7 @@ export const paymentsConstants = {
   CF_CLIENT_SECRET: "CLIENT_SECRET",
 };
 export class PaymentManagemetService {
-  serviceType: string = "payments";
+  serviceType: ServiceType = ServiceType.PAYMENTS;
 
   getGatewayConfig = async (gateway: string): Promise<APIResponse<any>> => {
     switch (gateway) {

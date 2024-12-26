@@ -1,6 +1,6 @@
 import { AuthAPIResponse } from "@/types/auth/api";
 import { postFetch } from "../request";
-import { Role } from "@prisma/client";
+import { Role, ServiceType } from "@prisma/client";
 import prisma from "@/lib/prisma";
 
 const authErrorMessage = "Failed to authenticate";
@@ -23,13 +23,18 @@ class AuthService {
   };
 
   checkSiteStatus = async (userRole: Role, redirectUrl?: string) => {
-    const isMediaConfig = await prisma.serviceProvider.count({
-      where: {
-        service_type: "media",
+    const configDetails = await prisma.serviceProvider.findMany({
+      select: {
+        service_type: true,
       },
     });
+    const serviceType = configDetails.map((s) => s.service_type);
+    const allExist =
+      serviceType.includes(ServiceType.CMS) &&
+      serviceType.includes(ServiceType.PAYMENTS) &&
+      serviceType.includes(ServiceType.EMAIL);
     if (userRole === Role.ADMIN) {
-      if (isMediaConfig > 0) {
+      if (allExist) {
         return redirectUrl !== "undefined" ? redirectUrl : "/dashboard";
       } else {
         return "/admin/onboard/complete";

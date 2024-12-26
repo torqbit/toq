@@ -7,6 +7,8 @@ const antThemeConfig = (siteConfig: PageSiteConfig) => {
       colorText: "#666",
       colorPrimary: `${siteConfig.brand?.brandColor}`,
       colorSplit: "#888",
+      hoverBorderColor: `${siteConfig.brand?.brandColor}`,
+      activeBorderColor: `${siteConfig.brand?.brandColor}`,
       colorTextDisabled: "#666",
     },
     components: {

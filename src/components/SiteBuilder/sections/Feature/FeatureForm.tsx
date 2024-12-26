@@ -4,6 +4,7 @@ import {
   Button,
   ColorPicker,
   Divider,
+  Dropdown,
   Flex,
   Form,
   FormInstance,
@@ -23,35 +24,48 @@ import { RcFile } from "antd/es/upload";
 import Image from "next/image";
 import { createSlug, getExtension } from "@/lib/utils";
 import { postWithFile } from "@/services/request";
+import SvgIcons from "@/components/SvgIcons";
 
 const AddFeatureForm: FC<{
   imageType: string;
   index: number;
   imgPath: string;
+  link: string;
   isIconExist: boolean;
   beforeUpload: (file: RcFile, imageType: string, index: number) => void;
   handleFeatureChange: (index: number, key: string, value: string) => void;
-}> = ({ beforeUpload, handleFeatureChange, imageType, index, imgPath, isIconExist }) => {
+}> = ({ beforeUpload, handleFeatureChange, imageType, index, link, imgPath, isIconExist }) => {
+  let text =
+    link && !link.includes(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}`)
+      ? "https://"
+      : process.env.NEXT_PUBLIC_NEXTAUTH_URL;
+
+  const [addonText, setAddonText] = useState<string>(text || `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}`);
   return (
     <div className={styles.feature__card__form}>
-      <ImgCrop rotationSlider aspect={1 / 1}>
-        <Upload
-          showUploadList={false}
-          maxCount={1}
-          beforeUpload={(file: RcFile) => beforeUpload(file, imageType, index)}
-        >
-          {!isIconExist ? (
-            <Button icon={<UploadOutlined />} style={{ width: 60 }}>
-              Logo
-            </Button>
-          ) : (
-            <Tooltip title="Upload icon">
-              <Image src={`${imgPath}`} height={60} width={60} alt="image" style={{ cursor: "pointer" }} />
-            </Tooltip>
-          )}
-        </Upload>
-      </ImgCrop>
-      <Form.Item name={`title_${index}`}>
+      <div>
+        <Form.Item layout="vertical" name={`icon${index}`} label="Upload icon">
+          <ImgCrop rotationSlider aspect={1 / 1}>
+            <Upload
+              showUploadList={false}
+              maxCount={1}
+              beforeUpload={(file: RcFile) => beforeUpload(file, imageType, index)}
+            >
+              {!isIconExist ? (
+                <Button icon={<UploadOutlined />} style={{ width: 60 }}>
+                  Logo
+                </Button>
+              ) : (
+                <Tooltip title="Upload icon">
+                  <Image src={`${imgPath}`} height={60} width={60} alt="image" style={{ cursor: "pointer" }} />
+                </Tooltip>
+              )}
+            </Upload>
+          </ImgCrop>
+        </Form.Item>
+      </div>
+
+      <Form.Item layout="vertical" name={`title_${index}`} label="Title">
         <Input
           onChange={(e) => {
             handleFeatureChange(index, "title", e.currentTarget.value);
@@ -59,7 +73,7 @@ const AddFeatureForm: FC<{
           placeholder="Add  title "
         />
       </Form.Item>
-      <Form.Item name={`description_${index}`}>
+      <Form.Item layout="vertical" name={`description_${index}`} label="Description">
         <Input
           onChange={(e) => {
             handleFeatureChange(index, "description", e.currentTarget.value);
@@ -67,13 +81,46 @@ const AddFeatureForm: FC<{
           placeholder="Add  description "
         />
       </Form.Item>
-      <Form.Item name={`link_${index}`}>
+      <Form.Item layout="vertical" name={`link_${index}`} label="Link">
         <Input
-          addonBefore={"https://"}
+          addonBefore={
+            <Dropdown
+              trigger={["click"]}
+              menu={{
+                items: [
+                  {
+                    key: "1",
+                    label: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}`,
+
+                    onClick: () => {
+                      setAddonText(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}`);
+                    },
+                  },
+                  {
+                    key: "2",
+                    label: "https://",
+
+                    onClick: () => {
+                      setAddonText("https://");
+                    },
+                  },
+                ],
+              }}
+            >
+              <div className={styles.link__dropdown}>
+                {addonText}
+                <i>{SvgIcons.chevronDownOutline}</i>
+              </div>
+            </Dropdown>
+          }
           onChange={(e) => {
-            handleFeatureChange(index, "link", `/${e.currentTarget.value}`);
+            handleFeatureChange(
+              index,
+              "link",
+              e.currentTarget.value.startsWith("http") ? e.currentTarget.value : `${addonText}/${e.currentTarget.value}`
+            );
           }}
-          placeholder="Add  link "
+          placeholder="Add link "
         />
       </Form.Item>
     </div>
@@ -86,6 +133,7 @@ const FeatureForm: FC<{
 }> = ({ updateSiteConfig, config }) => {
   const [form] = Form.useForm();
   const [featureConfig, setFeatureConfig] = useState<IFeatureInfo | undefined>(config?.sections?.features);
+  const [featureSegment, setFeatureSegment] = useState<string>("first");
 
   const [featureImages, setFeatureImages] = useState<{ firstIcon: string; secondIcon: string; thirdIcon: string }>({
     firstIcon: featureConfig?.items[0].img ? featureConfig?.items[0].img : "",
@@ -146,6 +194,8 @@ const FeatureForm: FC<{
 
   const addFeatureList = [
     {
+      key: "first",
+      link: `${featureConfig?.items[0].link}`,
       imageType: "firstIcon",
       index: 0,
       imgPath: `${featureConfig?.items[0].img}`,
@@ -154,6 +204,9 @@ const FeatureForm: FC<{
       beforeUpload: beforeUpload,
     },
     {
+      key: "second",
+      link: `${featureConfig?.items[1].link}`,
+
       imageType: "secondIcon",
       index: 1,
       imgPath: `${featureConfig?.items[1].img}`,
@@ -162,6 +215,9 @@ const FeatureForm: FC<{
       beforeUpload: beforeUpload,
     },
     {
+      key: "third",
+      link: `${featureConfig?.items[2].link}`,
+
       imageType: "thirdIcon",
       index: 2,
       imgPath: `${featureConfig?.items[2].img}`,
@@ -192,6 +248,7 @@ const FeatureForm: FC<{
       title: "Feature Title",
       description: "Add a Title  for feature ",
       layout: "vertical",
+
       input: (
         <Input
           onChange={(e) => {
@@ -223,19 +280,43 @@ const FeatureForm: FC<{
       title: "Feature List",
       description: "Add features list ",
       layout: "vertical",
+
       input: (
         <Flex vertical gap={10}>
+          <Segmented
+            className={styles.segment}
+            options={[
+              {
+                label: "First",
+                value: "first",
+              },
+              {
+                label: "Second",
+                value: "second",
+              },
+              {
+                label: "Third",
+                value: "third",
+              },
+            ]}
+            onChange={(value) => setFeatureSegment(value)}
+          />
           {addFeatureList.map((list, i) => {
             return (
-              <AddFeatureForm
-                key={i}
-                imageType={list.imageType}
-                index={list.index}
-                imgPath={list.imgPath}
-                isIconExist={list.isIconExist}
-                beforeUpload={list.beforeUpload}
-                handleFeatureChange={list.handleFeatureConfig}
-              />
+              <>
+                {featureSegment === list.key && (
+                  <AddFeatureForm
+                    key={i}
+                    imageType={list.imageType}
+                    index={list.index}
+                    imgPath={list.imgPath}
+                    link={list.link}
+                    isIconExist={list.isIconExist}
+                    beforeUpload={list.beforeUpload}
+                    handleFeatureChange={list.handleFeatureConfig}
+                  />
+                )}
+              </>
             );
           })}
         </Flex>

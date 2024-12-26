@@ -28,7 +28,7 @@ export const DEFAULT_THEME = {
     darkLogo: "/icon/torqbit.png",
     defaultTheme: "light",
     themeSwitch: true,
-    icon: "/icon/torqbit.png",
+    icon: "/img/brand/torqbit-icon.png",
     title: "Become a Pro Product Builder",
     description: "Master the art of product building and turn your ideas into successful, scalable products",
     ogImage: "/icon/torqbit.png",
