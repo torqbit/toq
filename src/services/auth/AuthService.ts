@@ -1,6 +1,6 @@
 import { AuthAPIResponse } from "@/types/auth/api";
 import { postFetch } from "../request";
-import { Role } from "@prisma/client";
+import { Role, ServiceType } from "@prisma/client";
 import prisma from "@/lib/prisma";
 
 const authErrorMessage = "Failed to authenticate";
@@ -29,7 +29,10 @@ class AuthService {
       },
     });
     const serviceType = configDetails.map((s) => s.service_type);
-    const allExist = serviceType.includes("cms") && serviceType.includes("payments") && serviceType.includes("email");
+    const allExist =
+      serviceType.includes(ServiceType.CMS) &&
+      serviceType.includes(ServiceType.PAYMENTS) &&
+      serviceType.includes(ServiceType.EMAIL);
     if (userRole === Role.ADMIN) {
       if (allExist) {
         return redirectUrl !== "undefined" ? redirectUrl : "/dashboard";
