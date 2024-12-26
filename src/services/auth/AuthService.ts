@@ -23,19 +23,13 @@ class AuthService {
   };
 
   checkSiteStatus = async (userRole: Role, redirectUrl?: string) => {
-    const cmsExists = await prisma.serviceProvider.count({
-      where: { service_type: "cms" },
+    const configDetail = await prisma.serviceProvider.findMany({
+      select: {
+        service_type: true,
+      },
     });
-
-    const paymentExists = await prisma.serviceProvider.count({
-      where: { service_type: "payments" },
-    });
-
-    const emailExists = await prisma.serviceProvider.count({
-      where: { service_type: "email" },
-    });
-
-    const allExist = cmsExists > 0 && paymentExists > 0 && emailExists > 0;
+    const serviceType = configDetail.map((s) => s.service_type);
+    const allExist = serviceType.includes("cms") && serviceType.includes("payments") && serviceType.includes("email");
     if (userRole === Role.ADMIN) {
       if (allExist) {
         return redirectUrl !== "undefined" ? redirectUrl : "/dashboard";
