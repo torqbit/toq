@@ -40,7 +40,7 @@ const AddFeatureForm: FC<{
       ? "https://"
       : process.env.NEXT_PUBLIC_NEXTAUTH_URL;
 
-  const [addonText, setAddonText] = useState<string>(text ? text : "http://localhost:300");
+  const [addonText, setAddonText] = useState<string>(text || `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}`);
   return (
     <div className={styles.feature__card__form}>
       <div>
@@ -90,15 +90,10 @@ const AddFeatureForm: FC<{
                 items: [
                   {
                     key: "1",
-                    label: process.env.NEXT_PUBLIC_NEXTAUTH_URL
-                      ? `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}`
-                      : "http://localhost:300",
+                    label: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}`,
+
                     onClick: () => {
-                      setAddonText(
-                        process.env.NEXT_PUBLIC_NEXTAUTH_URL
-                          ? `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}`
-                          : "http://localhost:300"
-                      );
+                      setAddonText(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}`);
                     },
                   },
                   {
