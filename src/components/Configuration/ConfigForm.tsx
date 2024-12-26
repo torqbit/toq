@@ -4,7 +4,7 @@ import styles from "./CMS/CMS.module.scss";
 import { IConfigForm } from "./CMS/ContentManagementSystem";
 import { Flex } from "antd";
 
-const ContentConfigForm: FC<IConfigForm> = ({ title, description, input, divider, optional, layout }) => {
+export const ConfigFormItem: FC<IConfigForm> = ({ title, description, input, divider, optional, layout }) => {
   return (
     <div
       className={styles.cms__form}
@@ -29,4 +29,4 @@ const ContentConfigForm: FC<IConfigForm> = ({ title, description, input, divider
   );
 };
 
-export default ContentConfigForm;
+export default ConfigFormItem;

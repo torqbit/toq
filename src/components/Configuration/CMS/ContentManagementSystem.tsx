@@ -17,10 +17,17 @@ export interface IConfigForm {
   title: string;
   description: string;
   input: ReactNode;
-  inputName: string;
   optional?: boolean;
   divider?: boolean;
   layout?: "vertical" | "horizontal";
+}
+
+export interface IConfigInput {
+  title: string;
+  description: string;
+  input: ReactNode;
+  inputName: string;
+  optional?: boolean;
 }
 
 const ContentManagementSystem: FC<{ siteConfig: PageSiteConfig; active: boolean }> = ({ siteConfig, active }) => {
@@ -129,7 +136,7 @@ const ContentManagementSystem: FC<{ siteConfig: PageSiteConfig; active: boolean 
     },
   ];
 
-  const cdnItems: IConfigForm[] = [
+  const cdnItems: IConfigInput[] = [
     {
       title: "Main Storage Region",
       description:
@@ -375,7 +382,6 @@ const ContentManagementSystem: FC<{ siteConfig: PageSiteConfig; active: boolean 
                           "Provide access key for Bunny.net that will be used to configure video stream, image CDN and file storage"
                         }
                         divider={false}
-                        inputName={""}
                       />
                     </Form>
                   </ConfigFormLayout>
@@ -407,7 +413,6 @@ const ContentManagementSystem: FC<{ siteConfig: PageSiteConfig; active: boolean 
                             title={item.title}
                             description={item.description}
                             divider={i === videoItems.length - 1 ? false : true}
-                            inputName={""}
                             optional={item.optional}
                           />
                         );
@@ -451,7 +456,6 @@ const ContentManagementSystem: FC<{ siteConfig: PageSiteConfig; active: boolean 
                             description={item.description}
                             divider={i === cdnItems.length - 1 ? false : true}
                             optional={item.optional}
-                            inputName={""}
                           />
                         );
                       })}

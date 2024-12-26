@@ -35,6 +35,10 @@
     gap: 40px;
     justify-content: space-between;
     border-bottom: 1px solid var(--border-color);
+
+    & > div:last-child {
+      min-width: 300px;
+    }
     .watermark__options {
       > div {
         padding: 10px;
