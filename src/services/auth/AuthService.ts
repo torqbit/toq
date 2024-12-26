@@ -23,12 +23,12 @@ class AuthService {
   };
 
   checkSiteStatus = async (userRole: Role, redirectUrl?: string) => {
-    const configDetail = await prisma.serviceProvider.findMany({
+    const configDetails = await prisma.serviceProvider.findMany({
       select: {
         service_type: true,
       },
     });
-    const serviceType = configDetail.map((s) => s.service_type);
+    const serviceType = configDetails.map((s) => s.service_type);
     const allExist = serviceType.includes("cms") && serviceType.includes("payments") && serviceType.includes("email");
     if (userRole === Role.ADMIN) {
       if (allExist) {
