@@ -21,13 +21,34 @@
     border: 1px solid var(--border-color);
 
     border-radius: 4px;
-    padding: 10px;
+    padding: 10px 10px 20px 10px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 20px;
     transition: all 0.4s ease-in;
-    &:hover {
-      border: 1px solid var(--btn-primary);
+    .link__dropdown {
+      cursor: pointer;
+      display: flex;
+      align-content: center;
+      flex-direction: row-reverse;
+      gap: 5px;
+      i {
+        line-height: 0;
+        font-size: 18px;
+        color: var(--font-secondary);
+      }
+    }
+    > div:first-child {
+      padding-bottom: 30px;
+    }
+  }
+
+  .segment {
+    color: var(--font-secondary);
+    > div:first-child {
+      label {
+        padding: 0px 3px;
+      }
     }
   }
 }

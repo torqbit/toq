@@ -23,13 +23,21 @@ class AuthService {
   };
 
   checkSiteStatus = async (userRole: Role, redirectUrl?: string) => {
-    const isMediaConfig = await prisma.serviceProvider.count({
-      where: {
-        service_type: "media",
-      },
+    const cmsExists = await prisma.serviceProvider.count({
+      where: { service_type: "cms" },
     });
+
+    const paymentExists = await prisma.serviceProvider.count({
+      where: { service_type: "payments" },
+    });
+
+    const emailExists = await prisma.serviceProvider.count({
+      where: { service_type: "email" },
+    });
+
+    const allExist = cmsExists > 0 && paymentExists > 0 && emailExists > 0;
     if (userRole === Role.ADMIN) {
-      if (isMediaConfig > 0) {
+      if (allExist) {
         return redirectUrl !== "undefined" ? redirectUrl : "/dashboard";
       } else {
         return "/admin/onboard/complete";
