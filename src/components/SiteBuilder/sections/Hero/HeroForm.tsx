@@ -202,7 +202,7 @@ const HeroForm: FC<{
               defaultValue={config.heroSection?.actionButtons?.secondary?.link}
               addonBefore="https://"
               onChange={(e) => {
-                onUpdateHeroConfig(`/${e.currentTarget.value}`, "actionButtons.secondary.link");
+                onUpdateHeroConfig(`${e.currentTarget.value}`, "actionButtons.secondary.link");
               }}
               placeholder="Add link"
             />

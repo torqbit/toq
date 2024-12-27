@@ -106,7 +106,7 @@ const BlogList: FC<{ contentType: string }> = ({ contentType }) => {
                   label: "Delete",
                   onClick: () => {
                     modal.confirm({
-                      title: "Are you sure you want to delete the blog?",
+                      title: `Are you sure you want to delete the ${contentType.toLowerCase()}?`,
                       okText: "Yes",
                       cancelText: "No",
                       onOk: () => {
