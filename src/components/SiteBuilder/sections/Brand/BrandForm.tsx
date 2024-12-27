@@ -338,13 +338,15 @@ const BrandForm: FC<{
           <Form.Item name={"social"}>
             <Input
               name="social"
-              addonBefore={`https://${selectedSegment}.com`}
+              addonBefore={`https://${selectedSegment}.${selectedSegment === "discord" ? "gg" : "com"}`}
               type="url"
               onChange={(e) => {
                 onUpdateBrandConfig(
                   e.currentTarget.value.startsWith("http")
                     ? e.currentTarget.value
-                    : `https://${selectedSegment}.com/${e.currentTarget.value}`,
+                    : `https://${selectedSegment}.${selectedSegment === "discord" ? "gg" : "com"}/${
+                        e.currentTarget.value
+                      }`,
                   `socialLinks.${selectedSegment}`
                 );
               }}
