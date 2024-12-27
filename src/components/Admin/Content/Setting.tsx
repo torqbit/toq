@@ -1,6 +1,5 @@
-import React, { FC } from "react";
+import React, { FC, useState } from "react";
 import styles from "@/styles/Dashboard.module.scss";
-
 import {
   Button,
   Flex,
@@ -9,6 +8,7 @@ import {
   Input,
   Popconfirm,
   Radio,
+  Segmented,
   Select,
   Space,
   Switch,
@@ -74,6 +74,28 @@ const CourseSetting: FC<{
       // setLoading(false);
     }
   };
+  type TeaserInput = "Video" | "Thumbnail";
+
+  const [teaser, setTeaser] = useState<{
+    selected: TeaserInput;
+    video: {
+      state: "empty" | "uploading" | "processing" | "uploaded";
+      videoThumbnail?: string;
+    };
+    thumbnail: {
+      state: "empty" | "uploading" | "uploaded";
+      url?: string;
+    };
+  }>({
+    selected: "Video",
+    video: {
+      state: uploadVideo ? "uploaded" : "empty",
+    },
+    thumbnail: {
+      state: courseBanner ? "uploaded" : "empty",
+      url: courseBanner,
+    },
+  });
 
   const courseDifficulty = ["Beginner", "Intermediate", "Advance"];
 
@@ -261,7 +283,7 @@ const CourseSetting: FC<{
                 />
                 <ConfigFormItem
                   input={
-                    <Form.Item name="expiryInDays" required>
+                    <Form.Item name="coursePrice" required>
                       <Input
                         placeholder="25"
                         width={100}
@@ -278,184 +300,103 @@ const CourseSetting: FC<{
                   divider={true}
                   layout="horizontal"
                 />
+                <ConfigFormItem
+                  input={
+                    <Flex align="center" gap={10} vertical>
+                      <Segmented<string>
+                        options={["Video", "Thumbnail"]}
+                        onChange={(value) => {
+                          setTeaser({ ...teaser, selected: value as TeaserInput }); // string
+                        }}
+                        className={styles.setting__video__segment}
+                      />
+                      {teaser.selected == "Video" && (
+                        <div className={styles.video_container}>
+                          <Upload
+                            name="avatar"
+                            listType="picture-card"
+                            className={styles.upload__trailer}
+                            disabled={courseTrailerUploading || uploadVideo?.state == VideoState.PROCESSING}
+                            showUploadList={false}
+                            beforeUpload={(file) => {
+                              onUploadTrailer(file, `${form.getFieldsValue().course_name}`);
+                            }}
+                            onChange={handleChange}
+                          >
+                            {uploadVideo?.state == VideoState.READY && !courseTrailerUploading && (
+                              <Tooltip title="Upload new trailer video">
+                                <img
+                                  src={uploadVideo?.thumbnail}
+                                  alt=""
+                                  height={180}
+                                  className={styles.video_container}
+                                  width={320}
+                                />
+                              </Tooltip>
+                            )}
+                            {(uploadVideo?.state == VideoState.PROCESSING || courseTrailerUploading) && (
+                              <div
+                                style={{ height: 50, width: 80 }}
+                                className={`${styles.video_status} ${styles.video_status_loading}`}
+                              >
+                                <LoadingOutlined />
+                                <span>{courseTrailerUploading ? "Uploading" : "Processing"}</span>
+                              </div>
+                            )}
+                          </Upload>
+                        </div>
+                      )}
+
+                      {teaser.selected == "Thumbnail" && (
+                        <Upload
+                          name="avatar"
+                          listType="picture-card"
+                          className={styles.upload__thumbnail}
+                          disabled={courseTrailerUploading}
+                          showUploadList={false}
+                          style={{ width: 118, height: 118 }}
+                          beforeUpload={(file) => {
+                            uploadFile(file, `${form.getFieldsValue().course_name}_banner`);
+                          }}
+                          onChange={handleChange}
+                        >
+                          {courseBanner ? (
+                            <>
+                              <Tooltip title="Update trailer thumbnail">
+                                <img
+                                  style={{ borderRadius: 4, objectFit: "cover", width: 318, height: 178 }}
+                                  src={courseBanner}
+                                />
+                              </Tooltip>
+                              <div className={styles.bannerStatus}>{courseBannerUploading && "Uploading"}</div>
+                            </>
+                          ) : (
+                            <button
+                              className={styles.upload_img_button}
+                              style={{ border: 0, background: "none", width: 318, height: 178 }}
+                              type="button"
+                            >
+                              {courseBannerUploading ? <LoadingOutlined /> : SvgIcons.uploadIcon}
+                              {!courseBannerUploading ? (
+                                <div style={{ marginTop: 8 }}>Upload Image</div>
+                              ) : (
+                                <div style={{ color: "#000" }}>{courseBannerUploading && "Uploading"}</div>
+                              )}
+                            </button>
+                          )}
+                        </Upload>
+                      )}
+                    </Flex>
+                  }
+                  title={"Course Trailer"}
+                  description={
+                    "Upload the trailer video that can would introduce the course to the end users, and optionally update the thumbnail for the trailer"
+                  }
+                  divider={false}
+                  layout="horizontal"
+                />
               </Form>
             </ConfigFormLayout>
-            <div className={styles.course_thumbnails}>
-              <h4>Trailer and thumbnail images</h4>
-              <div className={styles.row_1}>
-                <div>
-                  <h5>Course trailer video</h5>
-                  <p>Upload a video of upto 30 sec duration in 16:9 aspect ratio</p>
-                </div>
-                <div className={styles.video_container}>
-                  <Upload
-                    name="avatar"
-                    listType="picture-card"
-                    className={styles.upload__trailer}
-                    disabled={courseTrailerUploading || uploadVideo?.state == VideoState.PROCESSING}
-                    showUploadList={false}
-                    beforeUpload={(file) => {
-                      onUploadTrailer(file, `${form.getFieldsValue().course_name}`);
-                    }}
-                    onChange={handleChange}
-                  >
-                    {uploadVideo?.state == VideoState.READY && !courseTrailerUploading && (
-                      <Tooltip title="Upload new trailer video">
-                        <img
-                          src={uploadVideo?.thumbnail}
-                          alt=""
-                          height={180}
-                          className={styles.video_container}
-                          width={320}
-                        />
-                        <div
-                          style={{ height: 50, width: 50, fontSize: "1.4rem" }}
-                          className={`${styles.video_status} ${styles.video_status_ready}`}
-                        >
-                          {SvgIcons.video}
-                        </div>
-                      </Tooltip>
-                    )}
-                    {(uploadVideo?.state == VideoState.PROCESSING || courseTrailerUploading) && (
-                      <div
-                        style={{ height: 50, width: 80 }}
-                        className={`${styles.video_status} ${styles.video_status_loading}`}
-                      >
-                        <LoadingOutlined />
-                        <span>{courseTrailerUploading ? "Uploading" : "Processing"}</span>
-                      </div>
-                    )}
-                    {!uploadVideo?.state && !courseTrailerUploading && (
-                      <div
-                        style={{ height: 50, width: 150 }}
-                        className={`${styles.video_status} ${styles.video_status_loading}`}
-                      >
-                        <i style={{ display: "block" }}>{SvgIcons.video}</i>
-                        <span>Upload Video</span>
-                      </div>
-                    )}
-                  </Upload>
-                </div>
-              </div>
-              <div className={styles.row_2}>
-                <div>
-                  <h4>Course thumbnail image</h4>
-                  <p>Upload a photo of 256px x 256px </p>
-                </div>
-                <div className={styles.video_container}>
-                  <ImgCrop rotationSlider>
-                    <Upload
-                      name="avatar"
-                      listType="picture-card"
-                      className={styles.upload__thumbnail}
-                      disabled={courseTrailerUploading}
-                      showUploadList={false}
-                      style={{ width: 118, height: 118 }}
-                      beforeUpload={(file) => {
-                        uploadFile(file, `${form.getFieldsValue().course_name}_banner`);
-                      }}
-                      onChange={handleChange}
-                    >
-                      {courseBanner ? (
-                        <>
-                          <img
-                            style={{ borderRadius: 4, objectFit: "cover", width: 148, height: 148 }}
-                            src={courseBanner}
-                          />
-                          <Tooltip title="Upload course thumbnail">
-                            <div className={styles.camera_btn_img}>
-                              {courseBannerUploading && courseBanner ? <LoadingOutlined /> : SvgIcons.camera}
-                            </div>
-                          </Tooltip>
-                          <div className={styles.bannerStatus}>{courseBannerUploading && "Uploading"}</div>
-                        </>
-                      ) : (
-                        <button
-                          className={styles.upload_img_button}
-                          style={{ border: 0, background: "none", width: 150, height: 150 }}
-                          type="button"
-                        >
-                          {courseBannerUploading ? <LoadingOutlined /> : SvgIcons.uploadIcon}
-                          {!courseBannerUploading ? (
-                            <div style={{ marginTop: 8 }}>Upload Image</div>
-                          ) : (
-                            <div style={{ color: "#000" }}>{courseBannerUploading && "Uploading"}</div>
-                          )}
-                        </button>
-                      )}
-                    </Upload>
-                  </ImgCrop>
-                </div>
-              </div>
-            </div>
-            <div className={styles.course_pricing}>
-              <h4>Pricing</h4>
-              <p>Displayed on the Course listing and landing page</p>
-              <div className={styles.course_payment_type}>
-                <div className={styles.free_course}>
-                  <Radio checked={selectedCourseType.free} onClick={() => selectCourseType($Enums.CourseType.FREE)}>
-                    Free
-                  </Radio>
-                  <p>Free content for the specified duration </p>
-                  <p>Days until expiry</p>
-                  <Form.Item name="expiryInDays">
-                    <div className={styles.days_left}>
-                      <Input
-                        disabled={selectedCourseType.paid}
-                        placeholder="days left"
-                        onChange={(e) => {
-                          onSetCourseData("expiryInDays", e.currentTarget.value);
-                        }}
-                        value={courseData.expiryInDays || form.getFieldsValue().expiryInDays}
-                        defaultValue={courseData.expiryInDays}
-                      />
-
-                      <div>Days</div>
-                    </div>
-                  </Form.Item>
-                </div>
-                <div className={styles.paid_course}>
-                  <Radio checked={selectedCourseType.paid} onClick={() => selectCourseType($Enums.CourseType.PAID)}>
-                    One time Payment
-                  </Radio>
-                  <p>Paid content for the specified duration </p>
-
-                  <div className={styles.paid_overview}>
-                    <div>
-                      <p className={styles.expiry_para}> {`Price (in USD)`}</p>
-                      <div className={styles.days_left}>
-                        <Input
-                          disabled={selectedCourseType.free}
-                          placeholder="add price"
-                          onChange={(e) => {
-                            onSetCourseData("coursePrice", e.currentTarget.value);
-                          }}
-                          defaultValue={selectedCourseType.free ? 0 : courseData.coursePrice}
-                        />
-
-                        <div>Price</div>
-                      </div>
-                    </div>
-                    <div>
-                      <p className={styles.expiry_para}>Days until expiry</p>
-                      <div className={styles.days_left}>
-                        <Input
-                          disabled={selectedCourseType.free}
-                          placeholder="days left"
-                          onChange={(e) => {
-                            onSetCourseData("expiryInDays", e.currentTarget.value);
-                          }}
-                          value={courseData.expiryInDays || form.getFieldsValue().expiryInDays}
-                          defaultValue={courseData.expiryInDays}
-                        />
-
-                        <div>Days</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
           </Form>
         </section>
       )}

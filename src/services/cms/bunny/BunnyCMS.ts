@@ -529,6 +529,16 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
     }
   }
 
+  async uploadVideoThumbnail(
+    cmsConfig: BunnyCMSConfig,
+    thumbnail: Buffer,
+    providerVideoId: string,
+    objectId: number,
+    objectType: VideoObjectType
+  ): Promise<APIResponse<void>> {
+    const videoAPIKey = await secretsStore.get(cmsConfig.vodAccessKeyRef);
+  }
+
   async uploadVideo(
     cmsConfig: BunnyCMSConfig,
     file: Buffer,
@@ -536,9 +546,9 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
     objectType: VideoObjectType,
     objectId: number
   ): Promise<APIResponse<VideoInfo>> {
-    const videoPassword = await secretsStore.get(cmsConfig.vodAccessKeyRef);
-    if (videoPassword && cmsConfig.vodConfig && cmsConfig.cdnConfig) {
-      const bunny = new BunnyClient(videoPassword);
+    const videoAPIKey = await secretsStore.get(cmsConfig.vodAccessKeyRef);
+    if (videoAPIKey && cmsConfig.vodConfig && cmsConfig.cdnConfig) {
+      const bunny = new BunnyClient(videoAPIKey);
       const response = await bunny.uploadVideo(
         file,
         cmsConfig.vodConfig.vidLibraryId,
