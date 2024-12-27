@@ -41,11 +41,13 @@ const darkThemeConfig = (siteConfig: PageSiteConfig) => {
       hoverBorderColor: `${siteConfig.brand?.brandColor}`,
       activeBorderColor: `${siteConfig.brand?.brandColor}`,
       colorTextDisabled: "#939db8",
+      colorTextDescription: "#939db8",
     },
 
     Badge: {
       colorInfo: `${siteConfig.brand?.brandColor}`,
     },
+
     components: {
       Layout: {
         bodyBg: "#202433",

@@ -124,8 +124,9 @@ const Sidebar: FC<{ menu: MenuProps["items"]; siteConfig: PageSiteConfig }> = ({
               <Link href={"https://discord.gg/DHU38pGw7C"} target="_blank">
                 <i
                   style={{
-                    fill: "none",
-                    stroke: globalState?.theme == "dark" ? "#939db8" : "#666",
+                    fontSize: 20,
+                    lineHeight: 0,
+                    color: "var(--font-secondary)",
                     cursor: "pointer",
                   }}
                 >
