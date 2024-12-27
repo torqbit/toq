@@ -229,7 +229,7 @@ const BrandForm: FC<{
           {brandImage.icon === "" ? (
             <Button icon={<UploadOutlined />} style={{ width: 60, height: 60 }}></Button>
           ) : (
-            <Tooltip title="Upload light icon">
+            <Tooltip title="Upload icon">
               <Image
                 src={`${brandConfig?.icon}`}
                 height={60}
@@ -342,14 +342,20 @@ const BrandForm: FC<{
               type="url"
               onChange={(e) => {
                 onUpdateBrandConfig(
-                  e.currentTarget.value === "" ? "" : `https://${selectedSegment}.com/${e.currentTarget.value}`,
+                  e.currentTarget.value.startsWith("http")
+                    ? e.currentTarget.value
+                    : `https://${selectedSegment}.com/${e.currentTarget.value}`,
                   `socialLinks.${selectedSegment}`
                 );
               }}
               defaultValue={
-                config?.brand?.socialLinks ? config.brand.socialLinks[selectedSegment as keyof ISocialLinks] : ""
+                config?.brand?.socialLinks
+                  ? config.brand.socialLinks[selectedSegment as keyof ISocialLinks]?.startsWith("http")
+                    ? config.brand.socialLinks[selectedSegment as keyof ISocialLinks]?.split("/").pop()
+                    : config.brand.socialLinks[selectedSegment as keyof ISocialLinks]
+                  : ""
               }
-              placeholder={`Add ${selectedSegment} link`}
+              placeholder={`Add ${selectedSegment} id`}
             />
           </Form.Item>
         </Flex>
@@ -369,7 +375,11 @@ const BrandForm: FC<{
           name: config.brand?.name,
           title: config.brand?.title,
           description: config.brand?.description,
-          social: config?.brand?.socialLinks ? config.brand.socialLinks[selectedSegment as keyof ISocialLinks] : "",
+          social: config?.brand?.socialLinks
+            ? config.brand.socialLinks[selectedSegment as keyof ISocialLinks]?.startsWith("http")
+              ? config.brand.socialLinks[selectedSegment as keyof ISocialLinks]?.split("/").pop()
+              : config.brand.socialLinks[selectedSegment as keyof ISocialLinks]
+            : "",
         }}
       >
         {brandItems.map((item, i) => {

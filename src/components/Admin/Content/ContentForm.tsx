@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import styles from "@/styles/Marketing/Blog/Blog.module.scss";
 import { Button, Dropdown, Flex, Form, Input, Popconfirm, Tooltip, Upload, UploadProps, message } from "antd";
 import ImgCrop from "antd-img-crop";
@@ -11,7 +11,7 @@ import { useRouter } from "next/router";
 import { StateType } from "@prisma/client";
 import TextEditor from "@/components/Editor/Quilljs/Editor";
 import DOMPurify from "isomorphic-dompurify";
-const BlogForm: FC<{
+const ContentForm: FC<{
   htmlData: string;
   bannerImage: string;
   title: string;
@@ -259,7 +259,7 @@ const BlogForm: FC<{
             width={800}
             height={400}
             theme="snow"
-            placeholder={`Start writing your ${contentType.toLowerCase()}`}
+            placeholder={`Start writing your content`}
           />
         </div>
       </Form>
@@ -267,4 +267,4 @@ const BlogForm: FC<{
   );
 };
 
-export default BlogForm;
+export default ContentForm;

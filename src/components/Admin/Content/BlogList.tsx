@@ -144,7 +144,7 @@ const BlogList: FC<{ contentType: string }> = ({ contentType }) => {
         setLoading(false);
       }
     );
-  }, [refresh]);
+  }, [contentType]);
 
   const data = blogData?.map((blog, i) => {
     return {

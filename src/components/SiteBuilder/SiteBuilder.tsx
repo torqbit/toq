@@ -1,79 +1,25 @@
 import { FC, useEffect } from "react";
 import styles from "./SiteBuilder.module.scss";
-import { Breadcrumb, Collapse, CollapseProps, Flex, Form, Segmented, Switch } from "antd";
+import { Flex, Menu, MenuProps, Tabs, TabsProps } from "antd";
 import SvgIcons from "../SvgIcons";
 
 import { PageSiteConfig } from "@/services/siteConstant";
-import BrandForm from "./sections/Brand/BrandForm";
-import HeroForm from "./sections/Hero/HeroForm";
-import FeatureForm from "./sections/Feature/FeatureForm";
-import CourseForm from "./sections/Courses/CourseForm";
-import BlogForm from "./sections/Blog/BlogForm";
+
 import { Theme } from "@/types/theme";
 import { useAppContext } from "../ContextApi/AppContext";
+import Link from "next/link";
+import SiteDesign from "./Design";
 
 const SiteBuilder: FC<{
   config: PageSiteConfig;
+  selectedTab: string;
+  contentMenu: MenuProps["items"];
+  selectedMenu: string;
+  setSelectedMenu: (value: string) => void;
+  onChangeTab: (value: string) => void;
   updateSiteConfig: (config: PageSiteConfig) => void;
-}> = ({ config, updateSiteConfig }) => {
+}> = ({ config, updateSiteConfig, onChangeTab, selectedTab, selectedMenu, setSelectedMenu, contentMenu }) => {
   const { dispatch } = useAppContext();
-  const collapseHeader = (title: string, icon?: React.ReactNode) => {
-    return (
-      <Flex className={styles.collapse__header} justify="space-between" align="center">
-        <Flex align="center" gap={5}>
-          <i>{icon}</i>
-          <p style={{ margin: 0 }}>{title} </p>
-        </Flex>
-      </Flex>
-    );
-  };
-
-  const items: CollapseProps["items"] = [
-    {
-      key: "1",
-      className: styles.collapse__header,
-      label: collapseHeader("Brand Configuration", SvgIcons.brand),
-      children: <BrandForm config={config} updateSiteConfig={updateSiteConfig} />,
-    },
-    {
-      key: "2",
-      className: styles.collapse__header,
-      children: <HeroForm config={config} updateSiteConfig={updateSiteConfig} />,
-
-      label: collapseHeader("Hero", SvgIcons.hero),
-    },
-    {
-      key: "3",
-      className: styles.collapse__header,
-      children: <FeatureForm config={config} updateSiteConfig={updateSiteConfig} />,
-
-      label: collapseHeader("Feature", SvgIcons.features),
-    },
-    {
-      key: "4",
-      className: styles.collapse__header,
-
-      children: (
-        <>
-          <CourseForm config={config} updateSiteConfig={updateSiteConfig} />
-        </>
-      ),
-
-      label: collapseHeader("Courses", SvgIcons.courseConfig),
-    },
-    {
-      key: "5",
-      className: styles.collapse__header,
-
-      children: (
-        <>
-          <BlogForm config={config} updateSiteConfig={updateSiteConfig} />
-        </>
-      ),
-
-      label: collapseHeader("Blog", SvgIcons.blog),
-    },
-  ];
 
   const onCheckTheme = (theme: Theme) => {
     if (theme === "dark") {
@@ -93,46 +39,47 @@ const SiteBuilder: FC<{
     config.brand?.defaultTheme && onCheckTheme(config.brand?.defaultTheme);
   }, []);
 
+  const Tabitems: TabsProps["items"] = [
+    {
+      key: "design",
+      label: "Design",
+      children: <SiteDesign onCheckTheme={onCheckTheme} updateSiteConfig={updateSiteConfig} config={config} />,
+    },
+    {
+      key: "content",
+      label: "Content",
+
+      children: (
+        <Menu
+          mode="inline"
+          onSelect={({ key }) => setSelectedMenu(key)}
+          defaultSelectedKeys={["dashboard"]}
+          selectedKeys={[selectedMenu]}
+          style={{ width: "100%", borderInlineEnd: "none" }}
+          items={contentMenu}
+        />
+      ),
+    },
+  ];
+
   return (
     <div className={styles.side__bar__container}>
-      <h4 style={{ padding: "10px 20px" }}>Site Design</h4>
+      <Flex align="center" justify="space-between">
+        <h4 style={{ padding: "10px 20px" }}>Site</h4>
+        <Link className={styles.go_back_btn} href={"/dashboard"}>
+          <i>{SvgIcons.arrowLeft}</i>
+          <p>Go Back</p>
+        </Link>
+      </Flex>
 
-      <div className={styles.config__sections}>
-        <div className={styles.darkmode__switch}>
-          <p>Show Theme</p>
-          <Switch
-            size="small"
-            className={styles.switch}
-            checked={config.brand?.themeSwitch}
-            onChange={() =>
-              updateSiteConfig({ ...config, brand: { ...config.brand, themeSwitch: !config.brand?.themeSwitch } })
-            }
-          />
-        </div>
-
-        <div className={styles.darkmode__switch}>
-          <p>Default Theme</p>
-          <Segmented
-            className={`${styles.segment} `}
-            defaultValue={config.brand?.defaultTheme}
-            options={[
-              { label: "Dark", value: "dark" },
-              { label: "Light", value: "light" },
-            ]}
-            onChange={(value: Theme) => {
-              onCheckTheme(value);
-            }}
-          />
-        </div>
-        <Collapse
-          accordion
-          expandIconPosition="end"
-          className={styles.collapse__wrapper}
-          items={items}
-          size="middle"
-          defaultActiveKey={["1"]}
-        />
-      </div>
+      <Tabs
+        tabBarGutter={40}
+        tabBarStyle={{ padding: "0px 20px" }}
+        activeKey={selectedTab}
+        className={styles.site_config_tabs}
+        items={Tabitems}
+        onChange={onChangeTab}
+      />
     </div>
   );
 };

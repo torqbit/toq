@@ -1,7 +1,17 @@
 .site__builder__layout {
-  > div:last-child {
-    display: flex;
-    justify-content: right;
-    padding: 20px;
+  .sider_content {
+    padding: 10px 20px;
+    flex-basis: 100%;
+    height: 100vh;
+    overflow-y: scroll;
   }
+}
+
+.content__menu__icon {
+  line-height: 0;
+  color: var(--font-secondary);
+  font-size: 18px;
+}
+.selected__menu__icon {
+  color: var(--font-primary);
 }

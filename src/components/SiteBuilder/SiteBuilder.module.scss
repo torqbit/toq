@@ -11,6 +11,9 @@
   .side__bar__breadcrumb {
     padding: 10px 20px;
   }
+  .site_config_tabs {
+    // padding: 0px 20px;
+  }
 
   .config__sections {
     padding-top: 10px;
@@ -53,6 +56,27 @@
       height: 100%;
       border: none;
       border-radius: 0px;
+    }
+  }
+
+  .go_back_btn {
+    padding: 0px 20px;
+    color: var(--font-secondary);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    i {
+      line-height: 0;
+      font-size: 18px;
+    }
+    p {
+      margin: 0;
+    }
+    &:hover {
+      color: var(--btn-primary);
+      p {
+        color: var(--btn-primary);
+      }
     }
   }
 }
