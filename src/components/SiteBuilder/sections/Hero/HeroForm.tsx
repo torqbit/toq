@@ -184,7 +184,14 @@ const HeroForm: FC<{
               defaultValue={config.heroSection?.actionButtons?.primary?.link}
               addonBefore="https://"
               onChange={(e) => {
-                onUpdateHeroConfig(`/${e.currentTarget.value}`, "actionButtons.primary.link");
+                onUpdateHeroConfig(
+                  `${
+                    e.currentTarget.value.startsWith("mailto:") || e.currentTarget.value.startsWith("tel:")
+                      ? e.currentTarget.value
+                      : `/${e.currentTarget.value}`
+                  }`,
+                  "actionButtons.primary.link"
+                );
               }}
               placeholder="Add link"
             />
@@ -202,7 +209,14 @@ const HeroForm: FC<{
               defaultValue={config.heroSection?.actionButtons?.secondary?.link}
               addonBefore="https://"
               onChange={(e) => {
-                onUpdateHeroConfig(`${e.currentTarget.value}`, "actionButtons.secondary.link");
+                onUpdateHeroConfig(
+                  `${
+                    e.currentTarget.value.startsWith("mailto:") || e.currentTarget.value.startsWith("tel:")
+                      ? e.currentTarget.value
+                      : `/${e.currentTarget.value}`
+                  }`,
+                  "actionButtons.secondary.link"
+                );
               }}
               placeholder="Add link"
             />
