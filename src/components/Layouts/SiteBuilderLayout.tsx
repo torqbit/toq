@@ -1,8 +1,8 @@
-import { FC, useEffect, useRef } from "react";
+import { FC, useEffect } from "react";
 import React from "react";
 import Head from "next/head";
 import { useAppContext } from "../ContextApi/AppContext";
-import { ConfigProvider } from "antd";
+import { ConfigProvider, Layout } from "antd";
 import darkThemeConfig from "@/services/darkThemeConfig";
 import antThemeConfig from "@/services/antThemeConfig";
 import SpinLoader from "../SpinLoader/SpinLoader";
@@ -15,6 +15,7 @@ import { Theme } from "@/types/theme";
 
 import styles from "./SiteBuilder.module.scss";
 
+const { Content, Sider } = Layout;
 const SiteBuilderLayout: FC<{
   children?: React.ReactNode;
   sideBar?: React.ReactNode;
@@ -94,9 +95,21 @@ const SiteBuilderLayout: FC<{
           <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
           <link rel="icon" href={siteConfig.brand?.favicon} />
         </Head>
-        <div className={styles.site__builder__layout}>
-          {sideBar}
-          <div>{children}</div>
+        <div>
+          <Layout hasSider className={styles.site__builder__layout}>
+            <Sider
+              width={350}
+              theme="light"
+              className={`${styles.main_sider} main_sider`}
+              trigger={null}
+              collapsed={false}
+            >
+              {sideBar}
+            </Sider>
+            <Layout>
+              <Content className={styles.sider_content}>{children}</Content>
+            </Layout>
+          </Layout>
         </div>
       </ConfigProvider>
     </>

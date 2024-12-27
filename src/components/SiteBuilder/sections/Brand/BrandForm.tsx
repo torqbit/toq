@@ -229,7 +229,7 @@ const BrandForm: FC<{
           {brandImage.icon === "" ? (
             <Button icon={<UploadOutlined />} style={{ width: 60, height: 60 }}></Button>
           ) : (
-            <Tooltip title="Upload light icon">
+            <Tooltip title="Upload icon">
               <Image
                 src={`${brandConfig?.icon}`}
                 height={60}
@@ -298,7 +298,7 @@ const BrandForm: FC<{
 
               form.setFieldValue(
                 "social",
-                config.brand?.socialLinks && config.brand?.socialLinks[value as keyof ISocialLinks]
+                config.brand?.socialLinks && config.brand?.socialLinks[value as keyof ISocialLinks]?.split("/").pop()
               );
             }}
             style={{ lineHeight: 0 }}
@@ -338,18 +338,24 @@ const BrandForm: FC<{
           <Form.Item name={"social"}>
             <Input
               name="social"
-              addonBefore={`https://${selectedSegment}.com`}
+              addonBefore={`https://${selectedSegment}.${selectedSegment === "discord" ? "gg" : "com"}`}
               type="url"
               onChange={(e) => {
                 onUpdateBrandConfig(
-                  e.currentTarget.value === "" ? "" : `https://${selectedSegment}.com/${e.currentTarget.value}`,
+                  e.currentTarget.value.startsWith("http")
+                    ? e.currentTarget.value
+                    : `https://${selectedSegment}.${selectedSegment === "discord" ? "gg" : "com"}/${
+                        e.currentTarget.value
+                      }`,
                   `socialLinks.${selectedSegment}`
                 );
               }}
-              defaultValue={
-                config?.brand?.socialLinks ? config.brand.socialLinks[selectedSegment as keyof ISocialLinks] : ""
+              value={
+                config?.brand?.socialLinks
+                  ? config.brand.socialLinks[selectedSegment as keyof ISocialLinks]?.split("/").pop()
+                  : ""
               }
-              placeholder={`Add ${selectedSegment} link`}
+              placeholder={`Add ${selectedSegment} id`}
             />
           </Form.Item>
         </Flex>
@@ -369,7 +375,9 @@ const BrandForm: FC<{
           name: config.brand?.name,
           title: config.brand?.title,
           description: config.brand?.description,
-          social: config?.brand?.socialLinks ? config.brand.socialLinks[selectedSegment as keyof ISocialLinks] : "",
+          social: config?.brand?.socialLinks
+            ? config.brand.socialLinks[selectedSegment as keyof ISocialLinks]?.split("/").pop()
+            : "",
         }}
       >
         {brandItems.map((item, i) => {

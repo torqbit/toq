@@ -1,12 +1,11 @@
-import BlogForm from "@/components/Admin/Content/BlogForm";
 import { GetServerSidePropsContext } from "next";
-import prisma from "@/lib/prisma";
 
 import { FC } from "react";
 import { StateType } from "@prisma/client";
 import AppLayout from "@/components/Layouts/AppLayout";
 import { PageSiteConfig } from "@/services/siteConstant";
 import { getSiteConfig } from "@/services/getSiteConfig";
+import ContentForm from "@/components/Admin/Content/ContentForm";
 interface IProps {
   siteConfig: PageSiteConfig;
 }
@@ -15,7 +14,7 @@ const AddBlog: FC<IProps> = ({ siteConfig }) => {
   return (
     <>
       <AppLayout siteConfig={siteConfig}>
-        <BlogForm contentType={"BLOG"} htmlData={""} bannerImage={""} title={""} state={StateType.DRAFT} />
+        <ContentForm contentType={"BLOG"} htmlData={""} bannerImage={""} title={""} state={StateType.DRAFT} />
       </AppLayout>
     </>
   );
