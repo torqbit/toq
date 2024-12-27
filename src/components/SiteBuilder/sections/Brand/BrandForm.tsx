@@ -298,7 +298,7 @@ const BrandForm: FC<{
 
               form.setFieldValue(
                 "social",
-                config.brand?.socialLinks && config.brand?.socialLinks[value as keyof ISocialLinks]
+                config.brand?.socialLinks && config.brand?.socialLinks[value as keyof ISocialLinks]?.split("/").pop()
               );
             }}
             style={{ lineHeight: 0 }}
@@ -348,11 +348,9 @@ const BrandForm: FC<{
                   `socialLinks.${selectedSegment}`
                 );
               }}
-              defaultValue={
+              value={
                 config?.brand?.socialLinks
-                  ? config.brand.socialLinks[selectedSegment as keyof ISocialLinks]?.startsWith("http")
-                    ? config.brand.socialLinks[selectedSegment as keyof ISocialLinks]?.split("/").pop()
-                    : config.brand.socialLinks[selectedSegment as keyof ISocialLinks]
+                  ? config.brand.socialLinks[selectedSegment as keyof ISocialLinks]?.split("/").pop()
                   : ""
               }
               placeholder={`Add ${selectedSegment} id`}
@@ -376,9 +374,7 @@ const BrandForm: FC<{
           title: config.brand?.title,
           description: config.brand?.description,
           social: config?.brand?.socialLinks
-            ? config.brand.socialLinks[selectedSegment as keyof ISocialLinks]?.startsWith("http")
-              ? config.brand.socialLinks[selectedSegment as keyof ISocialLinks]?.split("/").pop()
-              : config.brand.socialLinks[selectedSegment as keyof ISocialLinks]
+            ? config.brand.socialLinks[selectedSegment as keyof ISocialLinks]?.split("/").pop()
             : "",
         }}
       >

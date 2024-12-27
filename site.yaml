@@ -19,9 +19,9 @@ site:
     defaultTheme: dark
     favicon: /favicon.ico
     socialLinks:
-      discord: NserMXcx
-      github: torqbit
-      youtube: "@torqbit"
+      discord: https://discord.com/NserMXcx
+      github: https://github.com/torqbit
+      youtube: https://youtube.com/@torqbit
     name: Torqbit
     brandColor: "#8980fd"
     title: Making online fun and easy

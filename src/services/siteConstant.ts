@@ -36,9 +36,9 @@ export const DEFAULT_THEME = {
     favicon: "/favicon.ico",
     brandColor: "#5b63d3",
     socialLinks: {
-      discord: "NserMXcx",
-      github: "torqbit",
-      youtube: "@torqbit",
+      discord: "https://discord.gg/NserMXcx",
+      github: "https://github.com/torqbit",
+      youtube: "https://www.youtube.com/@torqbit",
     },
   },
 
