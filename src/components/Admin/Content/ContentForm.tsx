@@ -81,7 +81,7 @@ const ContentForm: FC<{
         setCurrentState(result.blog.state);
         setLoader({ ...loader, publish: false });
 
-        router.push(`/admin/site/content/${contentType === "UPDATE" ? "updates" : "blogs"}/`);
+        router.push(`/admin/site/content/${contentType === "UPDATE" ? "updates" : "blogs"}`);
       },
       (error) => {
         messageApi.error(error);
@@ -109,7 +109,7 @@ const ContentForm: FC<{
         messageApi.success(result.message);
         setCurrentState(result.blog.state);
         setLoader({ ...loader, publish: false });
-        router.push(`/admin/site/content/${contentType === "UPDATE" ? "updates" : "blogs"}/`);
+        router.push(`/admin/site/content/${contentType === "UPDATE" ? "updates" : "blogs"}`);
       },
       (error) => {
         messageApi.error(error);
@@ -125,7 +125,7 @@ const ContentForm: FC<{
       contentId,
       (result) => {
         messageApi.success(result.message);
-        router.push(`/admin/site/content/${contentType === "UPDATE" ? "updates" : "blogs"}/`);
+        router.push(`/admin/site/content/${contentType === "UPDATE" ? "updates" : "blogs"}`);
 
         setLoader({ ...loader, discard: false });
       },
