@@ -28,8 +28,6 @@ const getBlogList = async (): Promise<IBlogCard[]> => {
     },
   });
 
-  console.log(blogs, "st");
-
   const blogList =
     blogs.length > 0
       ? blogs.map((b) => {
@@ -42,7 +40,6 @@ const getBlogList = async (): Promise<IBlogCard[]> => {
           };
         })
       : [];
-  console.log(blogList, "s");
   return blogList;
 };
 

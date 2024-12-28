@@ -43,7 +43,6 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   let cookieName = getCookieName();
 
   const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
-  console.log(site, "s");
   const allCourses = site.sections?.courses?.enable && (await getCourseList());
   const allBlogs = site.sections?.blog?.enable && (await getBlogList());
 
