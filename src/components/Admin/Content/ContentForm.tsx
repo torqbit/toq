@@ -17,7 +17,8 @@ const ContentForm: FC<{
   title: string;
   state: StateType;
   contentType: string;
-}> = ({ htmlData, title, bannerImage, state, contentType }) => {
+  contentId?: string;
+}> = ({ htmlData, title, bannerImage, state, contentType, contentId }) => {
   const [blogBanner, setBlogBanner] = useState<string>(bannerImage);
   const [blogTitle, setBlogTitle] = useState<string>(title);
   const [editorValue, setEditorValue] = useState<string>("");
@@ -68,7 +69,7 @@ const ContentForm: FC<{
       state,
       banner: bannerImage,
       contentType,
-      blogId: String(router.query.blogId),
+      blogId: contentId,
     };
     const formData = new FormData();
     formData.append("blog", JSON.stringify(data));
@@ -80,9 +81,7 @@ const ContentForm: FC<{
         setCurrentState(result.blog.state);
         setLoader({ ...loader, publish: false });
 
-        result.blog.state === StateType.ACTIVE
-          ? router.push(`/blog/${result.blog.slug}`)
-          : router.push("admin/content");
+        router.push(`/admin/site/content/${contentType === "UPDATE" ? "updates" : "blogs"}`);
       },
       (error) => {
         messageApi.error(error);
@@ -99,7 +98,7 @@ const ContentForm: FC<{
       state,
       banner: bannerImage,
       contentType,
-      blogId: String(router.query.blogId),
+      blogId: contentId,
     };
     const formData = new FormData();
     formData.append("blog", JSON.stringify(data));
@@ -110,9 +109,7 @@ const ContentForm: FC<{
         messageApi.success(result.message);
         setCurrentState(result.blog.state);
         setLoader({ ...loader, publish: false });
-        result.blog.state === StateType.ACTIVE
-          ? router.push(`/blog/${result.blog.slug}`)
-          : router.push("admin/content");
+        router.push(`/admin/site/content/${contentType === "UPDATE" ? "updates" : "blogs"}`);
       },
       (error) => {
         messageApi.error(error);
@@ -121,14 +118,15 @@ const ContentForm: FC<{
     );
   };
 
-  const onDelete = () => {
+  const onDelete = (contentId: string) => {
     setLoader({ ...loader, discard: true });
 
     BlogService.deleteBlog(
-      String(router.query.blogId),
+      contentId,
       (result) => {
         messageApi.success(result.message);
-        router.push("/admin/content");
+        router.push(`/admin/site/content/${contentType === "UPDATE" ? "updates" : "blogs"}`);
+
         setLoader({ ...loader, discard: false });
       },
       (error) => {
@@ -150,17 +148,23 @@ const ContentForm: FC<{
 
   return (
     <section className={styles.blogFormConatiner}>
-      <Form form={form} requiredMark={false}>
+      <Form
+        form={form}
+        requiredMark={false}
+        initialValues={{
+          title: blogTitle,
+        }}
+      >
         {contextHolder}
 
         <Flex className={styles.publishBtn} align="center" gap={10}>
           <Popconfirm
             title={`Delete the ${contentType.toLowerCase()}`}
-            description={`Are you sure to ${
-              router.query.blogId ? "delete" : "discard"
-            } this ${contentType.toLowerCase()}?`}
+            description={`Are you sure to ${contentId ? "delete" : "discard"} this ${contentType.toLowerCase()}?`}
             onConfirm={() => {
-              router.query.blogId ? onDelete() : router.push("/admin/content");
+              contentId
+                ? onDelete(contentId)
+                : router.push(`/admin/site/content/${contentType === "UPDATE" ? "updates" : "blogs"}`);
             }}
             okText="Yes"
             cancelText="No"
@@ -176,7 +180,7 @@ const ContentForm: FC<{
               form.getFieldsValue().title &&
                 handleBlog(
                   currentState === StateType.DRAFT ? StateType.ACTIVE : StateType.DRAFT,
-                  router.query.blogId ? "update" : "create"
+                  contentId ? "update" : "create"
                 );
             }}
             icon={SvgIcons.chevronDown}
@@ -191,7 +195,7 @@ const ContentForm: FC<{
                     form.getFieldsValue().title &&
                       handleBlog(
                         currentState === StateType.DRAFT ? StateType.DRAFT : StateType.ACTIVE,
-                        router.query.blogId ? "update" : "create"
+                        contentId ? "update" : "create"
                       );
                   },
                 },

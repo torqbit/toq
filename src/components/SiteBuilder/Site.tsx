@@ -1,35 +1,33 @@
-import BlogList from "@/components/Admin/Content/BlogList";
+import ContentList from "@/components/Admin/Content/ContentList";
 import SiteBuilderLayout from "@/components/Layouts/SiteBuilderLayout";
 import PreviewSite from "@/components/PreviewCode/PreviewSite";
 import SiteBuilder from "@/components/SiteBuilder/SiteBuilder";
 import SvgIcons from "@/components/SvgIcons";
-import { getSiteConfig } from "@/services/getSiteConfig";
 import { postFetch } from "@/services/request";
 import { PageSiteConfig } from "@/services/siteConstant";
 import { Button, Flex, MenuProps, message } from "antd";
-import { GetServerSidePropsContext, NextPage } from "next";
 import { useRouter } from "next/router";
-import { useEffect, useRef, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import styles from "@/components/Layouts/SiteBuilder.module.scss";
+import SiteContent from "./SiteContent";
 
-const SiteDesign: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
+const Site: FC<{ siteConfig: PageSiteConfig; contentType: "design" | "content" }> = ({ siteConfig, contentType }) => {
   const [messageApi, contexHolder] = message.useMessage();
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [config, setConfig] = useState<PageSiteConfig>(siteConfig);
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
-  const [selectedTab, setSelectedTab] = useState<string>("design");
-  const [selectedMenu, setSelectedMenu] = useState<string>("blogs");
+  const [selectedTab, setSelectedTab] = useState<string>(contentType);
+  const activeMenu = router.pathname.includes("blogs") ? "blogs" : "updates";
+  const contentId = typeof router.query.id === "string" ? router.query.id : undefined;
 
   const onChangeMenu = (value: string) => {
     switch (value) {
       case "updates":
-        setSelectedMenu("updates");
-        return router.push(`/admin/site?tab=content&content=updates`);
+        return router.push(`/admin/site/content/updates`);
 
       default:
-        setSelectedMenu("blogs");
-        return router.push(`/admin/site?tab=content&content=blogs`);
+        return router.push(`/admin/site/content/blogs`);
     }
   };
 
@@ -65,7 +63,10 @@ const SiteDesign: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) =>
       label: "Blogs",
       key: "blogs",
       icon: (
-        <i className={selectedMenu === "blogs" ? styles.selected__menu__icon : styles.content__menu__icon}>
+        <i
+          style={{ fontSize: 18 }}
+          className={activeMenu === "blogs" ? styles.selected__menu__icon : styles.content__menu__icon}
+        >
           {SvgIcons.newsPaper}
         </i>
       ),
@@ -74,7 +75,10 @@ const SiteDesign: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) =>
       label: "Updates",
       key: "updates",
       icon: (
-        <i className={selectedMenu === "updates" ? styles.selected__menu__icon : styles.content__menu__icon}>
+        <i
+          style={{ fontSize: 18 }}
+          className={activeMenu === "updates" ? styles.selected__menu__icon : styles.content__menu__icon}
+        >
           {SvgIcons.update}
         </i>
       ),
@@ -85,24 +89,14 @@ const SiteDesign: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) =>
     sendMessageToIframe();
   }, [config]);
 
-  useEffect(() => {
-    if (typeof router.query.tab === "string") {
-      onChange(router.query.tab);
-    }
-  }, []);
-
   const onChange = (value: string) => {
     switch (value) {
       case "content":
-        setSelectedTab("content");
-        typeof router.query.content === "string" && setSelectedMenu(router.query.content);
-        return router.push(
-          `/admin/site?tab=content&content=${router.query.content ? router.query.content : selectedMenu}`
-        );
+        return router.push(`/admin/site/content/blogs`);
 
-      default:
+      case "design":
         setSelectedTab("design");
-        return router.push("/admin/site?tab=design");
+        return router.push("/admin/site/design");
     }
   };
 
@@ -111,7 +105,7 @@ const SiteDesign: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) =>
       siteConfig={config}
       sideBar={
         <SiteBuilder
-          selectedMenu={selectedMenu}
+          selectedMenu={activeMenu}
           setSelectedMenu={onChangeMenu}
           selectedTab={selectedTab}
           contentMenu={contentMenu}
@@ -144,24 +138,10 @@ const SiteDesign: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) =>
           />
         </>
       ) : (
-        <Flex vertical gap={10}>
-          <h4 style={{ paddingTop: 5 }}>{selectedMenu === "updates" ? "Updates" : "Blogs"}</h4>
-
-          <BlogList contentType={selectedMenu === "updates" ? "UPDATE" : "BLOG"} />
-        </Flex>
+        <SiteContent activeMenu={activeMenu} contentId={contentId} />
       )}
     </SiteBuilderLayout>
   );
 };
 
-export default SiteDesign;
-
-export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const siteConfig = getSiteConfig();
-
-  return {
-    props: {
-      siteConfig: siteConfig.site,
-    },
-  };
-};
+export default Site;
