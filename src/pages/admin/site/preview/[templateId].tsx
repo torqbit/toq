@@ -8,11 +8,14 @@ import { FC, useEffect, useState } from "react";
 import { getSiteConfig } from "@/services/getSiteConfig";
 import { ICourseCard } from "@/types/landing/courses";
 import getCourseList from "@/actions/getCourseList";
+import getBlogList from "@/actions/getBlogList";
+import { IBlogCard } from "@/types/landing/blog";
 
-const PreviewPage: FC<{ user: User; siteConfig: PageSiteConfig; courseList: ICourseCard[] }> = ({
+const PreviewPage: FC<{ user: User; siteConfig: PageSiteConfig; courseList: ICourseCard[]; blogList: IBlogCard[] }> = ({
   user,
   siteConfig,
   courseList,
+  blogList,
 }) => {
   const [config, setConfig] = useState<PageSiteConfig>(siteConfig);
 
@@ -30,7 +33,7 @@ const PreviewPage: FC<{ user: User; siteConfig: PageSiteConfig; courseList: ICou
     };
   }, []);
 
-  return <StandardTemplate user={user} siteConfig={config} courseList={courseList} />;
+  return <StandardTemplate user={user} siteConfig={config} courseList={courseList} blogList={blogList} previewMode />;
 };
 export default PreviewPage;
 
@@ -40,14 +43,16 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   let cookieName = getCookieName();
 
   const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
-
+  console.log(site, "s");
   const allCourses = site.sections?.courses?.enable && (await getCourseList());
+  const allBlogs = site.sections?.blog?.enable && (await getBlogList());
 
   return {
     props: {
       user,
       siteConfig: site,
       courseList: allCourses || [],
+      blogList: allBlogs || [],
     },
   };
 };
