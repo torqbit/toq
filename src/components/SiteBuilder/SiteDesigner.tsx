@@ -1,5 +1,5 @@
-import { FC } from "react";
-import styles from "./SiteBuilder.module.scss";
+import { FC, useEffect } from "react";
+import styles from "@/components/Layouts/SiteBuilder.module.scss";
 import { Collapse, CollapseProps, Flex, Segmented, Switch } from "antd";
 import { PageSiteConfig } from "@/services/siteConstant";
 import { Theme } from "@/types/theme";
@@ -9,12 +9,31 @@ import SvgIcons from "../SvgIcons";
 import FeatureForm from "./sections/Feature/FeatureForm";
 import CourseForm from "./sections/Courses/CourseForm";
 import BlogForm from "./sections/Blog/BlogForm";
+import { useAppContext } from "../ContextApi/AppContext";
 
-const SiteDesign: FC<{
+const SiteDesigner: FC<{
   config: PageSiteConfig;
-  onCheckTheme: (theme: Theme) => void;
   updateSiteConfig: (config: PageSiteConfig) => void;
-}> = ({ updateSiteConfig, config, onCheckTheme }) => {
+}> = ({ updateSiteConfig, config }) => {
+  const { dispatch } = useAppContext();
+
+  const onCheckTheme = (theme: Theme) => {
+    if (theme === "dark") {
+      localStorage.setItem("theme", "dark");
+    } else {
+      localStorage.setItem("theme", "light");
+    }
+
+    dispatch({
+      type: "SWITCH_THEME",
+      payload: theme,
+    });
+    updateSiteConfig({ ...config, brand: { ...config.brand, defaultTheme: theme } });
+  };
+
+  useEffect(() => {
+    config.brand?.defaultTheme && onCheckTheme(config.brand?.defaultTheme);
+  }, []);
   const collapseHeader = (title: string, icon?: React.ReactNode) => {
     return (
       <Flex className={styles.collapse__header} justify="space-between" align="center">
@@ -112,4 +131,4 @@ const SiteDesign: FC<{
   );
 };
 
-export default SiteDesign;
+export default SiteDesigner;

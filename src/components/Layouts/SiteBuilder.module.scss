@@ -15,3 +15,86 @@
   color: var(--font-primary);
   line-height: 0;
 }
+
+.side__bar__container {
+  position: fixed;
+  border-right: 1px solid var(--border-color);
+  left: 0;
+  bottom: 0;
+  top: 0;
+  background-color: var(--bg-primary);
+  width: 350px;
+  overflow-y: auto;
+
+  .side__bar__breadcrumb {
+    padding: 10px 20px;
+  }
+
+  .config__sections {
+    padding-top: 10px;
+
+    .collapse__header {
+      padding: 5px 0px 0px 0px;
+
+      > div:first-child {
+        > div:first-child {
+          height: 33px;
+        }
+
+        > div:nth-child(3) {
+          margin-top: 4px;
+        }
+      }
+
+      i {
+        line-height: 0;
+        font-size: 18px;
+      }
+    }
+
+    .segment {
+      color: var(--font-secondary);
+    }
+    .darkmode__switch {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 20px;
+
+      p {
+        margin: 0;
+      }
+
+      .switch {
+        margin-right: -5px;
+      }
+    }
+
+    .collapse__wrapper {
+      height: 100%;
+      border: none;
+      border-radius: 0px;
+    }
+  }
+
+  .go_back_btn {
+    padding: 0px 20px;
+    color: var(--font-secondary);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    i {
+      line-height: 0;
+      font-size: 18px;
+    }
+    p {
+      margin: 0;
+    }
+    &:hover {
+      color: var(--btn-primary);
+      p {
+        color: var(--btn-primary);
+      }
+    }
+  }
+}
