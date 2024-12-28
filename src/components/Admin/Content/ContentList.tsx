@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from "react";
-import { Dropdown, Modal, Table, message } from "antd";
+import { Button, Dropdown, Flex, Modal, Table, message } from "antd";
 import SvgIcons from "@/components/SvgIcons";
 
 import { useRouter } from "next/router";
@@ -8,6 +8,7 @@ import appConstant from "@/services/appConstant";
 import { StateType } from "@prisma/client";
 
 import { getCreatedDate } from "@/services/helper";
+import Link from "next/link";
 
 const ContentList: FC<{ contentType: string }> = ({ contentType }) => {
   const router = useRouter();
@@ -160,6 +161,17 @@ const ContentList: FC<{ contentType: string }> = ({ contentType }) => {
   return (
     <div>
       {messageHolder}
+      <Flex align="center" justify="space-between">
+        <h4>{contentType === "BLOG" ? "Blogs" : "Updates"} </h4>
+        <Link href={`/admin/site/content/${contentType === "BLOG" ? "blogs" : "updates"}/add`}>
+          <Button type="primary">
+            <Flex align="center" gap={5}>
+              Add {contentType === "BLOG" ? "blogs" : "updates"}
+              <i style={{ lineHeight: 0, fontSize: 18, color: "var(--font-primary)" }}>{SvgIcons.arrowRight}</i>
+            </Flex>
+          </Button>
+        </Link>
+      </Flex>
       <Table size="small" className="users_table" columns={columns} dataSource={data} loading={loading} />
       {contextHolder}
     </div>
