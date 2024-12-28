@@ -3,11 +3,11 @@ import { getSiteConfig } from "@/services/getSiteConfig";
 import { PageSiteConfig } from "@/services/siteConstant";
 import { GetServerSidePropsContext, NextPage } from "next";
 
-const SiteDesign: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
-  return <Site siteConfig={siteConfig} contentType="design" />;
+const SiteContent: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
+  return <Site siteConfig={siteConfig} contentType="content" />;
 };
 
-export default SiteDesign;
+export default SiteContent;
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const siteConfig = getSiteConfig();

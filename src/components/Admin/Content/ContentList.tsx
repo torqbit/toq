@@ -9,7 +9,7 @@ import { StateType } from "@prisma/client";
 
 import { getCreatedDate } from "@/services/helper";
 
-const BlogList: FC<{ contentType: string }> = ({ contentType }) => {
+const ContentList: FC<{ contentType: string }> = ({ contentType }) => {
   const router = useRouter();
   const [modal, contextHolder] = Modal.useModal();
   const [blogData, setBlogData] = useState<latestBlogs[]>();
@@ -85,8 +85,8 @@ const BlogList: FC<{ contentType: string }> = ({ contentType }) => {
                   label: "Edit",
                   onClick: () => {
                     contentType === "BLOG"
-                      ? router.push(`/admin/content/blog/edit/${blogInfo?.id}`)
-                      : router.push(`/admin/content/update/edit/${blogInfo?.id}`);
+                      ? router.push(`/admin/site/content/blogs/edit/${blogInfo?.id}`)
+                      : router.push(`/admin/site/content/updates/edit/${blogInfo?.id}`);
                   },
                 },
                 {
@@ -144,7 +144,7 @@ const BlogList: FC<{ contentType: string }> = ({ contentType }) => {
         setLoading(false);
       }
     );
-  }, [contentType]);
+  }, [contentType, refresh]);
 
   const data = blogData?.map((blog, i) => {
     return {
@@ -166,4 +166,4 @@ const BlogList: FC<{ contentType: string }> = ({ contentType }) => {
   );
 };
 
-export default BlogList;
+export default ContentList;

@@ -15,9 +15,16 @@ export type ApiResponse = {
   error: string;
   message: string;
   latestBlogs: latestBlogs[];
+  contentData: IContentData;
   blog: Blog;
 };
 
+export interface IContentData {
+  htmlData: string;
+  bannerImage: string;
+  title: string;
+  state: StateType;
+}
 type FailedApiResponse = {
   error: string;
 };
@@ -28,15 +35,15 @@ class BlogService {
     onFailure: (message: string) => void
   ) => {
     postWithFile(formData, `/api/v1/admin/blog/update`).then((result) => {
-      if (result.status == 400) {
-        result.json().then((r) => {
-          const failedResponse = r as FailedApiResponse;
-          onFailure(failedResponse.error);
-        });
-      } else if (result.status == 200) {
+      if (result.status == 200) {
         result.json().then((r) => {
           const apiResponse = r as ApiResponse;
           onSuccess(apiResponse);
+        });
+      } else {
+        result.json().then((r) => {
+          const failedResponse = r as FailedApiResponse;
+          onFailure(failedResponse.error);
         });
       }
     });
@@ -48,15 +55,15 @@ class BlogService {
     onFailure: (message: string) => void
   ) => {
     postWithFile(formData, `/api/v1/admin/blog/create`).then((result) => {
-      if (result.status == 400) {
-        result.json().then((r) => {
-          const failedResponse = r as FailedApiResponse;
-          onFailure(failedResponse.error);
-        });
-      } else if (result.status == 200) {
+      if (result.status == 200) {
         result.json().then((r) => {
           const apiResponse = r as ApiResponse;
           onSuccess(apiResponse);
+        });
+      } else {
+        result.json().then((r) => {
+          const failedResponse = r as FailedApiResponse;
+          onFailure(failedResponse.error);
         });
       }
     });
@@ -86,6 +93,22 @@ class BlogService {
     onFailure: (message: string) => void
   ) => {
     getFetch(`/api/v1/admin/blog/latestDraftBlog?contentType=${contentType}`).then((result) => {
+      if (result.status == 400) {
+        result.json().then((r) => {
+          const failedResponse = r as FailedApiResponse;
+          onFailure(failedResponse.error);
+        });
+      } else if (result.status == 200) {
+        result.json().then((r) => {
+          const apiResponse = r as ApiResponse;
+          onSuccess(apiResponse);
+        });
+      }
+    });
+  };
+
+  getContentInfo = (id: string, onSuccess: (response: ApiResponse) => void, onFailure: (message: string) => void) => {
+    getFetch(`/api/v1/admin/blog/get/${id}`).then((result) => {
       if (result.status == 400) {
         result.json().then((r) => {
           const failedResponse = r as FailedApiResponse;
