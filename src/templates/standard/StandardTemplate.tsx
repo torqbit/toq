@@ -9,15 +9,17 @@ import Blogs from "@/templates/standard/components/Blog/Blogs";
 import Features from "./components/Feature/Features";
 import CourseList from "@/templates/standard/components/Courses/Courses";
 import { ICourseCard } from "@/types/landing/courses";
+import { IBlogCard } from "@/types/landing/blog";
 
 interface IStandardTemplateProps {
   user: User;
   siteConfig: PageSiteConfig;
   previewMode?: boolean;
   courseList: ICourseCard[];
+  blogList: IBlogCard[];
 }
 
-const StandardTemplate: FC<IStandardTemplateProps> = ({ user, siteConfig, courseList, previewMode }) => {
+const StandardTemplate: FC<IStandardTemplateProps> = ({ user, siteConfig, courseList, previewMode, blogList }) => {
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
   const featureInfo = siteConfig.sections?.features;
 
@@ -57,7 +59,7 @@ const StandardTemplate: FC<IStandardTemplateProps> = ({ user, siteConfig, course
               ? siteConfig.sections.blog.description
               : DEFAULT_THEME.sections.blog.description
           }
-          blogList={[]}
+          blogList={blogList}
           previewMode={previewMode}
         />
       )}
