@@ -2,30 +2,48 @@ import { FC, useEffect } from "react";
 import React from "react";
 import Head from "next/head";
 import { useAppContext } from "../ContextApi/AppContext";
-import { ConfigProvider, Layout } from "antd";
+import { ConfigProvider, Flex, Layout, Tabs, TabsProps } from "antd";
 import darkThemeConfig from "@/services/darkThemeConfig";
 import antThemeConfig from "@/services/antThemeConfig";
 import SpinLoader from "../SpinLoader/SpinLoader";
-import { DEFAULT_THEME, PageSiteConfig } from "@/services/siteConstant";
+import { PageSiteConfig } from "@/services/siteConstant";
 import { useMediaQuery } from "react-responsive";
 import { User } from "@prisma/client";
-import { IBrandInfo } from "@/types/landing/navbar";
 
 import { Theme } from "@/types/theme";
 
 import styles from "./SiteBuilder.module.scss";
+import Link from "next/link";
+import SvgIcons from "../SvgIcons";
+import { useRouter } from "next/router";
 
 const { Content, Sider } = Layout;
 const SiteBuilderLayout: FC<{
   children?: React.ReactNode;
-  sideBar?: React.ReactNode;
+  siteDesigner?: React.ReactNode;
+  siteContent?: React.ReactNode;
   siteConfig: PageSiteConfig;
   user?: User;
-}> = ({ children, sideBar, user, siteConfig }) => {
+}> = ({ children, siteDesigner, siteContent, user, siteConfig }) => {
   const { globalState, dispatch } = useAppContext();
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
-
+  const router = useRouter();
   const { brand } = siteConfig;
+
+  const Tabitems: TabsProps["items"] = [
+    {
+      key: "design",
+      label: "Design",
+      children: siteDesigner,
+    },
+    {
+      key: "content",
+      label: "Content",
+
+      children: siteContent,
+    },
+  ];
+
   useEffect(() => {
     const root = document.documentElement;
     root.style.setProperty("--btn-primary", `${brand?.brandColor}`);
@@ -64,6 +82,15 @@ const SiteBuilderLayout: FC<{
     });
   };
 
+  const onChange = (value: string) => {
+    switch (value) {
+      case "content":
+        return router.push(`/admin/site/content/blogs`);
+
+      case "design":
+        return router.push("/admin/site/design");
+    }
+  };
   useEffect(() => {
     onCheckTheme();
   }, []);
@@ -104,7 +131,24 @@ const SiteBuilderLayout: FC<{
               trigger={null}
               collapsed={false}
             >
-              {sideBar}
+              <div className={styles.side__bar__container}>
+                <Flex align="center" justify="space-between">
+                  <h4 style={{ padding: "10px 20px" }}>Site</h4>
+                  <Link className={styles.go_back_btn} href={"/dashboard"}>
+                    <i>{SvgIcons.arrowLeft}</i>
+                    <p>Go Back</p>
+                  </Link>
+                </Flex>
+
+                <Tabs
+                  tabBarGutter={40}
+                  tabBarStyle={{ padding: "0px 20px" }}
+                  activeKey={siteContent ? "content" : "design"}
+                  className={styles.site_config_tabs}
+                  items={Tabitems}
+                  onChange={onChange}
+                />
+              </div>
             </Sider>
             <Layout>
               <Content className={styles.sider_content}>{children}</Content>
