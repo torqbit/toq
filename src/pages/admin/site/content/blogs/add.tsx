@@ -1,5 +1,4 @@
 import ContentForm from "@/components/Admin/Content/ContentForm";
-import ContentList from "@/components/Admin/Content/ContentList";
 import SiteBuilderLayout from "@/components/Layouts/SiteBuilderLayout";
 import ContentNavigation from "@/components/SiteBuilder/ContentNavigation";
 import { getSiteConfig } from "@/services/getSiteConfig";
