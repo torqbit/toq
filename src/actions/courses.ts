@@ -44,6 +44,7 @@ export const uploadThumbnail = async (
     return new APIResponse(false, 400, "File is missing");
   }
 };
+
 export const uploadArchive = async (
   file: any,
   name: string,

@@ -28,7 +28,6 @@ import { PageSiteConfig } from "@/services/siteConstant";
 import { createSlug, getBase64 } from "@/lib/utils";
 
 const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
-  const [courseBannerUploading, setCourseBannerUploading] = useState<boolean>(false);
   const [courseTrailerUploading, setCourseTrailerUploading] = useState<boolean>(false);
   const [messageApi, contextHolder] = message.useMessage();
   const [resourceContentType, setContentType] = useState<ResourceContentType>();
@@ -84,8 +83,9 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
 
   const router = useRouter();
 
+  const [newTrailerThumbnail, setNewTrailerThumbnail] = useState<string>();
+
   const [uploadVideo, setUploadVideo] = useState<VideoInfo>();
-  const [courseThumbnail, setCourseThumbnail] = useState<string>();
 
   const [courseData, setCourseData] = useState<CourseData>({
     name: "",
@@ -276,14 +276,12 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
     }
   };
 
-  const uploadFile = async (file: any, title: string) => {
+  const uploadTeaserThumbnail = async (file: any) => {
     if (file) {
-      setCourseBannerUploading(true);
+      console.log("setting the new trailer");
       const base64 = await getBase64(file);
-      setCourseThumbnail(base64 as string);
+      setNewTrailerThumbnail(base64 as string);
       setFile(file);
-
-      setCourseBannerUploading(false);
     }
   };
 
@@ -337,11 +335,10 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
           onDiscard={onDiscard}
           courseData={courseData}
           onUploadTrailer={onUploadTrailer}
-          uploadFile={uploadFile}
+          uploadTeaserThumbnail={uploadTeaserThumbnail}
           uploadVideo={uploadVideo}
-          courseBannerUploading={courseBannerUploading}
           courseTrailerUploading={courseTrailerUploading}
-          courseBanner={courseThumbnail}
+          trailerThumbnail={newTrailerThumbnail}
           settingLoading={settingloading}
           selectedCourseType={selectedCourseType}
           selectCourseType={selectCourseType}
@@ -355,10 +352,9 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
           Curriculum
         </span>
       ),
-      disabled:
-        ((!courseThumbnail || courseThumbnail.startsWith("data:image/")) && !uploadVideo?.videoUrl) || !tabActive,
+      disabled: !uploadVideo?.videoUrl || !tabActive,
 
-      children: courseThumbnail && !courseThumbnail.startsWith("data:image/") && uploadVideo?.videoUrl && (
+      children: uploadVideo?.videoUrl && (
         <Curriculum
           chapters={courseData.chapters}
           onRefresh={onRefresh}
@@ -378,9 +374,8 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
       label: (
         <span onClick={() => !tabActive && message.error("First fill and  save  the add course form ")}>Preview</span>
       ),
-      disabled:
-        ((!courseThumbnail || courseThumbnail.startsWith("data:image/")) && !uploadVideo?.videoUrl) || !tabActive,
-      children: courseThumbnail && !courseThumbnail.startsWith("data:image/") && uploadVideo?.videoUrl && (
+      disabled: !uploadVideo?.videoUrl || !tabActive,
+      children: uploadVideo?.videoUrl && (
         <Preview
           videoUrl={uploadVideo?.videoUrl}
           onEnrollCourse={() => {}}
@@ -504,7 +499,6 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
             courseType: result.courseDetails.courseType,
           });
 
-          setCourseThumbnail(result.courseDetails.thumbnail);
           setSettingloading(false);
         },
         (error) => {

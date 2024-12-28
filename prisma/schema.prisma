@@ -142,7 +142,6 @@ model Course {
   tvUrl               String?
   tvThumbnail         String?
   tvState             VideoState?
-  thumbnail           String?
   icon                String?
   authorId            String
   skills              Json?

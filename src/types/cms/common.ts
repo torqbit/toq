@@ -4,6 +4,7 @@ export type VideoObjectType = "lesson" | "course";
 export enum FileObjectType {
   EVENT = "events",
   COURSE = "course",
+  LESSON = "lesson",
   BLOG = "blog",
   UPDATE = "update",
   CERTIFICATE = "certificate",

@@ -33,9 +33,8 @@ const CourseSetting: FC<{
   onDiscard: () => void;
   form: FormInstance;
   onSubmit: () => void;
-  uploadFile: (file: any, title: string) => void;
+  uploadTeaserThumbnail: (file: any) => void;
   onUploadTrailer: (file: RcFile, title: string) => void;
-  courseBannerUploading: boolean;
   courseTrailerUploading: boolean;
   onSetCourseData: (key: string, value: string) => void;
   courseData: {
@@ -45,7 +44,7 @@ const CourseSetting: FC<{
     chapters: ChapterDetail[];
     coursePrice?: number;
   };
-  courseBanner?: string;
+  trailerThumbnail?: string;
   uploadVideo?: VideoInfo;
   settingLoading?: boolean;
   selectedCourseType: { free: boolean; paid: boolean };
@@ -55,14 +54,13 @@ const CourseSetting: FC<{
   form,
   courseData,
   onUploadTrailer,
-  uploadFile,
+  uploadTeaserThumbnail,
   onDiscard,
-  courseBannerUploading,
   courseTrailerUploading,
   uploadVideo,
   onSetCourseData,
-  courseBanner,
   settingLoading,
+  trailerThumbnail,
   selectedCourseType,
   selectCourseType,
 }) => {
@@ -90,10 +88,11 @@ const CourseSetting: FC<{
     selected: "Video",
     video: {
       state: uploadVideo ? "uploaded" : "empty",
+      videoThumbnail: uploadVideo?.thumbnail,
     },
     thumbnail: {
-      state: courseBanner ? "uploaded" : "empty",
-      url: courseBanner,
+      state: uploadVideo?.thumbnail ? "uploaded" : "empty",
+      url: trailerThumbnail,
     },
   });
 
@@ -125,10 +124,7 @@ const CourseSetting: FC<{
                   htmlType="submit"
                   className={styles.save_setting_btn}
                   disabled={
-                    courseTrailerUploading ||
-                    uploadVideo?.state == VideoState.PROCESSING ||
-                    !uploadVideo?.videoUrl ||
-                    !courseBanner
+                    courseTrailerUploading || uploadVideo?.state == VideoState.PROCESSING || !uploadVideo?.videoUrl
                   }
                 >
                   Save Settings <img style={{ marginLeft: 5 }} src="/img/program/arrow-right.png" alt="arrow" />
@@ -305,6 +301,7 @@ const CourseSetting: FC<{
                     <Flex align="center" gap={10} vertical>
                       <Segmented<string>
                         options={["Video", "Thumbnail"]}
+                        defaultValue={teaser.selected}
                         onChange={(value) => {
                           setTeaser({ ...teaser, selected: value as TeaserInput }); // string
                         }}
@@ -352,38 +349,37 @@ const CourseSetting: FC<{
                           name="avatar"
                           listType="picture-card"
                           className={styles.upload__thumbnail}
-                          disabled={courseTrailerUploading}
+                          accept=".png,.jpeg,.jpg"
+                          disabled={typeof uploadVideo === "undefined"}
                           showUploadList={false}
                           style={{ width: 118, height: 118 }}
                           beforeUpload={(file) => {
-                            uploadFile(file, `${form.getFieldsValue().course_name}_banner`);
+                            uploadTeaserThumbnail(file);
                           }}
                           onChange={handleChange}
                         >
-                          {courseBanner ? (
-                            <>
-                              <Tooltip title="Update trailer thumbnail">
+                          <>
+                            <Tooltip
+                              title={
+                                typeof uploadVideo != "undefined"
+                                  ? "Update the video thumbnail"
+                                  : "Complete uploading the course trailer"
+                              }
+                            >
+                              {trailerThumbnail && (
                                 <img
                                   style={{ borderRadius: 4, objectFit: "cover", width: 318, height: 178 }}
-                                  src={courseBanner}
+                                  src={trailerThumbnail}
                                 />
-                              </Tooltip>
-                              <div className={styles.bannerStatus}>{courseBannerUploading && "Uploading"}</div>
-                            </>
-                          ) : (
-                            <button
-                              className={styles.upload_img_button}
-                              style={{ border: 0, background: "none", width: 318, height: 178 }}
-                              type="button"
-                            >
-                              {courseBannerUploading ? <LoadingOutlined /> : SvgIcons.uploadIcon}
-                              {!courseBannerUploading ? (
-                                <div style={{ marginTop: 8 }}>Upload Image</div>
-                              ) : (
-                                <div style={{ color: "#000" }}>{courseBannerUploading && "Uploading"}</div>
                               )}
-                            </button>
-                          )}
+                              {!trailerThumbnail && (
+                                <p>
+                                  + <br />
+                                  Upload thumbnail
+                                </p>
+                              )}
+                            </Tooltip>
+                          </>
                         </Upload>
                       )}
                     </Flex>

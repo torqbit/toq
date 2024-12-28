@@ -66,10 +66,11 @@ export interface IContentProvider<T extends ICMSAuthConfig, U> {
   uploadVideoThumbnail(
     cmsConfig: U,
     thumbnail: Buffer,
+    fileExtension: string,
     providerVideoId: string,
     objectId: number,
     objectType: VideoObjectType
-  ): Promise<APIResponse<void>>;
+  ): Promise<APIResponse<string>>;
   deleteCDNImage(cmsConfig: U, filePath: string): Promise<APIResponse<any>>;
   deleteVideo(cmsConfig: U, videoId: string, objectId: number, objectType: VideoObjectType): Promise<APIResponse<any>>;
 }
