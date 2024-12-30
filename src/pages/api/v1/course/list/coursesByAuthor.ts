@@ -27,7 +27,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           name: true,
           difficultyLevel: true,
           state: true,
-          thumbnail: true,
           description: true,
           totalResources: true,
           previewMode: true,
@@ -74,7 +73,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           name: true,
           difficultyLevel: true,
           state: true,
-          thumbnail: true,
           slug: true,
 
           description: true,
