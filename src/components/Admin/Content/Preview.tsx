@@ -124,6 +124,34 @@ const Preview: FC<{
   };
   return (
     <section className={addContentPreview ? styles.add_preview_container : styles.preview_container}>
+      <h4>{courseDetail?.course.name}</h4>
+      <p>A course by {courseDetail?.course.authorName}</p>
+      <Flex align="baseline" justify="flex-start" gap={20}>
+        <div>
+          <div className={styles.video_container}>
+            <Flex className={styles.spin_wrapper} align="center" justify="center">
+              <SpinLoader className="preview_loader" />
+            </Flex>
+            {
+              <iframe
+                allowFullScreen
+                style={{
+                  position: "absolute",
+                  width: "100%",
+                  height: "100%",
+                  outline: "none",
+                  border: "none",
+                }}
+                src={videoUrl}
+              ></iframe>
+            }
+          </div>
+        </div>
+        <div>
+          {/* component for price display */}
+          <div></div>
+        </div>
+      </Flex>
       <Space direction="vertical">
         <div style={{ fontSize: 20 }} className={styles.coursehHeaderLinks}>
           {courseDetail && !addContentPreview && (
@@ -140,30 +168,8 @@ const Preview: FC<{
             />
           )}
         </div>
-        <div className={styles.video_container}>
-          <Flex className={styles.spin_wrapper} align="center" justify="center">
-            <SpinLoader className="preview_loader" />
-          </Flex>
-          {
-            <iframe
-              allowFullScreen
-              style={{
-                position: "absolute",
-                width: "100%",
-                height: "100%",
-                outline: "none",
-                border: "none",
-              }}
-              src={videoUrl}
-            ></iframe>
-          }
-        </div>
-        <div className={styles.course__info}>
-          <Space direction="vertical">
-            <h2>{courseDetail?.course.name}</h2>
-            <p>{courseDetail?.course.description}</p>
-          </Space>
 
+        <div className={styles.course__info}>
           <Flex vertical gap={8}>
             {courseDetail?.course.courseType === $Enums.CourseType.PAID &&
               courseDetail.course.userRole !== Role.STUDENT && (
