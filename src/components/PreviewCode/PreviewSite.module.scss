@@ -1,13 +1,13 @@
 .site__preview__container {
   overflow: hidden;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
 
   .site__preview__titlebar {
     width: calc(100vw - 400px);
     padding: 0px 10px;
     height: 35px;
     background-color: var(--bg-primary);
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
 
     border: 2px solid var(--border-color);
     border-bottom: none;

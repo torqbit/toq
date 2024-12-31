@@ -151,7 +151,7 @@ const BrandForm: FC<{
   );
 
   useEffect(() => {
-    updateSiteConfig({ ...config, brand: brandConfig });
+    updateSiteConfig({ ...config, brand: { ...brandConfig, defaultTheme: config.brand?.defaultTheme } });
   }, [brandConfig]);
   const brandItems: IConfigForm[] = [
     {

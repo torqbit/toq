@@ -76,23 +76,17 @@
       border-radius: 0px;
     }
   }
-
-  .go_back_btn {
-    padding: 0px 20px;
-    color: var(--font-secondary);
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    i {
+  .site__builder__header {
+    padding: 10px 15px 10px 20px;
+    .go_back_btn {
+      color: var(--font-secondary);
       line-height: 0;
-      font-size: 18px;
-    }
-    p {
-      margin: 0;
-    }
-    &:hover {
-      color: var(--btn-primary);
-      p {
+
+      i {
+        font-size: 18px;
+      }
+
+      &:hover {
         color: var(--btn-primary);
       }
     }

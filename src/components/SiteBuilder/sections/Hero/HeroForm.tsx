@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from "react";
 import styles from "./HeroForm.module.scss";
-import { Button, Divider, Flex, Form, Input, message, Radio, Segmented, Tooltip, Upload } from "antd";
+import { Button, Divider, Dropdown, Flex, Form, Input, message, Radio, Segmented, Tooltip, Upload } from "antd";
 import ConfigForm from "@/components/Configuration/ConfigForm";
 import { IConfigForm } from "@/components/Configuration/CMS/ContentManagementSystem";
 import { UploadOutlined } from "@ant-design/icons";
@@ -9,7 +9,8 @@ import { IHeroConfig } from "@/types/schema";
 import Image from "next/image";
 import ImgCrop from "antd-img-crop";
 import { postWithFile } from "@/services/request";
-import { getExtension } from "@/lib/utils";
+import { extractLinkKey, extractValue, getExtension, mailtoRegex, regex, telRegex } from "@/lib/utils";
+import SvgIcons from "@/components/SvgIcons";
 
 const HeroForm: FC<{
   config: PageSiteConfig;
@@ -23,6 +24,12 @@ const HeroForm: FC<{
     darkModePath: heroConfig?.banner?.darkModePath ? heroConfig.banner.darkModePath : "",
   });
 
+  const [primaryAddonText, setPrimaryAddon] = useState<string>(
+    extractLinkKey(`${config.heroSection?.actionButtons?.primary?.link}`)
+  );
+  const [secondaryAddonText, setSecondaryAddon] = useState<string>(
+    extractLinkKey(`${config.heroSection?.actionButtons?.secondary?.link}`)
+  );
   const beforeUpload = async (file: File, mode: string) => {
     const getImageName = () => {
       if (mode === "lightModePath") {
@@ -142,12 +149,14 @@ const HeroForm: FC<{
       description: "Add title for the hero section ",
       layout: "vertical",
       input: (
-        <Input
-          onChange={(e) => {
-            onUpdateHeroConfig(e.currentTarget.value, "title");
-          }}
-          placeholder="Add title "
-        />
+        <Form.Item name={"title"} rules={[{ required: true, message: `title is required!` }]} key={1}>
+          <Input
+            onChange={(e) => {
+              onUpdateHeroConfig(e.currentTarget.value, "title");
+            }}
+            placeholder="Add title "
+          />
+        </Form.Item>
       ),
       inputName: "title",
     },
@@ -156,12 +165,14 @@ const HeroForm: FC<{
       description: "Add description for hero section ",
       layout: "vertical",
       input: (
-        <Input
-          onChange={(e) => {
-            onUpdateHeroConfig(e.currentTarget.value, "description");
-          }}
-          placeholder="Add description"
-        />
+        <Form.Item name={"description"} rules={[{ required: true, message: `description is required!` }]} key={2}>
+          <Input
+            onChange={(e) => {
+              onUpdateHeroConfig(e.currentTarget.value, "description");
+            }}
+            placeholder="Add description"
+          />
+        </Form.Item>
       ),
       inputName: "description",
     },
@@ -170,56 +181,215 @@ const HeroForm: FC<{
       description: "Add actions buttons ",
       layout: "vertical",
       input: (
-        <Flex vertical gap={10}>
+        <Flex vertical gap={10} key={3}>
           <Flex vertical gap={10}>
             <h5>Primary</h5>
-            <Input
-              defaultValue={config.heroSection?.actionButtons?.primary?.label}
-              onChange={(e) => {
-                onUpdateHeroConfig(e.currentTarget.value, "actionButtons.primary.label");
-              }}
-              placeholder="Add label"
-            />
-            <Input
-              defaultValue={config.heroSection?.actionButtons?.primary?.link}
-              addonBefore="https://"
-              onChange={(e) => {
-                onUpdateHeroConfig(
-                  `${
-                    e.currentTarget.value.startsWith("mailto:") || e.currentTarget.value.startsWith("tel:")
-                      ? e.currentTarget.value
-                      : `/${e.currentTarget.value}`
-                  }`,
-                  "actionButtons.primary.link"
-                );
-              }}
-              placeholder="Add link"
-            />
+            <Form.Item name={"primaryLabel"} rules={[{ required: true, message: `Primary link is required!` }]}>
+              <Input
+                defaultValue={config.heroSection?.actionButtons?.primary?.label}
+                onChange={(e) => {
+                  onUpdateHeroConfig(e.currentTarget.value, "actionButtons.primary.label");
+                }}
+                placeholder="Add label"
+              />
+            </Form.Item>
+            <Form.Item
+              name={"primaryLink"}
+              rules={[
+                () => ({
+                  validator(rule, value, callBack) {
+                    switch (primaryAddonText) {
+                      case "https://":
+                        if (regex.test(form.getFieldsValue().primaryLink)) {
+                          return Promise.resolve();
+                        } else {
+                          return Promise.reject("Domain is missing");
+                        }
+                      case "mailto:":
+                        if (mailtoRegex.test(form.getFieldsValue().primaryLink)) {
+                          return Promise.resolve();
+                        } else {
+                          return Promise.reject("Enter a valid email");
+                        }
+                      case "tel:":
+                        if (telRegex.test(form.getFieldsValue().primaryLink)) {
+                          return Promise.resolve();
+                        } else {
+                          return Promise.reject("Enter a valid phone number");
+                        }
+
+                      case `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/`:
+                        if (!form.getFieldsValue().primaryLink?.startsWith("http")) {
+                          return Promise.resolve();
+                        } else {
+                          return Promise.reject("Enter a valid url");
+                        }
+
+                      default:
+                        return Promise.resolve();
+                    }
+                  },
+                }),
+              ]}
+            >
+              <Input
+                defaultValue={config.heroSection?.actionButtons?.primary?.link}
+                addonBefore={
+                  <Dropdown
+                    trigger={["click"]}
+                    menu={{
+                      items: [
+                        {
+                          key: "1",
+                          label: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}`,
+
+                          onClick: () => {
+                            setPrimaryAddon(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/`);
+                          },
+                        },
+                        {
+                          key: "2",
+                          label: "https://",
+
+                          onClick: () => {
+                            setPrimaryAddon("https://");
+                          },
+                        },
+                        {
+                          key: "3",
+                          label: "mailto:",
+
+                          onClick: () => {
+                            setPrimaryAddon("mailto:");
+                          },
+                        },
+                        {
+                          key: "4",
+                          label: "tel:",
+
+                          onClick: () => {
+                            setPrimaryAddon("tel:");
+                          },
+                        },
+                      ],
+                    }}
+                  >
+                    <Flex align="center" gap={5} style={{ lineHeight: 0 }}>
+                      {primaryAddonText}
+                      <i>{SvgIcons.chevronDownOutline}</i>
+                    </Flex>
+                  </Dropdown>
+                }
+                onChange={(e) => {
+                  onUpdateHeroConfig(`${primaryAddonText}${e.currentTarget.value}`, "actionButtons.primary.link");
+                }}
+                placeholder="Add link"
+              />
+            </Form.Item>
           </Flex>
           <Flex vertical gap={10}>
             <h5>Secondary</h5>
-            <Input
-              defaultValue={config.heroSection?.actionButtons?.secondary?.label}
-              onChange={(e) => {
-                onUpdateHeroConfig(e.currentTarget.value, "actionButtons.secondary.label");
-              }}
-              placeholder="Add label"
-            />
-            <Input
-              defaultValue={config.heroSection?.actionButtons?.secondary?.link}
-              addonBefore="https://"
-              onChange={(e) => {
-                onUpdateHeroConfig(
-                  `${
-                    e.currentTarget.value.startsWith("mailto:") || e.currentTarget.value.startsWith("tel:")
-                      ? e.currentTarget.value
-                      : `/${e.currentTarget.value}`
-                  }`,
-                  "actionButtons.secondary.link"
-                );
-              }}
-              placeholder="Add link"
-            />
+            <Form.Item name={"secondaryLabel"} rules={[{ required: true, message: `Secondary link is required!` }]}>
+              <Input
+                defaultValue={config.heroSection?.actionButtons?.secondary?.label}
+                onChange={(e) => {
+                  onUpdateHeroConfig(e.currentTarget.value, "actionButtons.secondary.label");
+                }}
+                placeholder="Add label"
+              />
+            </Form.Item>
+            <Form.Item
+              name={"secondaryLink"}
+              rules={[
+                () => ({
+                  validator(rule, value, callBack) {
+                    switch (secondaryAddonText) {
+                      case "https://":
+                        if (regex.test(form.getFieldsValue().secondaryLink)) {
+                          return Promise.resolve();
+                        } else {
+                          return Promise.reject("Domain is missing");
+                        }
+                      case "mailto:":
+                        if (mailtoRegex.test(form.getFieldsValue().secondaryLink)) {
+                          return Promise.resolve();
+                        } else {
+                          return Promise.reject("Enter a valid email");
+                        }
+                      case "tel:":
+                        if (telRegex.test(form.getFieldsValue().secondaryLink)) {
+                          return Promise.resolve();
+                        } else {
+                          return Promise.reject("Enter a valid phone number");
+                        }
+                      case `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/`:
+                        if (!form.getFieldsValue().primaryLink?.startsWith("http")) {
+                          return Promise.resolve();
+                        } else {
+                          return Promise.reject("Enter a valid url");
+                        }
+
+                      default:
+                        return Promise.resolve();
+                    }
+                  },
+                }),
+              ]}
+            >
+              <Input
+                defaultValue={config.heroSection?.actionButtons?.secondary?.link}
+                addonBefore={
+                  <Dropdown
+                    trigger={["click"]}
+                    menu={{
+                      items: [
+                        {
+                          key: "1",
+                          label: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}`,
+
+                          onClick: () => {
+                            setSecondaryAddon(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/`);
+                          },
+                        },
+                        {
+                          key: "2",
+                          label: "https://",
+
+                          onClick: () => {
+                            setSecondaryAddon("https://");
+                          },
+                        },
+                        {
+                          key: "3",
+                          label: "mailto:",
+
+                          onClick: () => {
+                            setSecondaryAddon("mailto:");
+                          },
+                        },
+                        {
+                          key: "4",
+                          label: "tel:",
+
+                          onClick: () => {
+                            setSecondaryAddon("tel:");
+                          },
+                        },
+                      ],
+                    }}
+                  >
+                    <Flex align="center" gap={5} style={{ lineHeight: 0 }}>
+                      {secondaryAddonText}
+                      <i>{SvgIcons.chevronDownOutline}</i>
+                    </Flex>
+                  </Dropdown>
+                }
+                onChange={(e) => {
+                  onUpdateHeroConfig(`${secondaryAddonText}${e.currentTarget.value}`, "actionButtons.secondary.link");
+                }}
+                placeholder="Add link"
+              />
+            </Form.Item>
           </Flex>
         </Flex>
       ),
@@ -231,7 +401,7 @@ const HeroForm: FC<{
 
       description: "The hero image should be  at least 1200 x 600px.",
       input: (
-        <Flex align="center" vertical gap={20}>
+        <Flex align="center" vertical gap={20} key={4}>
           {config.brand?.themeSwitch && (
             <Segmented
               className={`${styles.segment} `}
@@ -272,7 +442,7 @@ const HeroForm: FC<{
 
       description: "Select the position of the image",
       input: (
-        <Flex vertical gap={10}>
+        <Flex vertical gap={10} key={5}>
           <Flex gap={62}>
             <Radio
               checked={heroConfig?.banner?.position === "left"}
@@ -319,29 +489,27 @@ const HeroForm: FC<{
       inputName: "position",
     },
   ];
+
   return (
     <div className={styles.add__hero__wrapper}>
       <Form
+        validateTrigger="onBlur"
         form={form}
         requiredMark={false}
         initialValues={{
           title: config.heroSection?.title,
           description: config.heroSection?.description,
+          primaryLabel: config.heroSection?.actionButtons?.primary?.label,
+          secondaryLabel: config.heroSection?.actionButtons?.secondary?.label,
+          primaryLink: extractValue(`${config.heroSection?.actionButtons?.primary?.link}`),
+          secondaryLink: extractValue(`${config.heroSection?.actionButtons?.secondary?.link}`),
         }}
       >
         {heroItems.map((item, i) => {
           return (
             <>
               <ConfigForm
-                input={
-                  <Form.Item
-                    name={item.inputName}
-                    rules={[{ required: !item.optional, message: `Field is required!` }]}
-                    key={i}
-                  >
-                    {item.input}
-                  </Form.Item>
-                }
+                input={item.input}
                 title={item.title}
                 description={item.description}
                 layout={item.layout}
