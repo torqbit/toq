@@ -44,6 +44,25 @@
     grid-template-columns: 1fr 1fr 1fr;
   }
 }
+.features__layout_container {
+  padding: 20px;
+  .features__layout__card {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 350px;
+    cursor: pointer;
+    padding: 20px;
+    background-color: var(--bg-primary);
+    border-radius: 16px;
+
+    transition: all 0.4s;
+    border: 1px solid var(--border-color);
+    &:hover {
+      border: 1px solid var(--btn-primary);
+    }
+  }
+}
 
 @media only screen and (max-width: 435px) {
   .features__container {
