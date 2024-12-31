@@ -5,7 +5,7 @@ import { withMethods } from "@/lib/api-middlewares/with-method";
 import { withUserAuthorized } from "@/lib/api-middlewares/with-authorized";
 import { createSlug, getFileExtension } from "@/lib/utils";
 import fs from "fs";
-import { uploadThumbnail } from "@/actions/courses";
+import { getCourseDetailedView, uploadThumbnail } from "@/actions/courses";
 import { APIResponse } from "@/types/apis";
 import { FileObjectType } from "@/types/cms/common";
 import { readFieldWithSingleFile } from "@/lib/upload/utils";
@@ -13,6 +13,7 @@ import { ContentManagementService } from "@/services/cms/ContentManagementServic
 import appConstant from "@/services/appConstant";
 import { IChapterView, ICourseDetailView, ILessonView } from "@/types/courses/Course";
 import { courseDifficultyType, ResourceContentType } from "@prisma/client";
+
 
 export const config = {
   api: {
@@ -31,6 +32,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const { fields, files } = (await readFieldWithSingleFile(req)) as any;
 
     const body = JSON.parse(fields.course[0]);
+    console.log(body)
     const name = createSlug(body.name);
     let courseId = Number(body.courseId);
 

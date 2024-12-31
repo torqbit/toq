@@ -129,8 +129,8 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
       difficultyLevel: courseData.difficultyLevel,
       certificateTemplate: courseData.certificateTemplate,
       previewMode: form.getFieldsValue().previewMode ? form.getFieldsValue().previewMode : false,
-      courseType: courseData.courseType,
-      coursePrice: courseData.courseType === $Enums.CourseType.FREE ? 0 : Number(courseData.coursePrice),
+      courseType: Number(courseData.coursePrice) == 0 ? $Enums.CourseType.FREE : $Enums.CourseType.PAID,
+      coursePrice: Number(courseData.coursePrice),
       thumbnail: courseData.thumbnail,
     };
 
@@ -259,24 +259,26 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
         messageApi.error(response.message);
 
         setCourseTrailerUploading(false);
-      }
-      const res = (await postRes.json()) as VideoAPIResponse;
+      } else {
+        const res = (await postRes.json()) as VideoAPIResponse;
 
-      if (res.success) {
-        setUploadVideo({
-          ...uploadVideo,
-          videoId: res.video.videoId,
-          videoUrl: res.video.videoUrl,
-          thumbnail: res.video.thumbnail,
-          previewUrl: res.video.previewUrl,
-          videoDuration: res.video.videoDuration,
-          state: res.video.state,
-          mediaProviderName: res.video.mediaProviderName,
-        });
-        messageApi.success("Course trailer video has been uploaded");
-        setCourseTrailerUploading(false);
-        setCheckVideoState(true);
+        if (res.success) {
+          setUploadVideo({
+            ...uploadVideo,
+            videoId: res.video.videoId,
+            videoUrl: res.video.videoUrl,
+            thumbnail: res.video.thumbnail,
+            previewUrl: res.video.previewUrl,
+            videoDuration: res.video.videoDuration,
+            state: res.video.state,
+            mediaProviderName: res.video.mediaProviderName,
+          });
+          messageApi.success("Course trailer video has been uploaded");
+          setCourseTrailerUploading(false);
+          setCheckVideoState(true);
+        }
       }
+
     }
   };
 
@@ -320,7 +322,7 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
         (result) => {
           router.push("/courses");
         },
-        (error) => {}
+        (error) => { }
       );
     } else {
       message.error("Minimum two published lessons are required to publish the course");
@@ -344,8 +346,7 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
           courseTrailerUploading={courseTrailerUploading}
           trailerThumbnail={newTrailerThumbnail}
           settingLoading={settingloading}
-          selectedCourseType={selectedCourseType}
-          selectCourseType={selectCourseType}
+
         />
       ),
     },
@@ -379,16 +380,21 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
         <span onClick={() => !tabActive && message.error("First fill and  save  the add course form ")}>Preview</span>
       ),
       disabled: !uploadVideo?.videoUrl || !tabActive,
-      children: uploadVideo?.videoUrl && (
+      children: uploadVideo?.videoUrl && courseDetails && (
         <Preview
           videoUrl={uploadVideo?.videoUrl}
-          onEnrollCourse={() => {}}
           courseDetail={courseDetails}
           addContentPreview={true}
         />
       ),
     },
   ];
+
+  useEffect(() => {
+    ProgramService.fetchCourseDetailedView(Number(router.query.id), result => {
+      setCourseDetails(result.body)
+    }, err => message.error(err))
+  }, [activeKey])
 
   useEffect(() => {
     let intervalId: NodeJS.Timer | undefined;

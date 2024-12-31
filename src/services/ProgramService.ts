@@ -215,6 +215,31 @@ class ProgramService {
     });
   };
 
+  fetchCourseDetailedView = (
+    courseId: number,
+    handleResponse: (response: APIResponse<ICourseDetailView>) => void,
+    onFailure: (message: string) => void
+  ) => {
+    fetch(`/api/v1/course/${courseId}/detailed-view`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    }).then((result) => {
+      if (result.ok) {
+        result.json().then((r) => {
+          handleResponse(r as APIResponse<ICourseDetailView>);
+        });
+      } else {
+        result.json().then((r) => {
+          onFailure((r as APIResponse<ICourseDetailView>).message);
+        });
+      }
+    });
+  };
+
+
   getAllCourse = (
     programId: number,
     state: string,
