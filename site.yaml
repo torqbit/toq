@@ -35,7 +35,7 @@ site:
     actionButtons:
       primary:
         label: Get Started
-        link: /dashboad
+        link: /dashboard
       secondary:
         label: Contact Us
         link: mailto:support@torqbit.com

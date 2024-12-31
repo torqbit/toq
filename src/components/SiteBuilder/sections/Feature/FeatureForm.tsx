@@ -108,8 +108,9 @@ const AddFeatureForm: FC<{
               }}
             >
               <div className={styles.link__dropdown}>
-                {addonText}
                 <i>{SvgIcons.chevronDownOutline}</i>
+
+                {addonText}
               </div>
             </Dropdown>
           }

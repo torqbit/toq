@@ -1,8 +1,8 @@
-import { FC, useEffect } from "react";
+import { FC, useEffect, useState } from "react";
 import React from "react";
 import Head from "next/head";
 import { useAppContext } from "../ContextApi/AppContext";
-import { ConfigProvider, Flex, Layout, Tabs, TabsProps } from "antd";
+import { Button, ConfigProvider, Flex, Layout, message, Tabs, TabsProps } from "antd";
 import darkThemeConfig from "@/services/darkThemeConfig";
 import antThemeConfig from "@/services/antThemeConfig";
 import SpinLoader from "../SpinLoader/SpinLoader";
@@ -16,6 +16,7 @@ import styles from "./SiteBuilder.module.scss";
 import Link from "next/link";
 import SvgIcons from "../SvgIcons";
 import { useRouter } from "next/router";
+import { postFetch } from "@/services/request";
 
 const { Content, Sider } = Layout;
 const SiteBuilderLayout: FC<{
@@ -28,6 +29,9 @@ const SiteBuilderLayout: FC<{
   const { globalState, dispatch } = useAppContext();
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
   const router = useRouter();
+  const [messageApi, contexHolder] = message.useMessage();
+
+  const [loading, setLoading] = useState<boolean>(false);
   const { brand } = siteConfig;
 
   const Tabitems: TabsProps["items"] = [
@@ -91,12 +95,42 @@ const SiteBuilderLayout: FC<{
         return router.push("/admin/site/design");
     }
   };
+
+  const onChangeTheme = (theme: Theme) => {
+    if (theme === "dark") {
+      localStorage.setItem("theme", "dark");
+    } else {
+      localStorage.setItem("theme", "light");
+    }
+
+    dispatch({
+      type: "SWITCH_THEME",
+      payload: theme,
+    });
+  };
+
+  const updateYamlFile = async (config: PageSiteConfig) => {
+    setLoading(true);
+    const res = await postFetch({ config }, "/api/v1/admin/site/site-info/update");
+    const result = await res.json();
+    if (res.ok) {
+      setLoading(false);
+      onChangeTheme(siteConfig.brand?.defaultTheme as Theme);
+      messageApi.success(result.message);
+    } else {
+      setLoading(false);
+
+      messageApi.error(result.error);
+    }
+  };
+
   useEffect(() => {
     onCheckTheme();
   }, []);
 
   return (
     <>
+      {contexHolder}
       {
         <div
           style={{
@@ -132,12 +166,22 @@ const SiteBuilderLayout: FC<{
               collapsed={false}
             >
               <div className={styles.side__bar__container}>
-                <Flex align="center" justify="space-between">
-                  <h4 style={{ padding: "10px 20px" }}>Site</h4>
-                  <Link className={styles.go_back_btn} href={"/dashboard"}>
-                    <i>{SvgIcons.arrowLeft}</i>
-                    <p>Go Back</p>
-                  </Link>
+                <Flex align="center" justify="space-between" className={styles.site__builder__header}>
+                  <Flex align="center" gap={5} justify="center">
+                    <Link className={styles.go_back_btn} href={"/dashboard"}>
+                      <i>{SvgIcons.arrowLeft}</i>
+                    </Link>
+                    <h4 style={{ padding: "0px", margin: 0 }}>Site</h4>
+                  </Flex>
+                  <Button
+                    loading={loading}
+                    onClick={() => {
+                      updateYamlFile(siteConfig);
+                    }}
+                    type="primary"
+                  >
+                    Save
+                  </Button>
                 </Flex>
 
                 <Tabs

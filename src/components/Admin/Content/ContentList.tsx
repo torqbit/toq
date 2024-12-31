@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from "react";
-import { Button, Dropdown, Flex, Modal, Table, message } from "antd";
+import { Button, Dropdown, Flex, Modal, Space, Table, message } from "antd";
 import SvgIcons from "@/components/SvgIcons";
 
 import { useRouter } from "next/router";
@@ -95,7 +95,7 @@ const ContentList: FC<{ contentType: string }> = ({ contentType }) => {
                   label: blogInfo.state == "DRAFT" ? "Publish" : "Move to Draft",
                   onClick: () => {
                     if (blogInfo.name === "Untitled") {
-                      messageApi.warning("Blog is not ready to publish");
+                      messageApi.warning(`${contentType === "BLOG" ? "Blog" : "Update"} is not ready to publish`);
                     } else {
                       handleBlogStatusUpdate(String(blogInfo.id), blogInfo.state == "DRAFT" ? "ACTIVE" : "DRAFT");
                     }
@@ -161,19 +161,20 @@ const ContentList: FC<{ contentType: string }> = ({ contentType }) => {
   return (
     <div>
       {messageHolder}
-      <Flex align="center" justify="space-between">
-        <h4>{contentType === "BLOG" ? "Blogs" : "Updates"} </h4>
+      {contextHolder}
+
+      <Flex align="center" justify="space-between" style={{ marginBottom: "20px" }}>
+        <h4 style={{ margin: "0px" }}>{contentType === "BLOG" ? "Blogs" : "Updates"} </h4>
         <Link href={`/admin/site/content/${contentType === "BLOG" ? "blogs" : "updates"}/add`}>
           <Button type="primary">
             <Flex align="center" gap={5}>
               Add {contentType === "BLOG" ? "blogs" : "updates"}
-              <i style={{ lineHeight: 0, fontSize: 18, color: "var(--font-primary)" }}>{SvgIcons.arrowRight}</i>
+              <i style={{ lineHeight: 0, fontSize: 18 }}>{SvgIcons.arrowRight}</i>
             </Flex>
           </Button>
         </Link>
       </Flex>
       <Table size="small" className="users_table" columns={columns} dataSource={data} loading={loading} />
-      {contextHolder}
     </div>
   );
 };
