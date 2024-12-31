@@ -1,8 +1,15 @@
 import { IRegisteredCourses, IResourceDetail, VideoDetails } from "@/lib/types/learn";
 import { ICourseDetial, ResourceDetails } from "@/lib/types/program";
-import { ChapterDetail, CourseAPIResponse, CourseInfo, CourseLessonAPIResponse } from "@/types/courses/Course";
+import {
+  ChapterDetail,
+  CourseAPIResponse,
+  CourseInfo,
+  CourseLessonAPIResponse,
+  ICourseDetailView,
+} from "@/types/courses/Course";
 import { Chapter, Course, CourseCertificates, Resource } from "@prisma/client";
 import { postWithFile } from "./request";
+import { APIResponse } from "@/types/apis";
 
 export interface ICourseList extends Course {
   courseId: number;
@@ -416,13 +423,13 @@ class ProgramService {
 
   updateCourse = (
     formData: FormData,
-    onSuccess: (response: ApiResponse) => void,
+    onSuccess: (response: APIResponse<ICourseDetailView>) => void,
     onFailure: (message: string) => void
   ) => {
     postWithFile(formData, `/api/v1/course/update`).then((result) => {
       if (result.status == 200 || result.status == 201) {
         result.json().then((r) => {
-          const apiResponse = r as ApiResponse;
+          const apiResponse = r as APIResponse<ICourseDetailView>;
           onSuccess(apiResponse);
         });
       } else {

@@ -11,6 +11,8 @@ import { FileObjectType } from "@/types/cms/common";
 import { readFieldWithSingleFile } from "@/lib/upload/utils";
 import { ContentManagementService } from "@/services/cms/ContentManagementService";
 import appConstant from "@/services/appConstant";
+import { IChapterView, ICourseDetailView, ILessonView } from "@/types/courses/Course";
+import { courseDifficultyType, ResourceContentType } from "@prisma/client";
 
 export const config = {
   api: {
@@ -81,7 +83,48 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         }
       }
 
-      await prisma.course.update({
+      const updateDetails = await prisma.course.update({
+        select: {
+          name: true,
+          description: true,
+          expiryInDays: true,
+          tvUrl: true,
+          user: {
+            select: {
+              name: true,
+              image: true,
+            },
+          },
+          state: true,
+          chapters: {
+            select: {
+              name: true,
+              description: true,
+              resource: {
+                select: {
+                  name: true,
+                  description: true,
+                  state: true,
+                  video: {
+                    select: {
+                      videoDuration: true,
+                      resourceId: true,
+                    },
+                  },
+                  assignment: {
+                    select: {
+                      estimatedDuration: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+
+          difficultyLevel: true,
+          courseType: true,
+          coursePrice: true,
+        },
         where: {
           courseId: Number(courseId),
         },
@@ -91,7 +134,72 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           slug: name,
         },
       });
-      return res.status(200).json(new APIResponse(true, 200, `Course has been successfully updated`));
+
+      let contentDurationInHrs = 0;
+      let assignmentCount = 0;
+      const lessons = updateDetails.chapters.flatMap((c) => c.resource);
+      lessons.forEach((l) => {
+        if (l.assignment && l.assignment.estimatedDuration) {
+          assignmentCount++;
+          contentDurationInHrs += Number((l.assignment.estimatedDuration / 60).toFixed(1));
+        } else if (l.video && l.video.videoDuration) {
+          contentDurationInHrs += Number((l.video.videoDuration / 3600).toFixed(1));
+        }
+      });
+
+      let chapters: IChapterView[] = updateDetails.chapters.map((c) => {
+        const lessons: ILessonView[] = c.resource.map((l) => {
+          if (l.assignment && l.assignment.estimatedDuration) {
+            return {
+              name: l.name,
+              description: l.description || "",
+              state: l.state,
+              lessonType: ResourceContentType.Assignment,
+              durationInMins: l.assignment.estimatedDuration,
+            };
+          } else {
+            return {
+              name: l.name,
+              description: l.description || "",
+              state: l.state,
+              lessonType: ResourceContentType.Assignment,
+              durationInMins: Number((l?.video?.videoDuration || 0 / 60).toFixed(1)),
+            };
+          }
+        });
+        return {
+          name: c.name,
+          description: c.description || "",
+          lessons: lessons,
+        };
+      });
+
+      const courseDetailedView: ICourseDetailView = {
+        name: updateDetails.name,
+        description: updateDetails.description,
+        state: updateDetails.state,
+        expiryInDays: updateDetails.expiryInDays,
+        difficultyLevel: updateDetails.difficultyLevel || courseDifficultyType.Beginner,
+        chapters: chapters,
+        trailerEmbedUrl: updateDetails.tvUrl || undefined,
+        author: {
+          name: updateDetails.user.name,
+          imageUrl: updateDetails.user.image || undefined,
+          designation: `Software engineer`,
+        },
+        pricing: {
+          amount: updateDetails.coursePrice || 0,
+          currency: "INR",
+        },
+        contentDurationInHrs: contentDurationInHrs,
+        assignmentsCount: assignmentCount,
+      };
+
+      return res
+        .status(200)
+        .json(
+          new APIResponse<ICourseDetailView>(true, 200, `Course has been successfully updated`, courseDetailedView)
+        );
     } else {
       return res.status(404).json({ success: false, error: "Course not found" });
     }

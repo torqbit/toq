@@ -13,6 +13,7 @@ import {
   ChapterDetail,
   CourseData,
   CourseLessonAPIResponse,
+  ICourseDetailView,
   IVideoLesson,
   VideoAPIResponse,
   VideoInfo,
@@ -87,6 +88,8 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
 
   const [uploadVideo, setUploadVideo] = useState<VideoInfo>();
 
+  const [courseDetails, setCourseDetails] = useState<ICourseDetailView>();
+
   const [courseData, setCourseData] = useState<CourseData>({
     name: "",
     description: "",
@@ -142,7 +145,8 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
         form.resetFields();
         setRefresh(!refresh);
         setTabActive(true);
-        messageApi.success("Course has been updated");
+        messageApi.success(result.message);
+        setCourseDetails(result.body);
         setSettingloading(false);
       },
       (error) => {
@@ -379,42 +383,7 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
         <Preview
           videoUrl={uploadVideo?.videoUrl}
           onEnrollCourse={() => {}}
-          courseDetail={
-            {
-              course: {
-                name: courseData.name,
-                description: courseData.description,
-                courseTrailer: uploadVideo.videoUrl,
-              },
-              lessons: courseData.chapters.map((c: ChapterDetail) => {
-                return {
-                  chapterSeq: c.sequenceId,
-                  chapterName: c.name,
-                  lessons: c.resource.map((r) => {
-                    if (r.video) {
-                      return {
-                        videoId: r.video.id,
-                        lessonId: r.resourceId,
-                        videoUrl: r.video.videoUrl,
-                        videoDuration: r.video.videoDuration,
-                        isWatched: false,
-                        title: r.name,
-                        contentType: r.contentType,
-                      };
-                    } else if (r.assignment) {
-                      return {
-                        lessonId: r.resourceId,
-                        isWatched: false,
-                        title: r.name,
-                        contentType: r.contentType,
-                        videoDuration: r.assignment.estimatedDuration ? r.assignment.estimatedDuration * 60 : 0,
-                      };
-                    }
-                  }),
-                };
-              }),
-            } as CourseLessonAPIResponse
-          }
+          courseDetail={courseDetails}
           addContentPreview={true}
         />
       ),

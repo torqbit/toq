@@ -1,5 +1,9 @@
 .preview_container,
 .add_preview_container {
+  .course__offerings {
+    background-color: var(--bg-primary);
+    width: 350px;
+  }
   .coursehHeaderLinks {
     color: var(--font-secondary);
     a:hover {

@@ -4,7 +4,7 @@ import SvgIcons from "@/components/SvgIcons";
 import { convertSecToHourandMin } from "@/pages/admin/content";
 import ProgramService from "@/services/ProgramService";
 import styles from "@/styles/Preview.module.scss";
-import { CourseLessonAPIResponse, VideoLesson } from "@/types/courses/Course";
+import { CourseLessonAPIResponse, ICourseDetailView, VideoLesson } from "@/types/courses/Course";
 import { $Enums, CourseState, CourseType, orderStatus, ResourceContentType, Role } from "@prisma/client";
 import { Breadcrumb, Button, Collapse, Flex, Space, Tag } from "antd";
 import Link from "next/link";
@@ -39,7 +39,7 @@ const Label: FC<{
 };
 
 const Preview: FC<{
-  courseDetail?: CourseLessonAPIResponse;
+  courseDetail?: ICourseDetailView;
   addContentPreview?: boolean;
   videoUrl?: string;
   onEnrollCourse?: () => void;
@@ -59,6 +59,7 @@ const Preview: FC<{
 }) => {
   const router = useRouter();
   let isCourseCompleted = courseDetail?.course.userStatus === CourseState.COMPLETED;
+  console.log(courseDetail);
 
   const items = courseDetail?.lessons.map((content, i) => {
     let totalTime = 0;
@@ -147,9 +148,17 @@ const Preview: FC<{
             }
           </div>
         </div>
-        <div>
+        <div className={styles.course__offerings}>
           {/* component for price display */}
-          <div></div>
+          <div>
+            {courseDetail?.course.courseType == CourseType.FREE && <h2>FREE</h2>}
+            {courseDetail?.course.courseType == CourseType.PAID && (
+              <Space>
+                <div>{courseDetail?.course.currency}</div>
+                <div>{courseDetail?.course.coursePrice}</div>
+              </Space>
+            )}
+          </div>
         </div>
       </Flex>
       <Space direction="vertical">
@@ -264,7 +273,7 @@ const Preview: FC<{
           </Flex>
         </div>
 
-        <h2>Table of Contents</h2>
+        <h4>Table of Contents</h4>
         <div>
           <div className={styles.chapter_list}>
             <Collapse
