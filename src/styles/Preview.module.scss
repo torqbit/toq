@@ -29,6 +29,20 @@
     }
   }
 
+  .course__details {
+    width: 800px;
+  }
+
+  .curriculum {
+    i {
+      line-height: 0;
+    }
+
+    p {
+      margin-bottom: 0;
+    }
+  }
+
   .coursehHeaderLinks {
     color: var(--font-secondary);
 
@@ -50,7 +64,7 @@
 
     width: 800px;
     height: 450px;
-    margin-bottom: 20px;
+    margin-bottom: 5px;
     background-color: var(--bg-primary);
     position: relative;
   }
@@ -247,7 +261,7 @@
 
       height: calc(50vw - 30px);
 
-      margin-bottom: 20px;
+      margin-bottom: 5px;
       background-color: var(--bg-primary);
       position: relative;
     }

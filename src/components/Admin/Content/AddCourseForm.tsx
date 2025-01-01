@@ -312,10 +312,8 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   };
 
   const onPublishCourse = (state: string) => {
-    if (
-      courseData.chapters.length > 0 &&
-      courseData.chapters[0].resource.filter((r) => r.state === StateType.ACTIVE).length >= 2
-    ) {
+    const courseLessons = courseDetails?.chapters.flatMap(c => c.lessons);
+    if (courseLessons && courseLessons.length >= 2) {
       ProgramService.updateCourseState(
         Number(router.query.id),
         state,
@@ -327,6 +325,7 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
     } else {
       message.error("Minimum two published lessons are required to publish the course");
     }
+
   };
 
   const items: TabsProps["items"] = [
