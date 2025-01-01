@@ -1,6 +1,7 @@
 .feature__wrapper {
   background-color: var(--bg-content-form);
   padding: 20px;
+  max-width: 800px;
   h4 {
     margin: 0;
   }
@@ -44,6 +45,7 @@
   }
 
   .segment {
+    width: fit-content;
     color: var(--font-secondary);
     > div:first-child {
       label {

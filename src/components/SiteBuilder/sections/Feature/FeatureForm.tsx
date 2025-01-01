@@ -22,7 +22,7 @@ import ImgCrop from "antd-img-crop";
 import { UploadOutlined } from "@ant-design/icons";
 import { RcFile } from "antd/es/upload";
 import Image from "next/image";
-import { createSlug, getExtension } from "@/lib/utils";
+import { createSlug, extractValue, getExtension } from "@/lib/utils";
 import { postWithFile } from "@/services/request";
 import SvgIcons from "@/components/SvgIcons";
 
@@ -233,15 +233,15 @@ const FeatureForm: FC<{
     description: config.sections?.features?.description,
     title_0: config.sections?.features?.items[0].title,
     description_0: config.sections?.features?.items[0].description,
-    link_0: config.sections?.features?.items[0].link,
+    link_0: extractValue(`${config.sections?.features?.items[0].link}`),
 
     title_1: config.sections?.features?.items[1].title,
     description_1: config.sections?.features?.items[1].description,
-    link_1: config.sections?.features?.items[1].link,
+    link_1: extractValue(`${config.sections?.features?.items[1].link}`),
 
     title_2: config.sections?.features?.items[2].title,
     description_2: config.sections?.features?.items[2].description,
-    link_2: config.sections?.features?.items[2].link,
+    link_2: extractValue(`${config.sections?.features?.items[2].link}`),
   };
 
   const featureItems: IConfigForm[] = [

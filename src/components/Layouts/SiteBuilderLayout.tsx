@@ -173,15 +173,17 @@ const SiteBuilderLayout: FC<{
                     </Link>
                     <h4 style={{ padding: "0px", margin: 0 }}>Site</h4>
                   </Flex>
-                  <Button
-                    loading={loading}
-                    onClick={() => {
-                      updateYamlFile(siteConfig);
-                    }}
-                    type="primary"
-                  >
-                    Save
-                  </Button>
+                  {siteDesigner && (
+                    <Button
+                      loading={loading}
+                      onClick={() => {
+                        updateYamlFile(siteConfig);
+                      }}
+                      type="primary"
+                    >
+                      Save
+                    </Button>
+                  )}
                 </Flex>
 
                 <Tabs

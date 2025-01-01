@@ -38,6 +38,18 @@ const ContentNavigation: FC<{ activeMenu: string }> = ({ activeMenu }) => {
             </i>
           ),
         },
+        {
+          label: "Features",
+          key: "features",
+          icon: (
+            <i
+              style={{ fontSize: 18 }}
+              className={activeMenu === "features" ? styles.selected__menu__icon : styles.content__menu__icon}
+            >
+              {SvgIcons.features}
+            </i>
+          ),
+        },
       ]}
     />
   );
