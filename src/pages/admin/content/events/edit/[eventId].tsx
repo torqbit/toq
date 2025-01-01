@@ -1,5 +1,3 @@
-import BlogForm from "@/components/Admin/Content/BlogForm";
-
 import { GetServerSidePropsContext, NextPage } from "next";
 import prisma from "@/lib/prisma";
 

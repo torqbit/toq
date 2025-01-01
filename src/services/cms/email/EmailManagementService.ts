@@ -3,6 +3,7 @@ import { APIResponse } from "@/types/apis";
 import { IEmailCredentials } from "@/types/cms/email";
 import emailService from "@/services/MailerService";
 import prisma from "@/lib/prisma";
+import { ServiceType } from "@prisma/client";
 
 export const emailConstantsVariable = {
   SMTP_HOST: "SMTP_HOST",
@@ -11,7 +12,7 @@ export const emailConstantsVariable = {
   SMTP_FROM_EMAIL: "SMTP_FROM_EMAIL",
 };
 export class EmailManagemetService {
-  serviceType: string = "email";
+  serviceType: ServiceType = ServiceType.EMAIL;
 
   getEmailCredentials = async (): Promise<APIResponse<any>> => {
     try {
@@ -38,7 +39,11 @@ export class EmailManagemetService {
     }
   };
 
-  verifyEmailCredentialsAndSave = async (emailConfig: IEmailCredentials, name: string, email: string): Promise<APIResponse<void>> => {
+  verifyEmailCredentialsAndSave = async (
+    emailConfig: IEmailCredentials,
+    name: string,
+    email: string
+  ): Promise<APIResponse<void>> => {
     try {
       const result = await emailService.sendMail("TEST_EMAIL_CREDENIDTIALS", { credendials: emailConfig, name, email });
       const secretStore = SecretsManager.getSecretsProvider();

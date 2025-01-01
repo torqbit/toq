@@ -23,6 +23,12 @@
     padding: 5px 35px;
 
     box-shadow: var(--box-shadow);
+
+    img {
+      width: auto;
+      height: 30px;
+      max-width: 300px;
+    }
     .link_wrapper {
       display: flex;
       align-items: center;
@@ -122,6 +128,12 @@
     background-color: var(--bg-secondary);
     border-bottom: 1px solid var(--border-color);
     font-size: 20px;
+
+    img {
+      height: 30px;
+      width: auto;
+      max-width: 250px;
+    }
 
     .drawerTitle,
     .childrenDrawerTitle {

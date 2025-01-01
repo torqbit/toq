@@ -23,13 +23,14 @@ import Image from "next/image";
 import ImgCrop from "antd-img-crop";
 import SvgIcons from "@/components/SvgIcons";
 import { getFetch, postFetch, postWithFile } from "@/services/request";
-import { getExtension } from "@/lib/utils";
+import { checkIfImageIsSquare, getExtension } from "@/lib/utils";
 
 const BrandForm: FC<{
   config: PageSiteConfig;
   updateSiteConfig: (config: PageSiteConfig) => void;
 }> = ({ updateSiteConfig, config }) => {
   const [form] = Form.useForm();
+  const [messageApi, contextWrapper] = message.useMessage();
   const [brandConfig, setBrandConfig] = useState<IBrandConfig | undefined>(config.brand);
   const [brandImage, setBrandImage] = useState<{ logo: string; icon: string; darkLogo: string }>({
     logo: config.brand?.logo ? (config.brand.logo as string) : "",
@@ -46,7 +47,7 @@ const BrandForm: FC<{
       if (imageType === "icon" && typeof brandConfig?.icon === "string") {
         const name = brandConfig.icon.split("/").pop();
         return name as string;
-      } else if (imageType.includes("logo")) {
+      } else if (imageType.toLowerCase().includes("logo")) {
         if (mode === "light" && typeof brandConfig?.logo === "string") {
           const name = brandConfig.logo.split("/").pop();
           return name as string;
@@ -63,21 +64,33 @@ const BrandForm: FC<{
 
     try {
       if (file) {
+        if (imageType == "icon") {
+          const isSquare = await checkIfImageIsSquare(file);
+          if (!isSquare) {
+            messageApi.warning("Image should be square shaped");
+            return;
+          }
+        }
         const imgName = `${imageType}-${mode}.${getExtension(file.name)}`;
         const formData = new FormData();
         formData.append("file", file);
         formData.append("imgName", imgName);
         formData.append("previousPath", getImageName());
+        imageType.toLowerCase().includes("logo") && formData.append("resize", "true");
+        formData.append("imageType", imageType);
 
         const postRes = await postWithFile(formData, `/api/v1/admin/site/image/save`);
         if (!postRes.ok) {
           throw new Error("Failed to upload file");
         }
         const res = await postRes.json();
-
         if (res.success) {
           setBrandImage({ ...brandImage, [imageType]: `/static/${res.imgName}` });
-          setBrandConfig({ ...brandConfig, [imageType]: `/static/${res.imgName}` });
+          setBrandConfig({
+            ...brandConfig,
+            [imageType]: `/static/${res.imgName}`,
+            favicon: res.icoFileName ? `/static/${res.icoFileName}` : brandConfig?.favicon,
+          });
         }
       }
     } catch (error) {
@@ -96,49 +109,49 @@ const BrandForm: FC<{
   };
 
   const darkLogo = (
-    <ImgCrop rotationSlider aspect={2 / 1}>
-      <Upload
-        showUploadList={false}
-        maxCount={1}
-        beforeUpload={(file: RcFile) => beforeUpload(file, "darkLogo", "dark")}
-      >
-        {brandImage.logo === "" ? (
-          <Button icon={<UploadOutlined />} style={{ width: 100 }}>
-            Dark Logo
-          </Button>
-        ) : (
-          <Tooltip title="Upload dark logo">
-            <Image
-              src={`${brandConfig?.darkLogo}`}
-              height={100}
-              width={200}
-              alt="image"
-              style={{ cursor: "pointer" }}
-            />
-          </Tooltip>
-        )}
-      </Upload>
-    </ImgCrop>
+    <Upload showUploadList={false} maxCount={1} beforeUpload={(file: RcFile) => beforeUpload(file, "darkLogo", "dark")}>
+      {brandImage.logo === "" ? (
+        <Button icon={<UploadOutlined />} style={{ width: 100 }}>
+          Dark Logo
+        </Button>
+      ) : (
+        <Tooltip title="Upload dark logo">
+          <Image
+            className={styles.logo_img}
+            src={`${brandConfig?.darkLogo}`}
+            height={100}
+            width={200}
+            alt="image"
+            style={{ cursor: "pointer" }}
+          />
+        </Tooltip>
+      )}
+    </Upload>
   );
 
   const lightLogo = (
-    <ImgCrop rotationSlider aspect={2 / 1}>
-      <Upload showUploadList={false} maxCount={1} beforeUpload={(file: RcFile) => beforeUpload(file, "logo", "light")}>
-        {brandImage.logo === "" ? (
-          <Button icon={<UploadOutlined />} style={{ width: 100 }}>
-            Light Logo
-          </Button>
-        ) : (
-          <Tooltip title="Upload light logo">
-            <Image src={`${brandConfig?.logo}`} height={100} width={200} alt="image" style={{ cursor: "pointer" }} />
-          </Tooltip>
-        )}
-      </Upload>
-    </ImgCrop>
+    <Upload showUploadList={false} maxCount={1} beforeUpload={(file: RcFile) => beforeUpload(file, "logo", "light")}>
+      {brandImage.logo === "" ? (
+        <Button icon={<UploadOutlined />} style={{ width: 100 }}>
+          Light Logo
+        </Button>
+      ) : (
+        <Tooltip title="Upload light logo">
+          <Image
+            className={styles.logo_img}
+            src={`${brandConfig?.logo}`}
+            height={100}
+            width={200}
+            alt="image"
+            style={{ cursor: "pointer" }}
+          />
+        </Tooltip>
+      )}
+    </Upload>
   );
 
   useEffect(() => {
-    updateSiteConfig({ ...config, brand: brandConfig });
+    updateSiteConfig({ ...config, brand: { ...brandConfig, defaultTheme: config.brand?.defaultTheme } });
   }, [brandConfig]);
   const brandItems: IConfigForm[] = [
     {
@@ -208,27 +221,25 @@ const BrandForm: FC<{
       layout: "vertical",
 
       input: (
-        <ImgCrop rotationSlider aspect={1 / 1}>
-          <Upload
-            showUploadList={false}
-            maxCount={1}
-            beforeUpload={(file: RcFile) => beforeUpload(file, "icon", "light")}
-          >
-            {brandImage.icon === "" ? (
-              <Button icon={<UploadOutlined />} style={{ width: 60, height: 60 }}></Button>
-            ) : (
-              <Tooltip title="Upload light icon">
-                <Image
-                  src={`${brandConfig?.icon}`}
-                  height={60}
-                  width={60}
-                  alt="image"
-                  style={{ cursor: "pointer", border: "1px solid var(--border-color)" }}
-                />
-              </Tooltip>
-            )}
-          </Upload>
-        </ImgCrop>
+        <Upload
+          showUploadList={false}
+          maxCount={1}
+          beforeUpload={(file: RcFile) => beforeUpload(file, "icon", "light")}
+        >
+          {brandImage.icon === "" ? (
+            <Button icon={<UploadOutlined />} style={{ width: 60, height: 60 }}></Button>
+          ) : (
+            <Tooltip title="Upload icon">
+              <Image
+                src={`${brandConfig?.icon}`}
+                height={60}
+                width={60}
+                alt="image"
+                style={{ cursor: "pointer", border: "1px solid var(--border-color)" }}
+              />
+            </Tooltip>
+          )}
+        </Upload>
       ),
       inputName: "icon",
     },
@@ -287,7 +298,7 @@ const BrandForm: FC<{
 
               form.setFieldValue(
                 "social",
-                config.brand?.socialLinks && config.brand?.socialLinks[value as keyof ISocialLinks]
+                config.brand?.socialLinks && config.brand?.socialLinks[value as keyof ISocialLinks]?.split("/").pop()
               );
             }}
             style={{ lineHeight: 0 }}
@@ -327,18 +338,24 @@ const BrandForm: FC<{
           <Form.Item name={"social"}>
             <Input
               name="social"
-              addonBefore={`https://${selectedSegment}.com`}
+              addonBefore={`https://${selectedSegment}.${selectedSegment === "discord" ? "gg" : "com"}`}
               type="url"
               onChange={(e) => {
                 onUpdateBrandConfig(
-                  e.currentTarget.value === "" ? "" : `https://${selectedSegment}.com/${e.currentTarget.value}`,
+                  e.currentTarget.value.startsWith("http")
+                    ? e.currentTarget.value
+                    : `https://${selectedSegment}.${selectedSegment === "discord" ? "gg" : "com"}/${
+                        e.currentTarget.value
+                      }`,
                   `socialLinks.${selectedSegment}`
                 );
               }}
-              defaultValue={
-                config?.brand?.socialLinks ? config.brand.socialLinks[selectedSegment as keyof ISocialLinks] : ""
+              value={
+                config?.brand?.socialLinks
+                  ? config.brand.socialLinks[selectedSegment as keyof ISocialLinks]?.split("/").pop()
+                  : ""
               }
-              placeholder={`Add ${selectedSegment} link`}
+              placeholder={`Add ${selectedSegment} id`}
             />
           </Form.Item>
         </Flex>
@@ -349,6 +366,7 @@ const BrandForm: FC<{
 
   return (
     <div className={styles.brand__wrapper}>
+      {contextWrapper}
       <Form
         form={form}
         requiredMark={false}
@@ -357,7 +375,9 @@ const BrandForm: FC<{
           name: config.brand?.name,
           title: config.brand?.title,
           description: config.brand?.description,
-          social: config?.brand?.socialLinks ? config.brand.socialLinks[selectedSegment as keyof ISocialLinks] : "",
+          social: config?.brand?.socialLinks
+            ? config.brand.socialLinks[selectedSegment as keyof ISocialLinks]?.split("/").pop()
+            : "",
         }}
       >
         {brandItems.map((item, i) => {

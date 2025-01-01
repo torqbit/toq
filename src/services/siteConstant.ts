@@ -1,4 +1,5 @@
 import { bannerAlignment, ThemeSchema } from "@/types/schema";
+import { Theme } from "@/types/theme";
 
 export type PageSiteConfig = ThemeSchema;
 
@@ -26,9 +27,9 @@ export const DEFAULT_THEME = {
     name: "TORQBIT",
     logo: "/icon/torqbit.png",
     darkLogo: "/icon/torqbit.png",
-    defaultTheme: "light",
+    defaultTheme: "light" as Theme,
     themeSwitch: true,
-    icon: "/icon/torqbit.png",
+    icon: "/img/brand/torqbit-icon.png",
     title: "Become a Pro Product Builder",
     description: "Master the art of product building and turn your ideas into successful, scalable products",
     ogImage: "/icon/torqbit.png",

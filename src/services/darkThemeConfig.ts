@@ -38,12 +38,16 @@ const darkThemeConfig = (siteConfig: PageSiteConfig) => {
       colorTextPlaceholder: "#666",
       colorPrimary: `${siteConfig.brand?.brandColor}`,
       colorSplit: "#2f3647",
+      hoverBorderColor: `${siteConfig.brand?.brandColor}`,
+      activeBorderColor: `${siteConfig.brand?.brandColor}`,
       colorTextDisabled: "#939db8",
+      colorTextDescription: "#939db8",
     },
 
     Badge: {
       colorInfo: `${siteConfig.brand?.brandColor}`,
     },
+
     components: {
       Layout: {
         bodyBg: "#202433",
@@ -106,6 +110,8 @@ const darkThemeConfig = (siteConfig: PageSiteConfig) => {
         activeShadow: "none",
         activeBg: "#222938",
         hoverBg: "#222938",
+        addonBg: "#383e4b",
+
         colorTextPlaceholder: "#939db8",
         activeBorderColor: "#939db8",
       },
@@ -193,7 +199,7 @@ const darkThemeConfig = (siteConfig: PageSiteConfig) => {
       Segmented: {
         itemSelectedBg: "#283040",
         itemHoverColor: "#fff",
-        trackBg: "#202124f5",
+        trackBg: "#151823",
         controlPaddingHorizontal: 30,
         itemColor: "#000",
       },
