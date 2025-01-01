@@ -8,11 +8,9 @@ import ProgramService from "@/services/ProgramService";
 import { useRouter } from "next/router";
 import { GetServerSidePropsContext, NextPage } from "next";
 import { Course } from "@prisma/client";
-import BlogList from "@/components/Admin/Content/BlogList";
-import BlogService from "@/services/BlogService";
+import ContentList from "@/components/Admin/Content/ContentList";
 import SubmissionList from "@/components/Assignment/Submissions/SubmissionList";
 import EventList from "@/components/Events/EventList";
-import EventService from "@/services/EventService";
 import { IContentTabType } from "@/types/courses/Course";
 import AppLayout from "@/components/Layouts/AppLayout";
 import { getSiteConfig } from "@/services/getSiteConfig";
@@ -306,12 +304,12 @@ const Content: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
     {
       key: "BLOGS" as IContentTabType,
       label: "Blogs",
-      children: <BlogList contentType="BLOG" />,
+      children: <ContentList contentType="BLOG" />,
     },
     {
       key: "UPDATES" as IContentTabType,
       label: "Updates",
-      children: <BlogList contentType="UPDATE" />,
+      children: <ContentList contentType="UPDATE" />,
     },
     {
       key: "SUBMISSIONS" as IContentTabType,

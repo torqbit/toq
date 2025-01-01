@@ -385,9 +385,15 @@ enum ConfigurationState {
   EMAIL_CONFIGURED
 }
 
+enum ServiceType {
+  CMS
+  PAYMENTS
+  EMAIL
+}
+
 model ServiceProvider {
   id             Int                @default(autoincrement()) @db.Int()
-  service_type   String             @unique @db.VarChar(20)
+  service_type   ServiceType        @unique
   provider_name  String             @db.Text()
   providerDetail Json?
   state          ConfigurationState @default(INITIATED)
@@ -522,9 +528,10 @@ model Assignment {
   updatedAt         DateTime               @default(now())
   lessonId          Int
   content           Json?
-  assignmentFiles   Json?
   submissionConfig  Json?
   estimatedDuration Int?
+  maximumPoints     Int
+  passingScore      Int
   lesson            Resource               @relation(fields: [lessonId], references: [resourceId], onDelete: Cascade)
   submission        AssignmentSubmission[]
 

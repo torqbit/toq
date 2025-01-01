@@ -21,8 +21,8 @@ site:
     socialLinks:
       discord: https://discord.gg/NserMXcx
       github: https://github.com/torqbit
-      youtube: https://www.youtube.com/@torqbit
-    name: torqbit-macbook
+      youtube: https://youtube.com/@torqbit
+    name: Torqbit
     brandColor: "#8980fd"
     title: Making online fun and easy
     icon: /icon/torqbit.png
@@ -35,7 +35,7 @@ site:
     actionButtons:
       primary:
         label: Get Started
-        link: /dashboad
+        link: /dashboard
       secondary:
         label: Contact Us
         link: mailto:support@torqbit.com

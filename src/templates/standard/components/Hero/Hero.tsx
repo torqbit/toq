@@ -98,7 +98,7 @@ const MarketingHero: FC<{ isMobile: boolean; user: User; siteConfig: PageSiteCon
             <Link href={user ? `${heroSection?.actionButtons?.primary?.link}` : `/login`}>
               <Button type="primary">{user ? heroSection?.actionButtons?.primary?.label : " Sign up for free"}</Button>
             </Link>
-            <a href={`/${heroSection?.actionButtons?.secondary?.link}`} aria-label="Contact us through mail">
+            <a href={`${heroSection?.actionButtons?.secondary?.link}`} aria-label="Contact us through mail">
               <Button className={styles.btn__contact}>{heroSection?.actionButtons?.secondary?.label}</Button>
             </a>
           </Space>

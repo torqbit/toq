@@ -66,7 +66,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     return res.status(200).json({
       success: true,
-      message: ` Blog has been ${updateBlog.state === "ACTIVE" ? "published" : "saved as draft"}`,
+      message: ` ${contentType === "BLOG" ? "Blog" : "Update"} has been ${
+        updateBlog.state === "ACTIVE" ? "published" : "saved as draft"
+      }`,
       blog: updateBlog,
     });
   } catch (error) {

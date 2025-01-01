@@ -1,6 +1,6 @@
 import React, { FC, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
+
 import { Drawer, Flex } from "antd";
 import styles from "./NavBar.module.scss";
 import { INavBarProps } from "@/types/landing/navbar";
@@ -22,15 +22,25 @@ const MobileNav: FC<INavBarProps> = ({ items, showThemeSwitch, activeTheme, bran
             <div className={styles.drawerTitle}>
               <Link href={"/"} aria-label="Go back to landing page">
                 <Flex align="center" gap={5}>
-                  <Image
-                    src={`${brand.logo}`}
-                    height={40}
-                    width={40}
-                    style={{ width: "auto" }}
-                    alt={"logo"}
-                    loading="lazy"
-                  />
-                  {!brand.logo && <h1 className="font-brand">{brand.name}</h1>}
+                  {typeof brand?.logo === "string" && typeof brand.darkLogo === "string" ? (
+                    <img
+                      src={activeTheme == "dark" ? brand?.darkLogo : brand?.logo}
+                      style={{ width: "auto", height: 30 }}
+                      alt={`logo of ${brand.name}`}
+                    />
+                  ) : (
+                    brand?.logo
+                  )}
+                  {!brand?.logo && (
+                    <Flex align="center" gap={10}>
+                      <img
+                        src={`${brand?.icon}`}
+                        style={{ width: "auto", height: 30 }}
+                        alt={`logo of ${brand?.name}`}
+                      />
+                      <h1 className="font-brand">{brand?.name}</h1>
+                    </Flex>
+                  )}
                 </Flex>
               </Link>
               {showSideNav && showThemeSwitch && <ThemeSwitch activeTheme={activeTheme} />}
@@ -69,8 +79,21 @@ const MobileNav: FC<INavBarProps> = ({ items, showThemeSwitch, activeTheme, bran
       <div className={styles.responsive__header}>
         <Link href={"/"} className={styles.platformNameLogo}>
           <Flex align="center" gap={5}>
-            <Image src={`${brand.logo}`} height={40} width={40} alt={"logo"} loading="lazy" />
-            <h4 className="font-brand">{brand.name}</h4>
+            {typeof brand?.logo === "string" && typeof brand.darkLogo === "string" ? (
+              <img
+                src={activeTheme == "dark" ? brand?.darkLogo : brand?.logo}
+                style={{ width: "auto", height: 30 }}
+                alt={`logo of ${brand.name}`}
+              />
+            ) : (
+              brand?.logo
+            )}
+            {!brand?.logo && (
+              <Flex align="center" gap={10}>
+                <img src={`${brand?.icon}`} style={{ width: "auto", height: 30 }} alt={`logo of ${brand?.name}`} />
+                <h1 className="font-brand">{brand?.name}</h1>
+              </Flex>
+            )}
           </Flex>
         </Link>
         <div role="button" className={styles.hamburger} aria-label="Toggle menu">

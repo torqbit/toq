@@ -99,30 +99,6 @@ export const uploadVideo = async (
     let needDeletion = false;
     let videoProviderId: string | undefined | null;
 
-    if (objectType == "course") {
-      const trailerVideo = await prisma.course.findUnique({
-        where: {
-          courseId: objectId,
-        },
-        select: {
-          tvProviderId: true,
-        },
-      });
-      videoProviderId = trailerVideo?.tvProviderId;
-      needDeletion = typeof trailerVideo !== undefined || trailerVideo != null;
-    } else if (objectType == "lesson") {
-      const videoLesson = await prisma?.video.findUnique({
-        where: {
-          resourceId: objectId,
-        },
-        select: {
-          providerVideoId: true,
-        },
-      });
-      videoProviderId = videoLesson?.providerVideoId;
-      needDeletion = typeof videoLesson !== undefined || videoLesson != null;
-    }
-
     await saveToLocal(fullName, sourcePath);
 
     const homeDir = os.homedir();
@@ -130,12 +106,34 @@ export const uploadVideo = async (
     const localDirPath = path.join(homeDir, `${appConstant.homeDirName}/${appConstant.staticFileDirName}`);
 
     const totalFile = fs.readdirSync(localDirPath).filter((file) => file.startsWith(name));
-
     if (totalFile.length === totalChunks) {
       const mergedFinalFilePath = path.join(localDirPath, `${name}.${currentTime}.${extension}`);
       fullName = createSlug(name);
       await mergeChunks(name, totalChunks, extension, mergedFinalFilePath);
       const fileBuffer = await fs.promises.readFile(mergedFinalFilePath);
+      if (objectType == "course") {
+        const trailerVideo = await prisma.course.findUnique({
+          where: {
+            courseId: objectId,
+          },
+          select: {
+            tvProviderId: true,
+          },
+        });
+        videoProviderId = trailerVideo?.tvProviderId;
+        needDeletion = typeof trailerVideo !== undefined || trailerVideo != null;
+      } else if (objectType == "lesson") {
+        const videoLesson = await prisma?.video.findUnique({
+          where: {
+            resourceId: objectId,
+          },
+          select: {
+            providerVideoId: true,
+          },
+        });
+        videoProviderId = videoLesson?.providerVideoId;
+        needDeletion = typeof videoLesson !== undefined || videoLesson != null;
+      }
       if (cmsConfig) {
         if (needDeletion && videoProviderId) {
           await cms.deleteVideo(cmsConfig, videoProviderId, objectId, objectType);

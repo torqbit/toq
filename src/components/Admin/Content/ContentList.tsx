@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from "react";
-import { Dropdown, Modal, Table, message } from "antd";
+import { Button, Dropdown, Flex, Modal, Space, Table, message } from "antd";
 import SvgIcons from "@/components/SvgIcons";
 
 import { useRouter } from "next/router";
@@ -8,8 +8,9 @@ import appConstant from "@/services/appConstant";
 import { StateType } from "@prisma/client";
 
 import { getCreatedDate } from "@/services/helper";
+import Link from "next/link";
 
-const BlogList: FC<{ contentType: string }> = ({ contentType }) => {
+const ContentList: FC<{ contentType: string }> = ({ contentType }) => {
   const router = useRouter();
   const [modal, contextHolder] = Modal.useModal();
   const [blogData, setBlogData] = useState<latestBlogs[]>();
@@ -85,8 +86,8 @@ const BlogList: FC<{ contentType: string }> = ({ contentType }) => {
                   label: "Edit",
                   onClick: () => {
                     contentType === "BLOG"
-                      ? router.push(`/admin/content/blog/edit/${blogInfo?.id}`)
-                      : router.push(`/admin/content/update/edit/${blogInfo?.id}`);
+                      ? router.push(`/admin/site/content/blogs/edit/${blogInfo?.id}`)
+                      : router.push(`/admin/site/content/updates/edit/${blogInfo?.id}`);
                   },
                 },
                 {
@@ -94,7 +95,7 @@ const BlogList: FC<{ contentType: string }> = ({ contentType }) => {
                   label: blogInfo.state == "DRAFT" ? "Publish" : "Move to Draft",
                   onClick: () => {
                     if (blogInfo.name === "Untitled") {
-                      messageApi.warning("Blog is not ready to publish");
+                      messageApi.warning(`${contentType === "BLOG" ? "Blog" : "Update"} is not ready to publish`);
                     } else {
                       handleBlogStatusUpdate(String(blogInfo.id), blogInfo.state == "DRAFT" ? "ACTIVE" : "DRAFT");
                     }
@@ -106,7 +107,7 @@ const BlogList: FC<{ contentType: string }> = ({ contentType }) => {
                   label: "Delete",
                   onClick: () => {
                     modal.confirm({
-                      title: "Are you sure you want to delete the blog?",
+                      title: `Are you sure you want to delete the ${contentType.toLowerCase()}?`,
                       okText: "Yes",
                       cancelText: "No",
                       onOk: () => {
@@ -144,7 +145,7 @@ const BlogList: FC<{ contentType: string }> = ({ contentType }) => {
         setLoading(false);
       }
     );
-  }, [refresh]);
+  }, [contentType, refresh]);
 
   const data = blogData?.map((blog, i) => {
     return {
@@ -160,10 +161,22 @@ const BlogList: FC<{ contentType: string }> = ({ contentType }) => {
   return (
     <div>
       {messageHolder}
-      <Table size="small" className="users_table" columns={columns} dataSource={data} loading={loading} />
       {contextHolder}
+
+      <Flex align="center" justify="space-between" style={{ marginBottom: "20px" }}>
+        <h4 style={{ margin: "0px" }}>{contentType === "BLOG" ? "Blogs" : "Updates"} </h4>
+        <Link href={`/admin/site/content/${contentType === "BLOG" ? "blogs" : "updates"}/add`}>
+          <Button type="primary">
+            <Flex align="center" gap={5}>
+              Add {contentType === "BLOG" ? "blogs" : "updates"}
+              <i style={{ lineHeight: 0, fontSize: 18 }}>{SvgIcons.arrowRight}</i>
+            </Flex>
+          </Button>
+        </Link>
+      </Flex>
+      <Table size="small" className="users_table" columns={columns} dataSource={data} loading={loading} />
     </div>
   );
 };
 
-export default BlogList;
+export default ContentList;

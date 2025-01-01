@@ -8,14 +8,17 @@ import StandardTemplate from "@/templates/standard/StandardTemplate";
 import { getSiteConfig } from "@/services/getSiteConfig";
 import { ICourseCard } from "@/types/landing/courses";
 import getCourseList from "@/actions/getCourseList";
+import getBlogList from "@/actions/getBlogList";
+import { IBlogCard } from "@/types/landing/blog";
 interface IProps {
   user: User;
   siteConfig: PageSiteConfig;
   courseList: ICourseCard[];
+  blogList: IBlogCard[];
 }
 
-const LandingPage: FC<IProps> = ({ user, siteConfig, courseList }) => {
-  return <StandardTemplate user={user} siteConfig={siteConfig} courseList={courseList} />;
+const LandingPage: FC<IProps> = ({ user, siteConfig, courseList, blogList }) => {
+  return <StandardTemplate user={user} siteConfig={siteConfig} courseList={courseList} blogList={blogList} />;
 };
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
@@ -25,11 +28,14 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const { site } = getSiteConfig();
   const siteConfig = site;
   const courselist = siteConfig.sections?.courses?.enable && (await getCourseList());
+  const blogList = siteConfig.sections?.blog?.enable && (await getBlogList());
+
   return {
     props: {
       user,
       siteConfig,
       courseList: courselist || [],
+      blogList: blogList || [],
     },
   };
 };

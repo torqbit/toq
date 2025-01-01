@@ -357,3 +357,50 @@ export const getDateAndYear = (dateInfo?: Date) => {
   const monthName = date.toLocaleString("default", { month: "long" });
   return `${monthName} ${day}, ${year}`;
 };
+
+export const checkIfImageIsSquare = (file: File) => {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const objectURL = URL.createObjectURL(file);
+
+    img.onload = () => {
+      const { width, height } = img;
+      URL.revokeObjectURL(objectURL); // Cleanup the object URL
+      resolve(width === height);
+    };
+
+    img.onerror = (error) => {
+      URL.revokeObjectURL(objectURL); // Cleanup the object URL
+      reject(error);
+    };
+
+    img.src = objectURL; // Trigger the load
+  });
+};
+
+export const regex = /^([a-zA-Z0-9-]+\.)*[a-zA-Z0-9-]+\.[a-zA-Z]{2,}(\/[a-zA-Z0-9\-._~:\/?#[\]@!$&'()*+,;=]*)?$/;
+export const mailtoRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+export const telRegex = /^\+?[0-9-]+$/;
+
+export function extractLinkKey(link: string) {
+  if (link.startsWith("tel:")) {
+    return `tel:`;
+  } else if (link.startsWith(`https://`)) {
+    return "https://";
+  } else if (link.startsWith(`mailto:`)) {
+    return "mailto:";
+  } else {
+    return `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/`;
+  }
+}
+export function extractValue(link: string) {
+  if (link.startsWith("mailto:")) {
+    return link.slice("mailto:".length);
+  } else if (link.startsWith("tel:")) {
+    return link.slice("tel:".length);
+  } else if (link.startsWith("https://") || link.startsWith(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}`)) {
+    return link.slice(link.indexOf("://") + 3);
+  } else if (link.startsWith("/")) {
+    return link.slice(1);
+  }
+}

@@ -453,6 +453,42 @@ export default {
       />
     </svg>
   ),
+  newsPaper: (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      height={"1em"}
+      width={"1em"}
+      viewBox="0 0 24 24"
+      strokeWidth={1.5}
+      stroke="currentColor"
+      className="size-6"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 0 1-2.25 2.25M16.5 7.5V18a2.25 2.25 0 0 0 2.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 0 0 2.25 2.25h13.5M6 7.5h3v3H6v-3Z"
+      />
+    </svg>
+  ),
+  update: (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      height={"1em"}
+      width={"1em"}
+      viewBox="0 0 24 24"
+      strokeWidth={1.5}
+      stroke="currentColor"
+      className="size-6"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M9.348 14.652a3.75 3.75 0 0 1 0-5.304m5.304 0a3.75 3.75 0 0 1 0 5.304m-7.425 2.121a6.75 6.75 0 0 1 0-9.546m9.546 0a6.75 6.75 0 0 1 0 9.546M5.106 18.894c-3.808-3.807-3.808-9.98 0-13.788m13.788 0c3.808 3.807 3.808 9.98 0 13.788M12 12h.008v.008H12V12Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"
+      />
+    </svg>
+  ),
   dashboard: (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -810,10 +846,10 @@ export default {
       xmlns="http://www.w3.org/2000/svg"
       width="1em"
       height="1em"
-      fill="inherit"
+      fill="currentColor"
       viewBox="0 0 24 24"
       strokeWidth={1.5}
-      stroke="inherit"
+      stroke="currentColor"
       className="cross_svg_icon"
     >
       <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
@@ -1216,6 +1252,19 @@ export default {
       stroke="currentColor"
       height={20}
       width={20}
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+    </svg>
+  ),
+  chevronDownOutline: (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      strokeWidth={1.5}
+      stroke="currentColor"
+      height={"1em"}
+      width={"1em"}
     >
       <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
     </svg>

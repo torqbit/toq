@@ -2,7 +2,7 @@ import { BunnyClient } from "./BunnyClient";
 import { baseBunnyConfig, BunnyCMSConfig, BunnyConstants, VideoLibrary } from "@/types/cms/bunny";
 import { apiConstants, APIResponse, APIServerError } from "@/types/apis";
 import { ICMSAuthConfig, IContentProvider } from "../IContentProvider";
-import { ConfigurationState, VideoState } from "@prisma/client";
+import { ConfigurationState, ServiceType, VideoState } from "@prisma/client";
 import SecretsManager from "@/services/secrets/SecretsManager";
 import { VideoAPIResponse, VideoInfo } from "@/types/courses/Course";
 import { FileObjectType, StaticFileCategory, VideoObjectType } from "@/types/cms/common";
@@ -37,7 +37,7 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
     }
   }
   provider: string = "bunny.net";
-  serviceType: string = "cms";
+  serviceType: ServiceType = ServiceType.CMS;
 
   async saveConfiguration(config: BunnyCMSConfig): Promise<boolean> {
     //based on the config object values, save in the database
@@ -68,7 +68,7 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
     } else {
       const result = await prisma?.serviceProvider.create({
         data: {
-          service_type: "cms",
+          service_type: ServiceType.CMS,
           provider_name: this.provider,
           providerDetail: config,
           state: configState,
