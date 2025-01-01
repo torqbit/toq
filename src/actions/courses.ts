@@ -36,7 +36,6 @@ export const uploadThumbnail = async (
       }
       // upload thumbnail
       response = await cms.uploadCDNImage(cmsConfig, fileBuffer, objectType, fullName, fileType);
-      console.log(response, "thumbnail upload response");
       return response;
     } else {
       return new APIResponse(false, 400, "CMS configuration was not found");
@@ -228,12 +227,13 @@ export const getCourseDetailedView = async (courseId: number): Promise<APIRespon
             durationInMins: l.assignment.estimatedDuration,
           };
         } else {
+          const vidDuration = l?.video?.videoDuration || 0;
           return {
             name: l.name,
             description: l.description || "",
             state: l.state,
-            lessonType: ResourceContentType.Assignment,
-            durationInMins: Number((l?.video?.videoDuration || 0 / 60).toFixed(1)),
+            lessonType: ResourceContentType.Video,
+            durationInMins: Number((vidDuration / 60).toFixed(1)),
           };
         }
       });

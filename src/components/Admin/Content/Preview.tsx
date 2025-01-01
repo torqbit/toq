@@ -1,43 +1,38 @@
 import SpinLoader from "@/components/SpinLoader/SpinLoader";
 import SvgIcons from "@/components/SvgIcons";
-
-import { convertSecToHourandMin } from "@/pages/admin/content";
-import ProgramService from "@/services/ProgramService";
 import styles from "@/styles/Preview.module.scss";
-import { CourseLessonAPIResponse, ICourseDetailView, VideoLesson } from "@/types/courses/Course";
+import { IChapterView, ICourseDetailView } from "@/types/courses/Course";
 import { UserOutlined } from "@ant-design/icons";
-import { $Enums, CourseState, CourseType, orderStatus, ResourceContentType, Role } from "@prisma/client";
-import { Avatar, Breadcrumb, Button, Collapse, Flex, Space, Tag } from "antd";
-import Link from "next/link";
+import { ResourceContentType, Role } from "@prisma/client";
+import { Avatar, Breadcrumb, Button, Collapse, CollapseProps, Flex, Space, Tabs, Tag } from "antd";
 import { useRouter } from "next/router";
 
 import { FC, ReactNode, useState } from "react";
 
-const Label: FC<{
-  title: string;
-  time: string;
-  keyValue: string;
-  resourceId?: number;
-  isCompleted?: boolean;
-  icon: ReactNode;
-  contentType: ResourceContentType;
-}> = ({ title, time, keyValue, icon, isCompleted, resourceId, contentType }) => {
-  return (
-    <div className={styles.labelContainer}>
-      <Flex justify="space-between" align="center">
-        <div>
-          <Flex gap={10} align="center">
-            <i>{isCompleted ? SvgIcons.check : icon}</i>
-            <div>{title}</div>
-          </Flex>
-        </div>
-        <div>
-          <Tag className={styles.time_tag}>{time}</Tag>
-        </div>
-      </Flex>
-    </div>
-  );
-};
+const CurriculumList: FC<{ chapters: IChapterView[] }> = ({ chapters }) => {
+
+  const collapsibleItems: CollapseProps['items'] = chapters.map((c, index) => {
+    const lessonItems = c.lessons.map(l => {
+      return (<div>
+        <Flex gap={10} align="center" style={{ marginLeft: 10 }}>
+          <>
+            {l.lessonType === ResourceContentType.Assignment && (<i>{SvgIcons.bookOpenFilled}</i>)}
+            {l.lessonType === ResourceContentType.Video && (<i>{SvgIcons.playFilled}</i>)}
+            <p>{l.name}</p>
+          </>
+        </Flex>
+      </div>)
+    });
+
+    return {
+      key: index,
+      label: c.name,
+      children: lessonItems,
+    }
+  })
+
+  return (<Collapse className={styles.curriculum} bordered={true} accordion items={collapsibleItems} />)
+}
 
 const Preview: FC<{
   courseDetail: ICourseDetailView;
@@ -76,6 +71,23 @@ const Preview: FC<{
                 ></iframe>
               }
             </div>
+            <div>
+              <Tabs
+                className={styles.course__details}
+                tabBarGutter={40}
+                items={[
+                  {
+                    key: "1",
+                    label: "Overview",
+                    children: (<div>{courseDetail.description}</div>)
+                  }, {
+                    key: "2",
+                    label: "Curriculum",
+                    children: <CurriculumList chapters={courseDetail.chapters} />
+                  }]}
+
+              />
+            </div>
           </div>
           <div className={styles.course__offerings}>
             {/* component for price display */}
@@ -85,7 +97,7 @@ const Preview: FC<{
               </>)}
               {courseDetail.pricing.amount > 0 && (
                 <>
-                  <Flex gap={15} align="center" justify="center">
+                  <Flex gap={10} align="center" justify="center">
                     <div className={styles.pricing__currency}>{courseDetail.pricing.currency}</div>
                     <h2>{courseDetail.pricing.amount}</h2>
                   </Flex>
@@ -94,6 +106,7 @@ const Preview: FC<{
               )}
             </div>
 
+            {/* component for price display */}
             <div className={styles.offering__highlights}>
               <p><b>This course includes</b></p>
               <Flex gap={10}>
