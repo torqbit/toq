@@ -13,6 +13,7 @@ import {
   ChapterDetail,
   CourseData,
   CourseLessonAPIResponse,
+  ICourseDetailView,
   IVideoLesson,
   VideoAPIResponse,
   VideoInfo,
@@ -28,7 +29,6 @@ import { PageSiteConfig } from "@/services/siteConstant";
 import { createSlug, getBase64 } from "@/lib/utils";
 
 const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
-  const [courseBannerUploading, setCourseBannerUploading] = useState<boolean>(false);
   const [courseTrailerUploading, setCourseTrailerUploading] = useState<boolean>(false);
   const [messageApi, contextHolder] = message.useMessage();
   const [resourceContentType, setContentType] = useState<ResourceContentType>();
@@ -84,8 +84,11 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
 
   const router = useRouter();
 
+  const [newTrailerThumbnail, setNewTrailerThumbnail] = useState<string>();
+
   const [uploadVideo, setUploadVideo] = useState<VideoInfo>();
-  const [courseThumbnail, setCourseThumbnail] = useState<string>();
+
+  const [courseDetails, setCourseDetails] = useState<ICourseDetailView>();
 
   const [courseData, setCourseData] = useState<CourseData>({
     name: "",
@@ -126,8 +129,8 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
       difficultyLevel: courseData.difficultyLevel,
       certificateTemplate: courseData.certificateTemplate,
       previewMode: form.getFieldsValue().previewMode ? form.getFieldsValue().previewMode : false,
-      courseType: courseData.courseType,
-      coursePrice: courseData.courseType === $Enums.CourseType.FREE ? 0 : Number(courseData.coursePrice),
+      courseType: Number(courseData.coursePrice) == 0 ? $Enums.CourseType.FREE : $Enums.CourseType.PAID,
+      coursePrice: Number(courseData.coursePrice),
       thumbnail: courseData.thumbnail,
     };
 
@@ -142,7 +145,8 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
         form.resetFields();
         setRefresh(!refresh);
         setTabActive(true);
-        messageApi.success("Course has been updated");
+        messageApi.success(result.message);
+        setCourseDetails(result.body);
         setSettingloading(false);
       },
       (error) => {
@@ -255,35 +259,35 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
         messageApi.error(response.message);
 
         setCourseTrailerUploading(false);
-      }
-      const res = (await postRes.json()) as VideoAPIResponse;
+      } else {
+        const res = (await postRes.json()) as VideoAPIResponse;
 
-      if (res.success) {
-        setUploadVideo({
-          ...uploadVideo,
-          videoId: res.video.videoId,
-          videoUrl: res.video.videoUrl,
-          thumbnail: res.video.thumbnail,
-          previewUrl: res.video.previewUrl,
-          videoDuration: res.video.videoDuration,
-          state: res.video.state,
-          mediaProviderName: res.video.mediaProviderName,
-        });
-        messageApi.success("Course trailer video has been uploaded");
-        setCourseTrailerUploading(false);
-        setCheckVideoState(true);
+        if (res.success) {
+          setUploadVideo({
+            ...uploadVideo,
+            videoId: res.video.videoId,
+            videoUrl: res.video.videoUrl,
+            thumbnail: res.video.thumbnail,
+            previewUrl: res.video.previewUrl,
+            videoDuration: res.video.videoDuration,
+            state: res.video.state,
+            mediaProviderName: res.video.mediaProviderName,
+          });
+          messageApi.success("Course trailer video has been uploaded");
+          setCourseTrailerUploading(false);
+          setCheckVideoState(true);
+        }
       }
+
     }
   };
 
-  const uploadFile = async (file: any, title: string) => {
+  const uploadTeaserThumbnail = async (file: any) => {
     if (file) {
-      setCourseBannerUploading(true);
+      console.log("setting the new trailer");
       const base64 = await getBase64(file);
-      setCourseThumbnail(base64 as string);
+      setNewTrailerThumbnail(base64 as string);
       setFile(file);
-
-      setCourseBannerUploading(false);
     }
   };
 
@@ -318,7 +322,7 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
         (result) => {
           router.push("/courses");
         },
-        (error) => {}
+        (error) => { }
       );
     } else {
       message.error("Minimum two published lessons are required to publish the course");
@@ -337,14 +341,12 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
           onDiscard={onDiscard}
           courseData={courseData}
           onUploadTrailer={onUploadTrailer}
-          uploadFile={uploadFile}
+          uploadTeaserThumbnail={uploadTeaserThumbnail}
           uploadVideo={uploadVideo}
-          courseBannerUploading={courseBannerUploading}
           courseTrailerUploading={courseTrailerUploading}
-          courseBanner={courseThumbnail}
+          trailerThumbnail={newTrailerThumbnail}
           settingLoading={settingloading}
-          selectedCourseType={selectedCourseType}
-          selectCourseType={selectCourseType}
+
         />
       ),
     },
@@ -355,10 +357,9 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
           Curriculum
         </span>
       ),
-      disabled:
-        ((!courseThumbnail || courseThumbnail.startsWith("data:image/")) && !uploadVideo?.videoUrl) || !tabActive,
+      disabled: !uploadVideo?.videoUrl || !tabActive,
 
-      children: courseThumbnail && !courseThumbnail.startsWith("data:image/") && uploadVideo?.videoUrl && (
+      children: uploadVideo?.videoUrl && (
         <Curriculum
           chapters={courseData.chapters}
           onRefresh={onRefresh}
@@ -378,53 +379,22 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
       label: (
         <span onClick={() => !tabActive && message.error("First fill and  save  the add course form ")}>Preview</span>
       ),
-      disabled:
-        ((!courseThumbnail || courseThumbnail.startsWith("data:image/")) && !uploadVideo?.videoUrl) || !tabActive,
-      children: courseThumbnail && !courseThumbnail.startsWith("data:image/") && uploadVideo?.videoUrl && (
+      disabled: !uploadVideo?.videoUrl || !tabActive,
+      children: uploadVideo?.videoUrl && courseDetails && (
         <Preview
           videoUrl={uploadVideo?.videoUrl}
-          onEnrollCourse={() => {}}
-          courseDetail={
-            {
-              course: {
-                name: courseData.name,
-                description: courseData.description,
-                courseTrailer: uploadVideo.videoUrl,
-              },
-              lessons: courseData.chapters.map((c: ChapterDetail) => {
-                return {
-                  chapterSeq: c.sequenceId,
-                  chapterName: c.name,
-                  lessons: c.resource.map((r) => {
-                    if (r.video) {
-                      return {
-                        videoId: r.video.id,
-                        lessonId: r.resourceId,
-                        videoUrl: r.video.videoUrl,
-                        videoDuration: r.video.videoDuration,
-                        isWatched: false,
-                        title: r.name,
-                        contentType: r.contentType,
-                      };
-                    } else if (r.assignment) {
-                      return {
-                        lessonId: r.resourceId,
-                        isWatched: false,
-                        title: r.name,
-                        contentType: r.contentType,
-                        videoDuration: r.assignment.estimatedDuration ? r.assignment.estimatedDuration * 60 : 0,
-                      };
-                    }
-                  }),
-                };
-              }),
-            } as CourseLessonAPIResponse
-          }
+          courseDetail={courseDetails}
           addContentPreview={true}
         />
       ),
     },
   ];
+
+  useEffect(() => {
+    ProgramService.fetchCourseDetailedView(Number(router.query.id), result => {
+      setCourseDetails(result.body)
+    }, err => message.error(err))
+  }, [activeKey])
 
   useEffect(() => {
     let intervalId: NodeJS.Timer | undefined;
@@ -504,7 +474,6 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
             courseType: result.courseDetails.courseType,
           });
 
-          setCourseThumbnail(result.courseDetails.thumbnail);
           setSettingloading(false);
         },
         (error) => {

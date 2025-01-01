@@ -43,7 +43,6 @@ export const getAllCourses = async (id: string) => {
       name: true,
       difficultyLevel: true,
       state: true,
-      thumbnail: true,
       description: true,
       totalResources: true,
       user: {

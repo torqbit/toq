@@ -164,6 +164,14 @@
   font-size: 12px;
   gap: 0 10px;
 }
+.setting__video__segment {
+  margin: 0 auto 10px auto;
+}
+.video_container {
+  height: 178px;
+  width: 318px;
+  border-radius: 4px;
+}
 
 .add_course_page {
   .add_course_header {
@@ -201,8 +209,7 @@
     padding: 10px 40px;
 
     .add_course_setting {
-      padding: 20px 40px;
-      max-width: 600px;
+      max-width: 1000px;
 
       .setting_header {
         margin-bottom: 20px;
@@ -233,8 +240,8 @@
 
       .upload__thumbnail {
         & > div {
-          height: 150px;
-          width: 150px;
+          height: 178px;
+          width: 318px;
           position: relative;
         }
         right: 50%;
@@ -267,12 +274,6 @@
         background-color: var(--bg-primary);
         padding: 10px 20px;
         margin-top: 20px;
-
-        .video_container {
-          height: 178px;
-          width: 318px;
-          border-radius: 4px;
-        }
 
         h3 {
           margin: 0;

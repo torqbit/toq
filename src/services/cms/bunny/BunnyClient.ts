@@ -102,6 +102,22 @@ export class BunnyClient {
     }
   }
 
+  updateVideoThumbnail = async (
+    thumbnailUrl: string,
+    libraryId: number,
+    videoId: string
+  ): Promise<APIResponse<string>> => {
+    const res = await fetch(
+      `https://video.bunnycdn.com/library/${libraryId}/videos/${videoId}/thumbnail?thumbnailUrl=${encodeURIComponent(
+        thumbnailUrl
+      )}`,
+      this.getClientPostOptions("")
+    );
+    const uploadRes = await res.json();
+
+    return new APIResponse(uploadRes.statusCode === 200, uploadRes.statusCode, uploadRes.Message, thumbnailUrl);
+  };
+
   uploadVideo = async (
     file: Buffer,
     libraryId: number,

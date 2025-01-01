@@ -136,6 +136,7 @@ export interface ICoursePriviewInfo {
   courseTrailer: string;
   previewMode: boolean;
   courseType: CourseType;
+  currency: string;
   coursePrice: number;
   userRole: Role;
   progress: number;
@@ -146,6 +147,40 @@ export interface ICoursePriviewInfo {
   authorImage: string;
   authorName: string;
   userStatus: CourseState;
+}
+
+export interface ILessonView {
+  name: string;
+  description: string;
+  state: StateType;
+  lessonType: ResourceContentType;
+  durationInMins: number;
+}
+
+export interface IChapterView {
+  name: string;
+  description: string;
+  lessons: ILessonView[];
+}
+export interface ICourseDetailView {
+  name: string;
+  description: string;
+  expiryInDays: number;
+  state?: string;
+  chapters: IChapterView[];
+  difficultyLevel: $Enums.courseDifficultyType;
+  contentDurationInHrs: number;
+  assignmentsCount: number;
+  pricing: {
+    currency: string;
+    amount: number;
+  };
+  author: {
+    name: string;
+    imageUrl?: string;
+    designation?: string;
+  };
+  trailerEmbedUrl?: string;
 }
 
 export interface CourseLessonAPIResponse {
@@ -191,6 +226,7 @@ export interface CourseInfo {
   chapters: ChapterDetail[];
   courseId: number;
   coursePrice: number;
+  currency: string;
   courseType: string;
   createdAt: string;
   description: string;
