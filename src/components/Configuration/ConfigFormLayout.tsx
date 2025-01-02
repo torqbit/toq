@@ -8,7 +8,7 @@ const ConfigFormLayout: FC<{
   formTitle: string;
   extraContent?: React.ReactNode;
   isCollapsible?: boolean;
-}> = ({ children, formTitle, extraContent, isCollapsible = false }) => {
+}> = ({ children, formTitle, extraContent, isCollapsible }) => {
   return (
     <section className={styles.cms__container}>
       <Collapse
