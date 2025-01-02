@@ -7,9 +7,15 @@ const ConfigFormLayout: FC<{
   children?: React.ReactNode;
   formTitle: string;
   extraContent?: React.ReactNode;
-}> = ({ children, formTitle, extraContent }) => {
+  width?: string;
+}> = ({ children, formTitle, extraContent, width = "1000px" }) => {
   return (
-    <section className={styles.cms__container}>
+    <section
+      className={styles.cms__container}
+      style={{
+        width: width,
+      }}
+    >
       <div className={styles.cms__form__header}>
         <h4>{formTitle}</h4>
         {extraContent}
