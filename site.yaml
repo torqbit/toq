@@ -72,3 +72,8 @@ site:
       enable: true
       title: Blogs
       description: Description on blogs
+    faq:
+      enable: true
+      items:
+        - question: "First question "
+          answer: "this is last question "

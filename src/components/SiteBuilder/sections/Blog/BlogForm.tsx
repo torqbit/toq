@@ -27,7 +27,6 @@ const BlogForm: FC<{
           placeholder="Add title"
         />
       ),
-      inputName: "title",
     },
     {
       title: "Blog list description",
@@ -41,7 +40,6 @@ const BlogForm: FC<{
           placeholder="Add description"
         />
       ),
-      inputName: "description",
     },
   ];
 
@@ -73,11 +71,7 @@ const BlogForm: FC<{
                 <>
                   <ConfigForm
                     input={
-                      <Form.Item
-                        name={item.inputName}
-                        rules={[{ required: !item.optional, message: `Field is required!` }]}
-                        key={i}
-                      >
+                      <Form.Item rules={[{ required: !item.optional, message: `Field is required!` }]} key={i}>
                         {item.input}
                       </Form.Item>
                     }
@@ -85,7 +79,6 @@ const BlogForm: FC<{
                     description={item.description}
                     layout={item.layout}
                     divider={i === blogItems.length - 1 ? false : true}
-                    inputName={""}
                     optional={item.optional}
                   />
                   {blogItems.length !== i + 1 && <Divider style={{ margin: "0px 0px 15px 0px" }} />}

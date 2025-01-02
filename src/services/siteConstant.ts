@@ -74,7 +74,6 @@ export const DEFAULT_THEME = {
       title: "Blogs",
       description: "Description for the blog list",
     },
-
     features: {
       items: [
         {
@@ -101,6 +100,24 @@ export const DEFAULT_THEME = {
       ],
       title: "Features",
       description: "Features for the learning platform",
+    },
+
+    faq: {
+      items: [
+        {
+          question: "First question",
+          answer: "First answer",
+        },
+        {
+          question: "Second question",
+          answer: "Second answer",
+        },
+        {
+          question: "Third question",
+          answer: "Third answer",
+        },
+      ],
+      enable: true,
     },
   },
 };
