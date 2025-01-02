@@ -103,7 +103,7 @@ const antThemeConfig = (siteConfig: PageSiteConfig) => {
         paddingLG: 20,
       },
       Collapse: {
-        headerBg: "#f5f5f5",
+        headerBg: "#fff",
       },
       Segmented: {
         itemSelectedBg: "#fff",
