@@ -2,34 +2,19 @@
   width: 1000px;
   background-color: var(--bg-primary);
   margin: 0px 0px 30px 0px;
-  border: 1px solid var(--border-color);
   border-radius: 8px;
-  > div:last-child {
-    padding: 0px 20px;
-  }
-  .cms__form__header {
-    padding: 10px 15px;
-    background-color: var(--bg-content-form);
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
-    border-bottom: 1px solid var(--border-color);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    h4 {
-      margin: 0;
-    }
-  }
   form {
     width: 100%;
     > div:first-child {
-      margin-bottom: 0;
+      padding-top: 0px;
+    }
+    > div:last-child {
+      padding-bottom: 0px;
     }
   }
   .cms__form {
     background-color: var(--bg-primary);
-    padding: 20px 0px;
+    padding: 15px 0px;
     width: 100%;
     display: flex;
     gap: 40px;
@@ -42,9 +27,6 @@
       border-radius: 8px;
     }
 
-    & > div:last-child {
-      min-width: 300px;
-    }
     .watermark__options {
       > div {
         padding: 10px;

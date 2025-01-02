@@ -218,7 +218,6 @@ const PaymentManagementSystem: FC<{ active: boolean }> = ({ active }) => {
                         title={item.title}
                         description={item.description}
                         divider={i === paymentSecretItems.length - 1 ? false : true}
-                        inputName={""}
                         optional={item.optional}
                       />
                     );
@@ -266,7 +265,6 @@ const PaymentManagementSystem: FC<{ active: boolean }> = ({ active }) => {
                         title={item.title}
                         description={item.description}
                         divider={i === paymentInfo.length - 1 ? false : true}
-                        inputName={""}
                         optional={item.optional}
                       />
                     );

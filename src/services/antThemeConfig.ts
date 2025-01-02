@@ -104,7 +104,6 @@ const antThemeConfig = (siteConfig: PageSiteConfig) => {
       },
       Collapse: {
         headerBg: "#fff",
-
       },
       Segmented: {
         itemSelectedBg: "#fff",
