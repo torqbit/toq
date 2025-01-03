@@ -110,21 +110,19 @@ class AssignmentSerivce {
     onSuccess: (response: ApiResponse) => void,
     onFailure: (message: string) => void
   ) => {
-    postFetch(assignmentData, `/api/v1/resource/assignment/${assignmentData.isEdit ? "update" : "save"}`).then(
-      (result) => {
-        if (result.status == 200) {
-          result.json().then((r) => {
-            const apiResponse = r as ApiResponse;
-            onSuccess(apiResponse);
-          });
-        } else {
-          result.json().then((r) => {
-            const failedResponse = r as FailedApiResponse;
-            onFailure(failedResponse.error);
-          });
-        }
+    postFetch(assignmentData, `/api/v1/resource/assignment/save`).then((result) => {
+      if (result.status == 200) {
+        result.json().then((r) => {
+          const apiResponse = r as ApiResponse;
+          onSuccess(apiResponse);
+        });
+      } else {
+        result.json().then((r) => {
+          const failedResponse = r as FailedApiResponse;
+          onFailure(failedResponse.error);
+        });
       }
-    );
+    });
   };
   getAssignment = (
     lessonId: number,

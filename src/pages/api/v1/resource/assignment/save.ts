@@ -18,14 +18,24 @@ export const config = {
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const body = req.body as AssignmentCreateRequest;
-
-    const { lessonId, estimatedDurationInMins, details, maximumScore, passingScore } = body;
+    const { lessonId, title, estimatedDurationInMins, details, maximumScore, passingScore } = body;
     const unDetails = details as any;
     const lessonCount = await prisma.assignment.count({
       where: {
         lessonId: lessonId,
       },
     });
+
+    if (title) {
+      await prisma?.resource.update({
+        where: {
+          resourceId: lessonId,
+        },
+        data: {
+          name: title,
+        },
+      });
+    }
 
     if (lessonCount > 0) {
       await prisma.assignment.update({

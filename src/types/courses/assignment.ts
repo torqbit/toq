@@ -85,4 +85,5 @@ export interface AssignmentCreateRequest {
   maximumScore: number;
   passingScore: number;
   details: IAssignmentDetails;
+  title: string;
 }
