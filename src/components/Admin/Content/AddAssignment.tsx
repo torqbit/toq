@@ -14,6 +14,7 @@ import {
   Select,
   Space,
   Steps,
+  Tag,
   Upload,
   UploadProps,
 } from "antd";
@@ -148,7 +149,8 @@ const AddAssignment: FC<{
     AssignmentService.createAssignment(
       {
         lessonId: Number(currResId),
-        estimatedDurationInMins: assignmentForm.getFieldsValue().estimatedDuration ?? 30,
+        title: assignmentForm.getFieldsValue().title,
+        estimatedDurationInMins: assignmentForm.getFieldsValue().estimatedDurationInMins ?? 30,
         maximumScore: Number(assignmentForm.getFieldsValue().maximumScore),
         passingScore: Number(assignmentForm.getFieldsValue().passingScore),
         isEdit,
@@ -303,7 +305,26 @@ const AddAssignment: FC<{
           {
             title: (
               <ConfigFormLayout formTitle={"Configure Assignment Type"} width="100%">
-                <Form form={assignmentForm}>
+                <Form form={assignmentForm} initialValues={{ estimatedDurationInMins: 30 }}>
+                  <ConfigForm
+                    title="Assignment Title"
+                    description="Enter the title of the assignment"
+                    input={
+                      <Form.Item name="title">
+                        <Input placeholder="Enter the title of the assignment" />
+                      </Form.Item>
+                    }
+                  />
+
+                  <ConfigForm
+                    title="Estimated Duration"
+                    description="Enter the estimated duration in minutes"
+                    input={
+                      <Form.Item name="estimatedDurationInMins">
+                        <InputNumber placeholder="" defaultValue={30} />
+                      </Form.Item>
+                    }
+                  />
                   <ConfigForm
                     input={
                       <Form.Item name="assignmentType">
@@ -317,11 +338,14 @@ const AddAssignment: FC<{
                                   disabled={item.disabled}
                                   onChange={(e) => {
                                     setSubmissionType(e.target.value);
-                                    setCurrent(1);
+                                    if (current === 0) setCurrent(1);
                                   }}
                                   className={`assignment_type_radio ${styles.assignment_type_radio}`}
                                 >
-                                  <h5>{item.title}</h5>
+                                  <Space style={{ width: "100%", justifyContent: "space-between" }}>
+                                    <h5>{item.title}</h5>
+                                    {item.disabled && <Tag color="orange">upcoming</Tag>}
+                                  </Space>
                                   <p>{item.description}</p>
                                 </Radio>
                               </Col>
@@ -355,7 +379,7 @@ const AddAssignment: FC<{
           {
             title: (
               <ConfigFormLayout formTitle={"Setup Grading"} width="100%">
-                <Form form={assignmentForm}>
+                <Form form={assignmentForm} initialValues={{ maximumScore: 5, passingScore: 80 }}>
                   <ConfigForm
                     input={
                       <Form.Item name="maximumScore">
