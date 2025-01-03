@@ -25,25 +25,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         lessonId: Number(assignmentId),
       },
     });
-    // if (getFileName && getFileName.assignmentFiles) {
-    //   let fileArray = getFileName?.assignmentFiles as string[];
-    //   let fileName = fileArray.find((f) => f.includes(".html"));
-    //   let assignmentConfig: AssignmentConfig = {
-    //     codeData: codeData,
-    //     courseId: Number(courseId),
-    //     lessonId: Number(assignmentId),
-    //     userId: String(token?.id),
-    //     previewFileName: String(fileName),
-    //   };
-
-    //   AssignmentFileManagement.saveToLocal(assignmentConfig)
-    //     .then((result) => {
-    //       return res.status(200).json({ success: true, preview: result, message: "Updated successfully" });
-    //     })
-    //     .catch((err) => {
-    //       return res.status(400).json({ success: false, error: ` ${err}` });
-    //     });
-    // }
   } catch (error) {
     return errorHandler(error, res);
   }
