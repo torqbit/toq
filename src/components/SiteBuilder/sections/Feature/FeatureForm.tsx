@@ -350,7 +350,7 @@ const FeatureForm: FC<{
                 optional={item.optional}
               />
               {featureItems.length !== i + 1 && (
-                <Divider style={{ margin: "0px 0px 15px 0px", color: "var(--bg-primary)" }} />
+                <Divider style={{ margin: "0px 0px 15px 0px", color: "var(--bg-primary)", borderBlockStart: "none" }} />
               )}
             </>
           );

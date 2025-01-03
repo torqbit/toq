@@ -401,7 +401,7 @@ const HeroForm: FC<{
 
       description: "The hero image should be  at least 1200 x 600px.",
       input: (
-        <Flex align="center" vertical gap={20} key={4}>
+        <Flex align="center" vertical gap={20} key={4} style={{ marginBottom: 15 }}>
           {config.brand?.themeSwitch && (
             <Segmented
               className={`${styles.segment} `}
@@ -442,9 +442,10 @@ const HeroForm: FC<{
 
       description: "Select the position of the image",
       input: (
-        <Flex vertical gap={10} key={5}>
+        <Flex vertical gap={10} key={5} style={{ width: "fit-content" }}>
           <Flex gap={62}>
             <Radio
+              className={styles.radio}
               checked={heroConfig?.banner?.position === "left"}
               onChange={(e) => {
                 setHeroConfig({ ...heroConfig, banner: { ...heroConfig?.banner, position: "left" } });
@@ -454,6 +455,7 @@ const HeroForm: FC<{
               Left
             </Radio>
             <Radio
+              className={styles.radio}
               checked={heroConfig?.banner?.position === "right"}
               onChange={(e) => {
                 setHeroConfig({ ...heroConfig, banner: { ...heroConfig?.banner, position: "right" } });
@@ -465,6 +467,7 @@ const HeroForm: FC<{
           </Flex>{" "}
           <Flex gap={40}>
             <Radio
+              className={styles.radio}
               checked={heroConfig?.banner?.position === "bottom"}
               onChange={(e) => {
                 setHeroConfig({ ...heroConfig, banner: { ...heroConfig?.banner, position: "bottom" } });
@@ -475,6 +478,7 @@ const HeroForm: FC<{
             </Radio>
 
             <Radio
+              className={styles.radio}
               checked={heroConfig?.banner?.position === "background"}
               onChange={(e) => {
                 setHeroConfig({ ...heroConfig, banner: { ...heroConfig?.banner, position: "background" } });
@@ -518,7 +522,7 @@ const HeroForm: FC<{
                 optional={item.optional}
               />
               {heroItems.length !== i + 1 && (
-                <Divider style={{ margin: "0px 0px 15px 0px", color: "var(--bg-primary)" }} />
+                <Divider style={{ margin: "0px 0px 15px 0px", color: "var(--bg-primary)", borderBlockStart: "none" }} />
               )}
             </>
           );

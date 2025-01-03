@@ -74,6 +74,7 @@ const BlogForm: FC<{
                   <ConfigForm
                     input={
                       <Form.Item
+                        noStyle
                         name={item.inputName}
                         rules={[{ required: !item.optional, message: `Field is required!` }]}
                         key={i}
@@ -88,7 +89,9 @@ const BlogForm: FC<{
                     optional={item.optional}
                   />
                   {blogItems.length !== i + 1 && (
-                    <Divider style={{ margin: "0px 0px 15px 0px", color: "var(--bg-primary)" }} />
+                    <Divider
+                      style={{ margin: "0px 0px 15px 0px", color: "var(--bg-primary)", borderBlockStart: "none" }}
+                    />
                   )}
                 </>
               );
