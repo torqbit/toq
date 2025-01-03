@@ -9,9 +9,10 @@ const ConfigFormLayout: FC<{
   extraContent?: React.ReactNode;
   isCollapsible?: boolean;
   width?: string;
-}> = ({ children, formTitle, extraContent, isCollapsible = false, width = "1000px" }) => {
+  marginBottom?: string;
+}> = ({ children, formTitle, extraContent, isCollapsible = false, width = "1000px", marginBottom }) => {
   return (
-    <section className={styles.cms__container} style={{ width }}>
+    <section className={styles.cms__container} style={{ width, marginBottom }}>
       <Collapse
         style={{ borderRadius: 4 }}
         defaultActiveKey={[formTitle]}

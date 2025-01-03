@@ -40,6 +40,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, onQuestionChange,
       formTitle={`Question ${question.id}`}
       width="100%"
       isCollapsible
+      marginBottom="10px"
       extraContent={
         <Popconfirm
           title="Delete the question"
