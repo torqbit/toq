@@ -16,7 +16,7 @@ site:
       successful, scalable products
     ogImage: /icon/torqbit.png
     themeSwitch: false
-    defaultTheme: dark
+    defaultTheme: light
     favicon: /favicon.ico
     socialLinks:
       discord: https://discord.gg/NserMXcx
@@ -35,7 +35,7 @@ site:
     actionButtons:
       primary:
         label: Get Started
-        link: /dashboad
+        link: /dashboard
       secondary:
         label: Contact Us
         link: mailto:support@torqbit.com
