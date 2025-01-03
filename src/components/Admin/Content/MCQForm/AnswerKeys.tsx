@@ -11,7 +11,7 @@ interface AnswerKeysProps {
 }
 
 export const AnswerKeys: React.FC<AnswerKeysProps> = ({ options, selectedAnswer, onAnswerChange }) => (
-  <div className="answer-keys">
+  <div>
     <Text strong>Answer Keys</Text>
     <p>Select the list of the answers from above provided options</p>
     <Select
