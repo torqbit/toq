@@ -1,15 +1,16 @@
 import React from "react";
-import { Card } from "antd";
+import { Alert, Card, Popconfirm } from "antd";
 import QuestionTitle from "./QuestionTitle";
 import OptionsSection from "./OptionSection";
 import { AnswerKeys } from "./AnswerKeys";
 import QuestionExplanation from "./QuestionExplanation";
-import { Question } from "./types";
 import { DeleteFilled } from "@ant-design/icons";
+import ConfigFormLayout from "@/components/Configuration/ConfigFormLayout";
+import { MultipleChoiceQA } from "@/types/courses/assignment";
 
 interface QuestionCardProps {
-  question: Question;
-  onQuestionChange: (updatedQuestion: Question) => void;
+  question: MultipleChoiceQA;
+  onQuestionChange: (updatedQuestion: MultipleChoiceQA) => void;
   onDeleteQuestion: (questionId: string) => void;
 }
 
@@ -35,10 +36,22 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, onQuestionChange,
   };
 
   return (
-    <Card
-      title={`Question ${question.id}`}
-      style={{ marginBottom: 16 }}
-      extra={<DeleteFilled onClick={() => onDeleteQuestion(question.id)} />}
+    <ConfigFormLayout
+      formTitle={`Question ${question.id}`}
+      width="100%"
+      isCollapsible
+      extraContent={
+        <Popconfirm
+          title="Delete the question"
+          description="Are you sure to delete this question?"
+          onConfirm={() => onDeleteQuestion(question.id)}
+          onCancel={() => {}}
+          okText="Yes"
+          cancelText="No"
+        >
+          <DeleteFilled />
+        </Popconfirm>
+      }
     >
       <QuestionTitle
         title={question.title}
@@ -58,10 +71,10 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, onQuestionChange,
         onAnswerChange={(values: any) => onQuestionChange({ ...question, correctOptionIndex: values })}
       />
       <QuestionExplanation
-        explanation={question.explanation || ""}
-        onChange={(value: string) => onQuestionChange({ ...question, explanation: value })}
+        explanation={question.answerExplaination || ""}
+        onChange={(value: string) => onQuestionChange({ ...question, answerExplaination: value })}
       />
-    </Card>
+    </ConfigFormLayout>
   );
 };
 

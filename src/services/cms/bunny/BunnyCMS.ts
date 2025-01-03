@@ -7,6 +7,7 @@ import SecretsManager from "@/services/secrets/SecretsManager";
 import { VideoAPIResponse, VideoInfo } from "@/types/courses/Course";
 import { FileObjectType, StaticFileCategory, VideoObjectType } from "@/types/cms/common";
 import prisma from "@/lib/prisma";
+import { createSlug } from "@/lib/utils";
 
 export interface BunnyAuthConfig extends ICMSAuthConfig {
   accessKey: string;
@@ -529,6 +530,38 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
     }
   }
 
+  async uploadVideoThumbnail(
+    cmsConfig: BunnyCMSConfig,
+    thumbnail: Buffer,
+    fileExtension: string,
+    providerVideoId: string,
+    objectId: number,
+    objectType: VideoObjectType
+  ): Promise<APIResponse<string>> {
+    try {
+      const videoAPIKey = await secretsStore.get(cmsConfig.vodAccessKeyRef);
+      if (videoAPIKey && cmsConfig.vodConfig && cmsConfig.cdnConfig) {
+        //get the course/lesson details
+        const currentEpochTime = new Date().getTime();
+        const thumbImg = `${objectId}-${objectType}-thumb-${currentEpochTime}.${fileExtension}`;
+
+        const cdnUploadResponse = await this.uploadCDNImage(
+          cmsConfig,
+          thumbnail,
+          objectType == "course" ? FileObjectType.COURSE : FileObjectType.LESSON,
+          thumbImg,
+          "thumbnail"
+        );
+        if (cdnUploadResponse.success && cdnUploadResponse.body) {
+          const bunny = new BunnyClient(videoAPIKey);
+          return bunny.updateVideoThumbnail(cdnUploadResponse.body, cmsConfig.vodConfig.vidLibraryId, providerVideoId);
+        } else throw new Error(`Failed to upload the image to CDN. Error : ${cdnUploadResponse.error}`);
+      } else throw new Error(`Failed to build the storage configuration`);
+    } catch (err: any) {
+      return new APIResponse(false, 400, err);
+    }
+  }
+
   async uploadVideo(
     cmsConfig: BunnyCMSConfig,
     file: Buffer,
@@ -536,9 +569,9 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
     objectType: VideoObjectType,
     objectId: number
   ): Promise<APIResponse<VideoInfo>> {
-    const videoPassword = await secretsStore.get(cmsConfig.vodAccessKeyRef);
-    if (videoPassword && cmsConfig.vodConfig && cmsConfig.cdnConfig) {
-      const bunny = new BunnyClient(videoPassword);
+    const videoAPIKey = await secretsStore.get(cmsConfig.vodAccessKeyRef);
+    if (videoAPIKey && cmsConfig.vodConfig && cmsConfig.cdnConfig) {
+      const bunny = new BunnyClient(videoAPIKey);
       const response = await bunny.uploadVideo(
         file,
         cmsConfig.vodConfig.vidLibraryId,

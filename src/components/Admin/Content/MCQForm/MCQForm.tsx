@@ -2,24 +2,14 @@ import React, { useState } from "react";
 import { Button } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import QuestionCard from "./QuestionCard";
-import { Question } from "./types";
+import { createEmptyQuestion } from "../AddAssignment";
+import { MultipleChoiceQA } from "@/types/courses/assignment";
 
-const createEmptyQuestion = (id: string): Question => ({
-  id,
-  title: "",
-  description: "",
-  options: [
-    { key: "A", text: "" },
-    { key: "B", text: "" },
-  ],
-  correctOptionIndex: [],
-  explanation: "",
-});
-
-const MCQForm: React.FC = () => {
-  const [questions, setQuestions] = useState<Question[]>([createEmptyQuestion("1")]);
-
-  const handleQuestionChange = (updatedQuestion: Question) => {
+const MCQForm: React.FC<{
+  questions: MultipleChoiceQA[];
+  setQuestions: React.Dispatch<React.SetStateAction<MultipleChoiceQA[]>>;
+}> = ({ questions, setQuestions }) => {
+  const handleQuestionChange = (updatedQuestion: MultipleChoiceQA) => {
     setQuestions((prev) => prev.map((q) => (q.id === updatedQuestion.id ? updatedQuestion : q)));
   };
 
@@ -30,8 +20,6 @@ const MCQForm: React.FC = () => {
   const handleDeleteQuestion = (questionId: string) => {
     setQuestions((prev) => prev.filter((q) => q.id !== questionId));
   };
-
-  console.log(questions, "dd");
 
   return (
     <div style={{ padding: 5 }}>

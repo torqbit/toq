@@ -19,12 +19,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const body = req.body as AssignmentCreateRequest;
 
-    const { lessonId, assingmentType, estimatedDurationInMins, details, maximumScore, passingScore } = body;
+    const { lessonId, estimatedDurationInMins, details, maximumScore, passingScore } = body;
     const unDetails = details as any;
     const lessonCount = await prisma.assignment.count({
       where: {
-        lessonId: lessonId
-      }
+        lessonId: lessonId,
+      },
     });
 
     if (lessonCount > 0) {
@@ -33,14 +33,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           content: unDetails as JsonObject,
           estimatedDuration: estimatedDurationInMins,
           maximumPoints: maximumScore,
-          passingScore: passingScore
+          passingScore: passingScore,
         },
         where: {
-          lessonId: lessonId
-        }
-      })
+          lessonId: lessonId,
+        },
+      });
 
-      return res.status(200).json(new APIResponse(true, 200, 'Assignment has been updated'));
+      return res.status(200).json(new APIResponse(true, 200, "Assignment has been updated"));
     } else {
       await prisma.assignment.create({
         data: {
@@ -48,9 +48,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           estimatedDuration: estimatedDurationInMins,
           maximumPoints: maximumScore,
           passingScore: passingScore,
-          lessonId: lessonId
-        }
-      })
+          lessonId: lessonId,
+        },
+      });
       return res.json({ success: true, message: "Assignment has been created" });
     }
   } catch (error) {

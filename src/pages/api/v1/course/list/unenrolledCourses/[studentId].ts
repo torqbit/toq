@@ -19,40 +19,41 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     });
     const { studentId } = req.query;
 
-    const allCourse = await prisma.course.findMany({
-      where: {
-        authorId: token?.id,
-        state: StateType.ACTIVE,
-        NOT: {
-          OR: [
-            {
-              CourseRegistraion: {
-                some: {
-                  studentId: String(studentId),
-                },
-              },
-            },
-            {
-              authorId: String(studentId),
-            },
-            {
-              courseType: CourseType.FREE,
-            },
-          ],
-        },
-      },
-      select: {
-        courseId: true,
-        name: true,
-        authorId: true,
-      },
-    });
+    //TODO: to be fixed later
+    // const allCourse = await prisma.course.findMany({
+    //   where: {
+    //     authorId: token?.id,
+    //     state: StateType.ACTIVE,
+    //     NOT: {
+    //       OR: [
+    //         {
+    //           CourseRegistraion: {
+    //             some: {
+    //               studentId: String(studentId),
+    //             },
+    //           },
+    //         },
+    //         {
+    //           authorId: String(studentId),
+    //         },
+    //         {
+    //           courseType: CourseType.FREE,
+    //         },
+    //       ],
+    //     },
+    //   },
+    //   select: {
+    //     courseId: true,
+    //     name: true,
+    //     authorId: true,
+    //   },
+    // });
 
     return res.status(200).json({
       info: false,
       success: true,
       message: "course successfully fetched",
-      courses: allCourse,
+      courses: [],
     });
   } catch (error) {
     console.error(error);

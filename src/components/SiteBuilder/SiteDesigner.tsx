@@ -9,25 +9,13 @@ import SvgIcons from "../SvgIcons";
 import FeatureForm from "./sections/Feature/FeatureForm";
 import CourseForm from "./sections/Courses/CourseForm";
 import BlogForm from "./sections/Blog/BlogForm";
-import { useAppContext } from "../ContextApi/AppContext";
+import FeaturesLayout from "@/templates/standard/components/Feature/FeaturesLayout";
 
 const SiteDesigner: FC<{
   config: PageSiteConfig;
   updateSiteConfig: (config: PageSiteConfig) => void;
 }> = ({ updateSiteConfig, config }) => {
-  const { dispatch } = useAppContext();
-
   const onCheckTheme = (theme: Theme) => {
-    if (theme === "dark") {
-      localStorage.setItem("theme", "dark");
-    } else {
-      localStorage.setItem("theme", "light");
-    }
-
-    dispatch({
-      type: "SWITCH_THEME",
-      payload: theme,
-    });
     updateSiteConfig({ ...config, brand: { ...config.brand, defaultTheme: theme } });
   };
 
@@ -62,7 +50,8 @@ const SiteDesigner: FC<{
     {
       key: "3",
       className: styles.collapse__header,
-      children: <FeatureForm config={config} updateSiteConfig={updateSiteConfig} />,
+      // children: <FeatureForm config={config} updateSiteConfig={updateSiteConfig} />,
+      children: <FeaturesLayout />,
 
       label: collapseHeader("Feature", SvgIcons.features),
     },

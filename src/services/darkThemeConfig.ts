@@ -158,11 +158,8 @@ const darkThemeConfig = (siteConfig: PageSiteConfig) => {
         colorBgElevated: "#283040",
       },
       Collapse: {
-        contentPadding: "0px",
         headerBg: "#283040",
         colorText: "#939db8",
-
-        paddingSM: 0,
       },
       Table: {
         colorBgContainer: "#283040",

@@ -13,7 +13,7 @@ interface OptionsSectionProps {
 }
 
 const OptionsSection: React.FC<OptionsSectionProps> = ({ options, onOptionChange, onAddOption, deleteOption }) => (
-  <div className="options-section">
+  <div className="options-section" style={{ marginTop: 40 }}>
     <Text strong>Options</Text>
     <p>Provide a list of options that will be provided to the learners for answering the question</p>
     <Space direction="vertical" style={{ width: "100%", marginBottom: 10 }}>

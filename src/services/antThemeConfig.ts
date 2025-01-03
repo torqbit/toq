@@ -1,3 +1,4 @@
+import { Steps } from "antd";
 import { PageSiteConfig } from "./siteConstant";
 
 const antThemeConfig = (siteConfig: PageSiteConfig) => {
@@ -103,9 +104,7 @@ const antThemeConfig = (siteConfig: PageSiteConfig) => {
         paddingLG: 20,
       },
       Collapse: {
-        contentPadding: "0px",
         headerBg: "#fff",
-        paddingSM: 0,
       },
       Segmented: {
         itemSelectedBg: "#fff",

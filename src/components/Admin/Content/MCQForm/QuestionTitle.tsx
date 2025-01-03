@@ -7,7 +7,7 @@ const { TextArea } = Input;
 
 interface QuestionTitleProps {
   title: string;
-  description: string;
+  description?: string;
   onTitleChange: (value: string) => void;
   onDescriptionChange: (value: string) => void;
 }
@@ -18,6 +18,7 @@ const QuestionTitle: React.FC<QuestionTitleProps> = ({ title, description, onTit
       <Text strong>Question</Text>
       <p style={{ marginBottom: 0 }}>Provide a brief title to the question</p>
       <Input
+        required
         placeholder="Provide a brief title to the question"
         value={title}
         onChange={(e) => onTitleChange(e.target.value)}

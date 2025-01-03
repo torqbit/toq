@@ -13,7 +13,6 @@ const getCourseList = async (): Promise<ICourseCard[]> => {
       name: true,
       difficultyLevel: true,
       state: true,
-      thumbnail: true,
       description: true,
       totalResources: true,
       previewMode: true,

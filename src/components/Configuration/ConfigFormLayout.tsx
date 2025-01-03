@@ -1,26 +1,31 @@
 import { FC } from "react";
 
 import styles from "./CMS/CMS.module.scss";
-import { Button, Flex, Form, Input, Segmented } from "antd";
+import { Collapse } from "antd";
 
 const ConfigFormLayout: FC<{
   children?: React.ReactNode;
   formTitle: string;
   extraContent?: React.ReactNode;
+  isCollapsible?: boolean;
   width?: string;
-}> = ({ children, formTitle, extraContent, width = "1000px" }) => {
+}> = ({ children, formTitle, extraContent, isCollapsible = false, width = "1000px" }) => {
   return (
-    <section
-      className={styles.cms__container}
-      style={{
-        width: width,
-      }}
-    >
-      <div className={styles.cms__form__header}>
-        <h4>{formTitle}</h4>
-        {extraContent}
-      </div>
-      <div>{children}</div>
+    <section className={styles.cms__container} style={{ width }}>
+      <Collapse
+        style={{ borderRadius: 4 }}
+        defaultActiveKey={[formTitle]}
+        collapsible={isCollapsible ? "header" : "icon"}
+      >
+        <Collapse.Panel
+          header={<h4 style={{ margin: 0 }}>{formTitle}</h4>}
+          key={formTitle}
+          extra={extraContent}
+          showArrow={isCollapsible}
+        >
+          {children}
+        </Collapse.Panel>
+      </Collapse>
     </section>
   );
 };
