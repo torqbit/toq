@@ -204,19 +204,16 @@
       border-right: 1px solid var(--bg-secondary);
     }
 
-    min-height: 48px;
     display: flex;
     align-items: center;
     gap: 10px;
-    border: 1px solid var(--bg-secondary);
+
     .drawerTitle {
       padding: 10px;
-      color: var(--font-primary);
+      color: var(--font-secondary);
     }
   }
   .drawerContainer {
-    padding-bottom: 10px;
-    padding: 0px 30px;
     display: flex;
     align-items: flex-start;
     gap: 10px;

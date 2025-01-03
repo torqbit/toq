@@ -54,11 +54,9 @@ const CoursesView: FC<{
 };
 
 const CoursesPage: NextPage<{ siteConfig: PageSiteConfig; userRole: Role }> = ({ siteConfig, userRole }) => {
-  const [allCourses, setAllCourses] = useState<Course[] | undefined>([]);
   const [courses, setCourses] = useState<ICourseListItem[]>([]);
   const [messageApi, contextMessageHolder] = message.useMessage();
   const [loading, setLoading] = useState<boolean>(false);
-  const [courseLoading, setCourseLoading] = useState<boolean>(false);
 
   const router = useRouter();
   const { globalState } = useAppContext();
@@ -77,17 +75,13 @@ const CoursesPage: NextPage<{ siteConfig: PageSiteConfig; userRole: Role }> = ({
   }, []);
 
   const addCourse = () => {
-    setCourseLoading(true);
     ProgramService.createDraftCourses(
       undefined,
       (result) => {
-        setCourseLoading(false);
-
         messageApi.success(result.message);
         router.push(`/admin/content/course/${result.getCourse.courseId}/edit`);
       },
       (error) => {
-        setCourseLoading(false);
         messageApi.error(error);
       }
     );

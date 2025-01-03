@@ -35,6 +35,7 @@ const CourseViewItem: FC<{ course: ICourseListItem }> = ({ course }) => {
         {course.userRole && course.userRole === Role.ADMIN && <Button type="default">Manage</Button>}
         {course.userRole && course.userRole === Role.AUTHOR && <Button type="default">Manage</Button>}
         {course.userRole && course.userRole === Role.NOT_ENROLLED && <Button type="default">Buy Now</Button>}
+        {course.userRole && course.userRole === Role.STUDENT && <Button type="default">Go to Course</Button>}
       </Flex>
     </Card>
   );
@@ -49,6 +50,7 @@ export const CoursesListView: FC<{
   return (
     <div className={styles.courses__list}>
       <h3>Courses</h3>
+
       <div className={styles.course__grid}>
         {courses.map((c, index) => (
           <CourseViewItem course={c} key={index} />

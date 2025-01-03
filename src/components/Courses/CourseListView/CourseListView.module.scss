@@ -1,6 +1,11 @@
 .courses__list {
   padding: 20px;
 
+  .course__grid {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
   .course__card {
     width: 300px;
 

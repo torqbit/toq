@@ -236,27 +236,19 @@ const AddVideoLesson: FC<{
         classNames={{ header: styles.headerWrapper, body: styles.body, footer: styles.footer }}
         width={400}
         maskClosable={false}
-        closeIcon={false}
+        closeIcon={true}
+        onClose={() => {
+          currResId && !isEdit && onDeleteResource(currResId);
+          setResourceDrawer(false);
+          form.resetFields();
+          onRefresh();
+        }}
         className={styles.newResDetails}
-        title={
-          <div className={styles.drawerHeader}>
-            <Space className={styles.drawerTitle}>
-              <CloseOutlined
-                onClick={() => {
-                  currResId && !isEdit && onDeleteResource(currResId);
-                  setResourceDrawer(false);
-                  form.resetFields();
-                  onRefresh();
-                }}
-              />
-              {isEdit ? `Update ${contentType} Details` : `New ${contentType} Details`}
-            </Space>
-          </div>
-        }
+        title={isEdit ? `Update ${contentType} Details` : `New ${contentType} Details`}
         placement="right"
         open={showResourceDrawer}
         footer={
-          <Space className={styles.footerBtn}>
+          <Space>
             <Button
               loading={loading}
               type="primary"

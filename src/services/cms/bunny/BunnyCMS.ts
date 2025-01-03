@@ -7,7 +7,6 @@ import SecretsManager from "@/services/secrets/SecretsManager";
 import { VideoAPIResponse, VideoInfo } from "@/types/courses/Course";
 import { FileObjectType, StaticFileCategory, VideoObjectType } from "@/types/cms/common";
 import prisma from "@/lib/prisma";
-import { createSlug } from "@/lib/utils";
 
 export interface BunnyAuthConfig extends ICMSAuthConfig {
   accessKey: string;
