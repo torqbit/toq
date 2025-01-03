@@ -10,6 +10,8 @@ import Features from "./components/Feature/Features";
 import CourseList from "@/templates/standard/components/Courses/Courses";
 import { ICourseCard } from "@/types/landing/courses";
 import { IBlogCard } from "@/types/landing/blog";
+import FAQList from "./components/FAQ/FAQList";
+import FAQ from "./components/FAQ/FAQ";
 
 interface IStandardTemplateProps {
   user: User;
@@ -62,6 +64,9 @@ const StandardTemplate: FC<IStandardTemplateProps> = ({ user, siteConfig, course
           blogList={blogList}
           previewMode={previewMode}
         />
+      )}
+      {siteConfig.sections?.faq?.enabled && (previewMode || siteConfig.sections.faq.items.length > 0) && (
+        <FAQ siteConfig={siteConfig} faqList={siteConfig.sections.faq.items} />
       )}
     </MarketingLayout>
   );

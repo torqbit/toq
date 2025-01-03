@@ -2,6 +2,7 @@ import { FC, ReactNode } from "react";
 import { IFeatureCard, IFeatureInfo } from "./landing/feature";
 export type bannerAlignment = "left" | "right" | "bottom" | "background";
 import { Theme } from "@/types/theme";
+import { IFaqInfo } from "./landing/faq";
 
 export interface ISocialLinks {
   github?: string;
@@ -71,5 +72,6 @@ export interface ThemeSchema {
     courses?: ICourseConfig;
     blog?: IBlogConfig;
     features?: IFeatureInfo;
+    faq?: IFaqInfo;
   };
 }

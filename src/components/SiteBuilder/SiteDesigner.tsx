@@ -10,6 +10,7 @@ import FeatureForm from "./sections/Feature/FeatureForm";
 import CourseForm from "./sections/Courses/CourseForm";
 import BlogForm from "./sections/Blog/BlogForm";
 import FeaturesLayout from "@/templates/standard/components/Feature/FeaturesLayout";
+import FAQDesign from "@/templates/standard/components/FAQ/FAQDesign";
 
 const SiteDesigner: FC<{
   config: PageSiteConfig;
@@ -78,6 +79,18 @@ const SiteDesigner: FC<{
       ),
 
       label: collapseHeader("Blog", SvgIcons.blog),
+    },
+    {
+      key: "6",
+      className: styles.collapse__header,
+
+      children: (
+        <>
+          <FAQDesign config={config} updateSiteConfig={updateSiteConfig} />
+        </>
+      ),
+
+      label: collapseHeader("FAQ", SvgIcons.faq),
     },
   ];
   return (

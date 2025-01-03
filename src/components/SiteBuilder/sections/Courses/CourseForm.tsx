@@ -59,7 +59,7 @@ const CourseForm: FC<{
       </Flex>
       {config.sections?.courses?.enable && (
         <>
-          <Divider style={{ margin: "15px 0px " }} />
+          <Divider style={{ margin: "15px 0px ", color: "var(--bg-primary)" }} />
 
           <Form
             form={form}
@@ -89,7 +89,9 @@ const CourseForm: FC<{
                     inputName={""}
                     optional={item.optional}
                   />
-                  {courseItems.length !== i + 1 && <Divider style={{ margin: "0px 0px 15px 0px" }} />}
+                  {courseItems.length !== i + 1 && (
+                    <Divider style={{ margin: "0px 0px 15px 0px", borderBlockStart: "none" }} />
+                  )}
                 </>
               );
             })}

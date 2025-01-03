@@ -72,3 +72,8 @@ site:
       enable: true
       title: Blogs
       description: Description on blogs
+    faq:
+      enabled: true
+      items:
+        - question: How do I access the courses after signing up?
+          answer: After signing up, log in to your account and navigate to the "Courses" section from the dashboard. Here, you’ll find all the courses available to you. Simply click on a course title to start learning!

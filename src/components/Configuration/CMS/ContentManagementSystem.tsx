@@ -20,6 +20,7 @@ export interface IConfigForm {
   optional?: boolean;
   divider?: boolean;
   layout?: "vertical" | "horizontal";
+  inputName?: string;
 }
 
 export interface IConfigInput {
