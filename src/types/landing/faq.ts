@@ -1,4 +1,4 @@
 export interface IFaqInfo {
-  enable?: boolean;
+  enabled?: boolean;
   items: { question: string; answer: string }[];
 }

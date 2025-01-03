@@ -117,7 +117,7 @@ export const DEFAULT_THEME = {
           answer: "Third answer",
         },
       ],
-      enable: true,
+      enabled: true,
     },
   },
 };

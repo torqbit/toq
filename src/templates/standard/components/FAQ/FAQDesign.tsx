@@ -8,7 +8,7 @@ const FAQDesign: FC<{
   config: PageSiteConfig;
   updateSiteConfig: (config: PageSiteConfig) => void;
 }> = ({ updateSiteConfig, config }) => {
-  const [enable, setEnable] = useState<boolean>(config.sections?.faq?.enable || false);
+  const [enable, setEnable] = useState<boolean>(config.sections?.faq?.enabled || false);
   const router = useRouter();
   useEffect(() => {
     config.sections?.faq?.items &&
@@ -17,17 +17,17 @@ const FAQDesign: FC<{
         ...config,
         sections: {
           ...config.sections,
-          faq: { ...config.sections?.faq, enable: !enable },
+          faq: { ...config.sections?.faq, enabled: !enable },
         },
       });
   }, [enable]);
   return (
     <div className={styles.faq__design__wrapper}>
       <Flex className={styles.disable__switch} align="center" justify="space-between">
-        <h5> {config.sections?.faq?.enable ? "Disable FAQ" : "Enable FAQ"}</h5>
+        <h5> {config.sections?.faq?.enabled ? "Disable FAQ" : "Enable FAQ"}</h5>
         <Switch
           size="small"
-          value={config.sections?.faq?.enable}
+          value={config.sections?.faq?.enabled}
           onChange={(value) => {
             config.sections?.faq?.items && config.sections.faq.items.length > 0 && setEnable(!enable);
           }}

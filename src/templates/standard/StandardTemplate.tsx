@@ -65,7 +65,7 @@ const StandardTemplate: FC<IStandardTemplateProps> = ({ user, siteConfig, course
           previewMode={previewMode}
         />
       )}
-      {siteConfig.sections?.faq?.enable && (previewMode || siteConfig.sections.faq.items.length > 0) && (
+      {siteConfig.sections?.faq?.enabled && (previewMode || siteConfig.sections.faq.items.length > 0) && (
         <FAQ siteConfig={siteConfig} faqList={siteConfig.sections.faq.items} />
       )}
     </MarketingLayout>
