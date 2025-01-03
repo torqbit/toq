@@ -59,7 +59,7 @@ const CourseForm: FC<{
       </Flex>
       {config.sections?.courses?.enable && (
         <>
-          <Divider style={{ margin: "15px 0px " }} />
+          <Divider style={{ margin: "15px 0px ", color: "var(--bg-primary)" }} />
 
           <Form
             form={form}

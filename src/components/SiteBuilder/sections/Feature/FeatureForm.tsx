@@ -349,7 +349,9 @@ const FeatureForm: FC<{
                 inputName={""}
                 optional={item.optional}
               />
-              {featureItems.length !== i + 1 && <Divider style={{ margin: "0px 0px 15px 0px" }} />}
+              {featureItems.length !== i + 1 && (
+                <Divider style={{ margin: "0px 0px 15px 0px", color: "var(--bg-primary)" }} />
+              )}
             </>
           );
         })}

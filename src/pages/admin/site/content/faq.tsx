@@ -9,7 +9,7 @@ import { Button, Flex, message } from "antd";
 import { GetServerSidePropsContext, NextPage } from "next";
 import { useState } from "react";
 
-const AddFeature: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
+const AddFaq: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const [messageApi, contentHolder] = message.useMessage();
   const [config, setConfig] = useState<PageSiteConfig>(siteConfig);
   const [loading, setLoading] = useState<boolean>(false);
@@ -28,7 +28,7 @@ const AddFeature: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) =>
   return (
     <SiteBuilderLayout siteConfig={siteConfig} siteContent={<ContentNavigation activeMenu={"faq"} />}>
       {contentHolder}
-      <Flex align="center" justify="space-between" style={{ marginBottom: 20 }}>
+      <Flex align="center" justify="space-between" style={{ marginBottom: 20, maxWidth: 1000 }}>
         <h4 style={{ margin: "0" }}> FAQ</h4>
         <Button type="primary" loading={loading} onClick={updateYamlFile}>
           Save
@@ -39,7 +39,7 @@ const AddFeature: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) =>
   );
 };
 
-export default AddFeature;
+export default AddFaq;
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const siteConfig = getSiteConfig();

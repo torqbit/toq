@@ -100,7 +100,7 @@ const FAQForm: FC<{ siteConfig: PageSiteConfig; setConfig: (value: PageSiteConfi
               onClick={() => setAddMore(true)}
               className={styles.add__more__btn}
               style={{ width: "fit-content", marginTop: -20 }}
-              type="primary"
+              type="link"
             >
               <Flex align="center">
                 <i>{SvgIcons.plusBtn}</i>

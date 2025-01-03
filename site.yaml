@@ -73,7 +73,7 @@ site:
       title: Blogs
       description: Description on blogs
     faq:
-      enabled: true
+      enable: true
       items:
-        - question: "First question "
-          answer: "this is last question "
+        - question: How to become a pro developer?
+          answer: jjjnjnjnjnj
