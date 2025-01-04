@@ -3,7 +3,7 @@ import { IBrandConfig } from "../schema";
 export type CourseCardSize = "small" | "large";
 export interface ICourseCard {
   title: string;
-  thumbnail: string;
+  tvThumbnail: string;
   duration: string;
   description: string;
   link: string;

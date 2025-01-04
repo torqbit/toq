@@ -4,10 +4,11 @@ import { ICourseListItem } from "@/types/courses/Course";
 import { Theme } from "@/types/theme";
 import { FC, ReactNode, useState } from "react";
 import styles from "./CourseListView.module.scss";
-import { Button, Card, Flex, Space, Tabs, TabsProps, Tag } from "antd";
+import { Button, Card, Flex, Space, Tabs, TabsProps, Tag, Dropdown, MenuProps } from "antd";
 import { Role, StateType } from "@prisma/client";
 import { capsToPascalCase } from "@/lib/utils";
 import { useRouter } from "next/router";
+import Link from "next/link";
 const { Meta } = Card;
 const CourseViewItem: FC<{ course: ICourseListItem }> = ({ course }) => {
   const router = useRouter();
@@ -19,6 +20,17 @@ const CourseViewItem: FC<{ course: ICourseListItem }> = ({ course }) => {
   const handleManage = (id: number) => {
     router.push(`admin/content/course/${id}/manage`);
   };
+
+  const items: MenuProps["items"] = [
+    {
+      label: <Link href={`/courses/${course.slug}`}>View</Link>,
+      key: "1",
+    },
+    {
+      label: <Link href={`/admin/course/${course.id}/edit`}>Edit</Link>,
+      key: "2",
+    },
+  ];
 
   return (
     <Card
@@ -62,9 +74,9 @@ const CourseViewItem: FC<{ course: ICourseListItem }> = ({ course }) => {
         {course.userRole &&
           (course.userRole === Role.AUTHOR || course.userRole === Role.ADMIN) &&
           course.state == StateType.ACTIVE && (
-            <Button onClick={(e) => handleManage(course.id)} type="default">
+            <Dropdown.Button type="default" trigger={["click"]} menu={{ items }} style={{ width: "auto" }}>
               Manage
-            </Button>
+            </Dropdown.Button>
           )}
         {course.userRole && course.userRole === Role.NOT_ENROLLED && <Button type="default">Buy Now</Button>}
         {course.userRole && course.userRole === Role.STUDENT && <Button type="default">Go to Course</Button>}

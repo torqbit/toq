@@ -283,7 +283,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const { site } = siteConfig;
   if (query.order_id && typeof query.order_id === "string") {
     const pms = new PaymentManagemetService();
-    const response = await pms.updateOrder(query.order_id);
+    await pms.updateOrder(query.order_id);
   }
 
   const courseInfo = await prisma?.course.findUnique({

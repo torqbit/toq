@@ -88,7 +88,7 @@ const Courses: FC<{
               let duration = convertSecToHourandMin(totalDuration);
               return (
                 <CourseCard
-                  thumbnail={course.thumbnail as string}
+                  thumbnail={""}
                   courseName={course.name}
                   courseDescription={course.description}
                   duration={String(duration)}
