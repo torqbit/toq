@@ -1,20 +1,5 @@
 .analyticsContainer {
-  padding: 40px;
-
-  .learn_breadcrumb {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 25px;
-    margin: 0;
-    padding: 0;
-
-    color: var(--font-secondary);
-    a:hover {
-      color: var(--font-primary);
-    }
-    // color: #939db8;
-  }
+  padding: 20px;
 }
 
 .overallMemberContainer {

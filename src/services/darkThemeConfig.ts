@@ -194,7 +194,7 @@ const darkThemeConfig = (siteConfig: PageSiteConfig) => {
       },
       Breadcrumb: {
         itemColor: "#939db8",
-        linkColor: "#fff",
+        colorBgTextHover: "#000",
         separatorColor: "#939db8",
       },
       Segmented: {

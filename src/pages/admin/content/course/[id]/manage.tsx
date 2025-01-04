@@ -1,7 +1,7 @@
 import { GetServerSidePropsContext, NextPage } from "next";
 import { useSession } from "next-auth/react";
 import styles from "@/styles/Analytics.module.scss";
-import { Flex, Spin } from "antd";
+import { Breadcrumb, Flex, Spin, Tabs, TabsProps } from "antd";
 import Link from "next/link";
 import SvgIcons from "@/components/SvgIcons";
 import { useRouter } from "next/router";
@@ -18,6 +18,7 @@ import { getSiteConfig } from "@/services/getSiteConfig";
 
 const AnalyticsPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const { data: session } = useSession();
+  const [tab, setTab] = useState("1");
   const router = useRouter();
   const [overallMembers, setOverallmember] = useState<{
     totalMembers: number;
@@ -25,13 +26,25 @@ const AnalyticsPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig })
     activeMembers: number;
   }>();
   const [courseName, setCourseName] = useState<string>();
+  const items: TabsProps["items"] = [
+    {
+      key: "1",
+      label: "Analytics",
+      children: <></>,
+    },
+    {
+      key: "2",
+      label: `Enrolments`,
+      children: <></>,
+    },
+  ];
 
   const [loading, setLoading] = useState<boolean>(false);
-  const [userData, setUserData] = useState<UserAnalyseData[]>();
+  const [userData, setUserData] = useState<UserAnalyseData[]>([]);
 
   const getOverallMembers = () => {
     AnalyticsService.overAllMembers(
-      Number(router.query.courseId),
+      Number(router.query.id),
       (result) => {
         setOverallmember({
           totalEnrolled: result.totalEnrolled,
@@ -56,7 +69,7 @@ const AnalyticsPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig })
 
   const getMonthlyEnrolled = () => {
     AnalyticsService.monthlyEnrolledMembers(
-      Number(router.query.courseId),
+      Number(router.query.id),
       (result) => {
         setUserData(result.userData);
         setLoading(false);
@@ -66,7 +79,7 @@ const AnalyticsPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig })
   };
   const getMonthlyActive = () => {
     AnalyticsService.monthlyActiveMembers(
-      Number(router.query.courseId),
+      Number(router.query.id),
       (result) => {
         setUserData(result.userData);
 
@@ -106,16 +119,10 @@ const AnalyticsPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig })
           <SpinLoader />
         ) : (
           <section className={styles.analyticsContainer}>
-            <div className={styles.learn_breadcrumb}>
-              <Flex style={{ fontSize: 20 }}>
-                <Link href={"/admin/content"}>Administration</Link>{" "}
-                <div style={{ marginTop: 3 }}>{SvgIcons.chevronRight} </div>{" "}
-                <Link href={`/admin/content/course/${router.query.courseId}/edit`}>Content</Link>
-                <div style={{ marginTop: 3 }}>{SvgIcons.chevronRight} </div> {courseName}
-              </Flex>
-            </div>
+            <h4>{courseName}</h4>
+            <Tabs tabBarGutter={40} items={items} activeKey={tab} onChange={(k) => setTab(k)} />
             {overallMembers && <OverallMembersList overallMembers={overallMembers} />}
-            {userData && <CourseMembers onChange={onChange} userData={userData} />}
+            {userData.length > 0 && <CourseMembers onChange={onChange} userData={userData} />}
           </section>
         )}
       </>
