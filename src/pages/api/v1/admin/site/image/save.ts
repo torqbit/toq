@@ -27,6 +27,29 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       });
     }
 
+    const isProfile = fields.hasOwnProperty("imageType") && fields.imageType[0] && fields.imageType[0] === "profile";
+
+    if (isProfile) {
+      const profileName = `${fields.imgName[0]}`;
+
+      const profilePath = path.join(dirPath, profileName);
+
+      const filePath = path.join(dirPath, profileName);
+      const base64String = fields.base64Img[0];
+
+      const base64Data = base64String.replace(/^data:image\/\w+;base64,/, "");
+
+      fs.writeFile(profilePath, base64Data, { encoding: "base64" }, (err) => {
+        if (err) {
+          console.error("Error saving image:", err);
+        } else {
+          console.log(`Image saved to ${profilePath}`);
+        }
+      });
+
+      return res.status(200).json({ success: true, imgName: profileName });
+    }
+
     const previousImgPath = path.join(
       homeDir,
       `${appConstant.homeDirName}/${appConstant.staticFileDirName}/${fields.previousPath[0]}`
@@ -36,12 +59,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     const imgName = `${new Date().getTime()}-${fields.imgName[0]}`;
+    const filePath = path.join(dirPath, imgName);
 
     const sourcePath = files.file[0].filepath;
     const isResize = fields.hasOwnProperty("resize") && fields.resize[0] && fields.resize[0] === "true";
-    const filePath = path.join(dirPath, imgName);
     const isIcon = fields.hasOwnProperty("imageType") && fields.imageType[0] && fields.imageType[0] === "icon";
+
     let icoFileName = "favicon.ico";
+
     if (isIcon) {
       const icoFilePath = path.join(dirPath, icoFileName);
       const fileBuffer = await fs.promises.readFile(sourcePath);

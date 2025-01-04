@@ -62,6 +62,18 @@ const ContentNavigation: FC<{ activeMenu: string }> = ({ activeMenu }) => {
             </i>
           ),
         },
+        {
+          label: "Testimonials",
+          key: "testimonials",
+          icon: (
+            <i
+              style={{ fontSize: 18 }}
+              className={activeMenu === "testimonials" ? styles.selected__menu__icon : styles.content__menu__icon}
+            >
+              {SvgIcons.testimonials}
+            </i>
+          ),
+        },
       ]}
     />
   );

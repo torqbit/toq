@@ -74,7 +74,7 @@ const BlogForm: FC<{
                   <ConfigForm
                     input={
                       <Form.Item
-                        noStyle
+                        noStyle={i === blogItems.length - 1}
                         name={item.inputName}
                         rules={[{ required: !item.optional, message: `Field is required!` }]}
                         key={i}
