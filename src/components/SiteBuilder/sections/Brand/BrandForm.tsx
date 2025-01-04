@@ -335,7 +335,7 @@ const BrandForm: FC<{
               },
             ]}
           />
-          <Form.Item name={"social"}>
+          <Form.Item name={"social"} noStyle>
             <Input
               name="social"
               addonBefore={`https://${selectedSegment}.${selectedSegment === "discord" ? "gg" : "com"}`}
@@ -400,7 +400,9 @@ const BrandForm: FC<{
                 inputName={""}
                 optional={item.optional}
               />
-              {brandItems.length !== i + 1 && <Divider style={{ margin: "0px 0px 15px 0px" }} />}
+              {brandItems.length !== i + 1 && (
+                <Divider style={{ margin: "0px 0px 15px 0px", color: "var(--bg-primary)", borderBlockStart: "none" }} />
+              )}
             </>
           );
         })}

@@ -50,6 +50,18 @@ const ContentNavigation: FC<{ activeMenu: string }> = ({ activeMenu }) => {
             </i>
           ),
         },
+        {
+          label: "FAQ",
+          key: "faq",
+          icon: (
+            <i
+              style={{ fontSize: 18 }}
+              className={activeMenu === "faq" ? styles.selected__menu__icon : styles.content__menu__icon}
+            >
+              {SvgIcons.faq}
+            </i>
+          ),
+        },
       ]}
     />
   );

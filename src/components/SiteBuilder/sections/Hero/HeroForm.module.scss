@@ -1,6 +1,4 @@
 .add__hero__wrapper {
-  background-color: var(--bg-content-form);
-  padding: 20px;
   h4 {
     margin: 0;
   }
@@ -27,5 +25,11 @@
       line-height: 0;
       min-height: 0;
     }
+  }
+}
+
+.radio {
+  input {
+    width: fit-content;
   }
 }

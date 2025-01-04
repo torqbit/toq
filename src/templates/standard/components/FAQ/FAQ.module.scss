@@ -1,0 +1,43 @@
+.faq__container {
+  padding: 20px 0px;
+  max-width: var(--marketing-container-width);
+  margin: 0 auto;
+}
+
+.add__more__btn {
+  i {
+    line-height: 0;
+  }
+}
+
+.faq__form__container {
+  max-width: 1000px;
+  background-color: var(--bg-primary);
+  margin: 0px 0px 30px 0px;
+  border-radius: 8px;
+
+  form {
+    width: 100%;
+    > div:first-child {
+      padding-top: 0px;
+    }
+    > div:last-child {
+      padding-bottom: 0px;
+    }
+  }
+  .edit__pipe {
+    height: 20px;
+    width: 2px;
+    background-color: var(--bg-tag);
+  }
+  i {
+    font-size: 18px;
+    color: var(--font-secondary);
+    line-height: 0;
+  }
+}
+
+.faq__design__wrapper {
+  background-color: var(--bg-primary);
+  text-align: center;
+}

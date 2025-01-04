@@ -59,7 +59,7 @@ const BlogForm: FC<{
       </Flex>
       {config.sections?.blog?.enable && (
         <>
-          <Divider style={{ margin: "15px 0px " }} />
+          <Divider style={{ margin: "15px 0px ", color: "var(--bg-primary)" }} />
           <Form
             form={form}
             requiredMark={false}
@@ -74,6 +74,7 @@ const BlogForm: FC<{
                   <ConfigForm
                     input={
                       <Form.Item
+                        noStyle
                         name={item.inputName}
                         rules={[{ required: !item.optional, message: `Field is required!` }]}
                         key={i}
@@ -85,10 +86,13 @@ const BlogForm: FC<{
                     description={item.description}
                     layout={item.layout}
                     divider={i === blogItems.length - 1 ? false : true}
-                    inputName={""}
                     optional={item.optional}
                   />
-                  {blogItems.length !== i + 1 && <Divider style={{ margin: "0px 0px 15px 0px" }} />}
+                  {blogItems.length !== i + 1 && (
+                    <Divider
+                      style={{ margin: "0px 0px 15px 0px", color: "var(--bg-primary)", borderBlockStart: "none" }}
+                    />
+                  )}
                 </>
               );
             })}
