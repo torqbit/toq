@@ -2,8 +2,6 @@ import { GetServerSidePropsContext, NextPage } from "next";
 import { useSession } from "next-auth/react";
 import styles from "@/styles/Analytics.module.scss";
 import { Breadcrumb, Flex, Spin, Tabs, TabsProps } from "antd";
-import Link from "next/link";
-import SvgIcons from "@/components/SvgIcons";
 import { useRouter } from "next/router";
 import OverallMembersList from "@/components/Admin/Analytics/OverallMembersList";
 import CourseMembers from "@/components/Admin/Analytics/CourseMembers";
@@ -15,6 +13,7 @@ import SpinLoader from "@/components/SpinLoader/SpinLoader";
 import AppLayout from "@/components/Layouts/AppLayout";
 import { PageSiteConfig } from "@/services/siteConstant";
 import { getSiteConfig } from "@/services/getSiteConfig";
+import CourseStats from "@/components/Admin/Analytics/CourseStats/CourseStats";
 
 const AnalyticsPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const { data: session } = useSession();
@@ -30,7 +29,7 @@ const AnalyticsPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig })
     {
       key: "1",
       label: "Analytics",
-      children: <></>,
+      children: <CourseStats courseId={Number(router.query.id)} />,
     },
     {
       key: "2",
@@ -60,7 +59,6 @@ const AnalyticsPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig })
     AnalyticsService.monthlyMembers(
       (result) => {
         setUserData(result.userData);
-
         setLoading(false);
       },
       (error) => {}
@@ -119,10 +117,8 @@ const AnalyticsPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig })
           <SpinLoader />
         ) : (
           <section className={styles.analyticsContainer}>
-            <h4>{courseName}</h4>
+            <h3>{courseName}</h3>
             <Tabs tabBarGutter={40} items={items} activeKey={tab} onChange={(k) => setTab(k)} />
-            {overallMembers && <OverallMembersList overallMembers={overallMembers} />}
-            {userData.length > 0 && <CourseMembers onChange={onChange} userData={userData} />}
           </section>
         )}
       </>

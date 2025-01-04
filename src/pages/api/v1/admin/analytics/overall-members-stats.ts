@@ -14,8 +14,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     });
     const enrolledMembers = await prisma.courseRegistration.findMany({
       distinct: ["studentId"],
+      select: {
+        registrationId: true,
+      },
       where: {
-        courseId: Number(courseId),
+        order: {
+          productId: Number(courseId),
+        },
       },
     });
     let weekAgoDate = new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000);

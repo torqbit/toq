@@ -10,7 +10,6 @@ const OverallMembersList: FC<{
 }> = ({ overallMembers }) => {
   return (
     <div className={styles.overallMemberContainer}>
-      <h1>Analytics</h1>
       <div className={styles.memberLists}>
         <div>
           <div>Total Members</div>
