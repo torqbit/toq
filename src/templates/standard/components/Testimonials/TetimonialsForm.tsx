@@ -84,7 +84,7 @@ const TestimonialsForm: FC<ITestimonialForm> = ({ handleTestimonial, form, index
                 name={"description"}
                 rules={[{ required: true, message: "Description is required" }]}
               >
-                <Input.TextArea rows={3} placeholder="Description for the testimonials" />
+                <Input.TextArea maxLength={200} rows={3} placeholder="Description for the testimonials" />
               </Form.Item>
             }
             title={"Description"}
