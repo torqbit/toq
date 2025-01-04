@@ -8,7 +8,7 @@ import { CourseType } from "@prisma/client";
 import CourseSkeleton from "./CourseSkeleton";
 
 const CourseCard: FC<ICourseCard> = ({
-  thumbnail,
+  tvThumbnail,
   title,
   description,
   link,
@@ -22,7 +22,7 @@ const CourseCard: FC<ICourseCard> = ({
 }) => {
   return (
     <Link href={`${link}`} className={`${styles.courses__card} courses__card__${size} ${cardClass}`}>
-      <img alt={title} aria-label={`icon for ${title.toLowerCase()}`} src={thumbnail} />
+      <img alt={title} aria-label={`icon for ${title.toLowerCase()}`} src={tvThumbnail} />
 
       <div>
         <div>
@@ -67,7 +67,7 @@ const CourseList: FC<ICourseInfo> = ({ title, description, courseList, previewMo
                     return (
                       <CourseCard
                         key={i}
-                        thumbnail={course.thumbnail}
+                        tvThumbnail={course.tvThumbnail}
                         title={course.title}
                         description={course.description}
                         link={`${course.link}`}

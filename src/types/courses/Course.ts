@@ -16,7 +16,6 @@ import { APIResponse } from "../apis";
 import { JsonObject } from "@prisma/client/runtime/library";
 import { IAssignmentDetails } from "./assignment";
 
-
 export interface IHeroCoursePreview {
   courseName: string;
   authorImage: string;
@@ -137,7 +136,6 @@ export interface ICoursePreviewDetail {
   chapterName?: string;
   watchedRes?: number;
   courseState: StateType;
-  thumbnail?: string;
   difficultyLevel?: courseDifficultyType;
   authorImage?: string;
   authorName?: string;
@@ -159,7 +157,7 @@ export interface ICoursePriviewInfo {
   progress: number;
   totalWatched: number;
   courseState: $Enums.StateType;
-  thumbnail: string;
+  tvThumbnail: string;
   difficultyLevel: $Enums.courseDifficultyType;
   authorImage: string;
   authorName: string;

@@ -18,7 +18,6 @@ export const extractLessonAndChapterDetail = (
     courseType: courseDetail[0]?.courseType,
     coursePrice: courseDetail[0]?.coursePrice,
     userRole: userRole,
-    thumbnail: courseDetail[0]?.thumbnail,
     difficultyLevel: courseDetail[0]?.difficultyLevel,
     courseState: courseDetail[0]?.courseState,
     authorImage: courseDetail[0]?.authorImage,
@@ -90,7 +89,7 @@ const courseDetailForStudent = async (
           ICoursePreviewDetail[]
         >`SELECT  ch.sequenceId as chapterSeq, re.sequenceId as resourceSeq, re.resourceId, re.name as lessonName, 
         co.name as courseName, co.description, co.tvUrl,co.tvThumbnail as videoThumbnail,co.previewMode,co.courseType,co.coursePrice,re.contentType as contentType,co.state as courseState,co.totalResources as totalLessons,
-        co.thumbnail as thumbnail,co.difficultyLevel,u.name as authorName,u.image as authorImage,assign.estimatedDuration,
+        co.difficultyLevel,u.name as authorName,u.image as authorImage,assign.estimatedDuration,
         vi.videoDuration, ch.chapterId, 
         ch.name as chapterName, cp.resourceId as watchedRes FROM Course as co 
         INNER JOIN \`Order\` as ord ON ord.productId = co.courseId
@@ -114,7 +113,7 @@ const courseDetailForStudent = async (
           ICoursePreviewDetail[]
         >`SELECT  ch.sequenceId as chapterSeq, re.sequenceId as resourceSeq, re.resourceId, re.name as lessonName, 
         co.name as courseName, co.description, co.tvUrl,co.tvThumbnail as videoThumbnail,co.previewMode,co.courseType,co.coursePrice,re.contentType as contentType,co.state as courseState,co.totalResources as totalLessons,
-        co.thumbnail as thumbnail,co.difficultyLevel,u.name as authorName,u.image as authorImage,assign.estimatedDuration,
+        co.difficultyLevel,u.name as authorName,u.image as authorImage,assign.estimatedDuration,
          vi.videoDuration, ch.chapterId, 
         ch.name as chapterName, cp.resourceId as watchedRes FROM Course as co 
         INNER JOIN \`Order\` as ord ON ord.productId = co.courseId
@@ -148,7 +147,7 @@ const courseDetail = async (
       ICoursePreviewDetail[]
     >`SELECT  ch.sequenceId as chapterSeq, re.sequenceId as resourceSeq, re.resourceId, re.name as lessonName, 
     co.name as courseName, co.description, co.tvUrl,co.tvThumbnail as videoThumbnail,co.previewMode,co.courseType,co.coursePrice,re.contentType as contentType,co.state as courseState,co.totalResources as totalLessons,
-    co.thumbnail as thumbnail,co.difficultyLevel,u.name as authorName,u.image as authorImage,assign.estimatedDuration,
+    co.difficultyLevel,u.name as authorName,u.image as authorImage,assign.estimatedDuration,
     vi.videoDuration, ch.chapterId, 
     ch.name as chapterName, NULL as watchedRes FROM Course as co 
     INNER JOIN User as u ON u.id = co.authorId

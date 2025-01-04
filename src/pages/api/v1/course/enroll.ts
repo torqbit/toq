@@ -67,7 +67,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       },
       select: {
         courseType: true,
-        thumbnail: true,
+        tvThumbnail: true,
         name: true,
         slug: true,
         expiryInDays: true,
@@ -108,7 +108,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           url: `${process.env.NEXTAUTH_URL}/courses/${course.slug}`,
           course: {
             name: course.name,
-            thumbnail: course.thumbnail,
+            thumbnail: course.tvThumbnail,
           },
         };
 
