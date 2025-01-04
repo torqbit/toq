@@ -16,6 +16,7 @@ import { APIResponse } from "../apis";
 import { JsonObject } from "@prisma/client/runtime/library";
 import { IAssignmentDetails } from "./assignment";
 
+
 export interface IHeroCoursePreview {
   courseName: string;
   authorImage: string;
@@ -35,6 +36,21 @@ export interface ChapterDetail {
   name: string;
   resource: IResourceDetail[];
 }
+
+export interface ICourseListItem {
+  id: number;
+  slug: string;
+  title: string;
+  difficultyLevel: courseDifficultyType;
+  author: string;
+  description: string;
+  price: number;
+  currency: string;
+  state: StateType;
+  trailerThumbnail?: string;
+  userRole?: Role;
+}
+
 export interface IAssignmentDetail {
   assignmentId: number;
   content: IAssignmentDetails;

@@ -8,11 +8,9 @@ import { useRouter } from "next/router";
 import OverallMembersList from "@/components/Admin/Analytics/OverallMembersList";
 import CourseMembers from "@/components/Admin/Analytics/CourseMembers";
 import AnalyticsService, { UserAnalyseData } from "@/services/AnalyticsService";
-import { error } from "console";
 import { useEffect, useState } from "react";
 import { SegmentedValue } from "antd/es/segmented";
 import ProgramService from "@/services/ProgramService";
-import { LoadingOutlined } from "@ant-design/icons";
 import SpinLoader from "@/components/SpinLoader/SpinLoader";
 import AppLayout from "@/components/Layouts/AppLayout";
 import { PageSiteConfig } from "@/services/siteConstant";
@@ -86,10 +84,9 @@ const AnalyticsPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig })
 
   useEffect(() => {
     setLoading(true);
-
-    router.query.courseId &&
+    router.query.id &&
       ProgramService.getCourseDetails(
-        Number(router.query.courseId),
+        Number(router.query.id),
         (result) => {
           setCourseName(result.courseDetails.name);
           getOverallMembers();
