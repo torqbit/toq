@@ -53,6 +53,9 @@
 }
 
 .add__testimonial {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
   i {
     line-height: 0;
   }

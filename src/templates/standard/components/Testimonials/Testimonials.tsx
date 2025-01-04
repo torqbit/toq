@@ -2,7 +2,7 @@ import { FC } from "react";
 import styles from "./Testimonials.module.scss";
 import { PageSiteConfig } from "@/services/siteConstant";
 import { ITestimonialItems } from "@/types/landing/testimonial";
-import { Carousel, Flex } from "antd";
+import { Carousel, Flex, Skeleton } from "antd";
 import SvgIcons from "@/components/SvgIcons";
 
 const TestimonialCard: FC<{ testimonialItem: ITestimonialItems }> = ({ testimonialItem }) => {
@@ -23,26 +23,41 @@ const TestimonialCard: FC<{ testimonialItem: ITestimonialItems }> = ({ testimoni
   );
 };
 
-const Testimonial: FC<{ siteConfig: PageSiteConfig; testimonialList: ITestimonialItems[] }> = ({
+const Testimonial: FC<{ siteConfig: PageSiteConfig; testimonialList: ITestimonialItems[]; previewMode?: boolean }> = ({
   siteConfig,
   testimonialList,
+  previewMode,
 }) => {
   return (
     <>
-      {testimonialList.length > 0 && (
+      {(testimonialList.length > 0 || previewMode) && (
         <section className={styles.testimonial__preview}>
           <div>
-            <h1>Teachers love our product</h1>
-            <p>Find out what excites our users, when using our product</p>
+            <h1>{siteConfig.sections?.testimonials?.title}</h1>
+            <p>{siteConfig.sections?.testimonials?.description}</p>
           </div>
           <Carousel dots={{ className: styles.caroursel__dots }} className={styles.carousel__wrapper} autoplay>
-            {testimonialList.map((testimonial, i) => {
-              return (
+            {testimonialList.length > 0 ? (
+              testimonialList.map((testimonial, i) => {
+                return (
+                  <div>
+                    <TestimonialCard key={i} testimonialItem={testimonial} />
+                  </div>
+                );
+              })
+            ) : (
+              <Flex vertical gap={20} justify="space-between" className={styles.testimonial__card}>
                 <div>
-                  <TestimonialCard key={i} testimonialItem={testimonial} />
+                  <Skeleton.Avatar shape="circle" size={40} />
+                  <Skeleton paragraph title={{ style: { marginTop: 30 } }} />
                 </div>
-              );
-            })}
+                <Flex align="center" gap={10}>
+                  <Skeleton.Avatar shape="circle" size={40} style={{ marginTop: 20 }} />
+
+                  <Skeleton paragraph={{ rows: 0 }} title={{ style: { marginTop: 40 } }} />
+                </Flex>
+              </Flex>
+            )}
           </Carousel>
         </section>
       )}

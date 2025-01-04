@@ -8,6 +8,8 @@ export interface ITestimonialItems {
 
 export interface ITestimonialInfo {
   enabled?: boolean;
+  title?: string;
+  description?: string;
   items?: ITestimonialItems[];
 }
 

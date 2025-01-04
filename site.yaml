@@ -80,5 +80,7 @@ site:
             section from the dashboard. Here, you’ll find all the courses
             available to you. Simply click on a course title to start learning!
     testimonials:
-      enabled: false
-      items:
+      enabled: true
+      title: "Teachers love our product "
+      description: "Find out what excites our users, when using our product "
+      items: null

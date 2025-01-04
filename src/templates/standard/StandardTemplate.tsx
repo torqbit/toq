@@ -68,14 +68,13 @@ const StandardTemplate: FC<IStandardTemplateProps> = ({ user, siteConfig, course
       {siteConfig.sections?.faq?.enabled && (previewMode || siteConfig.sections.faq.items.length > 0) && (
         <FAQ siteConfig={siteConfig} faqList={siteConfig.sections.faq.items} />
       )}
-      {siteConfig.sections?.testimonials?.enabled &&
-        (previewMode ||
-          (siteConfig.sections?.testimonials.items && siteConfig.sections.testimonials.items.length > 0)) && (
-          <Testimonial
-            siteConfig={siteConfig}
-            testimonialList={siteConfig.sections.testimonials.items || DEFAULT_THEME.sections.tesimonials.items}
-          />
-        )}
+      {siteConfig.sections?.testimonials?.enabled && (
+        <Testimonial
+          siteConfig={siteConfig}
+          previewMode={previewMode}
+          testimonialList={siteConfig.sections.testimonials.items || DEFAULT_THEME.sections.tesimonials.items}
+        />
+      )}
     </MarketingLayout>
   );
 };
