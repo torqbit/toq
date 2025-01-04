@@ -89,7 +89,7 @@ site:
           author:
             name: mehrabs
             img: https://dev-test-101-pz.b-cdn.net/user/profile/mehrab-1734332086098.jpg
-            designation: abc dss
+            designation: Full stack developer at Torqbit
         - description: After signing up, log in to your account and navigate to the
             "Courses" section from the dashboard. Here, you’ll find all the
             courses available to you. Simply click on a course title to start
@@ -97,4 +97,4 @@ site:
           author:
             name: mehrabs
             img: https://dev-test-101-pz.b-cdn.net/user/profile/mehrab-1734332086098.jpg
-            designation: abc dss
+            designation: HR

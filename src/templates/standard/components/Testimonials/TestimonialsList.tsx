@@ -36,7 +36,10 @@ const TestimonialList: FC<{
                   <Flex align="center" gap={10}>
                     <img src={testimonial.author.img} alt="author image" />
                     <div className={styles.edit__pipe}></div>
-                    <p>{testimonial.author.designation}</p>
+                    <div>
+                      <div>{testimonial.author.name}</div>
+                      <div>{testimonial.author.designation}</div>
+                    </div>
                   </Flex>
                 )
               }
