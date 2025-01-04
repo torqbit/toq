@@ -24,6 +24,20 @@ const AddTestimonial: FC<{ siteConfig: PageSiteConfig; setConfig: (value: PageSi
   const [form] = Form.useForm();
   const [basicForm] = Form.useForm();
 
+  const updateSiteConfig = (testimonialItems: ITestimonialItems[]) => {
+    siteConfig.sections?.testimonials &&
+      setConfig({
+        ...siteConfig,
+        sections: {
+          ...siteConfig.sections,
+          testimonials: {
+            ...siteConfig.sections?.testimonials,
+            items: testimonialItems,
+          },
+        },
+      });
+  };
+
   const onSave = async () => {
     const image = await beforeUpload(form.getFieldsValue().profile, form.getFieldsValue().name);
     if (testimonialList.length > 0) {
@@ -39,27 +53,19 @@ const AddTestimonial: FC<{ siteConfig: PageSiteConfig; setConfig: (value: PageSi
           },
         },
       ]);
-      setConfig({
-        ...siteConfig,
-        sections: {
-          ...siteConfig.sections,
-          testimonials: {
-            ...siteConfig.sections?.testimonials,
-            items: [
-              ...testimonialList,
-              {
-                description: form.getFieldsValue().description,
-                author: {
-                  name: form.getFieldsValue().name,
-                  img: image ? image : form.getFieldsValue().profile,
 
-                  designation: form.getFieldsValue().designation,
-                },
-              },
-            ],
+      updateSiteConfig([
+        ...testimonialList,
+        {
+          description: form.getFieldsValue().description,
+          author: {
+            name: form.getFieldsValue().name,
+            img: image ? image : form.getFieldsValue().profile,
+
+            designation: form.getFieldsValue().designation,
           },
         },
-      });
+      ]);
     } else {
       setTestimonialList([
         {
@@ -72,25 +78,17 @@ const AddTestimonial: FC<{ siteConfig: PageSiteConfig; setConfig: (value: PageSi
           },
         },
       ]);
-      setConfig({
-        ...siteConfig,
-        sections: {
-          ...siteConfig.sections,
-          testimonials: {
-            ...siteConfig.sections?.testimonials,
-            items: [
-              {
-                description: form.getFieldsValue().description,
-                author: {
-                  name: form.getFieldsValue().name,
-                  img: image ? image : form.getFieldsValue().profile,
-                  designation: form.getFieldsValue().designation,
-                },
-              },
-            ],
+
+      updateSiteConfig([
+        {
+          description: form.getFieldsValue().description,
+          author: {
+            name: form.getFieldsValue().name,
+            img: image ? image : form.getFieldsValue().profile,
+            designation: form.getFieldsValue().designation,
           },
         },
-      });
+      ]);
     }
 
     form.resetFields();
@@ -137,17 +135,8 @@ const AddTestimonial: FC<{ siteConfig: PageSiteConfig; setConfig: (value: PageSi
           author: { name: authorName, img: imgPath || authorImage, designation },
         };
       }
-      setConfig({
-        ...siteConfig,
-        sections: {
-          ...siteConfig.sections,
-          testimonials: {
-            ...siteConfig.sections?.testimonials,
+      updateSiteConfig(updatedItems);
 
-            items: updatedItems,
-          },
-        },
-      });
       return updatedItems;
     });
   };
@@ -155,33 +144,24 @@ const AddTestimonial: FC<{ siteConfig: PageSiteConfig; setConfig: (value: PageSi
   const onDelete = (index: number) => {
     setTestimonialList((prevItems) => {
       let updatedList = prevItems.filter((_, i) => i !== index);
+      updateSiteConfig(updatedList);
+      return updatedList;
+    });
+  };
+
+  const onSaveBasicInfo = () => {
+    siteConfig.sections?.testimonials &&
       setConfig({
         ...siteConfig,
         sections: {
           ...siteConfig.sections,
           testimonials: {
             ...siteConfig.sections?.testimonials,
-
-            items: updatedList,
+            title: basicForm.getFieldsValue().title,
+            description: basicForm.getFieldsValue().description,
           },
         },
       });
-      return updatedList;
-    });
-  };
-
-  const onSaveBasicInfo = () => {
-    setConfig({
-      ...siteConfig,
-      sections: {
-        ...siteConfig.sections,
-        testimonials: {
-          ...siteConfig.sections?.testimonials,
-          title: basicForm.getFieldsValue().title,
-          description: basicForm.getFieldsValue().description,
-        },
-      },
-    });
     messageApi.success("Basic info has been updated");
   };
 
