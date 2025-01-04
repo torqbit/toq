@@ -530,8 +530,8 @@ model Assignment {
   content           Json?
   submissionConfig  Json?
   estimatedDuration Int?
-  maximumPoints     Int
-  passingScore      Int
+  maximumPoints     Int                    @default(10)
+  passingScore      Int                    @default(8)
   lesson            Resource               @relation(fields: [lessonId], references: [resourceId], onDelete: Cascade)
   submission        AssignmentSubmission[]
 

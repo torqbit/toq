@@ -243,16 +243,18 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
       setConversationLoading({ postLoading: false, replyLoading: false });
     }
   };
-  useEffect(() => {
-    if (user) {
-      if (typeof intervalId === "undefined") {
-        intervalId = setInterval(() => {
-          getLatestNotificationCount();
-        }, 5000);
-      }
-    }
-    return () => intervalId && clearInterval(Number(intervalId));
-  });
+
+  //TODO: Disabled notifications for now
+  // useEffect(() => {
+  //   if (user) {
+  //     if (typeof intervalId === "undefined") {
+  //       intervalId = setInterval(() => {
+  //         getLatestNotificationCount();
+  //       }, 5000);
+  //     }
+  //   }
+  //   return () => intervalId && clearInterval(Number(intervalId));
+  // });
 
   useEffect(() => {
     window.addEventListener("online", () => {

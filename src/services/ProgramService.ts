@@ -240,7 +240,6 @@ class ProgramService {
     });
   };
 
-
   getAllCourse = (
     programId: number,
     state: string,
@@ -301,9 +300,8 @@ class ProgramService {
         const response = r as APIResponse<ICourseListItem[]>;
         handleResponse(response);
       });
-    }
-    );
-  }
+    });
+  };
 
   getCourseList = (
     courseListPreview: boolean,

@@ -6,8 +6,20 @@ import { FC, ReactNode, useState } from "react";
 import styles from "./CourseListView.module.scss";
 import { Button, Card, Flex, Space, Tabs, TabsProps, Tag } from "antd";
 import { Role, StateType } from "@prisma/client";
+import { capsToPascalCase } from "@/lib/utils";
+import { useRouter } from "next/router";
 const { Meta } = Card;
 const CourseViewItem: FC<{ course: ICourseListItem }> = ({ course }) => {
+  const router = useRouter();
+
+  const handleEdit = (id: number) => {
+    router.push(`admin/content/course/${id}/edit`);
+  };
+
+  const handleManage = (id: number) => {
+    router.push(`admin/content/course/${id}/manage`);
+  };
+
   return (
     <Card
       className={styles.course__card}
@@ -21,9 +33,11 @@ const CourseViewItem: FC<{ course: ICourseListItem }> = ({ course }) => {
               <Tag bordered={true} style={{ fontWeight: "normal" }}>
                 {course.difficultyLevel}
               </Tag>
-              <Tag bordered={true} color="warning" style={{ fontWeight: "normal" }}>
-                {course.state.toLocaleLowerCase()}
-              </Tag>
+              {course.state === StateType.DRAFT && (
+                <Tag bordered={true} color="warning" style={{ fontWeight: "normal" }}>
+                  {capsToPascalCase(StateType.DRAFT)}
+                </Tag>
+              )}
             </Space>
             <h4 style={{ marginTop: 5, marginBottom: 5 }}>{course.title}</h4>
             <p style={{ fontWeight: "normal", marginBottom: 0, fontSize: 14 }}>
@@ -37,8 +51,21 @@ const CourseViewItem: FC<{ course: ICourseListItem }> = ({ course }) => {
         <div>
           {course.currency} {course.price}
         </div>
-        {course.userRole && course.userRole === Role.ADMIN && <Button type="default">Manage</Button>}
-        {course.userRole && course.userRole === Role.AUTHOR && <Button type="default">Manage</Button>}
+
+        {course.userRole &&
+          (course.userRole === Role.AUTHOR || course.userRole === Role.ADMIN) &&
+          course.state == StateType.DRAFT && (
+            <Button onClick={(e) => handleEdit(course.id)} type="default">
+              Edit
+            </Button>
+          )}
+        {course.userRole &&
+          (course.userRole === Role.AUTHOR || course.userRole === Role.ADMIN) &&
+          course.state == StateType.ACTIVE && (
+            <Button onClick={(e) => handleManage(course.id)} type="default">
+              Manage
+            </Button>
+          )}
         {course.userRole && course.userRole === Role.NOT_ENROLLED && <Button type="default">Buy Now</Button>}
         {course.userRole && course.userRole === Role.STUDENT && <Button type="default">Go to Course</Button>}
       </Flex>
