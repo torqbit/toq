@@ -1,4 +1,5 @@
 import { FormInstance } from "antd";
+import { RcFile } from "antd/es/upload";
 
 export interface ITestimonialItems {
   author: { name: string; img: string; designation: string };
@@ -11,10 +12,8 @@ export interface ITesimonialInfo {
 }
 
 export interface ITestimonialForm {
-  handleTestimonial: () => void;
-  extra: React.ReactNode;
-  title: string;
-  authorName: string;
-  authorImg: string;
+  handleTestimonial: (file: RcFile) => void;
   form: FormInstance;
+  index?: number;
+  edit?: boolean;
 }

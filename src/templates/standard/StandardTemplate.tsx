@@ -25,7 +25,6 @@ interface IStandardTemplateProps {
 const StandardTemplate: FC<IStandardTemplateProps> = ({ user, siteConfig, courseList, previewMode, blogList }) => {
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
   const featureInfo = siteConfig.sections?.features;
-
   return (
     <MarketingLayout
       user={user}

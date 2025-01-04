@@ -8,19 +8,7 @@ const TestimonialDesign: FC<{
   config: PageSiteConfig;
   updateSiteConfig: (config: PageSiteConfig) => void;
 }> = ({ updateSiteConfig, config }) => {
-  const [enable, setEnable] = useState<boolean | undefined>(config.sections?.testimonials?.enabled);
   const router = useRouter();
-  useEffect(() => {
-    config.sections?.testimonials?.items &&
-      config.sections.testimonials.items.length > 0 &&
-      updateSiteConfig({
-        ...config,
-        sections: {
-          ...config.sections,
-          testimonials: { ...config.sections?.testimonials, enabled: !enable },
-        },
-      });
-  }, [enable]);
   return (
     <div className={styles.testimonial__design__wrapper}>
       {config.sections?.testimonials?.items && config.sections?.testimonials?.items.length === 0 ? (
@@ -45,7 +33,13 @@ const TestimonialDesign: FC<{
             size="small"
             value={config.sections?.testimonials?.enabled}
             onChange={(value) => {
-              setEnable(!enable);
+              updateSiteConfig({
+                ...config,
+                sections: {
+                  ...config.sections,
+                  testimonials: { ...config.sections?.testimonials, enabled: !config.sections?.testimonials?.enabled },
+                },
+              });
             }}
           />
         </Flex>

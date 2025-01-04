@@ -7,7 +7,7 @@ import TestimonialsForm from "./TetimonialsForm";
 import ConfigForm from "@/components/Configuration/ConfigForm";
 
 const TestimonialList: FC<{
-  onUpdate: (description: string, designation: string, index: number) => void;
+  onUpdate: (description: string, designation: string, authorName: string, authorImage: string, index: number) => void;
   onDelete: (index: number) => void;
   testimonialList: ITestimonialItems[];
   isEdit: boolean;
@@ -18,7 +18,13 @@ const TestimonialList: FC<{
   const [form] = Form.useForm();
   const handleTestimonial = () => {
     typeof activeIndex === "number" &&
-      onUpdate(form.getFieldsValue().description, form.getFieldsValue().designation, activeIndex);
+      onUpdate(
+        form.getFieldsValue().description,
+        form.getFieldsValue().designation,
+        form.getFieldsValue().name,
+        form.getFieldsValue().profile,
+        activeIndex
+      );
     form.resetFields();
     setEdit(false);
   };
@@ -70,6 +76,9 @@ const TestimonialList: FC<{
                         setActiveIndex(i);
                         form.setFieldValue("designation", testimonial.author.designation);
                         form.setFieldValue("description", testimonial.description);
+                        form.setFieldValue("profile", testimonial.author.img);
+
+                        form.setFieldValue("name", testimonial.author.name);
                       }}
                     >
                       {SvgIcons.boxEdit}
@@ -80,39 +89,7 @@ const TestimonialList: FC<{
               showArrow={false}
             >
               {isEdit && activeIndex === i ? (
-                <Form onFinish={handleTestimonial} key={i} form={form} requiredMark={false}>
-                  <div style={{ margin: "0px 0px 10px 0px" }}>
-                    <ConfigForm
-                      input={
-                        <Form.Item
-                          name={"designation"}
-                          rules={[{ required: true, message: "Designation is required" }]}
-                        >
-                          {<Input style={{ width: 350 }} placeholder={"Enter your designation"} />}
-                        </Form.Item>
-                      }
-                      title={"Designation"}
-                      description={"Add your designation "}
-                      divider={true}
-                    />
-                  </div>
-                  <ConfigForm
-                    layout="vertical"
-                    input={
-                      <Form.Item
-                        noStyle
-                        style={{ width: "100%" }}
-                        name={"description"}
-                        rules={[{ required: true, message: "Description is required" }]}
-                      >
-                        <Input.TextArea style={{ marginTop: 10 }} rows={3} placeholder="Description for the question" />
-                      </Form.Item>
-                    }
-                    title={"Description"}
-                    description={"Describe about the question asked by the students "}
-                    divider={false}
-                  />
-                </Form>
+                <TestimonialsForm handleTestimonial={handleTestimonial} form={form} edit={true} />
               ) : (
                 <p>{testimonial.description}</p>
               )}

@@ -8,8 +8,10 @@ import SvgIcons from "@/components/SvgIcons";
 const TestimonialCard: FC<{ testimonialItem: ITestimonialItems }> = ({ testimonialItem }) => {
   return (
     <div className={styles.testimonial__card}>
-      <i>{SvgIcons.quotes}</i>
-      <p>{testimonialItem.description}</p>
+      <Flex vertical gap={10}>
+        <i>{SvgIcons.quotes}</i>
+        <p>{testimonialItem.description}</p>
+      </Flex>
       <Flex align="center" gap={10}>
         <img src={testimonialItem.author.img} alt="author_image" />
         <div>

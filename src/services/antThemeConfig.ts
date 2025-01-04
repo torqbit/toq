@@ -71,6 +71,9 @@ const antThemeConfig = (siteConfig: PageSiteConfig) => {
         paddingLG: 20,
         colorBorderSecondary: "#d9d9d9",
       },
+      Carousel: {
+        colorBgContainer: `${siteConfig.brand?.brandColor}`,
+      },
       Form: {
         labelColor: "#888",
       },

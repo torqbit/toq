@@ -1,10 +1,8 @@
 import SiteBuilderLayout from "@/components/Layouts/SiteBuilderLayout";
 import ContentNavigation from "@/components/SiteBuilder/ContentNavigation";
-import FeatureForm from "@/components/SiteBuilder/sections/Feature/FeatureForm";
 import { getSiteConfig } from "@/services/getSiteConfig";
 import { postFetch } from "@/services/request";
 import { PageSiteConfig } from "@/services/siteConstant";
-import FAQForm from "@/templates/standard/components/FAQ/FAQForm";
 import AddTestimonial from "@/templates/standard/components/Testimonials/AddTestimonials";
 import { Button, Flex, message } from "antd";
 import { GetServerSidePropsContext, NextPage } from "next";
@@ -14,13 +12,15 @@ const Testimonials: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) 
   const [messageApi, contentHolder] = message.useMessage();
   const [config, setConfig] = useState<PageSiteConfig>(siteConfig);
   const [loading, setLoading] = useState<boolean>(false);
+
   const updateYamlFile = async () => {
     setLoading(true);
+
     const res = await postFetch({ config }, "/api/v1/admin/site/site-info/update");
     const result = await res.json();
     if (res.ok) {
       setLoading(false);
-      messageApi.success(result.message);
+      messageApi.success("Testimonials has been updated");
     } else {
       setLoading(false);
       messageApi.error(result.error);

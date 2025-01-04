@@ -1,12 +1,14 @@
 import SvgIcons from "@/components/SvgIcons";
 import { ITestimonialItems } from "@/types/landing/testimonial";
-import { Button, Flex, Form } from "antd";
+import { Button, Flex, Form, message } from "antd";
 import { FC, useState } from "react";
 import styles from "./Testimonials.module.scss";
 import { PageSiteConfig } from "@/services/siteConstant";
-import { useSession } from "next-auth/react";
 import TestimonialsForm from "./TetimonialsForm";
 import TestimonialList from "./TestimonialsList";
+import { postWithFile } from "@/services/request";
+
+import ConfigFormLayout from "@/components/Configuration/ConfigFormLayout";
 
 const AddTestimonial: FC<{ siteConfig: PageSiteConfig; setConfig: (value: PageSiteConfig) => void }> = ({
   siteConfig,
@@ -17,17 +19,18 @@ const AddTestimonial: FC<{ siteConfig: PageSiteConfig; setConfig: (value: PageSi
   );
   const [addMore, setAddMore] = useState<boolean>();
   const [isEdit, setEdit] = useState<boolean>(false);
-  const { data: user } = useSession();
   const [form] = Form.useForm();
-  const onSave = () => {
+  const onSave = async () => {
+    const image = await beforeUpload(form.getFieldsValue().profile, form.getFieldsValue().name);
     if (testimonialList.length > 0) {
       setTestimonialList([
         ...testimonialList,
         {
           description: form.getFieldsValue().description,
           author: {
-            name: String(user?.user?.name),
-            img: String(user?.user?.image),
+            name: form.getFieldsValue().name,
+            img: image ? image : form.getFieldsValue().profile,
+
             designation: form.getFieldsValue().designation,
           },
         },
@@ -43,8 +46,9 @@ const AddTestimonial: FC<{ siteConfig: PageSiteConfig; setConfig: (value: PageSi
               {
                 description: form.getFieldsValue().description,
                 author: {
-                  name: String(user?.user?.name),
-                  img: String(user?.user?.image),
+                  name: form.getFieldsValue().name,
+                  img: image ? image : form.getFieldsValue().profile,
+
                   designation: form.getFieldsValue().designation,
                 },
               },
@@ -57,8 +61,9 @@ const AddTestimonial: FC<{ siteConfig: PageSiteConfig; setConfig: (value: PageSi
         {
           description: form.getFieldsValue().description,
           author: {
-            name: String(user?.user?.name),
-            img: String(user?.user?.image),
+            name: form.getFieldsValue().name,
+            img: image ? image : form.getFieldsValue().profile,
+
             designation: form.getFieldsValue().designation,
           },
         },
@@ -73,8 +78,8 @@ const AddTestimonial: FC<{ siteConfig: PageSiteConfig; setConfig: (value: PageSi
               {
                 description: form.getFieldsValue().description,
                 author: {
-                  name: String(user?.user?.name),
-                  img: String(user?.user?.image),
+                  name: form.getFieldsValue().name,
+                  img: image ? image : form.getFieldsValue().profile,
                   designation: form.getFieldsValue().designation,
                 },
               },
@@ -88,14 +93,44 @@ const AddTestimonial: FC<{ siteConfig: PageSiteConfig; setConfig: (value: PageSi
     setAddMore(false);
   };
 
-  const onUpdate = (description: string, designation: string, index: number) => {
-    console.log(description, designation, index);
+  const beforeUpload = async (base64: string, authorName: string): Promise<string | undefined> => {
+    try {
+      if (base64) {
+        const imgName = `testimonial-${authorName}.png`;
+        const formData = new FormData();
+        formData.append("imgName", imgName);
+        formData.append("previousPath", "");
+        formData.append("imageType", "profile");
+        formData.append("base64Img", base64);
+
+        const postRes = await postWithFile(formData, `/api/v1/admin/site/image/save`);
+        if (!postRes.ok) {
+          throw new Error("Failed to upload file");
+        }
+        const res = await postRes.json();
+        if (res.success) {
+          return `/static/${res.imgName}`;
+        }
+      }
+    } catch (error) {
+      message.error(`Error uploading file: `);
+    }
+  };
+
+  const onUpdate = async (
+    description: string,
+    designation: string,
+    authorName: string,
+    authorImage: string,
+    index: number
+  ) => {
+    const imgPath = authorImage.includes("base64") ? await beforeUpload(authorImage, authorName) : authorImage;
     setTestimonialList((prevItems) => {
       const updatedItems = [...prevItems];
       if (index >= 0 && index < updatedItems.length) {
         updatedItems[index] = {
           description,
-          author: { name: String(user?.user?.name), img: String(user?.user?.image), designation },
+          author: { name: authorName, img: imgPath || authorImage, designation },
         };
       }
       setConfig({
@@ -159,9 +194,8 @@ const AddTestimonial: FC<{ siteConfig: PageSiteConfig; setConfig: (value: PageSi
       )}
       {(addMore || testimonialList.length === 0) && (
         <div>
-          <TestimonialsForm
-            handleTestimonial={onSave}
-            extra={
+          <ConfigFormLayout
+            extraContent={
               <Flex align="center" gap={10}>
                 {testimonialList.length > 0 && (
                   <Button
@@ -182,11 +216,10 @@ const AddTestimonial: FC<{ siteConfig: PageSiteConfig; setConfig: (value: PageSi
                 </Button>
               </Flex>
             }
-            title={"Add Testimonial"}
-            authorName={user?.user?.name || "user"}
-            authorImg={user?.user?.image || ""}
-            form={form}
-          />
+            formTitle={"Add Testimonial"}
+          >
+            <TestimonialsForm handleTestimonial={onSave} form={form} />
+          </ConfigFormLayout>
         </div>
       )}
     </section>

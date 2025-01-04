@@ -193,14 +193,14 @@ export default {
     </svg>
   ),
   quotes: (
-    <svg width="1em" height="1em" viewBox="0 0 23 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg width="1em" height="1em" viewBox="0 0 23 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M7.73434 1.61621L9.67104 3.38397L4.59436 8.01786V8.75009H10.0721V17.5001H1.85547V6.98232L7.73434 1.61621Z"
-        fill="black"
+        fill="currentColor"
       />
       <path
         d="M21.0253 8.75009H15.5475V8.01786L20.6241 3.38397L18.6875 1.61621L12.8086 6.98232V17.5001H21.0253V8.75009Z"
-        fill="black"
+        fill="currentColor"
       />
     </svg>
   ),
