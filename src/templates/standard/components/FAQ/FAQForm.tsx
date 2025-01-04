@@ -114,14 +114,25 @@ const FAQForm: FC<{ siteConfig: PageSiteConfig; setConfig: (value: PageSiteConfi
         <ConfigFormLayout
           formTitle={"Add FAQ"}
           extraContent={
-            <Button
-              onClick={() => {
-                form.submit();
-              }}
-              type="primary"
-            >
-              Save
-            </Button>
+            <Flex align="center" gap={10}>
+              {faqList.length > 0 && (
+                <Button
+                  onClick={() => {
+                    setAddMore(false);
+                  }}
+                >
+                  Cancel
+                </Button>
+              )}
+              <Button
+                onClick={() => {
+                  form.submit();
+                }}
+                type="primary"
+              >
+                Save
+              </Button>
+            </Flex>
           }
         >
           <Form onFinish={onSave} form={form} requiredMark={false}>
@@ -139,6 +150,7 @@ const FAQForm: FC<{ siteConfig: PageSiteConfig; setConfig: (value: PageSiteConfi
               layout="vertical"
               input={
                 <Form.Item
+                  noStyle
                   style={{ width: "100%" }}
                   name={"faqAnswer"}
                   rules={[{ required: true, message: "Answer is required" }]}

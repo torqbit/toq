@@ -12,6 +12,7 @@ import { ICourseCard } from "@/types/landing/courses";
 import { IBlogCard } from "@/types/landing/blog";
 import FAQList from "./components/FAQ/FAQList";
 import FAQ from "./components/FAQ/FAQ";
+import Testimonial from "./components/Testimonials/Testimonials";
 
 interface IStandardTemplateProps {
   user: User;
@@ -68,6 +69,14 @@ const StandardTemplate: FC<IStandardTemplateProps> = ({ user, siteConfig, course
       {siteConfig.sections?.faq?.enabled && (previewMode || siteConfig.sections.faq.items.length > 0) && (
         <FAQ siteConfig={siteConfig} faqList={siteConfig.sections.faq.items} />
       )}
+      {siteConfig.sections?.testimonials?.enabled &&
+        (previewMode ||
+          (siteConfig.sections?.testimonials.items && siteConfig.sections.testimonials.items.length > 0)) && (
+          <Testimonial
+            siteConfig={siteConfig}
+            testimonialList={siteConfig.sections.testimonials.items || DEFAULT_THEME.sections.tesimonials.items}
+          />
+        )}
     </MarketingLayout>
   );
 };

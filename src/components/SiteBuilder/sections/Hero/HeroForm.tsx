@@ -184,7 +184,7 @@ const HeroForm: FC<{
         <Flex vertical gap={10} key={3}>
           <Flex vertical gap={10}>
             <h5>Primary</h5>
-            <Form.Item name={"primaryLabel"} rules={[{ required: true, message: `Primary link is required!` }]}>
+            <Form.Item noStyle name={"primaryLabel"} rules={[{ required: true, message: `Primary link is required!` }]}>
               <Input
                 defaultValue={config.heroSection?.actionButtons?.primary?.label}
                 onChange={(e) => {
@@ -194,6 +194,7 @@ const HeroForm: FC<{
               />
             </Form.Item>
             <Form.Item
+              noStyle
               name={"primaryLink"}
               rules={[
                 () => ({
@@ -289,7 +290,11 @@ const HeroForm: FC<{
           </Flex>
           <Flex vertical gap={10}>
             <h5>Secondary</h5>
-            <Form.Item name={"secondaryLabel"} rules={[{ required: true, message: `Secondary link is required!` }]}>
+            <Form.Item
+              noStyle
+              name={"secondaryLabel"}
+              rules={[{ required: true, message: `Secondary link is required!` }]}
+            >
               <Input
                 defaultValue={config.heroSection?.actionButtons?.secondary?.label}
                 onChange={(e) => {

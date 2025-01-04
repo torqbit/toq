@@ -71,7 +71,11 @@ const FAQList: FC<{
                 >
                   <ConfigForm
                     input={
-                      <Form.Item name={"faqQuestion"} rules={[{ required: true, message: "Question is required" }]}>
+                      <Form.Item
+                        noStyle
+                        name={"faqQuestion"}
+                        rules={[{ required: true, message: "Question is required" }]}
+                      >
                         {<Input style={{ width: 350 }} placeholder={"Write a question"} />}
                       </Form.Item>
                     }
@@ -83,6 +87,7 @@ const FAQList: FC<{
                     layout="vertical"
                     input={
                       <Form.Item
+                        noStyle
                         style={{ width: "100%" }}
                         name={"faqAnswer"}
                         rules={[{ required: true, message: "Answer is required" }]}

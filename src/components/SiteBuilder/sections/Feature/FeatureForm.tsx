@@ -25,6 +25,7 @@ import Image from "next/image";
 import { createSlug, extractValue, getExtension } from "@/lib/utils";
 import { postWithFile } from "@/services/request";
 import SvgIcons from "@/components/SvgIcons";
+import ConfigFormLayout from "@/components/Configuration/ConfigFormLayout";
 
 const AddFeatureForm: FC<{
   imageType: string;
@@ -67,6 +68,7 @@ const AddFeatureForm: FC<{
 
       <Form.Item layout="vertical" name={`title_${index}`} label="Title">
         <Input
+          style={{ width: "100%" }}
           onChange={(e) => {
             handleFeatureChange(index, "title", e.currentTarget.value);
           }}
@@ -75,6 +77,7 @@ const AddFeatureForm: FC<{
       </Form.Item>
       <Form.Item layout="vertical" name={`description_${index}`} label="Description">
         <Input
+          style={{ width: "100%" }}
           onChange={(e) => {
             handleFeatureChange(index, "description", e.currentTarget.value);
           }}
@@ -248,8 +251,6 @@ const FeatureForm: FC<{
     {
       title: "Feature Title",
       description: "Add a Title  for feature ",
-      layout: "vertical",
-
       input: (
         <Input
           onChange={(e) => {
@@ -267,6 +268,7 @@ const FeatureForm: FC<{
       layout: "vertical",
       input: (
         <Input.TextArea
+          style={{ marginBottom: 15 }}
           autoSize={{ minRows: 1, maxRows: 4 }}
           onChange={(e) => {
             setFeatureConfig({ ...featureConfig, description: e.currentTarget.value } as IFeatureInfo);
@@ -304,7 +306,7 @@ const FeatureForm: FC<{
           />
           {addFeatureList.map((list, i) => {
             return (
-              <>
+              <div style={{ width: 500 }}>
                 {featureSegment === list.key && (
                   <AddFeatureForm
                     key={i}
@@ -317,7 +319,7 @@ const FeatureForm: FC<{
                     handleFeatureChange={list.handleFeatureConfig}
                   />
                 )}
-              </>
+              </div>
             );
           })}
         </Flex>
@@ -328,34 +330,39 @@ const FeatureForm: FC<{
 
   return (
     <div className={styles.feature__wrapper}>
-      <Form form={form} requiredMark={false} initialValues={initialValues}>
-        {featureItems.map((item, i) => {
-          return (
-            <>
-              <ConfigForm
-                input={
-                  <Form.Item
-                    name={item.inputName}
-                    rules={[{ required: !item.optional, message: `Field is required!` }]}
-                    key={i}
-                  >
-                    {item.input}
-                  </Form.Item>
-                }
-                title={item.title}
-                description={item.description}
-                layout={item.layout}
-                divider={i === featureItems.length - 1 ? false : true}
-                inputName={""}
-                optional={item.optional}
-              />
-              {featureItems.length !== i + 1 && (
-                <Divider style={{ margin: "0px 0px 15px 0px", color: "var(--bg-primary)", borderBlockStart: "none" }} />
-              )}
-            </>
-          );
-        })}
-      </Form>
+      <ConfigFormLayout formTitle="Add Features">
+        <Form form={form} requiredMark={false} initialValues={initialValues}>
+          {featureItems.map((item, i) => {
+            return (
+              <>
+                <ConfigForm
+                  input={
+                    <Form.Item
+                      noStyle
+                      name={item.inputName}
+                      rules={[{ required: !item.optional, message: `Field is required!` }]}
+                      key={i}
+                    >
+                      {item.input}
+                    </Form.Item>
+                  }
+                  title={item.title}
+                  description={item.description}
+                  layout={item.layout}
+                  divider={i === featureItems.length - 1 ? false : true}
+                  inputName={""}
+                  optional={item.optional}
+                />
+                {featureItems.length !== i + 1 && (
+                  <Divider
+                    style={{ margin: "0px 0px 15px 0px", color: "var(--bg-primary)", borderBlockStart: "none" }}
+                  />
+                )}
+              </>
+            );
+          })}
+        </Form>
+      </ConfigFormLayout>
     </div>
   );
 };

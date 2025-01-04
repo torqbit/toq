@@ -3,6 +3,7 @@ import { IFeatureCard, IFeatureInfo } from "./landing/feature";
 export type bannerAlignment = "left" | "right" | "bottom" | "background";
 import { Theme } from "@/types/theme";
 import { IFaqInfo } from "./landing/faq";
+import { ITesimonialInfo } from "./landing/testimonial";
 
 export interface ISocialLinks {
   github?: string;
@@ -73,5 +74,6 @@ export interface ThemeSchema {
     blog?: IBlogConfig;
     features?: IFeatureInfo;
     faq?: IFaqInfo;
+    testimonials?: ITesimonialInfo;
   };
 }

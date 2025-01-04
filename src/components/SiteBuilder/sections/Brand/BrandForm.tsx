@@ -271,7 +271,7 @@ const BrandForm: FC<{
             />
           )}
           {config.brand?.themeSwitch ? (
-            <>{segmentLogoValue === "dark" ? darkLogo : lightLogo}</>
+            <div>{segmentLogoValue === "dark" ? darkLogo : lightLogo}</div>
           ) : (
             <Flex vertical gap={0}>
               <p>Upload logo for {config.brand?.defaultTheme} theme</p>
@@ -360,7 +360,7 @@ const BrandForm: FC<{
           </Form.Item>
         </Flex>
       ),
-      inputName: "",
+      inputName: "social",
     },
   ];
 
@@ -387,6 +387,7 @@ const BrandForm: FC<{
                 input={
                   <Form.Item
                     name={item.inputName}
+                    noStyle={i === brandItems.length - 1}
                     rules={[{ required: !item.optional, message: `Field is required!` }]}
                     key={i}
                   >

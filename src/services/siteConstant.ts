@@ -119,6 +119,10 @@ export const DEFAULT_THEME = {
       ],
       enabled: true,
     },
+    tesimonials: {
+      items: [],
+      enabled: true,
+    },
   },
 };
 

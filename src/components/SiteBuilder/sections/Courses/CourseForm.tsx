@@ -75,6 +75,7 @@ const CourseForm: FC<{
                   <ConfigForm
                     input={
                       <Form.Item
+                        noStyle={i === courseItems.length - 1}
                         name={item.inputName}
                         rules={[{ required: !item.optional, message: `Field is required!` }]}
                         key={i}
