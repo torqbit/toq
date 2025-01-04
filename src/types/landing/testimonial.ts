@@ -6,7 +6,7 @@ export interface ITestimonialItems {
   description: string;
 }
 
-export interface ITesimonialInfo {
+export interface ITestimonialInfo {
   enabled?: boolean;
   items?: ITestimonialItems[];
 }

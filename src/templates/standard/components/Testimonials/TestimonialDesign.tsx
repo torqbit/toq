@@ -11,22 +11,7 @@ const TestimonialDesign: FC<{
   const router = useRouter();
   return (
     <div className={styles.testimonial__design__wrapper}>
-      {config.sections?.testimonials?.items && config.sections?.testimonials?.items.length === 0 ? (
-        <Flex vertical justify="center">
-          <p>No Testimonials exists</p>
-          <Button
-            onClick={() => {
-              router.push("/admin/site/content/testimonials");
-            }}
-            type="primary"
-          >
-            <Flex align="center" gap={10}>
-              Add Testimonials
-              <i>{SvgIcons.arrowRight}</i>
-            </Flex>
-          </Button>
-        </Flex>
-      ) : (
+      {config.sections?.testimonials?.items && config.sections?.testimonials?.items.length > 0 ? (
         <Flex className={styles.disable__switch} align="center" justify="space-between">
           <h5> {config.sections?.testimonials?.enabled ? "Disable Testimonials" : "Enable Testimonials"}</h5>
           <Switch
@@ -42,6 +27,21 @@ const TestimonialDesign: FC<{
               });
             }}
           />
+        </Flex>
+      ) : (
+        <Flex vertical justify="center" style={{ textAlign: "center" }}>
+          <p>No Testimonials exists</p>
+          <Button
+            onClick={() => {
+              router.push("/admin/site/content/testimonials");
+            }}
+            type="primary"
+          >
+            <Flex align="center" gap={10}>
+              Add Testimonials
+              <i>{SvgIcons.arrowRight}</i>
+            </Flex>
+          </Button>
         </Flex>
       )}
     </div>
