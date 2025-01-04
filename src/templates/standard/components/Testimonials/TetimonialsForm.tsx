@@ -55,11 +55,11 @@ const TestimonialsForm: FC<ITestimonialForm> = ({ handleTestimonial, form, index
             <ConfigForm
               input={
                 <Form.Item name={"name"} rules={[{ required: true, message: "Name is required" }]}>
-                  {<Input style={{ width: 350 }} placeholder={"Enter your designation"} />}
+                  {<Input style={{ width: 350 }} placeholder={"Enter author name"} />}
                 </Form.Item>
               }
               title={"Name"}
-              description={"Enter  name "}
+              description={"Enter author  name "}
               divider={true}
             />
           </div>
@@ -84,11 +84,11 @@ const TestimonialsForm: FC<ITestimonialForm> = ({ handleTestimonial, form, index
                 name={"description"}
                 rules={[{ required: true, message: "Description is required" }]}
               >
-                <Input.TextArea rows={3} placeholder="Description for the question" />
+                <Input.TextArea rows={3} placeholder="Description for the testimonials" />
               </Form.Item>
             }
             title={"Description"}
-            description={"Describe about the question asked by the students "}
+            description={"Describe fot the testimonials "}
             divider={false}
           />
         </Flex>
