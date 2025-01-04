@@ -18,11 +18,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       cookieName,
     });
 
-    const query = req.query;
+    let courses: ICourseListItem[] = [];
 
-    const { courseListPreview } = query;
-
-    const publishedCourses = await prisma.course.findMany({
+    const allCourses = await prisma.course.findMany({
       select: {
         courseId: true,
         name: true,
@@ -41,13 +39,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           },
         },
       },
-      where: {
-        state: StateType.ACTIVE,
-      },
     });
 
     let courseListItems: ICourseListItem[] = await Promise.all(
-      publishedCourses.map(async (c) => {
+      allCourses.map(async (c) => {
         let userRole: Role = Role.NOT_ENROLLED;
         if (token) {
           if (token.role === Role.ADMIN) {
@@ -79,12 +74,23 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           price: c.coursePrice,
           trailerThumbnail: c.tvThumbnail || undefined,
           currency: "INR",
+          state: c.state,
           userRole: userRole,
         };
       })
     );
 
-    return res.status(200).json(new APIResponse(true, 200, `Fetched the courses list`, courseListItems));
+    console.log(token);
+    if (token === null || (token && token.role === Role.STUDENT)) {
+      courses = courseListItems.filter((c) => c.state === StateType.ACTIVE);
+    } else if (token && token.role === Role.AUTHOR) {
+      courses = courseListItems.filter(
+        (c) => c.state === StateType.ACTIVE || (c.userRole && c.userRole === Role.AUTHOR)
+      );
+    } else {
+      courses = courseListItems;
+    }
+    return res.status(200).json(new APIResponse(true, 200, `Fetched the courses list`, courses));
   } catch (error) {
     console.error(error);
     return errorHandler(error, res);

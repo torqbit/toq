@@ -2,10 +2,10 @@ import { EmptyCourses } from "@/components/SvgIcons";
 import { PageSiteConfig } from "@/services/siteConstant";
 import { ICourseListItem } from "@/types/courses/Course";
 import { Theme } from "@/types/theme";
-import { FC } from "react";
+import { FC, ReactNode, useState } from "react";
 import styles from "./CourseListView.module.scss";
-import { Button, Card, Flex, Tag } from "antd";
-import { Role } from "@prisma/client";
+import { Button, Card, Flex, Space, Tabs, TabsProps, Tag } from "antd";
+import { Role, StateType } from "@prisma/client";
 const { Meta } = Card;
 const CourseViewItem: FC<{ course: ICourseListItem }> = ({ course }) => {
   return (
@@ -17,9 +17,14 @@ const CourseViewItem: FC<{ course: ICourseListItem }> = ({ course }) => {
         className={styles.meta}
         title={
           <>
-            <Tag bordered={true} style={{ fontWeight: "normal" }}>
-              {course.difficultyLevel}
-            </Tag>
+            <Space>
+              <Tag bordered={true} style={{ fontWeight: "normal" }}>
+                {course.difficultyLevel}
+              </Tag>
+              <Tag bordered={true} color="warning" style={{ fontWeight: "normal" }}>
+                {course.state.toLocaleLowerCase()}
+              </Tag>
+            </Space>
             <h4 style={{ marginTop: 5, marginBottom: 5 }}>{course.title}</h4>
             <p style={{ fontWeight: "normal", marginBottom: 0, fontSize: 14 }}>
               A course by <b>{course.author}</b>
@@ -46,16 +51,68 @@ export const CoursesListView: FC<{
   siteConfig: PageSiteConfig;
   currentTheme: Theme;
   handleCourseCreate: () => void;
-}> = ({ courses, currentTheme, siteConfig, handleCourseCreate }) => {
+  emptyView: ReactNode;
+  role?: Role;
+}> = ({ courses, currentTheme, siteConfig, handleCourseCreate, emptyView, role }) => {
+  const [tab, setTab] = useState("1");
+  const items: TabsProps["items"] = [
+    {
+      key: "1",
+      label: "Published Courses",
+      children: (
+        <div className={styles.course__grid}>
+          {courses
+            .filter((c) => c.state === StateType.ACTIVE)
+            .map((c, index) => (
+              <CourseViewItem course={c} key={index} />
+            ))}
+        </div>
+      ),
+    },
+    {
+      key: "2",
+      label: `${role == "AUTHOR" ? "Authored Courses" : "All Courses"}`,
+      children: (
+        <>
+          <div className={styles.course__grid}>
+            {role == Role.AUTHOR && (
+              <>
+                {courses
+                  .filter((c) => c.userRole && c.userRole === Role.AUTHOR)
+                  .map((c, index) => (
+                    <CourseViewItem course={c} key={index} />
+                  ))}
+              </>
+            )}
+            {role == Role.ADMIN && (
+              <>
+                {courses.map((c, index) => (
+                  <CourseViewItem course={c} key={index} />
+                ))}
+              </>
+            )}
+          </div>
+        </>
+      ),
+    },
+  ];
   return (
     <div className={styles.courses__list}>
-      <h3>Courses</h3>
+      {role && (
+        <>
+          <h4>Courses</h4>
+          <Tabs tabBarGutter={40} items={items} activeKey={tab} onChange={(k) => setTab(k)} />
+        </>
+      )}
+      {typeof role === "undefined" && courses.length > 0 && (
+        <div className={styles.course__grid}>
+          {courses.map((c, index) => (
+            <CourseViewItem course={c} key={index} />
+          ))}
+        </div>
+      )}
 
-      <div className={styles.course__grid}>
-        {courses.map((c, index) => (
-          <CourseViewItem course={c} key={index} />
-        ))}
-      </div>
+      {typeof role === "undefined" && courses.length == 0 && <>{emptyView}</>}
     </div>
   );
 };

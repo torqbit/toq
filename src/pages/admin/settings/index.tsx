@@ -40,7 +40,7 @@ const ConfigurationPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfi
 
   return (
     <AppLayout siteConfig={siteConfig}>
-      <div style={{ padding: "20px 40px" }}>
+      <div style={{ padding: "20px" }}>
         <Tabs
           tabBarGutter={60}
           tabBarStyle={{

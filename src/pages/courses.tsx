@@ -21,6 +21,7 @@ import { useAppContext } from "@/components/ContextApi/AppContext";
 import { Theme } from "@/types/theme";
 import { ICourseListItem } from "@/types/courses/Course";
 import { CoursesListView } from "@/components/Courses/CourseListView/CourseListView";
+import { useSession } from "next-auth/react";
 
 const CoursesView: FC<{
   courses: Course[];
@@ -57,7 +58,6 @@ const CoursesPage: NextPage<{ siteConfig: PageSiteConfig; userRole: Role }> = ({
   const [courses, setCourses] = useState<ICourseListItem[]>([]);
   const [messageApi, contextMessageHolder] = message.useMessage();
   const [loading, setLoading] = useState<boolean>(false);
-
   const router = useRouter();
   const { globalState } = useAppContext();
 
@@ -98,6 +98,10 @@ const CoursesPage: NextPage<{ siteConfig: PageSiteConfig; userRole: Role }> = ({
               siteConfig={siteConfig}
               currentTheme={globalState.theme || "light"}
               handleCourseCreate={addCourse}
+              role={userRole}
+              emptyView={
+                <EmptyCourses size="300px" {...getIconTheme(globalState.theme || "light", siteConfig.brand)} />
+              }
             />
           </section>
         </AppLayout>
@@ -114,6 +118,9 @@ const CoursesPage: NextPage<{ siteConfig: PageSiteConfig; userRole: Role }> = ({
                 siteConfig={siteConfig}
                 currentTheme={globalState.theme || "light"}
                 handleCourseCreate={addCourse}
+                emptyView={
+                  <EmptyCourses size="300px" {...getIconTheme(globalState.theme || "light", siteConfig.brand)} />
+                }
               />
             ) : (
               <SpinLoader className="course__spinner" />

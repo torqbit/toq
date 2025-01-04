@@ -15,7 +15,6 @@ import {
 import { APIResponse } from "../apis";
 import { IAssignmentSubmissionConfig } from "@/lib/emailConfig";
 
-
 export interface IHeroCoursePreview {
   courseName: string;
   authorImage: string;
@@ -45,8 +44,9 @@ export interface ICourseListItem {
   description: string;
   price: number;
   currency: string;
+  state: StateType;
   trailerThumbnail?: string;
-  userRole?: Role
+  userRole?: Role;
 }
 
 export interface IAssignmentDetail {
