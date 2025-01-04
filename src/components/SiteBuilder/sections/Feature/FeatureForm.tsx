@@ -306,7 +306,7 @@ const FeatureForm: FC<{
           />
           {addFeatureList.map((list, i) => {
             return (
-              <div style={{ width: 500 }}>
+              <div style={{ width: "50%" }}>
                 {featureSegment === list.key && (
                   <AddFeatureForm
                     key={i}
