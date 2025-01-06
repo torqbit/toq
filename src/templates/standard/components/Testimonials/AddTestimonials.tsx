@@ -255,6 +255,7 @@ const AddTestimonial: FC<{ siteConfig: PageSiteConfig; setConfig: (value: PageSi
           }}
           onFinish={onSaveBasicInfo}
         >
+
           <Flex vertical gap={10}>
             <ConfigForm
               input={
@@ -286,6 +287,7 @@ const AddTestimonial: FC<{ siteConfig: PageSiteConfig; setConfig: (value: PageSi
               divider={false}
             />
           </Flex>
+
         </Form>
       </ConfigFormLayout>
 

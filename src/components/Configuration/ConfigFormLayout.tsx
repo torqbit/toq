@@ -2,6 +2,8 @@ import { FC } from "react";
 
 import styles from "./CMS/CMS.module.scss";
 import { Collapse } from "antd";
+import SvgIcons from "../SvgIcons";
+import { CaretRightOutlined, RightOutlined } from "@ant-design/icons";
 
 const ConfigFormLayout: FC<{
   children?: React.ReactNode;
@@ -28,12 +30,15 @@ const ConfigFormLayout: FC<{
         collapsible={isCollapsible ? "header" : "icon"}
         items={[
           {
-            headerClass: styles.header__wrapper__collapse,
+
             key: formTitle,
-            extra: extraContent,
             label: <h4 style={{ margin: 0 }}>{formTitle}</h4>,
+
+            headerClass: styles.collapse__header__wrapper,
             children: children,
-            showArrow: showArrow,
+            extra: extraContent,
+            showArrow: isCollapsible,
+
           },
         ]}
       />

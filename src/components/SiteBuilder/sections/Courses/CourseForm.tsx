@@ -75,7 +75,7 @@ const CourseForm: FC<{
                   <ConfigForm
                     input={
                       <Form.Item
-                        noStyle={i === courseItems.length - 1}
+                        noStyle
                         name={item.inputName}
                         rules={[{ required: !item.optional, message: `Field is required!` }]}
                         key={i}
@@ -90,9 +90,6 @@ const CourseForm: FC<{
                     inputName={""}
                     optional={item.optional}
                   />
-                  {courseItems.length !== i + 1 && (
-                    <Divider style={{ margin: "0px 0px 15px 0px", borderBlockStart: "none" }} />
-                  )}
                 </>
               );
             })}
