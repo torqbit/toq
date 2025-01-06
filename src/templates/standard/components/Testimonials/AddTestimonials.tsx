@@ -185,33 +185,27 @@ const AddTestimonial: FC<{ siteConfig: PageSiteConfig; setConfig: (value: PageSi
           }}
           onFinish={onSaveBasicInfo}
         >
-          <Flex vertical gap={10}>
-            <ConfigForm
-              input={
-                <Form.Item
-                  style={{ width: 300 }}
-                  name={"title"}
-                  rules={[{ required: true, message: "Title is required" }]}
-                >
-                  <Input placeholder="Title for the testimonials" />
-                </Form.Item>
-              }
-              title={"Title"}
-              description={"Add a title for the testimonials "}
-              divider={true}
-            />
-            <ConfigForm
-              layout="vertical"
-              input={
-                <Form.Item name={"description"} rules={[{ required: true, message: "Description is required" }]}>
-                  <Input.TextArea rows={3} placeholder="Description for the testimonials" />
-                </Form.Item>
-              }
-              title={"Description"}
-              description={"Add a description for the testimonials "}
-              divider={false}
-            />
-          </Flex>
+          <ConfigForm
+            input={
+              <Form.Item noStyle name={"title"} rules={[{ required: true, message: "Title is required" }]}>
+                <Input style={{ width: 250 }} placeholder="Title for the testimonials" />
+              </Form.Item>
+            }
+            title={"Title"}
+            description={"Add a title for the testimonials "}
+            divider={true}
+          />
+          <ConfigForm
+            layout="vertical"
+            input={
+              <Form.Item noStyle name={"description"} rules={[{ required: true, message: "Description is required" }]}>
+                <Input.TextArea rows={3} placeholder="Description for the testimonials" />
+              </Form.Item>
+            }
+            title={"Description"}
+            description={"Add a description for the testimonials "}
+            divider={false}
+          />
         </Form>
       </ConfigFormLayout>
 

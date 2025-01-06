@@ -11,6 +11,8 @@ import { useRouter } from "next/router";
 import { StateType } from "@prisma/client";
 import TextEditor from "@/components/Editor/Quilljs/Editor";
 import DOMPurify from "isomorphic-dompurify";
+import ConfigFormLayout from "@/components/Configuration/ConfigFormLayout";
+import ConfigFormItem from "@/components/Configuration/ConfigForm";
 const ContentForm: FC<{
   htmlData: string;
   bannerImage: string;
@@ -157,115 +159,144 @@ const ContentForm: FC<{
       >
         {contextHolder}
 
-        <Flex className={styles.publishBtn} align="center" gap={10}>
-          <Popconfirm
-            title={`Delete the ${contentType.toLowerCase()}`}
-            description={`Are you sure to ${contentId ? "delete" : "discard"} this ${contentType.toLowerCase()}?`}
-            onConfirm={() => {
-              contentId
-                ? onDelete(contentId)
-                : router.push(`/admin/site/content/${contentType === "UPDATE" ? "updates" : "blogs"}`);
-            }}
-            okText="Yes"
-            cancelText="No"
-          >
-            <Button loading={loader.discard}>Discard</Button>
-          </Popconfirm>
-
-          <Dropdown.Button
-            loading={loader.publish}
-            type="primary"
-            onClick={() => {
-              form.submit();
-              form.getFieldsValue().title &&
-                handleBlog(
-                  currentState === StateType.DRAFT ? StateType.ACTIVE : StateType.DRAFT,
-                  contentId ? "update" : "create"
-                );
-            }}
-            icon={SvgIcons.chevronDown}
-            menu={{
-              items: [
-                {
-                  key: 1,
-
-                  label: currentState === "DRAFT" ? "Save" : "Publish ",
-                  onClick: () => {
-                    form.submit();
-                    form.getFieldsValue().title &&
-                      handleBlog(
-                        currentState === StateType.DRAFT ? StateType.DRAFT : StateType.ACTIVE,
-                        contentId ? "update" : "create"
-                      );
-                  },
-                },
-              ],
-            }}
-          >
-            {currentState === StateType.DRAFT ? "Publish " : "Save as Draft"}
-          </Dropdown.Button>
-        </Flex>
-        <div className={styles.formContainer}>
-          <Form.Item name="title" rules={[{ required: true, message: "Add a title" }]}>
-            <Input
-              onChange={(e) => setBlogTitle(e.target.value)}
-              defaultValue={blogTitle}
-              placeholder={`Set the title of the ${contentType.toLowerCase()}`}
-            />
-          </Form.Item>
-          <div className={styles.video_container}>
-            <ImgCrop rotationSlider aspect={16 / 9}>
-              <Upload
-                name="avatar"
-                listType="picture-card"
-                className={styles.upload__thumbnail}
-                showUploadList={false}
-                style={{ width: 800, height: 400 }}
-                beforeUpload={(file) => {
-                  const bannerName = createSlug(title);
-                  uploadFile(file, `${bannerName}_blog_banner`);
+        <ConfigFormLayout
+          formTitle={contentType === "UPDATE" ? "Add Updates" : "Add Blogs"}
+          extraContent={
+            <Flex align="center" gap={10}>
+              <Popconfirm
+                title={`Delete the ${contentType.toLowerCase()}`}
+                description={`Are you sure to ${contentId ? "delete" : "discard"} this ${contentType.toLowerCase()}?`}
+                onConfirm={() => {
+                  contentId
+                    ? onDelete(contentId)
+                    : router.push(`/admin/site/content/${contentType === "UPDATE" ? "updates" : "blogs"}`);
                 }}
-                onChange={handleChange}
+                okText="Yes"
+                cancelText="No"
               >
-                {blogBanner ? (
-                  <>
-                    <img style={{ borderRadius: 4, objectFit: "cover" }} src={blogBanner} />
-                    <Tooltip title={`Upload ${contentType.toLowerCase()} banner`}>
-                      <div className={styles.camera_btn_img}>
-                        {blogBannerUploading && blogBanner ? <LoadingOutlined /> : SvgIcons.camera}
-                      </div>
-                    </Tooltip>
-                    <div className={styles.bannerStatus}>{blogBannerUploading && "Uploading"}</div>
-                  </>
-                ) : (
-                  <button
-                    className={styles.upload_img_button}
-                    style={{ border: 0, background: "none", width: 800, height: 400 }}
-                    type="button"
-                  >
-                    {blogBannerUploading ? <LoadingOutlined /> : SvgIcons.uploadIcon}
-                    {!blogBannerUploading ? (
-                      <div style={{ marginTop: 8 }}>Upload banner</div>
-                    ) : (
-                      <div style={{ color: "#000" }}>{blogBannerUploading && "Uploading"}</div>
-                    )}
-                  </button>
-                )}
-              </Upload>
-            </ImgCrop>
+                <Button loading={loader.discard}>Discard</Button>
+              </Popconfirm>
+
+              <Dropdown.Button
+                loading={loader.publish}
+                type="primary"
+                onClick={() => {
+                  form.submit();
+                  form.getFieldsValue().title &&
+                    handleBlog(
+                      currentState === StateType.DRAFT ? StateType.ACTIVE : StateType.DRAFT,
+                      contentId ? "update" : "create"
+                    );
+                }}
+                icon={SvgIcons.chevronDown}
+                menu={{
+                  items: [
+                    {
+                      key: 1,
+
+                      label: currentState === "DRAFT" ? "Save" : "Publish ",
+                      onClick: () => {
+                        form.submit();
+                        form.getFieldsValue().title &&
+                          handleBlog(
+                            currentState === StateType.DRAFT ? StateType.DRAFT : StateType.ACTIVE,
+                            contentId ? "update" : "create"
+                          );
+                      },
+                    },
+                  ],
+                }}
+              >
+                {currentState === StateType.DRAFT ? "Publish " : "Save as Draft"}
+              </Dropdown.Button>
+            </Flex>
+          }
+        >
+          <div className={styles.formContainer}>
+            <ConfigFormItem
+              title={"Title"}
+              description={`Add a title for the ${contentType.toLowerCase()}`}
+              input={
+                <Form.Item name="title" rules={[{ required: true, message: "Add a title" }]}>
+                  <Input
+                    style={{ width: 250 }}
+                    onChange={(e) => setBlogTitle(e.target.value)}
+                    defaultValue={blogTitle}
+                    placeholder={`Set the title of the ${contentType.toLowerCase()}`}
+                  />
+                </Form.Item>
+              }
+              divider
+            />
+            <ConfigFormItem
+              layout="vertical"
+              title={"Upload Banner"}
+              description={`Upload a banner for the ${contentType.toLowerCase()}`}
+              input={
+                <div className={styles.video_container}>
+                  <ImgCrop rotationSlider aspect={16 / 9}>
+                    <Upload
+                      name="avatar"
+                      listType="picture-card"
+                      className={styles.upload__thumbnail}
+                      showUploadList={false}
+                      style={{ width: 800, height: 400 }}
+                      beforeUpload={(file) => {
+                        const bannerName = createSlug(title);
+                        uploadFile(file, `${bannerName}_blog_banner`);
+                      }}
+                      onChange={handleChange}
+                    >
+                      {blogBanner ? (
+                        <>
+                          <img style={{ borderRadius: 4, objectFit: "cover" }} src={blogBanner} />
+                          <Tooltip title={`Upload ${contentType.toLowerCase()} banner`}>
+                            <div className={styles.camera_btn_img}>
+                              {blogBannerUploading && blogBanner ? <LoadingOutlined /> : SvgIcons.camera}
+                            </div>
+                          </Tooltip>
+                          <div className={styles.bannerStatus}>{blogBannerUploading && "Uploading"}</div>
+                        </>
+                      ) : (
+                        <button
+                          className={styles.upload_img_button}
+                          style={{ border: 0, background: "none", width: 800, height: 400 }}
+                          type="button"
+                        >
+                          {blogBannerUploading ? <LoadingOutlined /> : SvgIcons.uploadIcon}
+                          {!blogBannerUploading ? (
+                            <div style={{ marginTop: 8 }}>Upload banner</div>
+                          ) : (
+                            <div style={{ color: "#000" }}>{blogBannerUploading && "Uploading"}</div>
+                          )}
+                        </button>
+                      )}
+                    </Upload>
+                  </ImgCrop>
+                </div>
+              }
+              divider
+            />
           </div>
-        </div>
-        <div className={styles.editorContainer}>
-          <TextEditor
-            defaultValue={editorValue ? editorValue : htmlData}
-            handleDefaultValue={handleEditorValue}
-            readOnly={false}
-            width={800}
-            height={400}
-            theme="snow"
-            placeholder={`Start writing your content`}
+          <ConfigFormItem
+            title={"Description"}
+            layout="vertical"
+            description={`Add a description for the ${contentType.toLowerCase()}`}
+            input={
+              <div className={styles.editorContainer}>
+                <TextEditor
+                  defaultValue={editorValue ? editorValue : htmlData}
+                  handleDefaultValue={handleEditorValue}
+                  readOnly={false}
+                  width={960}
+                  height={400}
+                  theme="snow"
+                  placeholder={`Start writing your content`}
+                />
+              </div>
+            }
           />
-        </div>
+        </ConfigFormLayout>
       </Form>
     </section>
   );

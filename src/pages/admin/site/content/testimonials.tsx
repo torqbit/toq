@@ -20,7 +20,7 @@ const Testimonials: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) 
     const result = await res.json();
     if (res.ok) {
       setLoading(false);
-      messageApi.success("Testimonials has been updated");
+      messageApi.success("New testimonial has been added");
     } else {
       setLoading(false);
       messageApi.error(result.error);
