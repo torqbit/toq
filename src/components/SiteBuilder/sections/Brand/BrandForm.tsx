@@ -387,7 +387,7 @@ const BrandForm: FC<{
                 input={
                   <Form.Item
                     name={item.inputName}
-                    noStyle={i === brandItems.length - 1}
+                    noStyle
                     rules={[{ required: !item.optional, message: `Field is required!` }]}
                     key={i}
                   >
@@ -401,9 +401,6 @@ const BrandForm: FC<{
                 inputName={""}
                 optional={item.optional}
               />
-              {brandItems.length !== i + 1 && (
-                <Divider style={{ margin: "0px 0px 15px 0px", color: "var(--bg-primary)", borderBlockStart: "none" }} />
-              )}
             </>
           );
         })}

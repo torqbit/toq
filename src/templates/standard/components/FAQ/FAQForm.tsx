@@ -1,6 +1,6 @@
 import ConfigForm from "@/components/Configuration/ConfigForm";
 import ConfigFormLayout from "@/components/Configuration/ConfigFormLayout";
-import { Button, Flex, Form, Input } from "antd";
+import { Button, Divider, Flex, Form, Input } from "antd";
 import { FC, useState } from "react";
 import styles from "./FAQ.module.scss";
 import { PageSiteConfig } from "@/services/siteConstant";
@@ -94,7 +94,7 @@ const FAQForm: FC<{ siteConfig: PageSiteConfig; setConfig: (value: PageSiteConfi
     <>
       {faqList.length > 0 && (
         <Flex vertical>
-          <FAQList faqList={faqList} isEditable={true} onUpdate={onUpdate} onDelete={onDelete} />
+          <FAQList faqList={faqList} isEditable={true} onUpdate={onUpdate} onDelete={onDelete} showIcon={false} />
           {!addMore && (
             <Button
               onClick={() => setAddMore(true)}
@@ -138,8 +138,8 @@ const FAQForm: FC<{ siteConfig: PageSiteConfig; setConfig: (value: PageSiteConfi
           <Form onFinish={onSave} form={form} requiredMark={false}>
             <ConfigForm
               input={
-                <Form.Item name={"faqQuestion"} rules={[{ required: true, message: "Question is required" }]}>
-                  {<Input style={{ width: 350 }} placeholder={"Write a question"} />}
+                <Form.Item noStyle name={"faqQuestion"} rules={[{ required: true, message: "Question is required" }]}>
+                  {<Input style={{ width: 250 }} placeholder={"Write a question"} />}
                 </Form.Item>
               }
               title={"Question"}
@@ -160,7 +160,6 @@ const FAQForm: FC<{ siteConfig: PageSiteConfig; setConfig: (value: PageSiteConfi
               }
               title={"Answer"}
               description={"Describe about the question asked by the students "}
-              divider={false}
             />
           </Form>
         </ConfigFormLayout>

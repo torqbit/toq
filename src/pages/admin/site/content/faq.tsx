@@ -19,7 +19,7 @@ const AddFaq: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
     const result = await res.json();
     if (res.ok) {
       setLoading(false);
-      messageApi.success(result.message);
+      messageApi.success("FAQs has been updated");
     } else {
       setLoading(false);
       messageApi.error(result.error);

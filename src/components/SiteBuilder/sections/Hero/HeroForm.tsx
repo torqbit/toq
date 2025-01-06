@@ -149,7 +149,7 @@ const HeroForm: FC<{
       description: "Add title for the hero section ",
       layout: "vertical",
       input: (
-        <Form.Item name={"title"} rules={[{ required: true, message: `title is required!` }]} key={1}>
+        <Form.Item noStyle name={"title"} rules={[{ required: true, message: `title is required!` }]} key={1}>
           <Input
             onChange={(e) => {
               onUpdateHeroConfig(e.currentTarget.value, "title");
@@ -165,7 +165,12 @@ const HeroForm: FC<{
       description: "Add description for hero section ",
       layout: "vertical",
       input: (
-        <Form.Item name={"description"} rules={[{ required: true, message: `description is required!` }]} key={2}>
+        <Form.Item
+          noStyle
+          name={"description"}
+          rules={[{ required: true, message: `description is required!` }]}
+          key={2}
+        >
           <Input
             onChange={(e) => {
               onUpdateHeroConfig(e.currentTarget.value, "description");
@@ -304,6 +309,7 @@ const HeroForm: FC<{
               />
             </Form.Item>
             <Form.Item
+              noStyle
               name={"secondaryLink"}
               rules={[
                 () => ({
@@ -526,9 +532,6 @@ const HeroForm: FC<{
                 inputName={""}
                 optional={item.optional}
               />
-              {heroItems.length !== i + 1 && (
-                <Divider style={{ margin: "0px 0px 15px 0px", color: "var(--bg-primary)", borderBlockStart: "none" }} />
-              )}
             </>
           );
         })}

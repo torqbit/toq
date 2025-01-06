@@ -1,20 +1,30 @@
 import SvgIcons from "@/components/SvgIcons";
-import { Button, Collapse, Flex, Form, Input, Popconfirm } from "antd";
+import { Button, Collapse, Divider, Flex, Form, Input, Popconfirm } from "antd";
 import { FC, useState } from "react";
 import ConfigForm from "@/components/Configuration/ConfigForm";
 import styles from "./FAQ.module.scss";
+import { MinusCircleOutlined, PlusCircleOutlined } from "@ant-design/icons";
 
 const FAQList: FC<{
   onUpdate: (question: string, answer: string, index: number) => void;
   onDelete: (index: number) => void;
   faqList: { question: string; answer: string }[];
   isEditable?: boolean;
-}> = ({ isEditable, onUpdate, onDelete, faqList }) => {
+  showIcon?: boolean;
+}> = ({ isEditable, onUpdate, onDelete, faqList, showIcon }) => {
   const [isEdit, setEdit] = useState<boolean>(false);
   const [form] = Form.useForm();
   return (
     <section className={isEditable ? styles.faq__form__container : styles.faq__list__container}>
-      <Collapse accordion style={{ borderRadius: 4 }} collapsible={"header"}>
+      <Collapse
+        expandIconPosition="end"
+        accordion
+        expandIcon={({ isActive }) =>
+          isActive ? <MinusCircleOutlined style={{ fontSize: 20 }} /> : <PlusCircleOutlined style={{ fontSize: 20 }} />
+        }
+        style={{ borderRadius: 4 }}
+        collapsible={showIcon ? "icon" : "header"}
+      >
         {faqList.map((faq, i) => {
           return (
             <Collapse.Panel
@@ -54,7 +64,7 @@ const FAQList: FC<{
                   <></>
                 )
               }
-              showArrow={false}
+              showArrow={showIcon}
             >
               {isEdit ? (
                 <Form
@@ -76,13 +86,14 @@ const FAQList: FC<{
                         name={"faqQuestion"}
                         rules={[{ required: true, message: "Question is required" }]}
                       >
-                        {<Input style={{ width: 350 }} placeholder={"Write a question"} />}
+                        {<Input style={{ width: 250 }} placeholder={"Write a question"} />}
                       </Form.Item>
                     }
                     title={"Question"}
                     description={"Add a question which is frequently asked by the students "}
                     divider={true}
                   />
+
                   <ConfigForm
                     layout="vertical"
                     input={

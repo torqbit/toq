@@ -27,7 +27,7 @@
 .tesimoinal__form__container {
   max-width: 1000px;
   background-color: var(--bg-primary);
-  margin: 0px 0px 30px 0px;
+  // margin: 0px 0px 30px 0px;
   border-radius: 8px;
 
   img {
@@ -66,8 +66,7 @@
 
 .testimonial__preview {
   max-width: var(--marketing-container-width);
-  margin: 0 auto;
-  padding: 40px 0px;
+  margin: 100px auto;
   display: flex;
   align-items: center;
   justify-content: space-between;

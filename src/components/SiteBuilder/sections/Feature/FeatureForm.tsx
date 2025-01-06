@@ -253,6 +253,7 @@ const FeatureForm: FC<{
       description: "Add a Title  for feature ",
       input: (
         <Input
+          style={{ width: 250 }}
           onChange={(e) => {
             setFeatureConfig({ ...featureConfig, title: e.currentTarget.value } as IFeatureInfo);
           }}
@@ -285,7 +286,7 @@ const FeatureForm: FC<{
       layout: "vertical",
 
       input: (
-        <Flex vertical gap={10}>
+        <Flex vertical>
           <Segmented
             className={styles.segment}
             options={[
@@ -306,7 +307,7 @@ const FeatureForm: FC<{
           />
           {addFeatureList.map((list, i) => {
             return (
-              <div style={{ width: "50%" }}>
+              <div style={{ width: "50%", marginTop: featureSegment === list.key ? 15 : 0 }}>
                 {featureSegment === list.key && (
                   <AddFeatureForm
                     key={i}
@@ -353,11 +354,6 @@ const FeatureForm: FC<{
                   inputName={""}
                   optional={item.optional}
                 />
-                {featureItems.length !== i + 1 && (
-                  <Divider
-                    style={{ margin: "0px 0px 15px 0px", color: "var(--bg-primary)", borderBlockStart: "none" }}
-                  />
-                )}
               </>
             );
           })}

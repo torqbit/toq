@@ -2,9 +2,9 @@
   max-width: var(--marketing-container-width);
   display: flex;
   flex-direction: column;
-  padding: 50px 0;
+
   gap: 50px;
-  margin: 0 auto;
+  margin: 100px auto;
 
   .blog__title {
     display: flex;
@@ -81,7 +81,7 @@
 @media only screen and (max-width: 435px) {
   .blog__list__container {
     max-width: 80vw;
-
+    margin: 40px auto;
     .blog__title {
       button {
         margin-bottom: 10px;
