@@ -6,11 +6,12 @@ import { withUserAuthorized } from "@/lib/api-middlewares/with-authorized";
 import { getCookieName } from "@/lib/utils";
 import { getToken } from "next-auth/jwt";
 import { ContentManagementService } from "@/services/cms/ContentManagementService";
+import { Role } from "@prisma/client";
+import appConstant from "@/services/appConstant";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     let cookieName = getCookieName();
-    const cms = new ContentManagementService();
 
     const token = await getToken({
       req,
@@ -18,7 +19,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       cookieName,
     });
 
-    const { blogId, filePath } = req.query;
+    const { blogId } = req.query;
 
     const isBlogExist = await prisma.blog.findUnique({
       where: {
@@ -26,35 +27,28 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       },
       select: {
         banner: true,
+        authorId: true,
       },
     });
 
     if (isBlogExist) {
-      await prisma.blog.delete({
-        where: {
-          id: String(blogId),
-          authorId: String(token?.id),
-        },
-      });
+      if (token?.id === isBlogExist?.authorId || token?.role === Role.ADMIN) {
+        if (isBlogExist.banner) {
+          const cms = new ContentManagementService().getCMS(appConstant.defaultCMSProvider);
+          const cmsConfig = (await cms.getCMSConfig()).body?.config;
+          await cms.deleteCDNImage(cmsConfig, isBlogExist.banner);
+        }
+        await prisma.blog.delete({
+          where: {
+            id: String(blogId),
+            authorId: isBlogExist.authorId,
+          },
+        });
 
-      //   const serviceProviderResponse = await prisma?.serviceProvider.findFirst({
-      //     where: {
-      //       service_type: "media",
-      //     },
-      //   });
-      //   if (serviceProviderResponse) {
-      //     const serviceProvider = cms.getServiceProvider(
-      //       serviceProviderResponse?.provider_name,
-      //       serviceProviderResponse?.providerDetail
-      //     );
-      //     if (isBlogExist) {
-      //       const deletionResponse = await cms.deleteFile(`${isBlogExist.banner}`, serviceProvider);
-      //       if (!deletionResponse.success && deletionResponse.statusCode !== 404) {
-      //         throw new Error(`Unable to delete the file due to : ${deletionResponse.message}`);
-      //       }
-      //     }
-      //   }
-      return res.status(200).json({ success: true, message: "Blog has been deleted" });
+        return res.status(200).json({ success: true, message: "Blog has been deleted" });
+      } else {
+        return res.status(403).json({ success: false, error: "You are not authorized" });
+      }
     } else {
       return res.status(400).json({ success: false, error: "Blog not exist" });
     }
