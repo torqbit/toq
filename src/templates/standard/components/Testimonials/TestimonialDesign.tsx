@@ -18,13 +18,17 @@ const TestimonialDesign: FC<{
             size="small"
             value={config.sections?.testimonials?.enabled}
             onChange={(value) => {
-              updateSiteConfig({
-                ...config,
-                sections: {
-                  ...config.sections,
-                  testimonials: { ...config.sections?.testimonials, enabled: !config.sections?.testimonials?.enabled },
-                },
-              });
+              config.sections?.testimonials &&
+                updateSiteConfig({
+                  ...config,
+                  sections: {
+                    ...config.sections,
+                    testimonials: {
+                      ...config.sections.testimonials,
+                      enabled: !config.sections.testimonials.enabled,
+                    },
+                  },
+                });
             }}
           />
         </Flex>

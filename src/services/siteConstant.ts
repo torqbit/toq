@@ -122,6 +122,8 @@ export const DEFAULT_THEME = {
     tesimonials: {
       items: [],
       enabled: true,
+      title: "Teachers love our product",
+      description: "Find out what excites our users, when using our product",
     },
   },
 };

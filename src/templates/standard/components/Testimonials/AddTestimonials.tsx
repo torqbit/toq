@@ -1,6 +1,6 @@
 import SvgIcons from "@/components/SvgIcons";
 import { ITestimonialItems } from "@/types/landing/testimonial";
-import { Button, Flex, Form, message } from "antd";
+import { Button, Flex, Form, Input, message } from "antd";
 import { FC, useState } from "react";
 import styles from "./Testimonials.module.scss";
 import { PageSiteConfig } from "@/services/siteConstant";
@@ -9,6 +9,7 @@ import TestimonialList from "./TestimonialsList";
 import { postWithFile } from "@/services/request";
 
 import ConfigFormLayout from "@/components/Configuration/ConfigFormLayout";
+import ConfigForm from "@/components/Configuration/ConfigForm";
 
 const AddTestimonial: FC<{ siteConfig: PageSiteConfig; setConfig: (value: PageSiteConfig) => void }> = ({
   siteConfig,
@@ -17,9 +18,26 @@ const AddTestimonial: FC<{ siteConfig: PageSiteConfig; setConfig: (value: PageSi
   const [testimonialList, setTestimonialList] = useState<ITestimonialItems[]>(
     siteConfig.sections?.testimonials?.items || []
   );
+  const [messageApi, contentHolder] = message.useMessage();
   const [addMore, setAddMore] = useState<boolean>();
   const [isEdit, setEdit] = useState<boolean>(false);
   const [form] = Form.useForm();
+  const [basicForm] = Form.useForm();
+
+  const updateSiteConfig = (testimonialItems: ITestimonialItems[]) => {
+    siteConfig.sections?.testimonials &&
+      setConfig({
+        ...siteConfig,
+        sections: {
+          ...siteConfig.sections,
+          testimonials: {
+            ...siteConfig.sections?.testimonials,
+            items: testimonialItems,
+          },
+        },
+      });
+  };
+
   const onSave = async () => {
     const image = await beforeUpload(form.getFieldsValue().profile, form.getFieldsValue().name);
     if (testimonialList.length > 0) {
@@ -35,27 +53,19 @@ const AddTestimonial: FC<{ siteConfig: PageSiteConfig; setConfig: (value: PageSi
           },
         },
       ]);
-      setConfig({
-        ...siteConfig,
-        sections: {
-          ...siteConfig.sections,
-          testimonials: {
-            ...siteConfig.sections?.testimonials,
-            items: [
-              ...testimonialList,
-              {
-                description: form.getFieldsValue().description,
-                author: {
-                  name: form.getFieldsValue().name,
-                  img: image ? image : form.getFieldsValue().profile,
 
-                  designation: form.getFieldsValue().designation,
-                },
-              },
-            ],
+      updateSiteConfig([
+        ...testimonialList,
+        {
+          description: form.getFieldsValue().description,
+          author: {
+            name: form.getFieldsValue().name,
+            img: image ? image : form.getFieldsValue().profile,
+
+            designation: form.getFieldsValue().designation,
           },
         },
-      });
+      ]);
     } else {
       setTestimonialList([
         {
@@ -68,25 +78,17 @@ const AddTestimonial: FC<{ siteConfig: PageSiteConfig; setConfig: (value: PageSi
           },
         },
       ]);
-      setConfig({
-        ...siteConfig,
-        sections: {
-          ...siteConfig.sections,
-          testimonials: {
-            ...siteConfig.sections?.testimonials,
-            items: [
-              {
-                description: form.getFieldsValue().description,
-                author: {
-                  name: form.getFieldsValue().name,
-                  img: image ? image : form.getFieldsValue().profile,
-                  designation: form.getFieldsValue().designation,
-                },
-              },
-            ],
+
+      updateSiteConfig([
+        {
+          description: form.getFieldsValue().description,
+          author: {
+            name: form.getFieldsValue().name,
+            img: image ? image : form.getFieldsValue().profile,
+            designation: form.getFieldsValue().designation,
           },
         },
-      });
+      ]);
     }
 
     form.resetFields();
@@ -133,17 +135,8 @@ const AddTestimonial: FC<{ siteConfig: PageSiteConfig; setConfig: (value: PageSi
           author: { name: authorName, img: imgPath || authorImage, designation },
         };
       }
-      setConfig({
-        ...siteConfig,
-        sections: {
-          ...siteConfig.sections,
-          testimonials: {
-            ...siteConfig.sections?.testimonials,
+      updateSiteConfig(updatedItems);
 
-            items: updatedItems,
-          },
-        },
-      });
       return updatedItems;
     });
   };
@@ -151,23 +144,77 @@ const AddTestimonial: FC<{ siteConfig: PageSiteConfig; setConfig: (value: PageSi
   const onDelete = (index: number) => {
     setTestimonialList((prevItems) => {
       let updatedList = prevItems.filter((_, i) => i !== index);
+      updateSiteConfig(updatedList);
+      return updatedList;
+    });
+  };
+
+  const onSaveBasicInfo = () => {
+    siteConfig.sections?.testimonials &&
       setConfig({
         ...siteConfig,
         sections: {
           ...siteConfig.sections,
           testimonials: {
             ...siteConfig.sections?.testimonials,
-
-            items: updatedList,
+            title: basicForm.getFieldsValue().title,
+            description: basicForm.getFieldsValue().description,
           },
         },
       });
-      return updatedList;
-    });
+    messageApi.success("Basic info has been updated");
   };
 
   return (
     <section className={styles.add__testimonial}>
+      {contentHolder}
+      <ConfigFormLayout
+        isCollapsible
+        formTitle="Basic info"
+        extraContent={
+          <Button onClick={() => basicForm.submit()} type="primary">
+            {!basicForm.getFieldsValue().title || !basicForm.getFieldsValue().description ? "Save" : "Update"}
+          </Button>
+        }
+      >
+        <Form
+          form={basicForm}
+          initialValues={{
+            title: siteConfig.sections?.testimonials?.title,
+            description: siteConfig.sections?.testimonials?.description,
+          }}
+          onFinish={onSaveBasicInfo}
+        >
+          <Flex vertical gap={10}>
+            <ConfigForm
+              input={
+                <Form.Item
+                  style={{ width: 300 }}
+                  name={"title"}
+                  rules={[{ required: true, message: "Title is required" }]}
+                >
+                  <Input placeholder="Title for the testimonials" />
+                </Form.Item>
+              }
+              title={"Title"}
+              description={"Add a title for the testimonials "}
+              divider={true}
+            />
+            <ConfigForm
+              layout="vertical"
+              input={
+                <Form.Item name={"description"} rules={[{ required: true, message: "Description is required" }]}>
+                  <Input.TextArea rows={3} placeholder="Description for the testimonials" />
+                </Form.Item>
+              }
+              title={"Description"}
+              description={"Add a description for the testimonials "}
+              divider={false}
+            />
+          </Flex>
+        </Form>
+      </ConfigFormLayout>
+
       {testimonialList.length > 0 && (
         <Flex vertical>
           <TestimonialList
