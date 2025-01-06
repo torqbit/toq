@@ -5,6 +5,7 @@ import styles from "./Testimonials.module.scss";
 import { ITestimonialItems } from "@/types/landing/testimonial";
 import TestimonialsForm from "./TetimonialsForm";
 import ConfigForm from "@/components/Configuration/ConfigForm";
+import UserInfo from "@/components/UserInfo/UserInfo";
 
 const TestimonialList: FC<{
   onUpdate: (description: string, designation: string, authorName: string, authorImage: string, index: number) => void;
@@ -36,18 +37,21 @@ const TestimonialList: FC<{
           return (
             <Collapse.Panel
               header={
-                isEdit && activeIndex === i ? (
-                  <h4 style={{ margin: 0 }}>Update Testimonial</h4>
-                ) : (
-                  <Flex align="center" gap={10}>
-                    <img src={testimonial.author.img} alt="author image" />
-                    <div className={styles.edit__pipe}></div>
-                    <div>
-                      <div>{testimonial.author.name}</div>
-                      <div>{testimonial.author.designation}</div>
-                    </div>
-                  </Flex>
-                )
+                ""
+
+                // <UserInfo
+                //   image={testimonial.author.img}
+                //   name={testimonial.author.name}
+                //   extraInfo={testimonial.author.designation}
+                // />
+                // <Flex align="center" gap={10}>
+                //   <img src={testimonial.author.img} alt="author image" />
+                //   <div className={styles.edit__pipe}></div>
+                //   <div>
+                //     <div>{testimonial.author.name}</div>
+                //     <div>{testimonial.author.designation}</div>
+                //   </div>
+                // </Flex>
               }
               key={i}
               extra={
@@ -89,7 +93,8 @@ const TestimonialList: FC<{
               showArrow={false}
             >
               {isEdit && activeIndex === i ? (
-                <TestimonialsForm handleTestimonial={handleTestimonial} form={form} edit={true} />
+                // <TestimonialsForm handleTestimonial={handleTestimonial} form={form} edit={true} />
+                <></>
               ) : (
                 <p>{testimonial.description}</p>
               )}

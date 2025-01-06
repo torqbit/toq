@@ -15,7 +15,9 @@ export interface ITestimonialInfo {
 
 export interface ITestimonialForm {
   handleTestimonial: (file: RcFile) => void;
+  onClose: () => void;
   form: FormInstance;
+  open: boolean;
   index?: number;
   edit?: boolean;
 }

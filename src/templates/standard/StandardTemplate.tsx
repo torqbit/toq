@@ -66,7 +66,7 @@ const StandardTemplate: FC<IStandardTemplateProps> = ({ user, siteConfig, course
         />
       )}
       {siteConfig.sections?.faq?.enabled && (previewMode || siteConfig.sections.faq.items.length > 0) && (
-        <FAQ siteConfig={siteConfig} faqList={siteConfig.sections.faq.items} />
+        <FAQ siteConfig={siteConfig} faqList={siteConfig.sections.faq.items || DEFAULT_THEME.sections.faq.items} />
       )}
       {siteConfig.sections?.testimonials?.enabled && (
         <Testimonial

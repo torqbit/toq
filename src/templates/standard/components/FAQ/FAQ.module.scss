@@ -4,6 +4,10 @@
   margin: 0 auto;
 }
 
+.drawer__header {
+  border-bottom: 1px solid var(--border-color);
+}
+
 .add__more__btn {
   i {
     line-height: 0;
@@ -13,7 +17,7 @@
 .faq__form__container {
   max-width: 1000px;
   background-color: var(--bg-primary);
-  margin: 0px 0px 30px 0px;
+  // margin: 0px 0px 30px 0px;
   border-radius: 8px;
 
   form {

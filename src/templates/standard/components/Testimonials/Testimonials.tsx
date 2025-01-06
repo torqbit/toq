@@ -4,6 +4,7 @@ import { PageSiteConfig } from "@/services/siteConstant";
 import { ITestimonialItems } from "@/types/landing/testimonial";
 import { Carousel, Flex, Skeleton } from "antd";
 import SvgIcons from "@/components/SvgIcons";
+import UserInfo from "@/components/UserInfo/UserInfo";
 
 const TestimonialCard: FC<{ testimonialItem: ITestimonialItems }> = ({ testimonialItem }) => {
   return (
@@ -12,13 +13,11 @@ const TestimonialCard: FC<{ testimonialItem: ITestimonialItems }> = ({ testimoni
         <i>{SvgIcons.quotes}</i>
         <p>{testimonialItem.description}</p>
       </Flex>
-      <Flex align="center" gap={10}>
-        <img src={testimonialItem.author.img} alt="author_image" />
-        <div>
-          <div>{testimonialItem.author.name}</div>
-          <div>{testimonialItem.author.designation}</div>
-        </div>
-      </Flex>
+      <UserInfo
+        image={testimonialItem.author.img}
+        name={testimonialItem.author.name}
+        extraInfo={testimonialItem.author.designation}
+      />
     </div>
   );
 };

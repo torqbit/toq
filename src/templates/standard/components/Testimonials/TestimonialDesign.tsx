@@ -11,28 +11,27 @@ const TestimonialDesign: FC<{
   const router = useRouter();
   return (
     <div className={styles.testimonial__design__wrapper}>
-      {config.sections?.testimonials?.items && config.sections?.testimonials?.items.length > 0 ? (
-        <Flex className={styles.disable__switch} align="center" justify="space-between">
-          <h5> {config.sections?.testimonials?.enabled ? "Disable Testimonials" : "Enable Testimonials"}</h5>
-          <Switch
-            size="small"
-            value={config.sections?.testimonials?.enabled}
-            onChange={(value) => {
-              config.sections?.testimonials &&
-                updateSiteConfig({
-                  ...config,
-                  sections: {
-                    ...config.sections,
-                    testimonials: {
-                      ...config.sections.testimonials,
-                      enabled: !config.sections.testimonials.enabled,
-                    },
+      <Flex className={styles.disable__switch} align="center" justify="space-between">
+        <h5> {config.sections?.testimonials?.enabled ? "Disable Testimonials" : "Enable Testimonials"}</h5>
+        <Switch
+          size="small"
+          value={config.sections?.testimonials?.enabled}
+          onChange={(value) => {
+            config.sections?.testimonials &&
+              updateSiteConfig({
+                ...config,
+                sections: {
+                  ...config.sections,
+                  testimonials: {
+                    ...config.sections.testimonials,
+                    enabled: !config.sections.testimonials.enabled,
                   },
-                });
-            }}
-          />
-        </Flex>
-      ) : (
+                },
+              });
+          }}
+        />
+      </Flex>
+      {config.sections?.testimonials?.items?.length === 0 && (
         <Flex vertical justify="center" style={{ textAlign: "center" }}>
           <p>No Testimonials exists</p>
           <Button

@@ -79,7 +79,7 @@ const SiteDesigner: FC<{
         </>
       ),
 
-      label: collapseHeader("Blog", SvgIcons.blog),
+      label: collapseHeader("Blogs", SvgIcons.blog),
     },
     {
       key: "6",
