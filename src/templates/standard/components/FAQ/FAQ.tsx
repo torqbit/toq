@@ -4,10 +4,11 @@ import { PageSiteConfig } from "@/services/siteConstant";
 import FAQList from "./FAQList";
 import { CollapseProps, Flex, Popconfirm } from "antd";
 
-const FAQ: FC<{ siteConfig: PageSiteConfig; faqList: { question: string; answer: string }[] }> = ({
-  siteConfig,
-  faqList,
-}) => {
+const FAQ: FC<{
+  siteConfig: PageSiteConfig;
+  previewMode?: boolean;
+  faqList: { question: string; answer: string }[];
+}> = ({ siteConfig, previewMode, faqList }) => {
   const items: CollapseProps["items"] =
     faqList.length > 0
       ? faqList.map((faq, i) => {
@@ -23,13 +24,12 @@ const FAQ: FC<{ siteConfig: PageSiteConfig; faqList: { question: string; answer:
 
   return (
     <>
-      {faqList.length > 0 && (
+      {(faqList.length > 0 || previewMode) && (
         <section className={styles.faq__container}>
           <h1>FAQ</h1>
           <p>Frequently asked questions by the students</p>
 
           <FAQList listItems={items} isEditable={false} expandIcon />
-
         </section>
       )}
     </>
