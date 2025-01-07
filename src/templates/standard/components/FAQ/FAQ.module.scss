@@ -1,6 +1,6 @@
 .faq__container {
   max-width: var(--marketing-container-width);
-  margin: 100px auto;
+  margin: 0px auto;
 }
 
 .drawer__header {
@@ -51,6 +51,6 @@
 @media only screen and (max-width: 435px) {
   .faq__container {
     max-width: 80vw;
-    margin: 40px auto;
+    margin: 0px auto;
   }
 }

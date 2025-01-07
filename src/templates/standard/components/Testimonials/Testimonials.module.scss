@@ -73,7 +73,8 @@
 
 .testimonial__preview {
   max-width: var(--marketing-container-width);
-  margin: 100px auto;
+  margin: 0px auto;
+
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -138,7 +139,7 @@
 @media only screen and (max-width: 435px) {
   .testimonial__preview {
     max-width: 80vw;
-    margin: 60px auto;
+    margin: 0px auto;
     display: flex;
     align-items: flex-start;
     gap: 20px;

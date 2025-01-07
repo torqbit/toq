@@ -47,7 +47,7 @@ const CourseList: FC<ICourseInfo> = ({ title, description, courseList, previewMo
   return (
     <>
       {courseList.length > 0 && (
-        <section className={styles.courses__container} id="courses">
+        <section className={styles.courses__container}>
           <div>
             <h2>{title}</h2>
             <p style={{ marginBottom: 30 }}>{description}</p>

@@ -10,6 +10,7 @@ interface PreviewProps extends IframeHTMLAttributes<HTMLIFrameElement> {
 }
 const PreviewSite = forwardRef<HTMLIFrameElement, PreviewProps>((props, ref) => {
   const [previewMode, setPreviewMode] = useState<PreviewMode>("desktop");
+
   return (
     <section
       className={` ${styles.preview__site__wrapper} ${

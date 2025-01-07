@@ -31,7 +31,7 @@ const Testimonial: FC<{ siteConfig: PageSiteConfig; testimonialList: ITestimonia
   previewMode,
 }) => {
   return (
-    <section id="testimonials">
+    <section>
       {(testimonialList.length > 0 || previewMode) && (
         <div className={styles.testimonial__preview}>
           <div>

@@ -32,7 +32,7 @@ const FAQ: FC<{
         });
 
   return (
-    <section id="faq">
+    <>
       {((faqList && faqList.length > 0) || previewMode) && (
         <section className={styles.faq__container}>
           <h1>FAQ</h1>
@@ -41,7 +41,7 @@ const FAQ: FC<{
           <FAQList listItems={items} isEditable={false} expandIcon />
         </section>
       )}
-    </section>
+    </>
   );
 };
 
