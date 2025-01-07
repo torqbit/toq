@@ -33,7 +33,7 @@ const SiteDesign: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) =>
 
   return (
     <SiteBuilderLayout siteConfig={config} siteDesigner={<SiteDesigner config={config} updateSiteConfig={setConfig} />}>
-      <div style={{ marginTop: 50 }}>
+      <div>
         <PreviewSite
           ref={iframeRef}
           siteConfig={config}
