@@ -9,7 +9,6 @@ import UserInfo from "@/components/UserInfo/UserInfo";
 
 import { getDummyArray } from "@/lib/dummyData";
 
-
 const TestimonialCard: FC<{ testimonialItem: ITestimonialItems }> = ({ testimonialItem }) => {
   return (
     <div className={styles.testimonial__card}>
@@ -52,13 +51,13 @@ const Testimonial: FC<{ siteConfig: PageSiteConfig; testimonialList: ITestimonia
                   return (
                     <Flex vertical gap={20} justify="space-between" className={styles.testimonial__card} key={i}>
                       <div>
-                        <Skeleton.Avatar shape="circle" size={40} />
-                        <Skeleton paragraph title={{ style: { marginTop: 30 } }} />
+                        <Skeleton.Avatar className={styles.testimonial__skeleton__avatar} shape="circle" size={40} />
+                        <Skeleton paragraph title={{ className: styles.skeleton__para__title }} />
                       </div>
                       <Flex align="center" gap={10}>
-                        <Skeleton.Avatar shape="circle" size={40} style={{ marginTop: 20 }} />
+                        <Skeleton.Avatar className={styles.skeleton__user__avatar} shape="circle" size={40} />
 
-                        <Skeleton paragraph={{ rows: 0 }} title={{ style: { marginTop: 40 } }} />
+                        <Skeleton paragraph={{ rows: 0 }} title={{ className: styles.skeleton__user__para }} />
                       </Flex>
                     </Flex>
                   );
