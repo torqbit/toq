@@ -65,9 +65,15 @@ const StandardTemplate: FC<IStandardTemplateProps> = ({ user, siteConfig, course
           previewMode={previewMode}
         />
       )}
-      {siteConfig.sections?.faq?.enabled && (previewMode || siteConfig.sections.faq.items.length > 0) && (
-        <FAQ siteConfig={siteConfig} faqList={siteConfig.sections.faq.items || DEFAULT_THEME.sections.faq.items} />
-      )}
+      {siteConfig.sections?.faq?.enabled &&
+        siteConfig.sections.faq.items &&
+        siteConfig.sections.faq.items.length > 0 && (
+          <FAQ
+            previewMode={previewMode}
+            siteConfig={siteConfig}
+            faqList={siteConfig.sections.faq.items || DEFAULT_THEME.sections.faq.items}
+          />
+        )}
       {siteConfig.sections?.testimonials?.enabled && (
         <Testimonial
           siteConfig={siteConfig}
