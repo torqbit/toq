@@ -13,12 +13,10 @@ const FAQForm: FC<{
   isEdit: boolean;
 }> = ({ open, onClose, form, handleFAQ, isEdit }) => {
   return (
-
     <Drawer
-      maskClosable={false}
-      closeIcon={false}
+      closeIcon={true}
       title={isEdit ? "Update FAQ" : "Add FAQ"}
-      classNames={{ header: styles.drawer__header }}
+      classNames={{ header: styles.drawer__header, footer: styles.drawer__footer }}
       footer={
         <Flex align="center" gap={10}>
           <Button
@@ -30,7 +28,6 @@ const FAQForm: FC<{
             {isEdit ? "Update" : "Add"}
           </Button>
           <Button onClick={onClose}>Cancel</Button>
-
         </Flex>
       }
       open={open}
@@ -48,10 +45,8 @@ const FAQForm: FC<{
             <ConfigForm
               layout="vertical"
               input={
-
                 <Form.Item name={"faqQuestion"} rules={[{ required: true, message: "Question is required" }]}>
                   {<Input style={{ width: "100%" }} placeholder={"Write a question"} />}
-
                 </Form.Item>
               }
               title={"Question"}

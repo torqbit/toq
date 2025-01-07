@@ -31,9 +31,9 @@ const Testimonial: FC<{ siteConfig: PageSiteConfig; testimonialList: ITestimonia
   previewMode,
 }) => {
   return (
-    <>
+    <section id="testimonials">
       {(testimonialList.length > 0 || previewMode) && (
-        <section className={styles.testimonial__preview}>
+        <div className={styles.testimonial__preview}>
           <div>
             <h1>{siteConfig.sections?.testimonials?.title}</h1>
             <p>{siteConfig.sections?.testimonials?.description}</p>
@@ -63,9 +63,9 @@ const Testimonial: FC<{ siteConfig: PageSiteConfig; testimonialList: ITestimonia
                   );
                 })}
           </Carousel>
-        </section>
+        </div>
       )}
-    </>
+    </section>
   );
 };
 

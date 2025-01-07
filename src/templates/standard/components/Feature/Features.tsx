@@ -12,7 +12,7 @@ const FeatureCard: FC<IFeatureCard> = ({ img, title, description, link, cardClas
 );
 
 const Features: FC<IFeatureInfo> = ({ title, description, items }) => (
-  <section className={styles.features__container}>
+  <section className={styles.features__container} id="features">
     <div>
       <h2>{title}</h2>
       <p style={{ marginBottom: 30 }}>{description}</p>

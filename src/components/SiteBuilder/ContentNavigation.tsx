@@ -11,6 +11,7 @@ const ContentNavigation: FC<{ activeMenu: string }> = ({ activeMenu }) => {
       mode="inline"
       onSelect={({ key }) => router.push(`/admin/site/content/${key}`)}
       defaultSelectedKeys={["blogs"]}
+      rootClassName={styles.content__menu__wrapper}
       selectedKeys={[activeMenu]}
       style={{ width: "100%", borderInlineEnd: "none" }}
       items={[

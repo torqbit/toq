@@ -184,10 +184,14 @@ const BrandForm: FC<{
     },
     {
       title: "Site description",
-      description: "Choose regions from where ",
+      description: "Add description for your site ",
       layout: "vertical",
       input: (
-        <Input
+        <Input.TextArea
+          className={styles.text__area__wrapper}
+          showCount={true}
+          style={{ marginBottom: 20, width: 250 }}
+          maxLength={120}
           onChange={(e) => {
             onUpdateBrandConfig(e.currentTarget.value, "description");
           }}

@@ -10,7 +10,6 @@ import Features from "./components/Feature/Features";
 import CourseList from "@/templates/standard/components/Courses/Courses";
 import { ICourseCard } from "@/types/landing/courses";
 import { IBlogCard } from "@/types/landing/blog";
-import FAQList from "./components/FAQ/FAQList";
 import FAQ from "./components/FAQ/FAQ";
 import Testimonial from "./components/Testimonials/Testimonials";
 
@@ -65,15 +64,9 @@ const StandardTemplate: FC<IStandardTemplateProps> = ({ user, siteConfig, course
           previewMode={previewMode}
         />
       )}
-      {siteConfig.sections?.faq?.enabled &&
-        siteConfig.sections.faq.items &&
-        siteConfig.sections.faq.items.length > 0 && (
-          <FAQ
-            previewMode={previewMode}
-            siteConfig={siteConfig}
-            faqList={siteConfig.sections.faq.items || DEFAULT_THEME.sections.faq.items}
-          />
-        )}
+      {siteConfig.sections?.faq?.enabled && (
+        <FAQ previewMode={previewMode} siteConfig={siteConfig} faqList={siteConfig.sections.faq.items} />
+      )}
       {siteConfig.sections?.testimonials?.enabled && (
         <Testimonial
           siteConfig={siteConfig}

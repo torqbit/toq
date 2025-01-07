@@ -19,7 +19,7 @@ const BlogCard: FC<IBlogCard> = ({ img, title, date, slug, cardClass, author }) 
 
 const Blogs: FC<IBlogInfo> = ({ blogList, title, description, previewMode }) => {
   return (
-    <section className={styles.blog__list__container}>
+    <section className={styles.blog__list__container} id="blogs">
       <div>
         <div className={styles.blog__title}>
           <div>

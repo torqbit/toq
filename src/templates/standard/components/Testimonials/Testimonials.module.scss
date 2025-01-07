@@ -24,6 +24,13 @@
   }
 }
 
+.drawer__header {
+  border-bottom: 1px solid var(--border-color) !important;
+}
+.drawer__footer {
+  border-top: 1px solid var(--border-color) !important;
+}
+
 .tesimoinal__form__container {
   max-width: 1000px;
   background-color: var(--bg-primary);

@@ -29,10 +29,10 @@ const TestimonialsForm: FC<ITestimonialForm> = ({ handleTestimonial, form, index
     <Drawer
       open={open}
       width={600}
-      maskClosable={false}
-      closeIcon={false}
+      closeIcon={true}
+      onClose={onClose}
       title={edit ? "Update Testimonial" : "Add Testimonial"}
-      classNames={{ header: styles.drawer__header }}
+      classNames={{ header: styles.drawer__header, footer: styles.drawer__footer }}
       footer={
         <Flex align="center" gap={10}>
           <Button

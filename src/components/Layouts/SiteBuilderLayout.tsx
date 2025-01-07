@@ -173,6 +173,7 @@ const SiteBuilderLayout: FC<{
                     </Link>
                     <h4 style={{ padding: "0px", margin: 0 }}>Site</h4>
                   </Flex>
+
                   {siteDesigner && (
                     <Button
                       loading={loading}
@@ -188,7 +189,7 @@ const SiteBuilderLayout: FC<{
 
                 <Tabs
                   tabBarGutter={40}
-                  tabBarStyle={{ padding: "0px 20px" }}
+                  tabBarStyle={{ padding: "0px 20px", margin: 0 }}
                   activeKey={siteContent ? "content" : "design"}
                   className={styles.site_config_tabs}
                   items={Tabitems}

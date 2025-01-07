@@ -73,6 +73,7 @@ const MarketingHero: FC<{ isMobile: boolean; user: User; siteConfig: PageSiteCon
 
   return (
     <section
+      id="hero"
       style={{
         ...backgroundStyles,
       }}

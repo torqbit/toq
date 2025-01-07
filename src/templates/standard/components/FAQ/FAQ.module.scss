@@ -4,7 +4,10 @@
 }
 
 .drawer__header {
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color) !important;
+}
+.drawer__footer {
+  border-top: 1px solid var(--border-color) !important;
 }
 
 .add__more__btn {
