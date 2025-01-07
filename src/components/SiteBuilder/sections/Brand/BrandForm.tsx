@@ -20,9 +20,8 @@ import { DEFAULT_THEME, PageSiteConfig } from "@/services/siteConstant";
 import { IBrandConfig, ISocialLinks } from "@/types/schema";
 import { RcFile } from "antd/es/upload";
 import Image from "next/image";
-import ImgCrop from "antd-img-crop";
 import SvgIcons from "@/components/SvgIcons";
-import { getFetch, postFetch, postWithFile } from "@/services/request";
+import { postWithFile } from "@/services/request";
 import { checkIfImageIsSquare, getExtension } from "@/lib/utils";
 
 const BrandForm: FC<{
@@ -190,7 +189,8 @@ const BrandForm: FC<{
         <Input.TextArea
           className={styles.text__area__wrapper}
           showCount={true}
-          style={{ marginBottom: 20, width: 250 }}
+          rows={3}
+          style={{ marginBottom: 20 }}
           maxLength={120}
           onChange={(e) => {
             onUpdateBrandConfig(e.currentTarget.value, "description");
