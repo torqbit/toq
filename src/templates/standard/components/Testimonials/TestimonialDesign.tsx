@@ -32,8 +32,10 @@ const TestimonialDesign: FC<{
         />
       </Flex>
 
-      {config.sections?.testimonials?.items?.length != 0 && (
-        <Flex vertical justify="center" style={{ textAlign: "center", marginTop: 10 }}>
+      {config.sections?.testimonials?.items?.length === 0 && (
+        <Flex vertical justify="center" style={{ textAlign: "center" }}>
+
+
           <p>No Testimonials exists</p>
           <Button
             onClick={() => {

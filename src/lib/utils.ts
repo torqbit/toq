@@ -404,3 +404,19 @@ export function extractValue(link: string) {
     return link.slice(1);
   }
 }
+
+export const arraysAreEqual = (arr1: any[], arr2: any[]) => {
+  // Check if both arrays have the same length
+  if (arr1.length !== arr2.length) {
+    return false;
+  }
+
+  // Compare each object in the arrays
+  for (let i = 0; i < arr1.length; i++) {
+    if (JSON.stringify(arr1[i]) !== JSON.stringify(arr2[i])) {
+      return false;
+    }
+  }
+
+  return true;
+};

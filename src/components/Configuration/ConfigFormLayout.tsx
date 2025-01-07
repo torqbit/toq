@@ -12,7 +12,16 @@ const ConfigFormLayout: FC<{
   isCollapsible?: boolean;
   width?: string;
   marginBottom?: string;
-}> = ({ children, formTitle, extraContent, isCollapsible = false, width = "1000px", marginBottom }) => {
+  showArrow?: boolean;
+}> = ({
+  children,
+  formTitle,
+  extraContent,
+  isCollapsible = false,
+  width = "1000px",
+  marginBottom,
+  showArrow = true,
+}) => {
   return (
     <section className={styles.cms__container} style={{ width, marginBottom }}>
       <Collapse
@@ -21,6 +30,7 @@ const ConfigFormLayout: FC<{
         collapsible={isCollapsible ? "header" : "icon"}
         items={[
           {
+
             key: formTitle,
             label: <h4 style={{ margin: 0 }}>{formTitle}</h4>,
 
@@ -28,6 +38,7 @@ const ConfigFormLayout: FC<{
             children: children,
             extra: extraContent,
             showArrow: isCollapsible,
+
           },
         ]}
       />

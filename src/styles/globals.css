@@ -705,7 +705,7 @@ a {
 }
 
 .ant-drawer .ant-drawer-header {
-  border-bottom: none;
+  /* border-bottom: none; */
 }
 
 /* **************** Lesson Sider ******************** */
