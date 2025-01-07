@@ -5,6 +5,7 @@
   .screen__mode__handler {
     line-height: 0;
     font-size: 18px;
+    color: var(--font-secondary);
   }
   .site__preview__container {
     position: relative;
@@ -14,6 +15,8 @@
 
     .site__preview__titlebar {
       padding: 0px 10px;
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
       height: 35px;
       background-color: var(--bg-primary);
 
@@ -22,7 +25,7 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      transition: all 0.1s ease-in;
+      transition: all 0.4s ease-in;
 
       > div:first-child {
         display: flex;
@@ -87,31 +90,37 @@
       overflow-x: hidden;
       transform-origin: 0 0;
       height: calc(100vh - 110px);
-      transition: all 0.4s ease-in;
+      transition: all 0.4s;
     }
   }
 }
 
 .preview__desktop__wrapper {
-  .site__preview__titlebar {
-    width: calc(100vw - 400px);
-    .new__window__link_wrapper {
-      position: absolute;
-      left: 42%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  .site__preview__container {
+    .site__preview__titlebar {
+      width: calc(100vw - 400px);
+      .new__window__link_wrapper {
+        position: absolute;
+        left: 42%;
 
-      padding: 5px 10px;
-      border-radius: 30px;
-      background-color: var(--bg-secondary);
-      cursor: default;
-      i {
-        line-height: 0;
-        font-size: 14px;
-        color: var(--font-secondary);
-        cursor: pointer;
-      }
-      p {
-        font-size: 12px;
-        margin: 0;
+        padding: 5px 10px;
+        border-radius: 4px;
+        background-color: var(--bg-secondary);
+        cursor: default;
+        i {
+          line-height: 0;
+          font-size: 14px;
+          color: var(--font-secondary);
+          cursor: pointer;
+        }
+        p {
+          font-size: 12px;
+          margin: 0;
+        }
       }
     }
   }
@@ -123,10 +132,12 @@
   justify-content: center;
   align-items: center;
 
-  .site__preview__titlebar {
-    width: calc(400px - 40px);
-    .new__window__link_wrapper {
-      display: none;
+  .site__preview__container {
+    .site__preview__titlebar {
+      width: calc(400px - 40px);
+      .new__window__link_wrapper {
+        display: none;
+      }
     }
   }
 }

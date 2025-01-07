@@ -69,7 +69,7 @@ const PreviewSite = forwardRef<HTMLIFrameElement, PreviewProps>((props, ref) => 
         <iframe
           ref={ref}
           loading="lazy"
-          style={{ transform: "scale(0.9)", width: previewMode === "mobile" ? "400px" : "111%" }}
+          style={{ transform: "scale(0.9)", width: "111%" }}
           className={styles.site__preview__iframe}
           {...props}
         ></iframe>
