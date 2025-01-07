@@ -26,7 +26,6 @@ const TestimonialsForm: FC<ITestimonialForm> = ({ handleTestimonial, form, index
     edit && setProfile(form.getFieldsValue().profile);
   }, [edit]);
   return (
-
     <Drawer
       open={open}
       width={600}
@@ -108,11 +107,16 @@ const TestimonialsForm: FC<ITestimonialForm> = ({ handleTestimonial, form, index
                     name={"description"}
                     rules={[{ required: true, message: "Description is required" }]}
                   >
-                    <Input.TextArea showCount maxLength={200} rows={3} placeholder="Description for the testimonials" />
+                    <Input.TextArea
+                      showCount
+                      maxLength={200}
+                      rows={3}
+                      placeholder="The course have really brought transformation ... "
+                    />
                   </Form.Item>
                 }
-                title={"Description"}
-                description={"Describe fot the testimonials "}
+                title={"Write the testimonial"}
+                description={"Description of your experience with our product or service."}
                 divider={false}
               />
             </Flex>
@@ -120,7 +124,6 @@ const TestimonialsForm: FC<ITestimonialForm> = ({ handleTestimonial, form, index
         </section>
       }
     />
-
   );
 };
 

@@ -335,29 +335,26 @@ const BrandForm: FC<{
               },
             ]}
           />
-          <Form.Item name={"social"} noStyle>
-            <Input
-              name="social"
-              addonBefore={`https://${selectedSegment}.${selectedSegment === "discord" ? "gg" : "com"}`}
-              type="url"
-              onChange={(e) => {
-                onUpdateBrandConfig(
-                  e.currentTarget.value.startsWith("http")
-                    ? e.currentTarget.value
-                    : `https://${selectedSegment}.${selectedSegment === "discord" ? "gg" : "com"}/${
-                        e.currentTarget.value
-                      }`,
-                  `socialLinks.${selectedSegment}`
-                );
-              }}
-              value={
-                config?.brand?.socialLinks
-                  ? config.brand.socialLinks[selectedSegment as keyof ISocialLinks]?.split("/").pop()
-                  : ""
-              }
-              placeholder={`Add ${selectedSegment} id`}
-            />
-          </Form.Item>
+          <Input
+            key={selectedSegment}
+            addonBefore={`https://${selectedSegment}.${selectedSegment === "discord" ? "gg" : "com"}`}
+            type="url"
+            onChange={(e) => {
+              onUpdateBrandConfig(
+                e.currentTarget.value.startsWith("http")
+                  ? e.currentTarget.value
+                  : `https://${selectedSegment}.${selectedSegment === "discord" ? "gg" : "com"}/${
+                      e.currentTarget.value
+                    }`,
+                `socialLinks.${selectedSegment}`
+              );
+            }}
+            defaultValue={
+              config.brand?.socialLinks &&
+              config.brand?.socialLinks[selectedSegment as keyof ISocialLinks]?.split("/").pop()
+            }
+            placeholder={`Add ${selectedSegment} id`}
+          />
         </Flex>
       ),
       inputName: "social",
@@ -375,9 +372,9 @@ const BrandForm: FC<{
           name: config.brand?.name,
           title: config.brand?.title,
           description: config.brand?.description,
-          social: config?.brand?.socialLinks
-            ? config.brand.socialLinks[selectedSegment as keyof ISocialLinks]?.split("/").pop()
-            : "",
+          social:
+            config.brand?.socialLinks &&
+            config.brand?.socialLinks[selectedSegment as keyof ISocialLinks]?.split("/").pop(),
         }}
       >
         {brandItems.map((item, i) => {
