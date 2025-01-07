@@ -1,7 +1,6 @@
 .faq__container {
-  padding: 20px 0px;
   max-width: var(--marketing-container-width);
-  margin: 0 auto;
+  margin: 100px auto;
 }
 
 .drawer__header {
@@ -44,4 +43,11 @@
 .faq__design__wrapper {
   background-color: var(--bg-primary);
   text-align: center;
+}
+
+@media only screen and (max-width: 435px) {
+  .faq__container {
+    max-width: 80vw;
+    margin: 40px auto;
+  }
 }

@@ -6,7 +6,6 @@ import { Theme } from "@/types/theme";
 import BrandForm from "./sections/Brand/BrandForm";
 import HeroForm from "./sections/Hero/HeroForm";
 import SvgIcons from "../SvgIcons";
-import FeatureForm from "./sections/Feature/FeatureForm";
 import CourseForm from "./sections/Courses/CourseForm";
 import BlogForm from "./sections/Blog/BlogForm";
 import FeaturesLayout from "@/templates/standard/components/Feature/FeaturesLayout";
@@ -134,14 +133,7 @@ const SiteDesigner: FC<{
           }}
         />
       </div>
-      <Collapse
-        accordion
-        expandIconPosition="end"
-        className={styles.collapse__wrapper}
-        items={items}
-        size="middle"
-        defaultActiveKey={["1"]}
-      />
+      <Collapse accordion expandIconPosition="end" className={styles.collapse__wrapper} items={items} size="middle" />
     </div>
   );
 };

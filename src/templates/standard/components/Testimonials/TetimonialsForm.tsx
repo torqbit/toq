@@ -1,6 +1,8 @@
 import ConfigForm from "@/components/Configuration/ConfigForm";
+
 import ConfigFormLayout from "@/components/Configuration/ConfigFormLayout";
 import { Button, Drawer, Flex, Form, Input, Tooltip, Upload } from "antd";
+
 import { FC, useEffect, useState } from "react";
 import styles from "./Testimonials.module.scss";
 
@@ -24,6 +26,7 @@ const TestimonialsForm: FC<ITestimonialForm> = ({ handleTestimonial, form, index
     edit && setProfile(form.getFieldsValue().profile);
   }, [edit]);
   return (
+
     <Drawer
       open={open}
       width={600}
@@ -117,6 +120,7 @@ const TestimonialsForm: FC<ITestimonialForm> = ({ handleTestimonial, form, index
         </section>
       }
     />
+
   );
 };
 

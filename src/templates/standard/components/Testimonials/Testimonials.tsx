@@ -4,7 +4,11 @@ import { PageSiteConfig } from "@/services/siteConstant";
 import { ITestimonialItems } from "@/types/landing/testimonial";
 import { Carousel, Flex, Skeleton } from "antd";
 import SvgIcons from "@/components/SvgIcons";
+
 import UserInfo from "@/components/UserInfo/UserInfo";
+
+import { getDummyArray } from "@/lib/dummyData";
+
 
 const TestimonialCard: FC<{ testimonialItem: ITestimonialItems }> = ({ testimonialItem }) => {
   return (
@@ -36,27 +40,29 @@ const Testimonial: FC<{ siteConfig: PageSiteConfig; testimonialList: ITestimonia
             <p>{siteConfig.sections?.testimonials?.description}</p>
           </div>
           <Carousel dots={{ className: styles.caroursel__dots }} className={styles.carousel__wrapper} autoplay>
-            {testimonialList.length > 0 ? (
-              testimonialList.map((testimonial, i) => {
-                return (
-                  <div>
-                    <TestimonialCard key={i} testimonialItem={testimonial} />
-                  </div>
-                );
-              })
-            ) : (
-              <Flex vertical gap={20} justify="space-between" className={styles.testimonial__card}>
-                <div>
-                  <Skeleton.Avatar shape="circle" size={40} />
-                  <Skeleton paragraph title={{ style: { marginTop: 30 } }} />
-                </div>
-                <Flex align="center" gap={10}>
-                  <Skeleton.Avatar shape="circle" size={40} style={{ marginTop: 20 }} />
+            {testimonialList.length > 0
+              ? testimonialList.map((testimonial, i) => {
+                  return (
+                    <div>
+                      <TestimonialCard key={i} testimonialItem={testimonial} />
+                    </div>
+                  );
+                })
+              : getDummyArray(3).map((item, i) => {
+                  return (
+                    <Flex vertical gap={20} justify="space-between" className={styles.testimonial__card} key={i}>
+                      <div>
+                        <Skeleton.Avatar shape="circle" size={40} />
+                        <Skeleton paragraph title={{ style: { marginTop: 30 } }} />
+                      </div>
+                      <Flex align="center" gap={10}>
+                        <Skeleton.Avatar shape="circle" size={40} style={{ marginTop: 20 }} />
 
-                  <Skeleton paragraph={{ rows: 0 }} title={{ style: { marginTop: 40 } }} />
-                </Flex>
-              </Flex>
-            )}
+                        <Skeleton paragraph={{ rows: 0 }} title={{ style: { marginTop: 40 } }} />
+                      </Flex>
+                    </Flex>
+                  );
+                })}
           </Carousel>
         </section>
       )}

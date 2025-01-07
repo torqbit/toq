@@ -1,11 +1,14 @@
+
 import { Collapse, CollapseProps } from "antd";
 import React, { FC } from "react";
+
 import styles from "./FAQ.module.scss";
 import { MinusCircleOutlined, PlusCircleOutlined } from "@ant-design/icons";
 
 const FAQList: FC<{
   listItems: CollapseProps["items"];
   isEditable?: boolean;
+
   expandIcon?: boolean;
 }> = ({ isEditable, listItems, expandIcon }) => {
   return (
@@ -20,6 +23,7 @@ const FAQList: FC<{
         }
         items={listItems}
       />
+
     </section>
   );
 };

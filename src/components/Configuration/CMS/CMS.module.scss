@@ -3,6 +3,7 @@
   background-color: var(--bg-primary);
   margin: 0px 0px 30px 0px;
   border-radius: 8px;
+
   form {
     width: 100%;
     > div:first-child {
@@ -40,12 +41,10 @@
 
 .cms__form {
   background-color: var(--bg-primary);
-  // padding: 15px 0px;
   width: 100%;
   display: flex;
   gap: 40px;
   justify-content: space-between;
-  border-bottom: 1px solid var(--border-color);
 
   .video_container {
     height: 178px;
@@ -90,4 +89,9 @@
   > div:first-child {
     max-width: 400px;
   }
+}
+
+.collapse__header__wrapper {
+  display: flex;
+  align-items: center !important;
 }

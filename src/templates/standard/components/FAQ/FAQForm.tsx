@@ -1,6 +1,8 @@
 import ConfigForm from "@/components/Configuration/ConfigForm";
+
 import { Button, Drawer, Flex, Form, FormInstance, Input } from "antd";
 import { FC } from "react";
+
 import styles from "./FAQ.module.scss";
 
 const FAQForm: FC<{
@@ -11,6 +13,7 @@ const FAQForm: FC<{
   isEdit: boolean;
 }> = ({ open, onClose, form, handleFAQ, isEdit }) => {
   return (
+
     <Drawer
       maskClosable={false}
       closeIcon={false}
@@ -27,6 +30,7 @@ const FAQForm: FC<{
             {isEdit ? "Update" : "Add"}
           </Button>
           <Button onClick={onClose}>Cancel</Button>
+
         </Flex>
       }
       open={open}
@@ -44,8 +48,10 @@ const FAQForm: FC<{
             <ConfigForm
               layout="vertical"
               input={
+
                 <Form.Item name={"faqQuestion"} rules={[{ required: true, message: "Question is required" }]}>
                   {<Input style={{ width: "100%" }} placeholder={"Write a question"} />}
+
                 </Form.Item>
               }
               title={"Question"}
@@ -66,7 +72,6 @@ const FAQForm: FC<{
               }
               title={"Answer"}
               description={"Describe about the question asked by the students "}
-              divider={false}
             />
           </Flex>
         </Form>

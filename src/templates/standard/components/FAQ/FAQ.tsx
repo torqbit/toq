@@ -27,7 +27,9 @@ const FAQ: FC<{ siteConfig: PageSiteConfig; faqList: { question: string; answer:
         <section className={styles.faq__container}>
           <h1>FAQ</h1>
           <p>Frequently asked questions by the students</p>
+
           <FAQList listItems={items} isEditable={false} expandIcon />
+
         </section>
       )}
     </>
