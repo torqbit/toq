@@ -1,7 +1,7 @@
 import { Assignment, AssignmentSubmission, submissionStatus } from "@prisma/client";
 import { getDelete, getFetch, postFetch } from "../request";
 import { IAssignmentDetail } from "@/types/courses/Course";
-import { AssignmentCreateRequest, IAssignmentDetails } from "@/types/courses/assignment";
+import { AssignmentCreateRequest, IAssignmentDetails, IAssignmentSubmissoionDetail } from "@/types/courses/assignment";
 
 export interface ISubmissionTableInfo {
   key: number;
@@ -57,6 +57,7 @@ interface ApiResponse {
   message: string;
   preview: string;
   assignmentDetail: IAssignmentDetail;
+  submissionContent: IAssignmentSubmissoionDetail;
   allAssignmentData: Assignment[];
   codeDetail: Map<string, string>;
   totalSubmissions: number;
@@ -126,10 +127,11 @@ class AssignmentSerivce {
   };
   getAssignment = (
     lessonId: number,
+    isAnswer: boolean = false,
     onSuccess: (response: ApiResponse) => void,
     onFailure: (message: string) => void
   ) => {
-    getFetch(`/api/v1/resource/assignment/get?lessonId=${lessonId}`).then((result) => {
+    getFetch(`/api/v1/resource/assignment/get?lessonId=${lessonId}&isAnswer=${isAnswer}`).then((result) => {
       if (result.status == 200) {
         result.json().then((r) => {
           const apiResponse = r as ApiResponse;
@@ -305,7 +307,7 @@ class AssignmentSerivce {
   saveAssignment = (
     data: {
       content: any;
-      courseId: number;
+      courseId: string;
       lessonId: number;
       assignmentId: number;
     },
@@ -373,6 +375,53 @@ class AssignmentSerivce {
     onFailure: (message: string) => void
   ) => {
     getFetch(`/api/v1/admin/submission/get?submissionId=${id}`).then((result) => {
+      if (result.status == 200) {
+        result.json().then((r) => {
+          const apiResponse = r as ApiResponse;
+          onSuccess(apiResponse);
+        });
+      } else {
+        result.json().then((r) => {
+          const failedResponse = r as FailedApiResponse;
+          onFailure(failedResponse.error);
+        });
+      }
+    });
+  };
+
+  getSubmissionContent = (
+    courseId: string,
+    lessonId: number,
+    assignmentId: number,
+    onSuccess: (response: ApiResponse) => void,
+    onFailure: (message: string) => void
+  ) => {
+    getFetch(`/api/v1/course/${courseId}/assignment/${assignmentId}/${lessonId}/submission/get`).then((result) => {
+      if (result.status == 200) {
+        result.json().then((r) => {
+          const apiResponse = r as ApiResponse;
+          onSuccess(apiResponse);
+        });
+      } else {
+        result.json().then((r) => {
+          const failedResponse = r as FailedApiResponse;
+          onFailure(failedResponse.error);
+        });
+      }
+    });
+  };
+
+  completeSubmission = (
+    courseId: string,
+    assignmentId: number,
+    lessonId: number,
+    submissionId: number,
+    onSuccess: (response: ApiResponse) => void,
+    onFailure: (message: string) => void
+  ) => {
+    getFetch(
+      `/api/v1/course/${courseId}/assignment/${assignmentId}/${lessonId}/submission/${submissionId}/evaluate`
+    ).then((result) => {
       if (result.status == 200) {
         result.json().then((r) => {
           const apiResponse = r as ApiResponse;

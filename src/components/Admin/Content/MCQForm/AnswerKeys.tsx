@@ -6,7 +6,7 @@ const { Text } = Typography;
 
 interface AnswerKeysProps {
   options: Option[];
-  selectedAnswer: string | number[];
+  selectedAnswer: string | number[] | any;
   onAnswerChange: (values: string | number[]) => void;
 }
 
