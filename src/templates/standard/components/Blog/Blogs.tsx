@@ -8,15 +8,13 @@ import SvgIcons from "@/components/SvgIcons";
 import BlogSkeleton from "./BlogSkeleton";
 
 const BlogCard: FC<IBlogCard> = ({ img, title, date, link, cardClass, author }) => (
-  <>
-    <Link href={`${link}`} className={`${styles.blogs__card} ${cardClass}`}>
-      <img className={styles.banner__img} alt={title} aria-label={`icon for ${title.toLowerCase()}`} src={img} />
-      <div className={styles.blogs__card__footer}>
-        <h4>{title}</h4>
-        <Avatar name={author.name} picture={author.picture} date={date} />
-      </div>
-    </Link>
-  </>
+  <Link href={`${link}`} className={`${styles.blogs__card} ${cardClass}`}>
+    <img className={styles.banner__img} alt={title} aria-label={`icon for ${title.toLowerCase()}`} src={img} />
+    <div className={styles.blogs__card__footer}>
+      <h4>{title}</h4>
+      <Avatar name={author.name} picture={author.picture} date={date} />
+    </div>
+  </Link>
 );
 
 const Blogs: FC<IBlogInfo> = ({ blogList, title, description, previewMode }) => {
