@@ -171,7 +171,12 @@ const HeroForm: FC<{
           rules={[{ required: true, message: `description is required!` }]}
           key={2}
         >
-          <Input
+          <Input.TextArea
+            className={styles.text__area__wrapper}
+            showCount={true}
+            rows={3}
+            style={{ marginBottom: 20 }}
+            maxLength={250}
             onChange={(e) => {
               onUpdateHeroConfig(e.currentTarget.value, "description");
             }}

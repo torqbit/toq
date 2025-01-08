@@ -269,6 +269,8 @@ const FeatureForm: FC<{
       layout: "vertical",
       input: (
         <Input.TextArea
+          showCount
+          maxLength={250}
           style={{ marginBottom: 15 }}
           autoSize={{ minRows: 1, maxRows: 4 }}
           onChange={(e) => {
