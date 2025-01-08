@@ -1,3 +1,5 @@
+import { submissionStatus } from "@prisma/client";
+
 export interface IAssignmentData {
   open: boolean;
   assignmentId?: number;
@@ -64,11 +66,18 @@ export interface MultipleChoiceQA {
   title: string;
   description?: string;
   options: Option[];
-  correctOptionIndex: number[];
+  correctOptionIndex: string | number[];
   answerExplaination: string;
 }
 export interface MCQAssignment extends IAssignmentDetails {
   questions: MultipleChoiceQA[];
+}
+
+export type SelectedAnswersType = {
+  [key: number]: (string | number)[];
+};
+export interface MCQASubmissionContent extends IAssignmentDetails {
+  selectedAnswers: SelectedAnswersType;
 }
 
 export interface SubjectiveAssignment extends IAssignmentDetails {
@@ -86,4 +95,14 @@ export interface AssignmentCreateRequest {
   passingScore: number;
   details: IAssignmentDetails;
   title: string;
+}
+
+export interface IAssignmentSubmissoionDetail {
+  id: number;
+  content: IAssignmentDetails;
+  status: submissionStatus;
+  isPassed: boolean;
+  passingScore: number;
+  totalMarks: number;
+  totalScore: number;
 }
