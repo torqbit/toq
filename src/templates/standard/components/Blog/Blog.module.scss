@@ -29,6 +29,12 @@
     display: grid;
     gap: 30px;
 
+    .skeleton__image {
+      width: 378px !important;
+      height: 200px !important;
+      border-radius: 16px 0px;
+    }
+
     .blogs__card {
       width: 380px;
       background-color: var(--bg-primary);
@@ -87,14 +93,24 @@
     }
 
     .blogs {
+      grid-template-columns: 1fr;
+
       .blogs__card,
       .blogs__card__large,
       .blogs__card__small {
         width: 80vw;
       }
+
+      .skeleton__image {
+        width: 316px !important;
+        height: 200px !important;
+        border-radius: 16px 0px;
+      }
     }
 
-    .blogs__triple {
+    .blogs__triple,
+    .blogs__double {
+      display: grid;
       grid-template-columns: 1fr;
     }
   }

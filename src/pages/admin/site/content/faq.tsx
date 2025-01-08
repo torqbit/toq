@@ -32,7 +32,7 @@ const FAQPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
       {contentHolder}
       <Flex align="center" justify="space-between" style={{ marginBottom: 20, maxWidth: 1000 }}>
         <h4 style={{ margin: "0" }}> FAQ</h4>
-        {siteConfig.sections?.faq?.items && siteConfig.sections?.faq?.items.length > 0 && (
+        {config.sections?.faq?.items && config.sections?.faq?.items.length > 0 && (
           <Button type="primary" loading={loading} onClick={updateYamlFile}>
             Save
           </Button>
