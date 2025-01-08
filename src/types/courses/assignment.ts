@@ -66,7 +66,7 @@ export interface MultipleChoiceQA {
   title: string;
   description?: string;
   options: Option[];
-  correctOptionIndex: string | number[];
+  correctOptionIndex: string[];
   answerExplaination: string;
 }
 export interface MCQAssignment extends IAssignmentDetails {

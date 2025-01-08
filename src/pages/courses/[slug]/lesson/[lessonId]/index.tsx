@@ -73,10 +73,11 @@ const LessonItem: FC<{
             padding: resourceId > 0 ? "5px 0px" : 0,
             paddingLeft: resourceId > 0 ? "20px" : 0,
           }}
-          className={`${selectedLesson && resourceId === selectedLesson.resourceId && styles.selectedLable} ${resourceId > 0 ? styles.lessonLabelContainer : styles.labelContainer
-            }`}
+          className={`${selectedLesson && resourceId === selectedLesson.resourceId && styles.selectedLable} ${
+            resourceId > 0 ? styles.lessonLabelContainer : styles.labelContainer
+          }`}
         >
-          <Flex justify="space-between" align="center" onClick={() => { }}>
+          <Flex justify="space-between" align="center" onClick={() => {}}>
             <div className={styles.title_container}>
               <Flex gap={10} align="center">
                 {completed ? SvgIcons.check : icon}
@@ -470,6 +471,7 @@ const LessonPage: NextPage<{ siteConfig: PageSiteConfig; courseId: number }> = (
   const getAssignmentDetail = (lessonId: number) => {
     AssignmentService.getAssignment(
       lessonId,
+      false,
       (result) => {
         setAssignmentDetail(result.assignmentDetail);
       },
@@ -575,7 +577,7 @@ const LessonPage: NextPage<{ siteConfig: PageSiteConfig; courseId: number }> = (
                           assignmentId={Number(assignmentDetail?.assignmentId)}
                           userRole={courseDetail?.userRole as Role}
                           ResponsiveLessonItemsList={ResponsiveLessonItemsList}
-                          assignmentFiles={assignmentDetail?.assignmentFiles as string[]}
+                          assignmentFiles={[] as string[]}
                           updateAssignmentWatchedStatus={updateAssignmentWatchedStatus}
                           chapterSeqId={Number(currentLesson.chapterSeq)}
                         />
