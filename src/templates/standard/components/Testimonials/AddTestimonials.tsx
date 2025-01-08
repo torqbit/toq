@@ -12,6 +12,7 @@ import ConfigForm from "@/components/Configuration/ConfigForm";
 import { createSlug } from "@/lib/utils";
 import FAQList from "../FAQ/FAQList";
 import UserInfo from "@/components/UserInfo/UserInfo";
+import BasicInfoForm from "@/components/SiteBuilder/sections/BasicInfoForm/BasicInfoForm";
 
 const AddTestimonial: FC<{ siteConfig: PageSiteConfig; setConfig: (value: PageSiteConfig) => void }> = ({
   siteConfig,
@@ -179,7 +180,6 @@ const AddTestimonial: FC<{ siteConfig: PageSiteConfig; setConfig: (value: PageSi
           },
         },
       });
-    messageApi.success("Basic info has been updated");
   };
   const handleEdit = (index: number) => {
     setOpen(true);
@@ -237,57 +237,14 @@ const AddTestimonial: FC<{ siteConfig: PageSiteConfig; setConfig: (value: PageSi
   return (
     <section className={styles.add__testimonial}>
       {contentHolder}
-      <ConfigFormLayout
-        isCollapsible
-        showArrow={false}
-        formTitle="Basic info"
-        extraContent={
-          <Button onClick={() => basicForm.submit()} type="primary">
-            {!basicForm.getFieldsValue().title || !basicForm.getFieldsValue().description ? "Save" : "Update"}
-          </Button>
-        }
-      >
-        <Form
-          form={basicForm}
-          initialValues={{
-            title: siteConfig.sections?.testimonials?.title,
-            description: siteConfig.sections?.testimonials?.description,
-          }}
-          onFinish={onSaveBasicInfo}
-        >
-          <Flex vertical gap={10}>
-            <ConfigForm
-              input={
-                <Form.Item
-                  style={{ width: 300 }}
-                  name={"title"}
-                  rules={[{ required: true, message: "Title is required" }]}
-                >
-                  <Input placeholder="Title for the testimonials" />
-                </Form.Item>
-              }
-              title={"Title"}
-              description={"Add a title for the testimonials "}
-              divider={true}
-            />
-            <ConfigForm
-              layout="vertical"
-              input={
-                <Form.Item
-                  noStyle
-                  name={"description"}
-                  rules={[{ required: true, message: "Description is required" }]}
-                >
-                  <Input.TextArea rows={3} placeholder="Description for the testimonials" />
-                </Form.Item>
-              }
-              title={"Description"}
-              description={"Add a description for the testimonials "}
-              divider={false}
-            />
-          </Flex>
-        </Form>
-      </ConfigFormLayout>
+      <BasicInfoForm
+        form={basicForm}
+        onFinish={onSaveBasicInfo}
+        initialValue={{
+          title: siteConfig.sections?.testimonials?.title,
+          description: siteConfig.sections?.testimonials?.description,
+        }}
+      />
 
       {testimonialList.length > 0 ? (
         <Flex vertical className={styles.testimonial__list__container}>

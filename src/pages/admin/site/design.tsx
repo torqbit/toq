@@ -28,7 +28,6 @@ const SiteDesign: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) =>
       const iframe = document.getElementById("myIframe") as HTMLIFrameElement;
       const iframeDocument = iframe?.contentWindow?.document;
 
-      // Change the URL of the iframe and scroll to the target section
       if (iframeDocument) {
         iframe.contentWindow.location.hash = activeKey;
       }

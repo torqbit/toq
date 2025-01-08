@@ -53,7 +53,7 @@ const SiteDesigner: FC<{
     {
       key: "features",
       className: styles.collapse__header,
-      children: <FeaturesLayout />,
+      children: <FeaturesLayout config={config} updateSiteConfig={updateSiteConfig} />,
 
       label: collapseHeader("Feature", SvgIcons.features),
     },

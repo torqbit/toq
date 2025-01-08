@@ -45,6 +45,7 @@ site:
       position: background
   sections:
     features:
+      enabled: true
       title: Our Features
       description: Our educational platform is completely secure, robust and scales to
         millions of users, and always available, giving you the flexibility to
@@ -75,7 +76,6 @@ site:
     faq:
       enabled: true
       items:
-
     testimonials:
       enabled: true
       title: "Teachers love our product "
