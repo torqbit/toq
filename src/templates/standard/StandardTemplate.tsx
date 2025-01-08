@@ -43,13 +43,19 @@ const StandardTemplate: FC<IStandardTemplateProps> = ({ user, siteConfig, course
       heroSection={<Hero siteConfig={siteConfig} isMobile={isMobile} user={user} />}
     >
       {/* <SetupPlatform /> */}
-      <section className={styles.section__wrapper} id="features">
-        <Features
-          title={featureInfo?.title ? featureInfo.title : DEFAULT_THEME.sections.features.title}
-          description={featureInfo?.description ? featureInfo.description : DEFAULT_THEME.sections.features.description}
-          items={featuresItems && featuresItems.length > 0 ? featuresItems : []}
-        />
-      </section>
+      {featureInfo?.enabled && (
+        <section className={styles.section__wrapper} id="features">
+          <Features
+            title={featureInfo?.title ? featureInfo.title : DEFAULT_THEME.sections.features.title}
+            description={
+              featureInfo?.description ? featureInfo.description : DEFAULT_THEME.sections.features.description
+            }
+            items={featuresItems && featuresItems.length > 0 ? featuresItems : []}
+            enabled={featureInfo?.enabled}
+          />
+        </section>
+      )}
+
       {siteConfig.sections?.courses?.enable && siteConfig.brand && (
         <section className={styles.section__wrapper} id="courses">
           <CourseList

@@ -20,24 +20,24 @@ const Testimonials: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) 
     const result = await res.json();
     if (res.ok) {
       setLoading(false);
-      messageApi.success("New testimonial has been added");
+      messageApi.success("Testimonials has been updated");
     } else {
       setLoading(false);
       messageApi.error(result.error);
     }
   };
+
   return (
     <SiteBuilderLayout siteConfig={siteConfig} siteContent={<ContentNavigation activeMenu={"testimonials"} />}>
       {contentHolder}
       <Flex align="center" justify="space-between" style={{ marginBottom: 20, maxWidth: 1000 }}>
         <h4 style={{ margin: "0" }}> Testimonials</h4>
-        {config.sections?.testimonials?.items && config.sections?.testimonials?.items.length > 0 && (
-          <Button type="primary" loading={loading} onClick={updateYamlFile}>
-            Save
-          </Button>
-        )}
+
+        <Button type="primary" loading={loading} onClick={updateYamlFile}>
+          Save
+        </Button>
       </Flex>
-      <AddTestimonial siteConfig={siteConfig} setConfig={setConfig} />
+      <AddTestimonial siteConfig={config} setConfig={setConfig} />
     </SiteBuilderLayout>
   );
 };

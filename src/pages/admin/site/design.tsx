@@ -1,8 +1,12 @@
+import { useAppContext } from "@/components/ContextApi/AppContext";
 import SiteBuilderLayout from "@/components/Layouts/SiteBuilderLayout";
 import PreviewSite from "@/components/PreviewCode/PreviewSite";
 import SiteDesigner from "@/components/SiteBuilder/SiteDesigner";
 import { getSiteConfig } from "@/services/getSiteConfig";
+import { postFetch } from "@/services/request";
 import { PageSiteConfig } from "@/services/siteConstant";
+import { Theme } from "@/types/theme";
+import { message } from "antd";
 import { GetServerSidePropsContext, NextPage } from "next";
 import { useEffect, useRef, useState } from "react";
 
@@ -10,7 +14,8 @@ const SiteDesign: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) =>
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [config, setConfig] = useState<PageSiteConfig>(siteConfig);
   const [activeKey, setActiveKey] = useState<string>("");
-
+  const [messageApi, contentHolder] = message.useMessage();
+  const { dispatch } = useAppContext();
   const sendMessageToIframe = () => {
     if (iframeRef.current && iframeRef.current.contentWindow) {
       iframeRef.current.contentWindow.postMessage(
@@ -28,7 +33,6 @@ const SiteDesign: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) =>
       const iframe = document.getElementById("myIframe") as HTMLIFrameElement;
       const iframeDocument = iframe?.contentWindow?.document;
 
-      // Change the URL of the iframe and scroll to the target section
       if (iframeDocument) {
         iframe.contentWindow.location.hash = activeKey;
       }
@@ -39,13 +43,40 @@ const SiteDesign: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) =>
     sendMessageToIframe();
   }, [config]);
 
+  const onChangeTheme = (theme: Theme) => {
+    if (theme === "dark") {
+      localStorage.setItem("theme", "dark");
+    } else {
+      localStorage.setItem("theme", "light");
+    }
+
+    dispatch({
+      type: "SWITCH_THEME",
+      payload: theme,
+    });
+  };
+
+  const updateYamlFile = async () => {
+    const res = await postFetch({ config }, "/api/v1/admin/site/site-info/update");
+    const result = await res.json();
+    if (res.ok) {
+      onChangeTheme(config.brand?.defaultTheme as Theme);
+
+      messageApi.success(result.message);
+    } else {
+      messageApi.error(result.error);
+    }
+  };
+
   return (
     <SiteBuilderLayout
+      updateYamlFile={updateYamlFile}
       siteConfig={siteConfig}
       siteDesigner={
         <SiteDesigner setActiveKey={setActiveKey} activeKey={activeKey} config={config} updateSiteConfig={setConfig} />
       }
     >
+      {contentHolder}
       <div>
         <PreviewSite
           id="myIframe"

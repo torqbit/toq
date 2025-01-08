@@ -75,6 +75,7 @@ export const DEFAULT_THEME = {
       description: "Description for the blog list",
     },
     features: {
+      enabled: true,
       items: [
         {
           img: "/img/landing/auth.png",
