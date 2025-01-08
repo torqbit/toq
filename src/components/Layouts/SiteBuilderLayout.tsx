@@ -24,8 +24,9 @@ const SiteBuilderLayout: FC<{
   siteDesigner?: React.ReactNode;
   siteContent?: React.ReactNode;
   siteConfig: PageSiteConfig;
+  updateYamlFile?: () => void;
   user?: User;
-}> = ({ children, siteDesigner, siteContent, user, siteConfig }) => {
+}> = ({ children, siteDesigner, siteContent, user, siteConfig, updateYamlFile }) => {
   const { globalState, dispatch } = useAppContext();
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
   const router = useRouter();
@@ -96,31 +97,9 @@ const SiteBuilderLayout: FC<{
     }
   };
 
-  const onChangeTheme = (theme: Theme) => {
-    if (theme === "dark") {
-      localStorage.setItem("theme", "dark");
-    } else {
-      localStorage.setItem("theme", "light");
-    }
-
-    dispatch({
-      type: "SWITCH_THEME",
-      payload: theme,
-    });
-  };
-
-  const updateYamlFile = async (config: PageSiteConfig) => {
-    setLoading(true);
-    const res = await postFetch({ config }, "/api/v1/admin/site/site-info/update");
-    const result = await res.json();
-    if (res.ok) {
-      setLoading(false);
-      onChangeTheme(siteConfig.brand?.defaultTheme as Theme);
-      messageApi.success(result.message);
-    } else {
-      setLoading(false);
-
-      messageApi.error(result.error);
+  const onUpdateYaml = async () => {
+    if (updateYamlFile) {
+      updateYamlFile();
     }
   };
 
@@ -178,7 +157,7 @@ const SiteBuilderLayout: FC<{
                     <Button
                       loading={loading}
                       onClick={() => {
-                        updateYamlFile(siteConfig);
+                        onUpdateYaml();
                       }}
                       type="primary"
                     >
