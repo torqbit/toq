@@ -7,8 +7,8 @@ import { Button } from "antd";
 import SvgIcons from "@/components/SvgIcons";
 import BlogSkeleton from "./BlogSkeleton";
 
-const BlogCard: FC<IBlogCard> = ({ img, title, date, slug, cardClass, author }) => (
-  <Link href={`/blog/${slug}`} className={`${styles.blogs__card} ${cardClass}`}>
+const BlogCard: FC<IBlogCard> = ({ img, title, date, link, cardClass, author }) => (
+  <Link href={`${link}`} className={`${styles.blogs__card} ${cardClass}`}>
     <img className={styles.banner__img} alt={title} aria-label={`icon for ${title.toLowerCase()}`} src={img} />
     <div className={styles.blogs__card__footer}>
       <h4>{title}</h4>
@@ -46,7 +46,7 @@ const Blogs: FC<IBlogInfo> = ({ blogList, title, description, previewMode }) => 
                       img={blogInfo.img}
                       title={blogInfo.title}
                       date={blogInfo.date}
-                      slug={blogInfo.slug}
+                      link={blogInfo.link}
                       cardClass={`${styles[blogList.length <= 2 ? "blog__card__large" : `"blog__card__small"`]} ${
                         blogInfo.cardClass
                       }`}

@@ -7,7 +7,16 @@ import styles from "./NavBar.module.scss";
 import ThemeSwitch from "@/components/ThemeSwitch/ThemeSwitch";
 import MobileNav from "./SideNavBar";
 
-const NavBar: FC<INavBarProps> = ({ user, items, brand, showThemeSwitch, activeTheme, isMobile }): ReactElement => {
+const NavBar: FC<INavBarProps> = ({
+  user,
+  items,
+  brand,
+  showThemeSwitch,
+  activeTheme,
+  isMobile,
+  defaultNavlink,
+  homeLink,
+}): ReactElement => {
   return (
     <section className={styles.navigation_main_container}>
       {isMobile ? (
@@ -17,11 +26,13 @@ const NavBar: FC<INavBarProps> = ({ user, items, brand, showThemeSwitch, activeT
           activeTheme={activeTheme}
           brand={brand}
           isMobile={isMobile}
+          homeLink={homeLink}
+          defaultNavlink={defaultNavlink}
         />
       ) : (
         <div className={styles.navBarContainer}>
           <nav>
-            <Link href={"/"} aria-label="Go back to landing page">
+            <Link href={homeLink} aria-label="Go back to landing page">
               <Flex align="center" gap={5}>
                 {typeof brand.logo === "string" && typeof brand.darkLogo === "string" ? (
                   <img
@@ -54,7 +65,7 @@ const NavBar: FC<INavBarProps> = ({ user, items, brand, showThemeSwitch, activeT
               <Flex align="center" gap={20}>
                 {showThemeSwitch && <ThemeSwitch activeTheme={activeTheme} />}
 
-                <Link href={user ? `/dashboard` : `/login`} aria-label="Get started">
+                <Link href={user ? `/dashboard` : `${defaultNavlink}`} aria-label="Get started">
                   <Button type="primary">{user ? "Go to Dashboard" : "Get Started"}</Button>
                 </Link>
               </Flex>

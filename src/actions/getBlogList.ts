@@ -36,7 +36,7 @@ const getBlogList = async (): Promise<IBlogCard[]> => {
             author: { name: String(b.user.name), picture: String(b.user.image) },
             img: b.banner,
             date: generateDayAndYear(b.createdAt),
-            slug: b.slug,
+            link: ` /blog/${b.slug}`,
           };
         })
       : [];
