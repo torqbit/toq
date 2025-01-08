@@ -36,7 +36,8 @@ const antThemeConfig = (siteConfig: PageSiteConfig) => {
         directoryNodeSelectedColor: "#000",
       },
       Modal: {
-        contentBg: "#f5f5f5",
+        contentBg: "#fff",
+        headerBg: "#fff",
       },
       Menu: {
         itemColor: "#666",

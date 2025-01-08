@@ -20,7 +20,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const userId = token?.id;
   const { courseId } = req.query;
   try {
-    const alreadyRegisterd = await prisma.courseRegistration.findFirst({
+    const alreadyRegistered = await prisma.courseRegistration.findFirst({
       where: {
         studentId: userId,
         order: {
@@ -32,7 +32,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       },
     });
 
-    if (alreadyRegisterd) {
+    if (alreadyRegistered) {
       const latestLesson = await prisma.courseProgress.findFirst({
         orderBy: {
           createdAt: "desc",

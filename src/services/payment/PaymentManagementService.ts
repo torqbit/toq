@@ -37,6 +37,7 @@ export const paymentsConstants = {
 };
 export class PaymentManagemetService {
   serviceType: ServiceType = ServiceType.PAYMENTS;
+  defaultGateway: string = "CASHFREE";
 
   getGatewayConfig = async (gateway: string): Promise<APIResponse<any>> => {
     switch (gateway) {
@@ -141,8 +142,8 @@ export class PaymentManagemetService {
     }
   };
 
-  getPaymentProvider = async (config: GatewayConfig): Promise<PaymentServiceProvider> => {
-    switch (config.name) {
+  getPaymentProvider = async (gatewayName: string): Promise<PaymentServiceProvider> => {
+    switch (gatewayName) {
       case $Enums.gatewayProvider.CASHFREE:
         const secretStore = SecretsManager.getSecretsProvider();
         const clientId = await secretStore.get(paymentsConstants.CF_CLIENT_ID);
@@ -173,7 +174,7 @@ export class PaymentManagemetService {
           expiryInDays: true,
           slug: true,
           name: true,
-          thumbnail: true,
+          tvThumbnail: true,
           coursePrice: true,
           courseId: true,
         },
@@ -181,7 +182,7 @@ export class PaymentManagemetService {
 
       const courseExpiryDate = courseDetail && addDays(Number(courseDetail.expiryInDays));
 
-      const isRigistered = await prisma.courseRegistration.findUnique({
+      const isRegistered = await prisma.courseRegistration.findUnique({
         where: {
           orderId,
         },
@@ -191,7 +192,7 @@ export class PaymentManagemetService {
       });
 
       const courseRegistrationDetail =
-        !isRigistered &&
+        !isRegistered &&
         (await prisma.courseRegistration.create({
           data: {
             studentId: customerDetail.id,
@@ -220,7 +221,7 @@ export class PaymentManagemetService {
           courseName: String(courseDetail?.name),
           slug: String(courseDetail?.slug),
           validUpTo: generateDayAndYear(addDays(Number(courseDetail?.expiryInDays))),
-          thumbnail: String(courseDetail?.thumbnail),
+          thumbnail: String(courseDetail?.tvThumbnail),
         },
 
         totalAmount: Number(paymentData.amount),
@@ -271,7 +272,7 @@ export class PaymentManagemetService {
     if (OrderDetail?.gatewayOrderId) {
       switch (OrderDetail?.paymentGateway) {
         case $Enums.gatewayProvider.CASHFREE:
-          const cf = await this.getPaymentProvider({ name: OrderDetail.paymentGateway });
+          const cf = await this.getPaymentProvider(OrderDetail.paymentGateway);
           const response = await cf.updateOrder(orderId, OrderDetail.gatewayOrderId, this.processRegistration);
 
           return new APIResponse(response.success, response.status, response.message, response.body);
@@ -400,8 +401,7 @@ export class PaymentManagemetService {
 
   processPayment = async (
     userConfig: UserConfig,
-    courseConfig: CoursePaymentConfig,
-    gatewayConfig: GatewayConfig
+    courseConfig: CoursePaymentConfig
   ): Promise<APIResponse<PaymentApiResponse>> => {
     const currentTime = new Date();
     const latestOrder = await this.getLatestOrder(userConfig.studentId, courseConfig.courseId);
@@ -430,15 +430,15 @@ export class PaymentManagemetService {
      * if latest order is in failed state or not available
      */
     try {
-      const paymentProvider = await this.getPaymentProvider(gatewayConfig);
-
+      const paymentProvider = await this.getPaymentProvider(this.defaultGateway);
+      console.log("got payment provider", paymentProvider);
       if (!latestOrder || latestOrder.orderStatus === orderStatus.FAILED) {
         const order = await prisma.order.create({
           data: {
             studentId: userConfig.studentId,
             orderStatus: orderStatus.INITIATED,
             productId: courseConfig.courseId,
-            paymentGateway: gatewayConfig.name as $Enums.gatewayProvider,
+            paymentGateway: this.defaultGateway as $Enums.gatewayProvider,
             amount: courseConfig.amount,
           },
           select: {

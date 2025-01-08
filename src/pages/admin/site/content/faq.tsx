@@ -1,7 +1,5 @@
 import SiteBuilderLayout from "@/components/Layouts/SiteBuilderLayout";
 import ContentNavigation from "@/components/SiteBuilder/ContentNavigation";
-import FeatureForm from "@/components/SiteBuilder/sections/Feature/FeatureForm";
-import { arraysAreEqual } from "@/lib/utils";
 import { getSiteConfig } from "@/services/getSiteConfig";
 import { postFetch } from "@/services/request";
 import { PageSiteConfig } from "@/services/siteConstant";

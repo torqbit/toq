@@ -13,8 +13,6 @@ export const postFetch = async (body: any, path: string, headers?: any) => {
     },
   });
 
-  console.log(res);
-
   return res;
 };
 export const postWithFile = async (body: any, path: string, headers?: any) => {
