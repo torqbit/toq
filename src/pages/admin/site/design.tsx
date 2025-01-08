@@ -24,6 +24,18 @@ const SiteDesign: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) =>
   };
 
   useEffect(() => {
+    if (activeKey) {
+      const iframe = document.getElementById("myIframe") as HTMLIFrameElement;
+      const iframeDocument = iframe?.contentWindow?.document;
+
+      // Change the URL of the iframe and scroll to the target section
+      if (iframeDocument) {
+        iframe.contentWindow.location.hash = activeKey;
+      }
+    }
+  }, [activeKey]);
+
+  useEffect(() => {
     sendMessageToIframe();
   }, [config]);
 
@@ -36,6 +48,7 @@ const SiteDesign: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) =>
     >
       <div>
         <PreviewSite
+          id="myIframe"
           ref={iframeRef}
           siteConfig={config}
           src={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/admin/site/preview/${siteConfig.template}${`#${activeKey}`}`}
