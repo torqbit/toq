@@ -1,6 +1,6 @@
 import ProgramService from "@/services/ProgramService";
 import { getFetch, IResponse, postFetch } from "@/services/request";
-import { CourseLessonAPIResponse, CourseLessons, ICoursePriviewInfo } from "@/types/courses/Course";
+import { CourseLessonAPIResponse, CourseLessons, ICourseDetailView, ICoursePriviewInfo } from "@/types/courses/Course";
 import { Alert, AlertProps, Breadcrumb, Form, Modal, message } from "antd";
 import { GetServerSidePropsContext, NextPage } from "next";
 import { useRouter } from "next/router";
@@ -16,19 +16,20 @@ import { PageSiteConfig } from "@/services/siteConstant";
 import { getToken } from "next-auth/jwt";
 import { getCookieName } from "@/lib/utils";
 import MarketingLayout from "@/components/Layouts/MarketingLayout";
-import CoursePreview from "@/components/Marketing/Courses/CoursePreview";
-import HeroCoursePreview from "@/components/Marketing/Courses/HeroCoursePreview";
 import getCourseDetail, { extractLessonAndChapterDetail } from "@/actions/getCourseDetail";
 import prisma from "@/lib/prisma";
 import { PaymentManagemetService } from "@/services/payment/PaymentManagementService";
+import { getCourseDetailedView } from "@/actions/courses";
+import Preview from "@/components/Admin/Content/Preview";
 
 const LearnCoursesPage: NextPage<{
   siteConfig: PageSiteConfig;
   userRole: Role;
   course: ICoursePriviewInfo;
+  courseViewDetail?: ICourseDetailView;
   lessons: CourseLessons[];
   courseId: number;
-}> = ({ siteConfig, userRole, course, lessons, courseId }) => {
+}> = ({ siteConfig, userRole, course, courseViewDetail, lessons, courseId }) => {
   const router = useRouter();
   const [form] = Form.useForm();
 
@@ -86,11 +87,21 @@ const LearnCoursesPage: NextPage<{
     }
   };
 
-  const getNextLessonId = async () => {
+  const getNextLessonId = async (courseId: number) => {
     ProgramService.getNextLessonId(
-      Number(courseId),
+      courseId,
       (result) => {
         setNextLessonId(result.nextLessonId);
+      },
+      (error) => {}
+    );
+  };
+
+  const handleLessonRedirection = async (courseId: number) => {
+    ProgramService.getNextLessonId(
+      courseId,
+      (result) => {
+        router.replace(`/courses/${router.query.slug}/lesson/${result.nextLessonId}`);
       },
       (error) => {}
     );
@@ -125,7 +136,7 @@ const LearnCoursesPage: NextPage<{
           modal.success({
             title: result.message,
             onOk: () => {
-              getNextLessonId();
+              handleLessonRedirection(courseId);
             },
           });
         } else if (courseDetail?.course.courseType === $Enums.CourseType.PAID) {
@@ -151,9 +162,55 @@ const LearnCoursesPage: NextPage<{
     }
   };
 
+  const handlePurchase = async (courseId: number) => {
+    setLoading(true);
+    try {
+      const res = await postFetch(
+        {
+          courseId: courseId,
+        },
+        "/api/v1/course/enroll"
+      );
+      const result = (await res.json()) as IResponse;
+
+      if (res.ok && result.success) {
+        // getPaymentStatus();
+        if (courseDetail?.course.courseType === $Enums.CourseType.FREE) {
+          setLoading(false);
+          setRefresh(!refresh);
+
+          modal.success({
+            title: result.message,
+            onOk: () => {
+              handleLessonRedirection(courseId);
+            },
+          });
+        } else if (courseDetail?.course.courseType === $Enums.CourseType.PAID) {
+          handleCheckout(result.gatewayResponse.sessionId, result.gatewayName);
+        }
+      } else {
+        if (result.alreadyEnrolled) {
+          router.replace(`/courses/${router.query.slug}/lesson/${nextLessonId}`);
+          setLoading(false);
+        } else {
+          if (result.phoneNotFound && result.error) {
+            setModal({ active: true, message: result.error });
+          } else {
+            messageApi.error(result.error);
+          }
+          // getPaymentStatus();
+          setLoading(false);
+        }
+      }
+    } catch (err: any) {
+      messageApi.error("Error while enrolling course ", err?.message);
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (courseId) {
-      userRole && getNextLessonId();
+      userRole && getNextLessonId(courseId);
       userRole && getPaymentStatus();
 
       setTimeout(() => {
@@ -198,22 +255,25 @@ const LearnCoursesPage: NextPage<{
           <MarketingLayout
             siteConfig={siteConfig}
             heroSection={
-              <HeroCoursePreview
-                courseName={course.name}
-                authorImage={course.authorImage}
-                authorName={course.authorName}
-                courseTrailer={course.courseTrailer}
-              />
+              courseViewDetail && (
+                <Preview
+                  courseDetail={courseViewDetail}
+                  previewMode={false}
+                  handlePurchase={() => router.push(`/login?redirect=courses/${router.query.slug}`)}
+                  handleLessonRedirection={() => {}}
+                  extraStyle={{ padding: "100px 0 50px" }}
+                />
+              )
             }
           >
-            <CoursePreview
+            {/* <CoursePreview
               courseId={Number(courseId)}
               nextLessonId={nextLessonId}
               courseDetails={course}
               chapters={lessons}
               onEnrollCourse={() => {}}
               paymentDisable={false}
-            />
+            /> */}
           </MarketingLayout>
         </>
       ) : (
@@ -233,38 +293,16 @@ const LearnCoursesPage: NextPage<{
             />
           )}
 
-          <>
-            <Breadcrumb
-              style={{ margin: "10px 40px" }}
-              items={[
-                {
-                  title: <a href="/courses"> Courses</a>,
-                },
-                {
-                  title: `${courseDetail.course.name}`,
-                  className: styles.courseName,
-                },
-              ]}
-            />
-            <HeroCoursePreview
-              courseName={course.name}
-              authorImage={course.authorImage}
-              authorName={course.authorName}
-              courseTrailer={course.courseTrailer}
-              userRole={userRole}
-            />
-            <CoursePreview
-              courseId={Number(courseId)}
-              nextLessonId={nextLessonId}
-              courseDetails={course}
-              chapters={lessons}
-              onEnrollCourse={onEnrollCourse}
-              userRole={userRole}
-              loading={loading}
-              paymentStatus={paymentStatus}
-              paymentDisable={paymentDisable}
-            />
-          </>
+          <div style={{ padding: "20px 0" }}>
+            {courseViewDetail && (
+              <Preview
+                courseDetail={courseViewDetail}
+                previewMode={false}
+                handlePurchase={handlePurchase}
+                handleLessonRedirection={handleLessonRedirection}
+              />
+            )}
+          </div>
 
           <AddPhone title={enableModal.message} open={enableModal.active} onCloseModal={onCloseModal} />
         </AppLayout>
@@ -285,6 +323,13 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
     const pms = new PaymentManagemetService();
     await pms.updateOrder(query.order_id);
   }
+
+  const cdv = user
+    ? await getCourseDetailedView(String(query.slug), true, {
+        id: user.id,
+        role: user.role,
+      })
+    : await getCourseDetailedView(String(query.slug), true);
 
   const courseInfo = await prisma?.course.findUnique({
     where: {
@@ -308,6 +353,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
             progress: info.progress,
             userStatus: info.courseInfo.userStatus ? info.courseInfo.userStatus : Role.NA,
           },
+          courseViewDetail: cdv.body,
           lessons: info.chapterLessons,
           courseId: courseInfo.courseId,
         },
@@ -321,6 +367,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
             progress: info.progress,
             userStatus: info.courseInfo.userStatus ? info.courseInfo.userStatus : Role.NA,
           },
+          courseViewDetail: cdv.body,
           lessons: info.chapterLessons,
           courseId: courseInfo.courseId,
         },
@@ -331,6 +378,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
       props: {
         siteConfig: site,
         lessons: [],
+        courseViewDetail: cdv.body,
         courseId: courseInfo?.courseId,
       },
     };

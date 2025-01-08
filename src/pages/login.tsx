@@ -43,7 +43,6 @@ const LoginPage: NextPage<{
   }, []);
 
   React.useEffect(() => {
-    console.log(loginMethods);
     if (router.query.error) {
       if (router.query.error === "OAuthAccountNotLinked") {
         closeLoading();

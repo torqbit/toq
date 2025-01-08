@@ -9,7 +9,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const body = await req.body;
     const cms = new ContentManagementService().getCMS(body.provider);
     const response = await cms.getCMSConfig();
-    console.log(response);
     return res
       .status(response.status)
       .json({ success: response.success, message: response.message, config: response.body });

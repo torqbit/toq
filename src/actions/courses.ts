@@ -9,7 +9,7 @@ import prisma from "@/lib/prisma";
 import path from "path";
 import { IChapterView, ICourseDetailView, ILessonView, VideoAPIResponse } from "@/types/courses/Course";
 import { mergeChunks, saveToLocal } from "@/lib/upload/utils";
-import { courseDifficultyType, ResourceContentType } from "@prisma/client";
+import { courseDifficultyType, Prisma, ResourceContentType, Role } from "@prisma/client";
 
 export const uploadThumbnail = async (
   file: any,
@@ -154,17 +154,29 @@ export const uploadVideo = async (
   }
 };
 
-export const getCourseDetailedView = async (courseId: number): Promise<APIResponse<ICourseDetailView>> => {
+export const getCourseDetailedView = async (
+  courseId: number | string,
+  isSlug: boolean = false,
+  user?: {
+    id: string;
+    role: Role;
+  }
+): Promise<APIResponse<ICourseDetailView>> => {
+  const whereClause: Prisma.CourseWhereUniqueInput = isSlug
+    ? { slug: String(courseId) }
+    : { courseId: Number(courseId) };
 
   const courseDBDetails = await prisma.course.findUnique({
     select: {
       name: true,
+      courseId: true,
       description: true,
       expiryInDays: true,
       tvUrl: true,
       user: {
         select: {
           name: true,
+          id: true,
           image: true,
         },
       },
@@ -198,12 +210,45 @@ export const getCourseDetailedView = async (courseId: number): Promise<APIRespon
       courseType: true,
       coursePrice: true,
     },
-    where: {
-      courseId: Number(courseId),
-    },
+    where: whereClause,
   });
 
   if (courseDBDetails) {
+    let userRole: Role = Role.NOT_ENROLLED;
+    let enrolmentDate: string | undefined;
+    if (user) {
+      if (user.role === Role.ADMIN) {
+        userRole = Role.ADMIN;
+      } else if (user.role == Role.AUTHOR && courseDBDetails.user.id == user.id) {
+        userRole = Role.AUTHOR;
+      } else {
+        //get the registration details for this course and userId
+        const registrationDetails = await prisma.courseRegistration.findMany({
+          select: {
+            registrationId: true,
+            dateJoined: true,
+          },
+          where: {
+            studentId: user.id,
+            order: {
+              productId: courseDBDetails.courseId,
+            },
+          },
+          orderBy: {
+            dateJoined: "desc",
+          },
+        });
+        if (registrationDetails && registrationDetails.length > 0) {
+          userRole = Role.STUDENT;
+          enrolmentDate = registrationDetails[0].dateJoined.toLocaleDateString("en-US", {
+            month: "short",
+            day: "2-digit",
+            year: "numeric",
+          });
+        }
+      }
+    }
+
     let contentDurationInHrs = 0;
     let assignmentCount = 0;
     const lessons = courseDBDetails.chapters.flatMap((c) => c.resource);
@@ -245,6 +290,7 @@ export const getCourseDetailedView = async (courseId: number): Promise<APIRespon
     });
 
     const courseDetailedView: ICourseDetailView = {
+      id: courseDBDetails.courseId,
       name: courseDBDetails.name,
       description: courseDBDetails.description,
       state: courseDBDetails.state,
@@ -252,6 +298,8 @@ export const getCourseDetailedView = async (courseId: number): Promise<APIRespon
       difficultyLevel: courseDBDetails.difficultyLevel || courseDifficultyType.Beginner,
       chapters: chapters,
       trailerEmbedUrl: courseDBDetails.tvUrl || undefined,
+      role: userRole,
+      enrolmentDate: enrolmentDate || null,
       author: {
         name: courseDBDetails.user.name,
         imageUrl: courseDBDetails.user.image || undefined,
@@ -267,6 +315,4 @@ export const getCourseDetailedView = async (courseId: number): Promise<APIRespon
 
     return new APIResponse(true, 200, `Succesfully fetched course detailed view`, courseDetailedView);
   } else return new APIResponse(true, 200, `Succesfully fetched course detailed view`);
-
-
-}
+};

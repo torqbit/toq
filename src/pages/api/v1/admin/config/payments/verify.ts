@@ -10,10 +10,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const body = await req.body;
     const accessConfig = paymentAuth.parse(body);
     const paymentManager = new PaymentManagemetService();
-    const result = await paymentManager.verifyConnection(accessConfig.gateway, accessConfig.apiKey, accessConfig.secretKey);
+    const result = await paymentManager.verifyConnection(
+      accessConfig.gateway,
+      accessConfig.apiKey,
+      accessConfig.secretKey
+    );
     return res.status(result.status).json(result);
   } catch (error) {
-    console.log(error);
     return errorHandler(error, res);
   }
 };
