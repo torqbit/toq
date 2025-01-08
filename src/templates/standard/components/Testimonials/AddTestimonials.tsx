@@ -255,7 +255,6 @@ const AddTestimonial: FC<{ siteConfig: PageSiteConfig; setConfig: (value: PageSi
           }}
           onFinish={onSaveBasicInfo}
         >
-
           <Flex vertical gap={10}>
             <ConfigForm
               input={
@@ -287,7 +286,6 @@ const AddTestimonial: FC<{ siteConfig: PageSiteConfig; setConfig: (value: PageSi
               divider={false}
             />
           </Flex>
-
         </Form>
       </ConfigFormLayout>
 
@@ -312,6 +310,8 @@ const AddTestimonial: FC<{ siteConfig: PageSiteConfig; setConfig: (value: PageSi
         </Flex>
       ) : (
         <Flex vertical align="center" justify="center" gap={20}>
+          <img src="/img/common/empty.svg" alt="" />
+
           <h4>No testimonials exist </h4>
           <Button
             type="primary"

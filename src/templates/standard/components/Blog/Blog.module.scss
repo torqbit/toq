@@ -4,15 +4,13 @@
   flex-direction: column;
 
   gap: 50px;
-  margin: 100px auto;
+  margin: 0px auto;
 
   .blog__title {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    h2 {
-      font-weight: 800;
-    }
+
     button {
       display: flex;
       align-items: center;
@@ -81,7 +79,7 @@
 @media only screen and (max-width: 435px) {
   .blog__list__container {
     max-width: 80vw;
-    margin: 40px auto;
+    margin: 0px auto;
     .blog__title {
       button {
         margin-bottom: 10px;

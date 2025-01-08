@@ -20,9 +20,8 @@ import { DEFAULT_THEME, PageSiteConfig } from "@/services/siteConstant";
 import { IBrandConfig, ISocialLinks } from "@/types/schema";
 import { RcFile } from "antd/es/upload";
 import Image from "next/image";
-import ImgCrop from "antd-img-crop";
 import SvgIcons from "@/components/SvgIcons";
-import { getFetch, postFetch, postWithFile } from "@/services/request";
+import { postWithFile } from "@/services/request";
 import { checkIfImageIsSquare, getExtension } from "@/lib/utils";
 
 const BrandForm: FC<{
@@ -184,10 +183,15 @@ const BrandForm: FC<{
     },
     {
       title: "Site description",
-      description: "Choose regions from where ",
+      description: "Add description for your site ",
       layout: "vertical",
       input: (
-        <Input
+        <Input.TextArea
+          className={styles.text__area__wrapper}
+          showCount={true}
+          rows={3}
+          style={{ marginBottom: 20 }}
+          maxLength={120}
           onChange={(e) => {
             onUpdateBrandConfig(e.currentTarget.value, "description");
           }}

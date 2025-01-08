@@ -69,7 +69,6 @@ const Site: FC<{ siteConfig: PageSiteConfig; contentType: "design" | "content" }
           src={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/admin/site/preview/${siteConfig.template}`}
         />
       </>
-      {/* <SiteContent activeMenu={activeMenu} contentId={contentId} /> */}
     </SiteBuilderLayout>
   );
 };

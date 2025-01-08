@@ -14,8 +14,10 @@ import TestimonialDesign from "@/templates/standard/components/Testimonials/Test
 
 const SiteDesigner: FC<{
   config: PageSiteConfig;
+  activeKey: string;
+  setActiveKey: (value: string) => void;
   updateSiteConfig: (config: PageSiteConfig) => void;
-}> = ({ updateSiteConfig, config }) => {
+}> = ({ updateSiteConfig, config, activeKey, setActiveKey }) => {
   const onCheckTheme = (theme: Theme) => {
     updateSiteConfig({ ...config, brand: { ...config.brand, defaultTheme: theme } });
   };
@@ -42,22 +44,21 @@ const SiteDesigner: FC<{
       children: <BrandForm config={config} updateSiteConfig={updateSiteConfig} />,
     },
     {
-      key: "2",
+      key: "hero",
       className: styles.collapse__header,
       children: <HeroForm config={config} updateSiteConfig={updateSiteConfig} />,
 
       label: collapseHeader("Hero", SvgIcons.hero),
     },
     {
-      key: "3",
+      key: "features",
       className: styles.collapse__header,
-      // children: <FeatureForm config={config} updateSiteConfig={updateSiteConfig} />,
       children: <FeaturesLayout />,
 
       label: collapseHeader("Feature", SvgIcons.features),
     },
     {
-      key: "4",
+      key: "courses",
       className: styles.collapse__header,
 
       children: (
@@ -69,7 +70,7 @@ const SiteDesigner: FC<{
       label: collapseHeader("Courses", SvgIcons.courseConfig),
     },
     {
-      key: "5",
+      key: "blogs",
       className: styles.collapse__header,
 
       children: (
@@ -81,7 +82,7 @@ const SiteDesigner: FC<{
       label: collapseHeader("Blogs", SvgIcons.blog),
     },
     {
-      key: "6",
+      key: "faq",
       className: styles.collapse__header,
 
       children: (
@@ -93,7 +94,7 @@ const SiteDesigner: FC<{
       label: collapseHeader("FAQ", SvgIcons.faq),
     },
     {
-      key: "7",
+      key: "testimonials",
       className: styles.collapse__header,
 
       children: (
@@ -133,7 +134,17 @@ const SiteDesigner: FC<{
           }}
         />
       </div>
-      <Collapse accordion expandIconPosition="end" className={styles.collapse__wrapper} items={items} size="middle" />
+      <Collapse
+        activeKey={[activeKey]}
+        onChange={(value) => {
+          value && setActiveKey(value[0]);
+        }}
+        accordion
+        expandIconPosition="end"
+        className={styles.collapse__wrapper}
+        items={items}
+        size="middle"
+      />
     </div>
   );
 };

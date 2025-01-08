@@ -14,15 +14,13 @@ import antThemeConfig from "@/services/antThemeConfig";
 import { useRouter } from "next/router";
 import SpinLoader from "../SpinLoader/SpinLoader";
 import NotificationService from "@/services/NotificationService";
-import ConversationService, { IConversationList } from "@/services/ConversationService";
+import ConversationService from "@/services/ConversationService";
 import { IConversationData } from "@/pages/api/v1/conversation/list";
 import Offline from "../Offline/Offline";
-
-import { postFetch } from "@/services/request";
 import { useMediaQuery } from "react-responsive";
 
 import { Theme } from "@/types/theme";
-import { DEFAULT_THEME, PageSiteConfig } from "@/services/siteConstant";
+import { PageSiteConfig } from "@/services/siteConstant";
 
 const { Content } = Layout;
 

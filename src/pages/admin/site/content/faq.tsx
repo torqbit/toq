@@ -10,7 +10,7 @@ import { Button, Flex, message } from "antd";
 import { GetServerSidePropsContext, NextPage } from "next";
 import { useState } from "react";
 
-const AddFaq: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
+const FAQPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const [messageApi, contentHolder] = message.useMessage();
   const [config, setConfig] = useState<PageSiteConfig>(siteConfig);
   const [loading, setLoading] = useState<boolean>(false);
@@ -22,7 +22,6 @@ const AddFaq: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
       setLoading(false);
 
       messageApi.success("FAQs has been updated");
-
     } else {
       setLoading(false);
       messageApi.error(result.error);
@@ -44,7 +43,7 @@ const AddFaq: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   );
 };
 
-export default AddFaq;
+export default FAQPage;
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const siteConfig = getSiteConfig();

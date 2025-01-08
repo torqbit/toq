@@ -1,10 +1,13 @@
 .faq__container {
   max-width: var(--marketing-container-width);
-  margin: 100px auto;
+  margin: 0px auto;
 }
 
 .drawer__header {
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color) !important;
+}
+.drawer__footer {
+  border-top: 1px solid var(--border-color) !important;
 }
 
 .add__more__btn {
@@ -48,6 +51,6 @@
 @media only screen and (max-width: 435px) {
   .faq__container {
     max-width: 80vw;
-    margin: 40px auto;
+    margin: 0px auto;
   }
 }

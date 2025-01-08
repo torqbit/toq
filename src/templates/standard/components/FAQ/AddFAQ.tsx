@@ -168,6 +168,7 @@ const AddFAQ: FC<{ siteConfig: PageSiteConfig; setConfig: (value: PageSiteConfig
         </Flex>
       ) : (
         <Flex vertical align="center" justify="center" style={{ height: "calc(100vh - 100px)" }} gap={20}>
+          <img src="/img/common/empty.svg" alt="" />
           <h4>No FAQ exist </h4>
           <Button
             type="primary"

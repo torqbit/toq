@@ -34,22 +34,23 @@ const FAQDesign: FC<{
         />
       </Flex>
 
-      {config.sections?.faq?.items && config.sections?.faq?.items.length === 0 && (
-        <Flex vertical justify="center">
-          <p>No FAQ exists</p>
-          <Button
-            onClick={() => {
-              router.push("/admin/site/content/faq");
-            }}
-            type="primary"
-          >
-            <Flex align="center" gap={10}>
-              Add FAQ
-              <i>{SvgIcons.arrowRight}</i>
-            </Flex>
-          </Button>
-        </Flex>
-      )}
+      {(config.sections?.faq?.items && config.sections?.faq?.items.length === 0) ||
+        (!config.sections?.faq?.items && (
+          <Flex vertical justify="center">
+            <p>No FAQ exists</p>
+            <Button
+              onClick={() => {
+                router.push("/admin/site/content/faq");
+              }}
+              type="primary"
+            >
+              <Flex align="center" gap={10}>
+                Add FAQ
+                <i>{SvgIcons.arrowRight}</i>
+              </Flex>
+            </Button>
+          </Flex>
+        ))}
     </div>
   );
 };

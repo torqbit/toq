@@ -1,0 +1,9 @@
+.section__wrapper {
+  padding: 60px 0;
+}
+
+@media only screen and (max-widt: 435px) {
+  .section__wrapper {
+    padding: 40px 0;
+  }
+}

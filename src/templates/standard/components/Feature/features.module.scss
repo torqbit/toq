@@ -3,11 +3,7 @@
   display: flex;
   flex-direction: column;
   gap: 50px;
-  margin: 100px auto;
-
-  h2 {
-    font-weight: 800;
-  }
+  margin: 0px auto;
 
   .features {
     display: grid;
@@ -65,7 +61,7 @@
 @media only screen and (max-width: 435px) {
   .features__container {
     max-width: 80vw;
-    margin: 40px auto;
+    margin: 0px auto;
 
     .features {
       .features__card__large,

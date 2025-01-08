@@ -100,7 +100,7 @@ const Footer: FC<{ siteConfig: PageSiteConfig; isMobile: boolean; activeTheme: T
     <section className={styles.footerContainer}>
       <footer>
         <div>
-          <Link href={"/landing-page"}>
+          <Link href={"/"}>
             <Flex align="center" gap={5}>
               {siteConfig.brand &&
               typeof siteConfig.brand?.logo === "string" &&

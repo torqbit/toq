@@ -27,7 +27,7 @@ const CourseViewItem: FC<{ course: ICourseListItem }> = ({ course }) => {
       key: "1",
     },
     {
-      label: <Link href={`/admin/course/${course.id}/edit`}>Edit</Link>,
+      label: <Link href={`/admin/content/course/${course.id}/edit`}>Edit</Link>,
       key: "2",
     },
   ];

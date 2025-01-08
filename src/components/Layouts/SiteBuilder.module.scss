@@ -7,6 +7,9 @@
     overflow-y: scroll;
   }
 }
+.site__builder__header {
+  height: 50px;
+}
 
 .content__menu__icon {
   line-height: 0;
@@ -15,6 +18,14 @@
 .selected__menu__icon {
   color: var(--font-primary);
   line-height: 0;
+}
+
+.content__menu__wrapper {
+  li {
+    margin-inline: 0px !important;
+    width: 100% !important;
+    border-radius: 0px !important;
+  }
 }
 
 .side__bar__container {
