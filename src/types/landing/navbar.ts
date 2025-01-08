@@ -14,6 +14,8 @@ export interface INavBarProps {
   activeTheme: Theme;
   isMobile: boolean;
   brand: IBrandInfo;
+  defaultNavlink?: string;
+  homeLink: string;
   items: {
     title: string;
     link: string;

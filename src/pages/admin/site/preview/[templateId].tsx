@@ -33,7 +33,47 @@ const PreviewPage: FC<{ user: User; siteConfig: PageSiteConfig; courseList: ICou
     };
   }, []);
 
-  return <StandardTemplate user={user} siteConfig={config} courseList={courseList} blogList={blogList} previewMode />;
+  const socialLinks =
+    config.brand?.socialLinks &&
+    Object.keys(config.brand?.socialLinks).reduce((acc: any, key) => {
+      acc[key] = "#";
+      return acc;
+    }, {});
+
+  return (
+    <StandardTemplate
+      user={user}
+      siteConfig={{
+        ...config,
+        navBar: {
+          links: config.navBar?.links?.map((navLinks) => {
+            return { ...navLinks, link: "#" };
+          }),
+        },
+        heroSection: {
+          ...config.heroSection,
+          actionButtons: {
+            ...config.heroSection?.actionButtons,
+            primary: {
+              ...config.heroSection?.actionButtons?.primary,
+              link: "#",
+            },
+            secondary: {
+              ...config.heroSection?.actionButtons?.secondary,
+              link: "#",
+            },
+          },
+        },
+        brand: {
+          ...config.brand,
+          socialLinks: socialLinks,
+        },
+      }}
+      courseList={courseList}
+      blogList={blogList}
+      previewMode
+    />
+  );
 };
 export default PreviewPage;
 
@@ -43,8 +83,22 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   let cookieName = getCookieName();
 
   const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
-  const allCourses = site.sections?.courses?.enable && (await getCourseList());
-  const allBlogs = site.sections?.blog?.enable && (await getBlogList());
+  const allCourses =
+    site.sections?.courses?.enable &&
+    (await getCourseList()).map((list, i) => {
+      return {
+        ...list,
+        link: "#courses",
+      };
+    });
+  const allBlogs =
+    site.sections?.blog?.enable &&
+    (await getBlogList()).map((blog) => {
+      return {
+        ...blog,
+        link: "#blogs",
+      };
+    });
 
   return {
     props: {

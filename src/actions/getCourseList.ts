@@ -16,6 +16,7 @@ const getCourseList = async (): Promise<ICourseCard[]> => {
       description: true,
       totalResources: true,
       previewMode: true,
+      tvThumbnail: true,
       slug: true,
       user: {
         select: {
@@ -59,7 +60,7 @@ const getCourseList = async (): Promise<ICourseCard[]> => {
           let duration = convertSecToHourandMin(totalDuration);
           return {
             title: course.name,
-            thumbnail: course.thumbnail || "",
+            tvThumbnail: course.tvThumbnail || "",
             duration: `${duration}`,
             description: course.description,
             link: `/courses/${course.slug}`,

@@ -20,8 +20,10 @@ const MarketingLayout: FC<{
   children?: React.ReactNode;
   heroSection?: React.ReactNode;
   siteConfig: PageSiteConfig;
+  previewMode?: boolean;
+  homeLink?: string;
   user?: User;
-}> = ({ children, heroSection, user, siteConfig }) => {
+}> = ({ children, heroSection, user, siteConfig, previewMode, homeLink }) => {
   const { globalState, dispatch } = useAppContext();
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
 
@@ -109,6 +111,8 @@ const MarketingLayout: FC<{
             <NavBarComponent
               user={user}
               isMobile={isMobile}
+              defaultNavlink={previewMode ? "#" : "/login"}
+              homeLink={homeLink ? homeLink : "/"}
               items={siteConfig.navBar?.links ?? []}
               showThemeSwitch={siteConfig.brand?.themeSwitch ?? DEFAULT_THEME.brand.themeSwitch}
               activeTheme={globalState.theme ?? "light"}
@@ -120,7 +124,12 @@ const MarketingLayout: FC<{
         </section>
         <div className={landingPage.children_wrapper}>{children}</div>
 
-        <Footer siteConfig={siteConfig} isMobile={isMobile} activeTheme={globalState.theme ?? "light"} />
+        <Footer
+          siteConfig={siteConfig}
+          homeLink={homeLink ? homeLink : "/"}
+          isMobile={isMobile}
+          activeTheme={globalState.theme ?? "light"}
+        />
       </ConfigProvider>
     </>
   );

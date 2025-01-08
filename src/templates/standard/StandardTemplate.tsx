@@ -25,10 +25,21 @@ const StandardTemplate: FC<IStandardTemplateProps> = ({ user, siteConfig, course
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
   const featureInfo = siteConfig.sections?.features;
 
+  let featuresItems = previewMode
+    ? featureInfo?.items.map((item) => {
+        return {
+          ...item,
+          link: "#features",
+        };
+      })
+    : featureInfo?.items;
+
   return (
     <MarketingLayout
-      user={user}
+      user={previewMode ? undefined : user}
       siteConfig={siteConfig}
+      previewMode={previewMode}
+      homeLink={previewMode ? "#" : "/"}
       heroSection={<Hero siteConfig={siteConfig} isMobile={isMobile} user={user} />}
     >
       {/* <SetupPlatform /> */}
@@ -36,7 +47,7 @@ const StandardTemplate: FC<IStandardTemplateProps> = ({ user, siteConfig, course
         <Features
           title={featureInfo?.title ? featureInfo.title : DEFAULT_THEME.sections.features.title}
           description={featureInfo?.description ? featureInfo.description : DEFAULT_THEME.sections.features.description}
-          items={featureInfo?.items && featureInfo?.items.length > 0 ? featureInfo?.items : []}
+          items={featuresItems && featuresItems.length > 0 ? featuresItems : []}
         />
       </section>
       {siteConfig.sections?.courses?.enable && siteConfig.brand && (
