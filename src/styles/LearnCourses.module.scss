@@ -4,6 +4,8 @@
   display: flex;
   justify-content: space-between;
   gap: 20px;
+  position: relative;
+  height: 100vh;
 
   .responsive_action_btn {
     display: none;
@@ -19,6 +21,11 @@
   .video_container {
     min-height: 400px;
   }
+
+  .video_container,
+  .certificatePage {
+    position: relative;
+  }
   .video_container,
   .certificatePage,
   .assignment_container {
@@ -26,7 +33,7 @@
     width: 100%;
     aspect-ratio: 16/9;
 
-    position: relative;
+    // position: relative;
   }
   .assignment_container {
     img {

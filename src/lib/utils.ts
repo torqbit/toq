@@ -405,18 +405,19 @@ export function extractValue(link: string) {
   }
 }
 
-export const arraysAreEqual = (arr1: any[], arr2: any[]) => {
-  // Check if both arrays have the same length
-  if (arr1.length !== arr2.length) {
+export function areAnswersEqualForKey(arr1: (string | number)[], arr2: (string | number)[]): boolean {
+  // Compare the length of the arrays
+  if (arr1?.length !== arr2?.length) {
     return false;
   }
 
-  // Compare each object in the arrays
-  for (let i = 0; i < arr1.length; i++) {
-    if (JSON.stringify(arr1[i]) !== JSON.stringify(arr2[i])) {
-      return false;
+  // Compare each element index-wise
+  for (let i = 0; i < arr1?.length; i++) {
+    if (arr1[i] !== arr2[i]) {
+      return false; // Mismatch at any index
     }
   }
 
-  return true;
-};
+  return true; // Arrays match index-wise
+}
+

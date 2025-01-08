@@ -5,12 +5,12 @@ import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "@/lib/prisma";
 import { IAssignmentDetail } from "@/types/courses/Course";
 import { JsonObject } from "@prisma/client/runtime/library";
-import { IAssignmentDetails } from "@/types/courses/assignment";
+import { AssignmentType, IAssignmentDetails, MCQAssignment } from "@/types/courses/assignment";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const query = req.query;
-    const { lessonId } = query;
+    const { lessonId, isAnswer } = query;
 
     const assignmentDetail = await prisma?.assignment.findUnique({
       where: {
@@ -40,6 +40,23 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         maximumScore: assignmentDetail.maximumPoints,
         passingScore: assignmentDetail.passingScore,
       };
+
+      if (detail.content._type === AssignmentType.MCQ && !isAnswer) {
+        let assignmentContent = detail.content as MCQAssignment;
+        let questions = assignmentContent.questions;
+        let updateQuestion = questions.map((question) => {
+          return {
+            ...question,
+            correctOptionIndex: [],
+          };
+        });
+
+        detail.content = {
+          _type: AssignmentType.MCQ,
+          questions: updateQuestion as MCQAssignment["questions"],
+        } as IAssignmentDetails;
+      }
+
       return res.json({
         success: true,
         message: " Assignment detail has been fetched",

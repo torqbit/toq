@@ -451,10 +451,19 @@
   background-color: var(--bg-asignment-tab);
 }
 
-.editorWrapper {
+.assignmen_view_tab {
   padding: 20px;
-  background-color: var(--bg-primary);
+  background-color: var(--bg-asignment-tab);
+  // position: relative;
+  height: calc(100vh - 100px);
+
+  i {
+    line-height: 0;
+    color: var(--font-secondary);
+    font-size: 18px;
+  }
 }
+
 .code__editor_container {
   position: relative;
   z-index: 2;
@@ -708,6 +717,79 @@
   color: var(--icon-color);
 }
 
+// MCQ View Assignment
+
+.assignment_header {
+  h5 {
+    color: var(--font-secondary);
+    font-weight: 500;
+  }
+}
+
+.submit_button {
+  font-size: 13px;
+}
+
+.question_count {
+  box-shadow: var(--box-shadow);
+  border: 0.5px solid var(--border-color);
+  width: 60px;
+  border-radius: 4px;
+  overflow: hidden;
+  div {
+    text-align: center;
+    font-weight: 700;
+  }
+  & > div:first-child {
+    width: 45%;
+  }
+  & > div:nth-child(2) {
+    width: 55%;
+    background-color: var(--bg-secondary);
+    transform: skew(-18deg);
+    margin-right: -5px;
+    border-bottom-left-radius: 5px;
+    border-top-left-radius: 3px;
+  }
+}
+
+.question_explanation {
+  margin-top: 30px;
+  padding: 10px;
+  background-color: var(--bg-primary);
+}
+
+.mcq_option {
+  padding: 8px 10px;
+  border-radius: 6px;
+  max-width: 500px;
+  cursor: pointer;
+  transition: all 0.3s;
+  color: rgba(0, 0, 0, 0.85);
+  .ant-btn {
+    border: none;
+  }
+}
+
+.mcq_option_wrong {
+  background-color: rgba(228, 135, 135, 0.35);
+}
+.mcq_option_selected {
+  background-color: rgba(180, 236, 209, 0.35);
+  border-color: var(--btn-primary);
+  color: #000;
+}
+
+.assignment_footer {
+  position: absolute;
+  bottom: -10px;
+  padding: 0 20px;
+  left: -50px;
+  height: 58px;
+  width: calc(100vw - 650px);
+  background-color: var(--bg-primary);
+}
+
 @media only screen and (max-width: 435px) {
   .learn_resource_page {
     .resource_wrapper {
@@ -763,6 +845,7 @@
 }
 
 @media only screen and (max-width: 933px) and (orientation: landscape) {
+  .assignmen_view_tab,
   .editorWrapper,
   .assignment_tab_container {
     width: calc(100vw - 120px) !important;

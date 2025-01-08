@@ -466,6 +466,7 @@ const LessonPage: NextPage<{ siteConfig: PageSiteConfig; courseId: number }> = (
   const getAssignmentDetail = (lessonId: number) => {
     AssignmentService.getAssignment(
       lessonId,
+      false,
       (result) => {
         setAssignmentDetail(result.assignmentDetail);
       },
@@ -571,7 +572,7 @@ const LessonPage: NextPage<{ siteConfig: PageSiteConfig; courseId: number }> = (
                           assignmentId={Number(assignmentDetail?.assignmentId)}
                           userRole={courseDetail?.userRole as Role}
                           ResponsiveLessonItemsList={ResponsiveLessonItemsList}
-                          assignmentFiles={assignmentDetail?.assignmentFiles as string[]}
+                          assignmentFiles={[] as string[]}
                           updateAssignmentWatchedStatus={updateAssignmentWatchedStatus}
                           chapterSeqId={Number(currentLesson.chapterSeq)}
                         />

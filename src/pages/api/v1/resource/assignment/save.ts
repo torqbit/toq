@@ -1,7 +1,6 @@
 import { errorHandler } from "@/lib/api-middlewares/errorHandler";
 import { withUserAuthorized } from "@/lib/api-middlewares/with-authorized";
 import { withMethods } from "@/lib/api-middlewares/with-method";
-import { $Enums } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "@/lib/prisma";
 import { AssignmentCreateRequest } from "@/types/courses/assignment";
@@ -46,7 +45,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           passingScore: passingScore,
         },
         where: {
-          lessonId: lessonId,
+          lessonId: Number(lessonId),
         },
       });
 
