@@ -10,7 +10,9 @@ const SkeletonCard: FC<{ size: CourseCardSize }> = ({ size }) => {
 
   return (
     <div style={{ cursor: "pointer" }} className={`${styles.blogs__card}`}>
-      <Skeleton.Image style={{ width: isMobile ? 316 : 378, height: 200 }} />
+      <Skeleton.Image
+        style={{ width: isMobile ? 316 : 378, height: 200, borderTopRightRadius: 16, borderTopLeftRadius: 16 }}
+      />
       <Flex vertical className={styles.blogs__card__footer}>
         <Skeleton paragraph={{ rows: 0 }} title={{ width: 280 }} />
         <Flex align="center" gap={5}>
