@@ -1,5 +1,8 @@
 .preview_container,
 .add_preview_container {
+  width: var(--marketing-container-width);
+  margin: 0 auto;
+
   .course__offerings {
     background-color: var(--bg-primary);
     width: 350px;
@@ -11,7 +14,7 @@
 
     .item__price {
       text-align: center;
-      padding: 30px 0;
+      padding: 30px;
       border-bottom: 1px solid var(--border-color);
     }
 
@@ -135,10 +138,6 @@
 
 .add_preview_container {
   padding: 0px;
-}
-
-.preview_container {
-  padding: 20px 40px;
 }
 
 .alertMessage {

@@ -73,10 +73,11 @@ const LessonItem: FC<{
             padding: resourceId > 0 ? "5px 0px" : 0,
             paddingLeft: resourceId > 0 ? "20px" : 0,
           }}
-          className={`${selectedLesson && resourceId === selectedLesson.resourceId && styles.selectedLable} ${resourceId > 0 ? styles.lessonLabelContainer : styles.labelContainer
-            }`}
+          className={`${selectedLesson && resourceId === selectedLesson.resourceId && styles.selectedLable} ${
+            resourceId > 0 ? styles.lessonLabelContainer : styles.labelContainer
+          }`}
         >
-          <Flex justify="space-between" align="center" onClick={() => { }}>
+          <Flex justify="space-between" align="center" onClick={() => {}}>
             <div className={styles.title_container}>
               <Flex gap={10} align="center">
                 {completed ? SvgIcons.check : icon}
@@ -182,8 +183,6 @@ const LessonPage: NextPage<{ siteConfig: PageSiteConfig; courseId: number }> = (
       findAndSetCurrentLesson(courseLessons, true);
 
       !courseDetail?.previewMode && courseDetail?.userRole === Role.STUDENT && onCreateCertificate();
-
-      console.log("go to certificate page");
     } else {
       let nextLessonId = 0;
       courseLessons.forEach((ch, chapterIndex) => {
@@ -193,13 +192,10 @@ const LessonPage: NextPage<{ siteConfig: PageSiteConfig; courseId: number }> = (
         } else if (currentLessonIndex >= 0 && currentLessonIndex == ch.lessons.length - 1) {
           if (chapterIndex == courseLessons.length - 1 && lessonsCompleted == totalLessons) {
             //move to complete course
-            console.log(`Don't go any where but update the current lesson state`);
             findAndSetCurrentLesson(courseLessons, true);
           } else if (chapterIndex == courseLessons.length - 1 && lessonsCompleted < totalLessons) {
-            console.log(`Other lessons are still pending, but update the current lesson state`);
             findAndSetCurrentLesson(courseLessons, true);
           } else if (chapterIndex < courseLessons.length - 1) {
-            console.log(`Move to the next lesson`);
             const nextChapter = courseLessons[chapterIndex + 1];
             nextLessonId = nextChapter.lessons[0].lessonId;
           }
