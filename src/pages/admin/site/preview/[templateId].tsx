@@ -46,8 +46,8 @@ const PreviewPage: FC<{ user: User; siteConfig: PageSiteConfig; courseList: ICou
       siteConfig={{
         ...config,
         navBar: {
-          links: config.navBar?.links?.map((link) => {
-            return { ...link, link: "#" };
+          links: config.navBar?.links?.map((navLinks) => {
+            return { ...navLinks, link: "#" };
           }),
         },
         heroSection: {
