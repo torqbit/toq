@@ -404,3 +404,19 @@ export function extractValue(link: string) {
     return link.slice(1);
   }
 }
+
+export function areAnswersEqualForKey(arr1: (string | number)[], arr2: (string | number)[]): boolean {
+  // Compare the length of the arrays
+  if (arr1?.length !== arr2?.length) {
+    return false;
+  }
+
+  // Compare each element index-wise
+  for (let i = 0; i < arr1?.length; i++) {
+    if (arr1[i] !== arr2[i]) {
+      return false; // Mismatch at any index
+    }
+  }
+
+  return true; // Arrays match index-wise
+}
