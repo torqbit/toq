@@ -31,7 +31,7 @@ const Testimonials: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) 
       {contentHolder}
       <Flex align="center" justify="space-between" style={{ marginBottom: 20, maxWidth: 1000 }}>
         <h4 style={{ margin: "0" }}> Testimonials</h4>
-        {siteConfig.sections?.testimonials?.items && siteConfig.sections?.testimonials?.items.length > 0 && (
+        {config.sections?.testimonials?.items && config.sections?.testimonials?.items.length > 0 && (
           <Button type="primary" loading={loading} onClick={updateYamlFile}>
             Save
           </Button>
