@@ -64,7 +64,6 @@ const LoginPage: NextPage<{
   }
   const handleSignup = () => {
     setSignupLoading(true);
-    console.log(signupForm.getFieldsValue());
 
     AuthService.signup(
       { ...signupForm.getFieldsValue() },

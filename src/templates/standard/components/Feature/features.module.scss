@@ -2,13 +2,8 @@
   max-width: var(--marketing-container-width);
   display: flex;
   flex-direction: column;
-  padding: 50px 0;
   gap: 50px;
-  margin: 0 auto;
-
-  h2 {
-    font-weight: 800;
-  }
+  margin: 0px auto;
 
   .features {
     display: grid;
@@ -66,6 +61,7 @@
 @media only screen and (max-width: 435px) {
   .features__container {
     max-width: 80vw;
+    margin: 0px auto;
 
     .features {
       .features__card__large,

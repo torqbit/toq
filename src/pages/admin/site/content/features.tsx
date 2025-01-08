@@ -19,7 +19,7 @@ const AddFeature: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) =>
     if (res.ok) {
       setLoading(false);
 
-      messageApi.success(result.message);
+      messageApi.success("Features has been updated");
     } else {
       setLoading(false);
 
@@ -29,8 +29,8 @@ const AddFeature: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) =>
   return (
     <SiteBuilderLayout siteConfig={siteConfig} siteContent={<ContentNavigation activeMenu={"features"} />}>
       {contentHolder}
-      <Flex align="center" justify="space-between" style={{ marginBottom: 20 }}>
-        <h4 style={{ margin: "0 0 0 20px" }}>Add Features</h4>
+      <Flex align="center" justify="space-between" style={{ marginBottom: 20, width: 1000 }}>
+        <h4 style={{ margin: 0 }}> Features</h4>
         <Button type="primary" loading={loading} onClick={updateYamlFile}>
           Save
         </Button>

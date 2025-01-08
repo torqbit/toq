@@ -178,6 +178,7 @@ export interface IChapterView {
   lessons: ILessonView[];
 }
 export interface ICourseDetailView {
+  id: number;
   name: string;
   description: string;
   expiryInDays: number;
@@ -186,6 +187,8 @@ export interface ICourseDetailView {
   difficultyLevel: $Enums.courseDifficultyType;
   contentDurationInHrs: number;
   assignmentsCount: number;
+  role: Role;
+  enrolmentDate: string | null;
   pricing: {
     currency: string;
     amount: number;

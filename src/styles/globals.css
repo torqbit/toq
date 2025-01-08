@@ -64,7 +64,7 @@ p {
   color: var(--font-secondary);
 }
 :root[data-theme="light"] {
-  --bg-secondary: #f0f2fa;
+  --bg-secondary: #fafafa;
   --bg-primary: #fff;
   --font-dropdown-label: #000;
   --bg-elevated: #fff;
@@ -705,7 +705,7 @@ a {
 }
 
 .ant-drawer .ant-drawer-header {
-  border-bottom: none;
+  /* border-bottom: none; */
 }
 
 /* **************** Lesson Sider ******************** */

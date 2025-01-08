@@ -1,0 +1,10 @@
+.section__wrapper {
+  padding: 50px 0;
+  scroll-margin-top: 50px;
+}
+
+@media only screen and (max-widt: 435px) {
+  .section__wrapper {
+    padding: 40px 0;
+  }
+}

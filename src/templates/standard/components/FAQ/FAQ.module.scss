@@ -1,7 +1,13 @@
 .faq__container {
-  padding: 20px 0px;
   max-width: var(--marketing-container-width);
-  margin: 0 auto;
+  margin: 0px auto;
+}
+
+.drawer__header {
+  border-bottom: 1px solid var(--border-color) !important;
+}
+.drawer__footer {
+  border-top: 1px solid var(--border-color) !important;
 }
 
 .add__more__btn {
@@ -13,7 +19,7 @@
 .faq__form__container {
   max-width: 1000px;
   background-color: var(--bg-primary);
-  margin: 0px 0px 30px 0px;
+  // margin: 0px 0px 30px 0px;
   border-radius: 8px;
 
   form {
@@ -40,4 +46,11 @@
 .faq__design__wrapper {
   background-color: var(--bg-primary);
   text-align: center;
+}
+
+@media only screen and (max-width: 435px) {
+  .faq__container {
+    max-width: 80vw;
+    margin: 0px auto;
+  }
 }

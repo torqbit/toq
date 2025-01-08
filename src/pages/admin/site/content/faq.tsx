@@ -1,15 +1,16 @@
 import SiteBuilderLayout from "@/components/Layouts/SiteBuilderLayout";
 import ContentNavigation from "@/components/SiteBuilder/ContentNavigation";
 import FeatureForm from "@/components/SiteBuilder/sections/Feature/FeatureForm";
+import { arraysAreEqual } from "@/lib/utils";
 import { getSiteConfig } from "@/services/getSiteConfig";
 import { postFetch } from "@/services/request";
 import { PageSiteConfig } from "@/services/siteConstant";
-import FAQForm from "@/templates/standard/components/FAQ/FAQForm";
+import AddFAQ from "@/templates/standard/components/FAQ/AddFAQ";
 import { Button, Flex, message } from "antd";
 import { GetServerSidePropsContext, NextPage } from "next";
 import { useState } from "react";
 
-const AddFaq: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
+const FAQPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const [messageApi, contentHolder] = message.useMessage();
   const [config, setConfig] = useState<PageSiteConfig>(siteConfig);
   const [loading, setLoading] = useState<boolean>(false);
@@ -19,7 +20,8 @@ const AddFaq: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
     const result = await res.json();
     if (res.ok) {
       setLoading(false);
-      messageApi.success(result.message);
+
+      messageApi.success("FAQs has been updated");
     } else {
       setLoading(false);
       messageApi.error(result.error);
@@ -29,17 +31,22 @@ const AddFaq: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
     <SiteBuilderLayout siteConfig={siteConfig} siteContent={<ContentNavigation activeMenu={"faq"} />}>
       {contentHolder}
       <Flex align="center" justify="space-between" style={{ marginBottom: 20, maxWidth: 1000 }}>
-        <h4 style={{ margin: "0" }}> FAQ</h4>
-        <Button type="primary" loading={loading} onClick={updateYamlFile}>
-          Save
-        </Button>
+        {config.sections?.faq?.items && config.sections?.faq?.items.length > 0 && (
+          <>
+            {" "}
+            <h4 style={{ margin: "0" }}> FAQ</h4>
+            <Button type="primary" loading={loading} onClick={updateYamlFile}>
+              Save
+            </Button>
+          </>
+        )}
       </Flex>
-      <FAQForm siteConfig={siteConfig} setConfig={setConfig} />
+      <AddFAQ siteConfig={siteConfig} setConfig={setConfig} />
     </SiteBuilderLayout>
   );
 };
 
-export default AddFaq;
+export default FAQPage;
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const siteConfig = getSiteConfig();

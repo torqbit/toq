@@ -159,7 +159,7 @@ const ContentList: FC<{ contentType: string }> = ({ contentType }) => {
   });
 
   return (
-    <div>
+    <div style={{ width: 1000 }}>
       {messageHolder}
       {contextHolder}
 

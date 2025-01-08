@@ -75,6 +75,7 @@ export const DEFAULT_THEME = {
       description: "Description for the blog list",
     },
     features: {
+      enabled: true,
       items: [
         {
           img: "/img/landing/auth.png",
@@ -118,6 +119,12 @@ export const DEFAULT_THEME = {
         },
       ],
       enabled: true,
+    },
+    tesimonials: {
+      items: [],
+      enabled: true,
+      title: "Teachers love our product",
+      description: "Find out what excites our users, when using our product",
     },
   },
 };

@@ -177,6 +177,9 @@ const darkThemeConfig = (siteConfig: PageSiteConfig) => {
         colorPrimaryHover: "#939db8",
         colorTextDisabled: "#939db8",
       },
+      Carousel: {
+        colorBgContainer: `${siteConfig.brand?.brandColor}`,
+      },
       Modal: {
         contentBg: "#202433",
         colorIcon: "#939db8",
@@ -194,7 +197,7 @@ const darkThemeConfig = (siteConfig: PageSiteConfig) => {
       },
       Breadcrumb: {
         itemColor: "#939db8",
-        linkColor: "#fff",
+        colorBgTextHover: "#000",
         separatorColor: "#939db8",
       },
       Segmented: {

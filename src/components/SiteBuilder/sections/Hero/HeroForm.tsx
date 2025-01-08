@@ -149,7 +149,7 @@ const HeroForm: FC<{
       description: "Add title for the hero section ",
       layout: "vertical",
       input: (
-        <Form.Item name={"title"} rules={[{ required: true, message: `title is required!` }]} key={1}>
+        <Form.Item noStyle name={"title"} rules={[{ required: true, message: `title is required!` }]} key={1}>
           <Input
             onChange={(e) => {
               onUpdateHeroConfig(e.currentTarget.value, "title");
@@ -165,8 +165,18 @@ const HeroForm: FC<{
       description: "Add description for hero section ",
       layout: "vertical",
       input: (
-        <Form.Item name={"description"} rules={[{ required: true, message: `description is required!` }]} key={2}>
-          <Input
+        <Form.Item
+          noStyle
+          name={"description"}
+          rules={[{ required: true, message: `description is required!` }]}
+          key={2}
+        >
+          <Input.TextArea
+            className={styles.text__area__wrapper}
+            showCount={true}
+            rows={3}
+            style={{ marginBottom: 20 }}
+            maxLength={250}
             onChange={(e) => {
               onUpdateHeroConfig(e.currentTarget.value, "description");
             }}
@@ -184,7 +194,7 @@ const HeroForm: FC<{
         <Flex vertical gap={10} key={3}>
           <Flex vertical gap={10}>
             <h5>Primary</h5>
-            <Form.Item name={"primaryLabel"} rules={[{ required: true, message: `Primary link is required!` }]}>
+            <Form.Item noStyle name={"primaryLabel"} rules={[{ required: true, message: `Primary link is required!` }]}>
               <Input
                 defaultValue={config.heroSection?.actionButtons?.primary?.label}
                 onChange={(e) => {
@@ -194,6 +204,7 @@ const HeroForm: FC<{
               />
             </Form.Item>
             <Form.Item
+              noStyle
               name={"primaryLink"}
               rules={[
                 () => ({
@@ -289,7 +300,11 @@ const HeroForm: FC<{
           </Flex>
           <Flex vertical gap={10}>
             <h5>Secondary</h5>
-            <Form.Item name={"secondaryLabel"} rules={[{ required: true, message: `Secondary link is required!` }]}>
+            <Form.Item
+              noStyle
+              name={"secondaryLabel"}
+              rules={[{ required: true, message: `Secondary link is required!` }]}
+            >
               <Input
                 defaultValue={config.heroSection?.actionButtons?.secondary?.label}
                 onChange={(e) => {
@@ -299,6 +314,7 @@ const HeroForm: FC<{
               />
             </Form.Item>
             <Form.Item
+              noStyle
               name={"secondaryLink"}
               rules={[
                 () => ({
@@ -521,9 +537,6 @@ const HeroForm: FC<{
                 inputName={""}
                 optional={item.optional}
               />
-              {heroItems.length !== i + 1 && (
-                <Divider style={{ margin: "0px 0px 15px 0px", color: "var(--bg-primary)", borderBlockStart: "none" }} />
-              )}
             </>
           );
         })}

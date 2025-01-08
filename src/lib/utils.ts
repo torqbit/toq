@@ -420,3 +420,4 @@ export function areAnswersEqualForKey(arr1: (string | number)[], arr2: (string |
 
   return true; // Arrays match index-wise
 }
+

@@ -27,7 +27,7 @@ const CourseViewItem: FC<{ course: ICourseListItem }> = ({ course }) => {
       key: "1",
     },
     {
-      label: <Link href={`/admin/course/${course.id}/edit`}>Edit</Link>,
+      label: <Link href={`/admin/content/course/${course.id}/edit`}>Edit</Link>,
       key: "2",
     },
   ];
@@ -74,7 +74,13 @@ const CourseViewItem: FC<{ course: ICourseListItem }> = ({ course }) => {
         {course.userRole &&
           (course.userRole === Role.AUTHOR || course.userRole === Role.ADMIN) &&
           course.state == StateType.ACTIVE && (
-            <Dropdown.Button type="default" trigger={["click"]} menu={{ items }} style={{ width: "auto" }}>
+            <Dropdown.Button
+              type="default"
+              trigger={["click"]}
+              menu={{ items }}
+              onClick={() => handleManage(course.id)}
+              style={{ width: "auto" }}
+            >
               Manage
             </Dropdown.Button>
           )}

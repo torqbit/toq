@@ -183,8 +183,6 @@ const LessonPage: NextPage<{ siteConfig: PageSiteConfig; courseId: number }> = (
       findAndSetCurrentLesson(courseLessons, true);
 
       !courseDetail?.previewMode && courseDetail?.userRole === Role.STUDENT && onCreateCertificate();
-
-      console.log("go to certificate page");
     } else {
       let nextLessonId = 0;
       courseLessons.forEach((ch, chapterIndex) => {
@@ -194,13 +192,10 @@ const LessonPage: NextPage<{ siteConfig: PageSiteConfig; courseId: number }> = (
         } else if (currentLessonIndex >= 0 && currentLessonIndex == ch.lessons.length - 1) {
           if (chapterIndex == courseLessons.length - 1 && lessonsCompleted == totalLessons) {
             //move to complete course
-            console.log(`Don't go any where but update the current lesson state`);
             findAndSetCurrentLesson(courseLessons, true);
           } else if (chapterIndex == courseLessons.length - 1 && lessonsCompleted < totalLessons) {
-            console.log(`Other lessons are still pending, but update the current lesson state`);
             findAndSetCurrentLesson(courseLessons, true);
           } else if (chapterIndex < courseLessons.length - 1) {
-            console.log(`Move to the next lesson`);
             const nextChapter = courseLessons[chapterIndex + 1];
             nextLessonId = nextChapter.lessons[0].lessonId;
           }

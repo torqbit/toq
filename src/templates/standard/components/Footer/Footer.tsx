@@ -7,9 +7,10 @@ import { FC } from "react";
 import { PageSiteConfig } from "@/services/siteConstant";
 import { Theme } from "@/types/theme";
 
-const Footer: FC<{ siteConfig: PageSiteConfig; isMobile: boolean; activeTheme: Theme }> = ({
+const Footer: FC<{ siteConfig: PageSiteConfig; homeLink: string; isMobile: boolean; activeTheme: Theme }> = ({
   siteConfig,
   isMobile,
+  homeLink,
   activeTheme,
 }) => {
   const { navBar, brand } = siteConfig;
@@ -100,7 +101,7 @@ const Footer: FC<{ siteConfig: PageSiteConfig; isMobile: boolean; activeTheme: T
     <section className={styles.footerContainer}>
       <footer>
         <div>
-          <Link href={"/landing-page"}>
+          <Link href={homeLink}>
             <Flex align="center" gap={5}>
               {siteConfig.brand &&
               typeof siteConfig.brand?.logo === "string" &&

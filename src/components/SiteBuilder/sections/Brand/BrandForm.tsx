@@ -20,9 +20,8 @@ import { DEFAULT_THEME, PageSiteConfig } from "@/services/siteConstant";
 import { IBrandConfig, ISocialLinks } from "@/types/schema";
 import { RcFile } from "antd/es/upload";
 import Image from "next/image";
-import ImgCrop from "antd-img-crop";
 import SvgIcons from "@/components/SvgIcons";
-import { getFetch, postFetch, postWithFile } from "@/services/request";
+import { postWithFile } from "@/services/request";
 import { checkIfImageIsSquare, getExtension } from "@/lib/utils";
 
 const BrandForm: FC<{
@@ -184,10 +183,15 @@ const BrandForm: FC<{
     },
     {
       title: "Site description",
-      description: "Choose regions from where ",
+      description: "Add description for your site ",
       layout: "vertical",
       input: (
-        <Input
+        <Input.TextArea
+          className={styles.text__area__wrapper}
+          showCount={true}
+          rows={3}
+          style={{ marginBottom: 20 }}
+          maxLength={120}
           onChange={(e) => {
             onUpdateBrandConfig(e.currentTarget.value, "description");
           }}
@@ -271,7 +275,7 @@ const BrandForm: FC<{
             />
           )}
           {config.brand?.themeSwitch ? (
-            <>{segmentLogoValue === "dark" ? darkLogo : lightLogo}</>
+            <div>{segmentLogoValue === "dark" ? darkLogo : lightLogo}</div>
           ) : (
             <Flex vertical gap={0}>
               <p>Upload logo for {config.brand?.defaultTheme} theme</p>
@@ -335,32 +339,29 @@ const BrandForm: FC<{
               },
             ]}
           />
-          <Form.Item name={"social"} noStyle>
-            <Input
-              name="social"
-              addonBefore={`https://${selectedSegment}.${selectedSegment === "discord" ? "gg" : "com"}`}
-              type="url"
-              onChange={(e) => {
-                onUpdateBrandConfig(
-                  e.currentTarget.value.startsWith("http")
-                    ? e.currentTarget.value
-                    : `https://${selectedSegment}.${selectedSegment === "discord" ? "gg" : "com"}/${
-                        e.currentTarget.value
-                      }`,
-                  `socialLinks.${selectedSegment}`
-                );
-              }}
-              value={
-                config?.brand?.socialLinks
-                  ? config.brand.socialLinks[selectedSegment as keyof ISocialLinks]?.split("/").pop()
-                  : ""
-              }
-              placeholder={`Add ${selectedSegment} id`}
-            />
-          </Form.Item>
+          <Input
+            key={selectedSegment}
+            addonBefore={`https://${selectedSegment}.${selectedSegment === "discord" ? "gg" : "com"}`}
+            type="url"
+            onChange={(e) => {
+              onUpdateBrandConfig(
+                e.currentTarget.value.startsWith("http")
+                  ? e.currentTarget.value
+                  : `https://${selectedSegment}.${selectedSegment === "discord" ? "gg" : "com"}/${
+                      e.currentTarget.value
+                    }`,
+                `socialLinks.${selectedSegment}`
+              );
+            }}
+            defaultValue={
+              config.brand?.socialLinks &&
+              config.brand?.socialLinks[selectedSegment as keyof ISocialLinks]?.split("/").pop()
+            }
+            placeholder={`Add ${selectedSegment} id`}
+          />
         </Flex>
       ),
-      inputName: "",
+      inputName: "social",
     },
   ];
 
@@ -375,9 +376,9 @@ const BrandForm: FC<{
           name: config.brand?.name,
           title: config.brand?.title,
           description: config.brand?.description,
-          social: config?.brand?.socialLinks
-            ? config.brand.socialLinks[selectedSegment as keyof ISocialLinks]?.split("/").pop()
-            : "",
+          social:
+            config.brand?.socialLinks &&
+            config.brand?.socialLinks[selectedSegment as keyof ISocialLinks]?.split("/").pop(),
         }}
       >
         {brandItems.map((item, i) => {
@@ -387,6 +388,7 @@ const BrandForm: FC<{
                 input={
                   <Form.Item
                     name={item.inputName}
+                    noStyle
                     rules={[{ required: !item.optional, message: `Field is required!` }]}
                     key={i}
                   >
@@ -400,9 +402,6 @@ const BrandForm: FC<{
                 inputName={""}
                 optional={item.optional}
               />
-              {brandItems.length !== i + 1 && (
-                <Divider style={{ margin: "0px 0px 15px 0px", color: "var(--bg-primary)", borderBlockStart: "none" }} />
-              )}
             </>
           );
         })}

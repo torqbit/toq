@@ -45,6 +45,7 @@ site:
       position: background
   sections:
     features:
+      enabled: true
       title: Our Features
       description: Our educational platform is completely secure, robust and scales to
         millions of users, and always available, giving you the flexibility to
@@ -75,5 +76,8 @@ site:
     faq:
       enabled: true
       items:
-        - question: How do I access the courses after signing up?
-          answer: After signing up, log in to your account and navigate to the "Courses" section from the dashboard. Here, you’ll find all the courses available to you. Simply click on a course title to start learning!
+    testimonials:
+      enabled: true
+      title: "Teachers love our product "
+      description: "Find out what excites our users, when using our product "
+      items:

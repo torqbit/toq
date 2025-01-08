@@ -11,6 +11,7 @@ const ContentNavigation: FC<{ activeMenu: string }> = ({ activeMenu }) => {
       mode="inline"
       onSelect={({ key }) => router.push(`/admin/site/content/${key}`)}
       defaultSelectedKeys={["blogs"]}
+      rootClassName={styles.content__menu__wrapper}
       selectedKeys={[activeMenu]}
       style={{ width: "100%", borderInlineEnd: "none" }}
       items={[
@@ -59,6 +60,18 @@ const ContentNavigation: FC<{ activeMenu: string }> = ({ activeMenu }) => {
               className={activeMenu === "faq" ? styles.selected__menu__icon : styles.content__menu__icon}
             >
               {SvgIcons.faq}
+            </i>
+          ),
+        },
+        {
+          label: "Testimonials",
+          key: "testimonials",
+          icon: (
+            <i
+              style={{ fontSize: 18 }}
+              className={activeMenu === "testimonials" ? styles.selected__menu__icon : styles.content__menu__icon}
+            >
+              {SvgIcons.testimonials}
             </i>
           ),
         },

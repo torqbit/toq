@@ -278,13 +278,11 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
           setCheckVideoState(true);
         }
       }
-
     }
   };
 
   const uploadTeaserThumbnail = async (file: any) => {
     if (file) {
-      console.log("setting the new trailer");
       const base64 = await getBase64(file);
       setNewTrailerThumbnail(base64 as string);
       setFile(file);
@@ -312,7 +310,7 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   };
 
   const onPublishCourse = (state: string) => {
-    const courseLessons = courseDetails?.chapters.flatMap(c => c.lessons);
+    const courseLessons = courseDetails?.chapters.flatMap((c) => c.lessons);
     if (courseLessons && courseLessons.length >= 2) {
       ProgramService.updateCourseState(
         Number(router.query.id),
@@ -320,12 +318,11 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
         (result) => {
           router.push("/courses");
         },
-        (error) => { }
+        (error) => {}
       );
     } else {
       message.error("Minimum two published lessons are required to publish the course");
     }
-
   };
 
   const items: TabsProps["items"] = [
@@ -345,7 +342,6 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
           courseTrailerUploading={courseTrailerUploading}
           trailerThumbnail={newTrailerThumbnail}
           settingLoading={settingloading}
-
         />
       ),
     },
@@ -381,19 +377,24 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
       disabled: !uploadVideo?.videoUrl || !tabActive,
       children: uploadVideo?.videoUrl && courseDetails && (
         <Preview
-          videoUrl={uploadVideo?.videoUrl}
           courseDetail={courseDetails}
-          addContentPreview={true}
+          previewMode={true}
+          handlePurchase={() => {}}
+          handleLessonRedirection={() => {}}
         />
       ),
     },
   ];
 
   useEffect(() => {
-    ProgramService.fetchCourseDetailedView(Number(router.query.id), result => {
-      setCourseDetails(result.body)
-    }, err => message.error(err))
-  }, [activeKey])
+    ProgramService.fetchCourseDetailedView(
+      Number(router.query.id),
+      (result) => {
+        setCourseDetails(result.body);
+      },
+      (err) => message.error(err)
+    );
+  }, [activeKey]);
 
   useEffect(() => {
     let intervalId: NodeJS.Timer | undefined;

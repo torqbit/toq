@@ -9,6 +9,7 @@ import { APIResponse } from "@/types/apis";
 import { uploadThumbnail } from "@/actions/courses";
 import { FileObjectType } from "@/types/cms/common";
 import { readFieldWithFile } from "@/lib/upload/utils";
+import { Role } from "@prisma/client";
 export const config = {
   api: {
     bodyParser: false,
@@ -34,43 +35,56 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     let response: APIResponse<any>;
     let thumbnail;
 
-    if (files.file) {
-      response = await uploadThumbnail(
-        files.file[0],
-        body.slug,
-        contentType === "UPDATE" ? FileObjectType.UPDATE : FileObjectType.BLOG,
-        "banner",
-        banner
-      );
-      if (response.success) {
-        thumbnail = response.body;
-      } else {
-        return res.status(response.status).json(response);
-      }
-    }
-
-    const updateBlog = await prisma.blog.update({
+    const findBlog = await prisma.blog.findUnique({
       where: {
         id: blogId,
-        authorId: String(token?.id),
       },
-      data: {
-        title,
-        content,
-        state,
-        banner: thumbnail ? thumbnail : banner,
-        slug,
-        updatedAt: new Date(),
+      select: {
+        authorId: true,
       },
     });
 
-    return res.status(200).json({
-      success: true,
-      message: ` ${contentType === "BLOG" ? "Blog" : "Update"} has been ${
-        updateBlog.state === "ACTIVE" ? "published" : "saved as draft"
-      }`,
-      blog: updateBlog,
-    });
+    if (token?.id === findBlog?.authorId || token?.role === Role.ADMIN) {
+      if (files.file) {
+        response = await uploadThumbnail(
+          files.file[0],
+          body.slug,
+          contentType === "UPDATE" ? FileObjectType.UPDATE : FileObjectType.BLOG,
+          "banner",
+          banner
+        );
+        if (response.success) {
+          thumbnail = response.body;
+        } else {
+          return res.status(response.status).json(response);
+        }
+      }
+
+      const updateBlog = await prisma.blog.update({
+        where: {
+          id: blogId,
+          authorId: findBlog?.authorId,
+        },
+        data: {
+          title,
+          content,
+          state,
+          banner: thumbnail ? thumbnail : banner,
+          slug,
+          updatedAt: new Date(),
+        },
+      });
+
+      return res.status(200).json({
+        success: true,
+        message: ` ${contentType === "BLOG" ? "Blog" : "Update"} has been ${
+          updateBlog.state === "ACTIVE" ? "published" : "saved as draft"
+        }`,
+        blog: updateBlog,
+      });
+    } else {
+      return res.status(403).json({ success: false, error: "You are not authorized" });
+    }
   } catch (error) {
     console.log(error);
     return errorHandler(error, res);

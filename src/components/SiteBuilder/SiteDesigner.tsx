@@ -6,16 +6,18 @@ import { Theme } from "@/types/theme";
 import BrandForm from "./sections/Brand/BrandForm";
 import HeroForm from "./sections/Hero/HeroForm";
 import SvgIcons from "../SvgIcons";
-import FeatureForm from "./sections/Feature/FeatureForm";
 import CourseForm from "./sections/Courses/CourseForm";
 import BlogForm from "./sections/Blog/BlogForm";
 import FeaturesLayout from "@/templates/standard/components/Feature/FeaturesLayout";
 import FAQDesign from "@/templates/standard/components/FAQ/FAQDesign";
+import TestimonialDesign from "@/templates/standard/components/Testimonials/TestimonialDesign";
 
 const SiteDesigner: FC<{
   config: PageSiteConfig;
+  activeKey: string;
+  setActiveKey: (value: string) => void;
   updateSiteConfig: (config: PageSiteConfig) => void;
-}> = ({ updateSiteConfig, config }) => {
+}> = ({ updateSiteConfig, config, activeKey, setActiveKey }) => {
   const onCheckTheme = (theme: Theme) => {
     updateSiteConfig({ ...config, brand: { ...config.brand, defaultTheme: theme } });
   };
@@ -42,22 +44,21 @@ const SiteDesigner: FC<{
       children: <BrandForm config={config} updateSiteConfig={updateSiteConfig} />,
     },
     {
-      key: "2",
+      key: "hero",
       className: styles.collapse__header,
       children: <HeroForm config={config} updateSiteConfig={updateSiteConfig} />,
 
       label: collapseHeader("Hero", SvgIcons.hero),
     },
     {
-      key: "3",
+      key: "features",
       className: styles.collapse__header,
-      // children: <FeatureForm config={config} updateSiteConfig={updateSiteConfig} />,
-      children: <FeaturesLayout />,
+      children: <FeaturesLayout config={config} updateSiteConfig={updateSiteConfig} />,
 
       label: collapseHeader("Feature", SvgIcons.features),
     },
     {
-      key: "4",
+      key: "courses",
       className: styles.collapse__header,
 
       children: (
@@ -69,7 +70,7 @@ const SiteDesigner: FC<{
       label: collapseHeader("Courses", SvgIcons.courseConfig),
     },
     {
-      key: "5",
+      key: "blogs",
       className: styles.collapse__header,
 
       children: (
@@ -78,10 +79,10 @@ const SiteDesigner: FC<{
         </>
       ),
 
-      label: collapseHeader("Blog", SvgIcons.blog),
+      label: collapseHeader("Blogs", SvgIcons.blog),
     },
     {
-      key: "6",
+      key: "faq",
       className: styles.collapse__header,
 
       children: (
@@ -91,6 +92,18 @@ const SiteDesigner: FC<{
       ),
 
       label: collapseHeader("FAQ", SvgIcons.faq),
+    },
+    {
+      key: "testimonials",
+      className: styles.collapse__header,
+
+      children: (
+        <>
+          <TestimonialDesign config={config} updateSiteConfig={updateSiteConfig} />
+        </>
+      ),
+
+      label: collapseHeader("Testimonials", SvgIcons.testimonials),
     },
   ];
   return (
@@ -122,12 +135,15 @@ const SiteDesigner: FC<{
         />
       </div>
       <Collapse
+        activeKey={[activeKey]}
+        onChange={(value) => {
+          value && setActiveKey(value[0]);
+        }}
         accordion
         expandIconPosition="end"
         className={styles.collapse__wrapper}
         items={items}
         size="middle"
-        defaultActiveKey={["1"]}
       />
     </div>
   );
