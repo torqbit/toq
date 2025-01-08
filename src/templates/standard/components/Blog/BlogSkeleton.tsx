@@ -3,11 +3,14 @@ import styles from "./Blog.module.scss";
 
 import { CourseCardSize } from "@/types/landing/courses";
 import { Flex, Skeleton, Tag } from "antd";
+import { useMediaQuery } from "react-responsive";
 
 const SkeletonCard: FC<{ size: CourseCardSize }> = ({ size }) => {
+  const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
+
   return (
     <div style={{ cursor: "pointer" }} className={`${styles.blogs__card}`}>
-      <Skeleton.Image className={styles.skeleton__image} />
+      <Skeleton.Image style={{ width: isMobile ? 316 : 378, height: 200 }} />
       <Flex vertical className={styles.blogs__card__footer}>
         <Skeleton paragraph={{ rows: 0 }} title={{ width: 280 }} />
         <Flex align="center" gap={5}>

@@ -29,12 +29,6 @@
     display: grid;
     gap: 30px;
 
-    .skeleton__image {
-      width: 378px !important;
-      height: 200px !important;
-      border-radius: 16px 0px;
-    }
-
     .blogs__card {
       width: 380px;
       background-color: var(--bg-primary);
@@ -99,12 +93,6 @@
       .blogs__card__large,
       .blogs__card__small {
         width: 80vw;
-      }
-
-      .skeleton__image {
-        width: 316px !important;
-        height: 200px !important;
-        border-radius: 16px 0px;
       }
     }
 
