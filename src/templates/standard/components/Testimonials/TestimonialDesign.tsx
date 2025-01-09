@@ -34,8 +34,6 @@ const TestimonialDesign: FC<{
 
       {config.sections?.testimonials?.items?.length === 0 && (
         <Flex vertical justify="center" style={{ textAlign: "center" }}>
-
-
           <p>No Testimonials exists</p>
           <Button
             onClick={() => {
@@ -45,7 +43,7 @@ const TestimonialDesign: FC<{
           >
             <Flex align="center" gap={10}>
               Add Testimonials
-              <i>{SvgIcons.arrowRight}</i>
+              <i style={{ fontSize: 18, lineHeight: 0 }}> {SvgIcons.arrowRight}</i>
             </Flex>
           </Button>
         </Flex>

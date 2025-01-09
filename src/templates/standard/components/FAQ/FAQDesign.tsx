@@ -45,8 +45,7 @@ const FAQDesign: FC<{
               type="primary"
             >
               <Flex align="center" gap={10}>
-                Add FAQ
-                <i>{SvgIcons.arrowRight}</i>
+                Add FAQ <i style={{ fontSize: 18, lineHeight: 0 }}> {SvgIcons.arrowRight}</i>
               </Flex>
             </Button>
           </Flex>

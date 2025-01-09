@@ -50,7 +50,7 @@ const ShowCertificate: FC<{ siteConfig: PageSiteConfig; courseName: string; user
             target="_blank"
           >
             <div> Download Certificate </div>
-            <i>{SvgIcons.arrowRight}</i>
+            <i style={{ fontSize: 18, lineHeight: 0 }}> {SvgIcons.arrowRight}</i>
           </Button>
         </div>
       </Space>

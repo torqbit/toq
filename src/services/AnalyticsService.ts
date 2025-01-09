@@ -1,3 +1,4 @@
+import { IOverviewStats } from "@/types/courses/analytics";
 import { getFetch } from "./request";
 export type UserAnalyseData = {
   year: any;
@@ -8,6 +9,7 @@ export type ApiResponse = {
   success: boolean;
   error: string;
   message: string;
+  overviewStats: IOverviewStats[];
   totalMembers: number;
   totalEnrolled: number;
   activeMembers: number;
@@ -89,6 +91,15 @@ class AnalyticsSerivce {
           onSuccess(apiResponse);
         });
       }
+    });
+  };
+
+  overviewStats = (onSuccess: (response: ApiResponse) => void, onFailure: (message: string) => void) => {
+    getFetch(`/api/v1/admin/analytics/overview`).then((result) => {
+      result.json().then((r) => {
+        const apiResponse = r as ApiResponse;
+        apiResponse.success ? onSuccess(apiResponse) : onFailure(apiResponse.error);
+      });
     });
   };
 }

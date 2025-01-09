@@ -637,7 +637,7 @@ const LessonPage: NextPage<{ siteConfig: PageSiteConfig; courseId: number }> = (
                             }}
                           >
                             View Certificate
-                            {SvgIcons.arrowRight}
+                            <i style={{ fontSize: 18, lineHeight: 0 }}> {SvgIcons.arrowRight}</i>
                           </Button>
                         </div>
                       )}
