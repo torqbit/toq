@@ -9,7 +9,7 @@ import { Role } from "@prisma/client";
 import { getCookieName } from "@/lib/utils";
 import { getToken } from "next-auth/jwt";
 import StudentDashboard from "@/components/Dashboard/StudentDashboard";
-import AdminDashboard from "@/components/Dashboard/AdminDashboard";
+import AdminDashboard from "@/components/Dashboard/Admin/AdminDashboard";
 import ProgramService from "@/services/ProgramService";
 
 const Dashboard: NextPage<{ siteConfig: PageSiteConfig; userRole: Role }> = ({ siteConfig, userRole }) => {
