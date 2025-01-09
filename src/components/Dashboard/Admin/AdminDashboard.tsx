@@ -64,7 +64,6 @@ const AdminDashboard: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
       duration,
       type,
       (result) => {
-        console.log(result.analyticStats);
         setAnalyticStat(result.analyticStats);
         setLoadingAnalytics(false);
       },
