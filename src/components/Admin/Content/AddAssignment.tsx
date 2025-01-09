@@ -173,7 +173,7 @@ const AddAssignment: FC<{
     if (isEdit) {
       AssignmentService.getAssignment(
         currResId,
-        true,
+        false,
         (result) => {
           assignmentForm.setFieldValue("title", result.assignmentDetail.name);
           assignmentForm.setFieldValue("estimatedDurationInMins", result.assignmentDetail.estimatedDurationInMins);
