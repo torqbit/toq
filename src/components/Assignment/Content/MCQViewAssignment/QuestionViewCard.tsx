@@ -24,6 +24,8 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, selectedAnswer, o
             key={option.key}
             label={option.text}
             value={option.key}
+            correctOptionIndex={question.correctOptionIndex}
+            selectedAnswer={selectedAnswer}
             isSelected={selectedAnswer?.includes(option.key)}
             onClick={() => onAnswerSelect(option.key, question?.id)}
           />

@@ -11,24 +11,17 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     let cookieName = getCookieName();
 
     const token = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
-    const { lessonId } = req.query;
+    const { submissionId } = req.query;
 
-    const savedSubmission = await prisma.assignmentSubmission.findFirst({
+    const evaluationResult = await prisma.assignmentEvaluation.findUnique({
       where: {
-        lessonId: Number(lessonId),
-        studentId: String(token?.id),
-      },
-      select: {
-        content: true,
-        status: true,
-        id: true,
-      },
-      orderBy: {
-        createdAt: "desc",
+        submissionId: Number(submissionId),
       },
     });
 
-    return res.status(200).json({ success: true, message: "Submission found", submissionContent: savedSubmission });
+    return res
+      .status(200)
+      .json({ success: true, message: "Evaluation result found", evaluationResult: evaluationResult });
   } catch (error) {
     console.log(error);
     errorHandler(error, res);

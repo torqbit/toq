@@ -1,7 +1,12 @@
 import { Assignment, AssignmentSubmission, submissionStatus } from "@prisma/client";
 import { getDelete, getFetch, postFetch } from "../request";
 import { IAssignmentDetail } from "@/types/courses/Course";
-import { AssignmentCreateRequest, IAssignmentDetails, IAssignmentSubmissoionDetail } from "@/types/courses/assignment";
+import {
+  AssignmentCreateRequest,
+  IAssignmentDetails,
+  IAssignmentSubmissoionDetail,
+  IEvaluationResult,
+} from "@/types/courses/assignment";
 
 export interface ISubmissionTableInfo {
   key: number;
@@ -58,6 +63,7 @@ interface ApiResponse {
   preview: string;
   assignmentDetail: IAssignmentDetail;
   submissionContent: IAssignmentSubmissoionDetail;
+  evaluationResult: IEvaluationResult;
   allAssignmentData: Assignment[];
   codeDetail: Map<string, string>;
   totalSubmissions: number;
@@ -70,6 +76,7 @@ interface ApiResponse {
   allSubmmissions: IAllSubmmissionsDetail[];
   latestSubmissionStatus: submissionStatus;
   score: number;
+  maximumScore: number;
   submitLimit: number;
 }
 
@@ -127,11 +134,11 @@ class AssignmentSerivce {
   };
   getAssignment = (
     lessonId: number,
-    isAnswer: boolean = false,
+    isNoAnswer: boolean,
     onSuccess: (response: ApiResponse) => void,
     onFailure: (message: string) => void
   ) => {
-    getFetch(`/api/v1/resource/assignment/get?lessonId=${lessonId}&isAnswer=${isAnswer}`).then((result) => {
+    getFetch(`/api/v1/resource/assignment/get?lessonId=${lessonId}&isNoAnswer=${isNoAnswer}`).then((result) => {
       if (result.status == 200) {
         result.json().then((r) => {
           const apiResponse = r as ApiResponse;
@@ -409,6 +416,30 @@ class AssignmentSerivce {
         });
       }
     });
+  };
+  getEvaluationResult = (
+    courseId: string,
+    lessonId: number,
+    assignmentId: number,
+    submissionId: number,
+    onSuccess: (response: ApiResponse) => void,
+    onFailure: (message: string) => void
+  ) => {
+    getFetch(`/api/v1/course/${courseId}/assignment/${assignmentId}/${lessonId}/submission/${submissionId}/get`).then(
+      (result) => {
+        if (result.status == 200) {
+          result.json().then((r) => {
+            const apiResponse = r as ApiResponse;
+            onSuccess(apiResponse);
+          });
+        } else {
+          result.json().then((r) => {
+            const failedResponse = r as FailedApiResponse;
+            onFailure(failedResponse.error);
+          });
+        }
+      }
+    );
   };
 
   completeSubmission = (
