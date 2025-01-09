@@ -41,7 +41,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         passingScore: assignmentDetail.passingScore,
       };
       if (detail.content._type === AssignmentType.MCQ && isNoAnswer === "true") {
-        console.log(isNoAnswer);
         let assignmentContent = detail.content as MCQAssignment;
         let questions = assignmentContent.questions;
         let updateQuestion = questions.map((question) => {
