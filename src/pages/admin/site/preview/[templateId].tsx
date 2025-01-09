@@ -10,13 +10,14 @@ import { ICourseCard } from "@/types/landing/courses";
 import getCourseList from "@/actions/getCourseList";
 import getBlogList from "@/actions/getBlogList";
 import { IBlogCard } from "@/types/landing/blog";
+import { ICourseListItem } from "@/types/courses/Course";
 
-const PreviewPage: FC<{ user: User; siteConfig: PageSiteConfig; courseList: ICourseCard[]; blogList: IBlogCard[] }> = ({
-  user,
-  siteConfig,
-  courseList,
-  blogList,
-}) => {
+const PreviewPage: FC<{
+  user: User;
+  siteConfig: PageSiteConfig;
+  courseList: ICourseListItem[];
+  blogList: IBlogCard[];
+}> = ({ user, siteConfig, courseList, blogList }) => {
   const [config, setConfig] = useState<PageSiteConfig>(siteConfig);
 
   useEffect(() => {

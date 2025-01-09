@@ -1,7 +1,16 @@
-.heroBlogWrapper {
+.hero__content__wrapper {
   width: 100%;
   position: relative;
   overflow: hidden;
+  background-color: var(--bg-primary);
+
+  background-image: radial-gradient(var(--bg-secondary) 2px, transparent 2px),
+    radial-gradient(var(--bg-secondary) 2px, var(--bg-primary) 2px);
+  background-size: 80px 80px;
+  background-position: 0 0, 40px 40px;
+
+  // background-image: radial-gradient(var(--bg-secondary) 1.4500000000000002px, var(--bg-primary) 1.4500000000000002px);
+  // background-size: 29px 29px;
 
   .blogContentContainer {
     position: relative;
@@ -32,7 +41,7 @@
 }
 
 @media only screen and (max-width: 435px) {
-  .heroBlogWrapper {
+  .hero__content__wrapper {
     .blogContentContainer {
       width: 350px;
       min-height: 30vh;

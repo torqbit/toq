@@ -16,7 +16,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const authConfig = await cms.getAuthConfig();
 
     if (authConfig.success && authConfig.body) {
-      console.log(`attempting to save the CDN configuration`);
       response = await cms.saveCDNConfig(
         authConfig.body,
         config.brandName,

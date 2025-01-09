@@ -440,7 +440,6 @@ export class BunnyClient {
     isCDN: boolean
   ): Promise<APIResponse<StorageZone>> => {
     const url = "https://api.bunny.net/storagezone";
-    console.log(`storage zone name: ${this.getStorageZoneName(brandName, isCDN)}`);
     const options = {
       method: "POST",
       headers: this.getClientHeaders(),

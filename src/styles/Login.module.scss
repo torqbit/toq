@@ -24,10 +24,10 @@
 }
 
 .bg__light {
-  background-image: url("/img/landing/hero-bg.png");
+  background: var(--bg-secondary);
 }
 .bg__dark {
-  background-image: url("/img/landing/hero-bg-dark.png");
+  background-color: var(--bg-primary);
 }
 
 .login_img {

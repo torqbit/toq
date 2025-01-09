@@ -1,4 +1,3 @@
-import { EmptyCourses } from "@/components/SvgIcons";
 import { PageSiteConfig } from "@/services/siteConstant";
 import { ICourseListItem } from "@/types/courses/Course";
 import { Theme } from "@/types/theme";
@@ -10,7 +9,7 @@ import { capsToPascalCase } from "@/lib/utils";
 import { useRouter } from "next/router";
 import Link from "next/link";
 const { Meta } = Card;
-const CourseViewItem: FC<{ course: ICourseListItem }> = ({ course }) => {
+export const CourseViewItem: FC<{ course: ICourseListItem }> = ({ course }) => {
   const router = useRouter();
 
   const handleEdit = (id: number) => {
@@ -35,6 +34,8 @@ const CourseViewItem: FC<{ course: ICourseListItem }> = ({ course }) => {
       key: "2",
     },
   ];
+
+  console.log(course);
 
   return (
     <Card

@@ -7,6 +7,7 @@ import { getToken } from "next-auth/jwt";
 import { CourseState, Role, StateType } from "@prisma/client";
 import { ICourseListItem } from "@/types/courses/Course";
 import { APIResponse } from "@/types/apis";
+import appConstant from "@/services/appConstant";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
@@ -73,14 +74,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           author: c.user.name,
           price: c.coursePrice,
           trailerThumbnail: c.tvThumbnail || undefined,
-          currency: "INR",
+          currency: appConstant.currency,
           state: c.state,
           userRole: userRole,
         };
       })
     );
 
-    console.log(token);
     if (token === null || (token && token.role === Role.STUDENT)) {
       courses = courseListItems.filter((c) => c.state === StateType.ACTIVE);
     } else if (token && token.role === Role.AUTHOR) {

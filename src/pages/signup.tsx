@@ -75,8 +75,6 @@ const LoginPage: NextPage<{
       },
       (err) => {
         setSignupLoading(false);
-
-        console.log(`error: ${err}`);
         messageApi.error(err);
       }
     );

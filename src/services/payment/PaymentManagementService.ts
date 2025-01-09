@@ -431,7 +431,6 @@ export class PaymentManagemetService {
      */
     try {
       const paymentProvider = await this.getPaymentProvider(this.defaultGateway);
-      console.log("got payment provider", paymentProvider);
       if (!latestOrder || latestOrder.orderStatus === orderStatus.FAILED) {
         const order = await prisma.order.create({
           data: {

@@ -34,14 +34,12 @@ export class SodiumSecretsProvider implements SecretsProvider {
           console.error("Error creating directory:", err);
           return;
         }
-        console.log(`Directory created at: ${dirPath}`);
 
         fs.writeFile(keyFilePath, this.privateKey.toString(keyFormat), "utf8", (err) => {
           if (err) {
             console.error("Error writing to file:", err);
             return;
           }
-          console.log(`Private Key written successfully at: ${keyFilePath}`);
         });
 
         fs.writeFile(pubKeyFilePath, this.publicKey.toString(keyFormat), "utf8", (err) => {
@@ -49,7 +47,6 @@ export class SodiumSecretsProvider implements SecretsProvider {
             console.error("Error writing to file:", err);
             return;
           }
-          console.log(`Public Key written successfully at: ${pubKeyFilePath}`);
         });
       });
     }

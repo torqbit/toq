@@ -29,7 +29,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const body = await req.body;
     const reqBody = validateReqBody.parse(body);
-    console.log("body", reqBody);
     // check is user Active
 
     if (!token || !token.isActive) {
@@ -74,7 +73,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       },
     });
     let courseType = course?.courseType;
-    console.log(course);
 
     if (course) {
       const expiryDate = addDays(Number(course.expiryInDays));
@@ -158,7 +156,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       }
     }
   } catch (error: any) {
-    console.log(error);
     return errorHandler(error, res);
   }
 };

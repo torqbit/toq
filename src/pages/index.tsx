@@ -10,10 +10,12 @@ import { ICourseCard } from "@/types/landing/courses";
 import getCourseList from "@/actions/getCourseList";
 import getBlogList from "@/actions/getBlogList";
 import { IBlogCard } from "@/types/landing/blog";
+import { ICourseListItem } from "@/types/courses/Course";
+import { listCourseListItems } from "@/actions/courses";
 interface IProps {
   user: User;
   siteConfig: PageSiteConfig;
-  courseList: ICourseCard[];
+  courseList: ICourseListItem[];
   blogList: IBlogCard[];
 }
 
@@ -27,7 +29,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
   const { site } = getSiteConfig();
   const siteConfig = site;
-  const courselist = siteConfig.sections?.courses?.enable && (await getCourseList());
+  const courselist = siteConfig.sections?.courses?.enable && (await listCourseListItems(user));
   const blogList = siteConfig.sections?.blog?.enable && (await getBlogList());
 
   return {

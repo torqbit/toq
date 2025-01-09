@@ -8,16 +8,17 @@ import Hero from "./components/Hero/Hero";
 import Blogs from "@/templates/standard/components/Blog/Blogs";
 import Features from "./components/Feature/Features";
 import CourseList from "@/templates/standard/components/Courses/Courses";
-import { ICourseCard } from "@/types/landing/courses";
 import { IBlogCard } from "@/types/landing/blog";
 import FAQ from "./components/FAQ/FAQ";
 import Testimonial from "./components/Testimonials/Testimonials";
 import styles from "./StandardTemplate.module.scss";
+import { ICourseListItem } from "@/types/courses/Course";
+
 interface IStandardTemplateProps {
   user: User;
   siteConfig: PageSiteConfig;
   previewMode?: boolean;
-  courseList: ICourseCard[];
+  courseList: ICourseListItem[];
   blogList: IBlogCard[];
 }
 

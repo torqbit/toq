@@ -1,11 +1,13 @@
 import { FC } from "react";
 import styles from "./Courses.module.scss";
+import courseGrid from "@/components/Courses/CourseListView/CourseListView.module.scss";
 import Link from "next/link";
 import { CourseCardSize, ICourseCard, ICourseInfo } from "@/types/landing/courses";
 import { Flex, Tag } from "antd";
 
-import { CourseType } from "@prisma/client";
+import { CourseType, StateType } from "@prisma/client";
 import CourseSkeleton from "./CourseSkeleton";
+import { CourseViewItem } from "@/components/Courses/CourseListView/CourseListView";
 
 const CourseCard: FC<ICourseCard> = ({
   tvThumbnail,
@@ -51,38 +53,20 @@ const CourseList: FC<ICourseInfo> = ({ title, description, courseList, previewMo
           <div>
             <h2>{title}</h2>
             <p style={{ marginBottom: 30 }}>{description}</p>
-            <div
-              style={{
-                gridTemplateColumns: courseList.length === 4 ? "580px 580px" : "1fr 1fr 1fr",
-              }}
-              className={`${styles.courses} ${styles.courses__triple}`}
-            >
-              {previewMode && courseList.length === 0 ? (
-                <>
-                  <CourseSkeleton size={3} />
-                </>
-              ) : (
-                <>
-                  {courseList.map((course, i) => {
-                    return (
-                      <CourseCard
-                        key={i}
-                        tvThumbnail={course.tvThumbnail}
-                        title={course.title}
-                        description={course.description}
-                        link={`${course.link}`}
-                        cardClass={`${course.cardClass}`}
-                        duration={course.duration}
-                        courseType={course.courseType}
-                        price={2000}
-                        difficulty={course.difficulty}
-                        size={cardSize}
-                      />
-                    );
-                  })}
-                </>
-              )}
-            </div>
+
+            {previewMode && courseList.length === 0 ? (
+              <>
+                <CourseSkeleton size={3} />
+              </>
+            ) : (
+              <div className={courseGrid.course__grid}>
+                {courseList
+                  .filter((c) => c.state === StateType.ACTIVE)
+                  .map((c, index) => (
+                    <CourseViewItem course={c} key={index} />
+                  ))}
+              </div>
+            )}
           </div>
         </section>
       )}

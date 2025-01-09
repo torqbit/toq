@@ -7,9 +7,16 @@ import fs from "fs";
 import os from "os";
 import prisma from "@/lib/prisma";
 import path from "path";
-import { IChapterView, ICourseDetailView, ILessonView, VideoAPIResponse } from "@/types/courses/Course";
+import {
+  IChapterView,
+  ICourseDetailView,
+  ICourseListItem,
+  ILessonView,
+  VideoAPIResponse,
+} from "@/types/courses/Course";
 import { mergeChunks, saveToLocal } from "@/lib/upload/utils";
-import { courseDifficultyType, Prisma, ResourceContentType, Role } from "@prisma/client";
+import { courseDifficultyType, Prisma, ResourceContentType, Role, StateType } from "@prisma/client";
+import { JWT } from "next-auth/jwt";
 
 export const uploadThumbnail = async (
   file: any,
@@ -315,4 +322,77 @@ export const getCourseDetailedView = async (
 
     return new APIResponse(true, 200, `Succesfully fetched course detailed view`, courseDetailedView);
   } else return new APIResponse(true, 200, `Succesfully fetched course detailed view`);
+};
+
+export const listCourseListItems = async (token: JWT | null): Promise<ICourseListItem[]> => {
+  let courses: ICourseListItem[] = [];
+
+  const allCourses = await prisma.course.findMany({
+    select: {
+      courseId: true,
+      name: true,
+      difficultyLevel: true,
+      state: true,
+      description: true,
+      totalResources: true,
+      previewMode: true,
+      tvThumbnail: true,
+      coursePrice: true,
+      slug: true,
+      user: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+    },
+  });
+
+  let courseListItems: ICourseListItem[] = await Promise.all(
+    allCourses.map(async (c) => {
+      let userRole: Role = Role.NOT_ENROLLED;
+      if (token) {
+        if (token.role === Role.ADMIN) {
+          userRole = Role.ADMIN;
+        } else if (token.role == Role.AUTHOR && c.user.id == token.id) {
+          userRole = Role.AUTHOR;
+        } else {
+          //get the registration details for this course and userId
+          const registrationDetails = await prisma.courseRegistration.count({
+            where: {
+              studentId: token.id,
+              order: {
+                productId: c.courseId,
+              },
+            },
+          });
+          if (registrationDetails > 0) {
+            userRole = Role.STUDENT;
+          }
+        }
+      }
+      return {
+        id: c.courseId,
+        title: c.name,
+        slug: c.slug || `${c.courseId}-`,
+        description: c.description,
+        difficultyLevel: c.difficultyLevel,
+        author: c.user.name,
+        price: c.coursePrice,
+        trailerThumbnail: c.tvThumbnail || undefined,
+        currency: appConstant.currency,
+        state: c.state,
+        userRole: userRole,
+      };
+    })
+  );
+
+  if (token === null || (token && token.role === Role.STUDENT)) {
+    courses = courseListItems.filter((c) => c.state === StateType.ACTIVE);
+  } else if (token && token.role === Role.AUTHOR) {
+    courses = courseListItems.filter((c) => c.state === StateType.ACTIVE || (c.userRole && c.userRole === Role.AUTHOR));
+  } else {
+    courses = courseListItems;
+  }
+  return courses;
 };

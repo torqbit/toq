@@ -120,7 +120,7 @@ export const authOptions: NextAuthOptions = {
         session.user = token.user as Object;
         session.user.name = token.name;
 
-        if ((trigger = "update" && newSession?.name)) {
+        if (trigger == "update" && newSession?.name) {
           session.user.name = newSession?.name;
           session.phone = newSession?.phone;
           token.picture = newSession?.image;
