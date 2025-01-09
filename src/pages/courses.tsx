@@ -113,15 +113,17 @@ const CoursesPage: NextPage<{ siteConfig: PageSiteConfig; userRole: Role }> = ({
           {contextMessageHolder}
           <section>
             {!loading && courses ? (
-              <CoursesListView
-                courses={courses}
-                siteConfig={siteConfig}
-                currentTheme={globalState.theme || "light"}
-                handleCourseCreate={addCourse}
-                emptyView={
-                  <EmptyCourses size="300px" {...getIconTheme(globalState.theme || "light", siteConfig.brand)} />
-                }
-              />
+              <div className="page__wrapper">
+                <CoursesListView
+                  courses={courses}
+                  siteConfig={siteConfig}
+                  currentTheme={globalState.theme || "light"}
+                  handleCourseCreate={addCourse}
+                  emptyView={
+                    <EmptyCourses size="300px" {...getIconTheme(globalState.theme || "light", siteConfig.brand)} />
+                  }
+                />
+              </div>
             ) : (
               <SpinLoader className="course__spinner" />
             )}

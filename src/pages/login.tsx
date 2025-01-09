@@ -73,7 +73,6 @@ const LoginPage: NextPage<{
       password: loginForm.getFieldValue("password"),
       email: loginForm.getFieldValue("email"),
     }).then(async (response) => {
-      console.log(response);
       if (response && !response.ok) {
         setLoginLoading(false);
 
@@ -98,7 +97,6 @@ const LoginPage: NextPage<{
       range: "${label} must be between ${min} and ${max}",
     },
   };
-  console.log(globalState.theme, "theme");
   return (
     <ConfigProvider theme={globalState.theme == "dark" ? darkThemeConfig(siteConfig) : antThemeConfig(siteConfig)}>
       <div

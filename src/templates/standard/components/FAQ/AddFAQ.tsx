@@ -55,7 +55,6 @@ const AddFAQ: FC<{ siteConfig: PageSiteConfig; setConfig: (value: PageSiteConfig
   };
 
   const onUpdate = (question: string, answer: string, index: number) => {
-    console.log(question, answer, index, "sdf");
     setFaqList((prevItems) => {
       const updatedItems = [...prevItems];
       if (index >= 0 && index < updatedItems.length) {

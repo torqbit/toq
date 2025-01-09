@@ -28,9 +28,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     });
 
     const body = await req.body;
-
-    const { courseId, orderId } = body;
-
+    const reqBody = validateReqBody.parse(body);
     // check is user Active
 
     if (!token || !token.isActive) {
@@ -43,10 +41,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     // check user already enrolled
 
     const alreadyEnrolled =
-      orderId &&
+      reqBody.orderId &&
       (await prisma.courseRegistration.findUnique({
         where: {
-          orderId,
+          orderId: reqBody.orderId,
         },
         select: {
           registrationId: true,
@@ -63,7 +61,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const course = await prisma.course.findUnique({
       where: {
-        courseId: courseId,
+        courseId: reqBody.courseId,
       },
       select: {
         courseType: true,
@@ -86,7 +84,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             data: {
               studentId: token.id,
               orderStatus: orderStatus.SUCCESS,
-              productId: courseId,
+              productId: reqBody.courseId,
               amount: 0,
             },
           });
@@ -140,20 +138,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           };
 
           const courseConfig: CoursePaymentConfig = {
-            courseId: Number(courseId),
+            courseId: reqBody.courseId,
             slug: String(course.slug),
             amount: Number(course.coursePrice),
             coursePrice: Number(course.coursePrice),
           };
-
-          const gatewayConfig: CashFreeConfig = {
-            name: String(process.env.GATEWAY_PROVIDER_NAME),
-            clientId: String(process.env.CASHFREE_CLIENT_ID),
-            secretId: String(process.env.CASHFREE_SECRET_KEY),
-          };
           const pms = new PaymentManagemetService();
 
-          const paymentData = await pms.processPayment(userConfig, courseConfig, gatewayConfig);
+          const paymentData = await pms.processPayment(userConfig, courseConfig);
 
           if (paymentData.success) {
             return res.status(paymentData.status).json({ ...paymentData.body, success: paymentData.success });

@@ -216,6 +216,11 @@ h6 {
   color: var(--font-secondary);
 }
 
+.page__wrapper {
+  width: var(--container-width);
+  margin: 0 auto;
+}
+
 a {
   color: inherit;
   text-decoration: none;
@@ -509,7 +514,6 @@ a {
 }
 .spinner_container {
   position: relative;
-  min-height: 100vh;
 }
 
 .lesson_loader {

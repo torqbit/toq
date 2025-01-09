@@ -1,4 +1,3 @@
-import { EmptyCourses } from "@/components/SvgIcons";
 import { PageSiteConfig } from "@/services/siteConstant";
 import { ICourseListItem } from "@/types/courses/Course";
 import { Theme } from "@/types/theme";
@@ -10,7 +9,7 @@ import { capsToPascalCase } from "@/lib/utils";
 import { useRouter } from "next/router";
 import Link from "next/link";
 const { Meta } = Card;
-const CourseViewItem: FC<{ course: ICourseListItem }> = ({ course }) => {
+export const CourseViewItem: FC<{ course: ICourseListItem }> = ({ course }) => {
   const router = useRouter();
 
   const handleEdit = (id: number) => {
@@ -19,6 +18,10 @@ const CourseViewItem: FC<{ course: ICourseListItem }> = ({ course }) => {
 
   const handleManage = (id: number) => {
     router.push(`admin/content/course/${id}/manage`);
+  };
+
+  const handlePurchase = (slug: string) => {
+    router.push(`/courses/${slug}`);
   };
 
   const items: MenuProps["items"] = [
@@ -31,6 +34,8 @@ const CourseViewItem: FC<{ course: ICourseListItem }> = ({ course }) => {
       key: "2",
     },
   ];
+
+  console.log(course);
 
   return (
     <Card
@@ -84,7 +89,11 @@ const CourseViewItem: FC<{ course: ICourseListItem }> = ({ course }) => {
               Manage
             </Dropdown.Button>
           )}
-        {course.userRole && course.userRole === Role.NOT_ENROLLED && <Button type="default">Buy Now</Button>}
+        {course.userRole && course.userRole === Role.NOT_ENROLLED && (
+          <Button type="default" onClick={(e) => handlePurchase(course.slug)}>
+            Buy Now
+          </Button>
+        )}
         {course.userRole && course.userRole === Role.STUDENT && <Button type="default">Go to Course</Button>}
       </Flex>
     </Card>
@@ -143,12 +152,26 @@ export const CoursesListView: FC<{
   ];
   return (
     <div className={styles.courses__list}>
-      {role && (
+      {role && role !== Role.STUDENT && (
         <>
           <h4>Courses</h4>
           <Tabs tabBarGutter={40} items={items} activeKey={tab} onChange={(k) => setTab(k)} />
         </>
       )}
+
+      {role && role === Role.STUDENT && (
+        <>
+          <h4>Courses</h4>
+          <div className={styles.course__grid}>
+            {courses
+              .filter((c) => c.state === StateType.ACTIVE)
+              .map((c, index) => (
+                <CourseViewItem course={c} key={index} />
+              ))}
+          </div>
+        </>
+      )}
+
       {typeof role === "undefined" && courses.length > 0 && (
         <div className={styles.course__grid}>
           {courses.map((c, index) => (

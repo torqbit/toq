@@ -70,9 +70,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             courseId,
             "course"
           );
-          console.log(newThumbnailResponse);
           if (newThumbnailResponse.success && newThumbnailResponse.body) {
-            console.log(`New thumbnail: ${newThumbnailResponse.body}`);
             trailerThumbnail = newThumbnailResponse.body;
           }
         } else {

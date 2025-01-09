@@ -10,6 +10,7 @@
 
     h2 {
       font-size: 3rem;
+      line-height: 1.66;
     }
 
     .item__price {
@@ -20,11 +21,17 @@
 
     .pricing__currency {
       font-size: 1.2rem;
+      color: var(--font-secondary);
     }
 
     .offering__highlights {
       padding: 30px 40px;
       border-bottom: 1px solid var(--border-color);
+      color: var(--font-secondary);
+
+      i {
+        font-size: 20px;
+      }
     }
 
     .course__author {

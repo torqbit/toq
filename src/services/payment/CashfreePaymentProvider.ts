@@ -1,6 +1,6 @@
 import { Cashfree, OrderEntity } from "cashfree-pg";
 import prisma from "@/lib/prisma";
-import { $Enums, CourseRegistration, orderStatus, paymentStatus } from "@prisma/client";
+import { $Enums, CourseRegistration, gatewayProvider, orderStatus, paymentStatus } from "@prisma/client";
 import {
   PaymentApiResponse,
   CoursePaymentConfig,
@@ -14,7 +14,7 @@ import appConstant from "../appConstant";
 import { APIResponse } from "@/types/apis";
 
 export class CashfreePaymentProvider implements PaymentServiceProvider {
-  name: string = String(process.env.GATEWAY_PROVIDER_NAME);
+  name: string = String(gatewayProvider.CASHFREE);
   clientId: string;
   secretId: string;
   apiVersion: string = "2023-08-01";
