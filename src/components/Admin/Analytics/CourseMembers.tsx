@@ -41,7 +41,7 @@ const CourseMembers: FC<{ onChange: (value: SegmentedValue) => void; userData: U
         />
       </div>
       <div className={styles.lineChartWrapper}>
-        <LineChart data={data} />
+        <LineChart data={data} title={"students"} axisBottomTitle="Months" axisLeftTitle="Users" />
       </div>
     </div>
   );

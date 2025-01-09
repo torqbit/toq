@@ -1,7 +1,15 @@
+import { Serie } from "@nivo/line";
+
 export interface IEarningStats {
   totalEarnings: number;
   currentMonthEarnings: number;
   previousMonthEarnings: number;
+}
+
+export interface IResponseStats {
+  total: number;
+  current: number;
+  previous: number;
 }
 
 export interface IEnrollmentStats {
@@ -13,6 +21,11 @@ export interface IUsersStats {
   totalUsers: number;
   currentMonthUsers: number;
   previousMonthUsers: number;
+}
+
+export interface IAnalyticResponse {
+  info: IAnalyticStats;
+  data: Serie[];
 }
 
 export interface IEarningResponse {
@@ -27,9 +40,11 @@ export interface IUsersResponse {
   totalUsers: number;
   comparedPercentage: number;
 }
+export type AnalyticsType = "Earnings" | "Enrollments" | "Users";
+export type AnalyticsDuration = "month" | "quarter" | "year";
 
-export interface IOverviewStats {
-  type: string;
+export interface IAnalyticStats {
+  type: AnalyticsType;
   total: string;
   comparedPercentage: number;
 }

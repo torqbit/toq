@@ -4,7 +4,7 @@ import { withMethods } from "@/lib/api-middlewares/with-method";
 
 import { withUserAuthorized } from "@/lib/api-middlewares/with-authorized";
 import analytics from "@/actions/analytics";
-import { IOverviewStats } from "@/types/courses/analytics";
+import { IAnalyticStats } from "@/types/courses/analytics";
 import appConstant from "@/services/appConstant";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -13,10 +13,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const enrollmentDetail = await analytics.getTotalEnrollments();
     const usersDetail = await analytics.getTotalUsers();
 
-    let overviewStats: IOverviewStats[] = [
+    let overviewStats: IAnalyticStats[] = [
       {
         type: "Earnings",
-        total: `${appConstant.payment.currency} ${earningDetail.body?.totalEarning}`,
+        total: `${earningDetail.body?.totalEarning}`,
         comparedPercentage: Number(earningDetail.body?.comparedPercentage),
       },
       {

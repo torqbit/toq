@@ -4,7 +4,13 @@ import { ResponsiveLine, Serie } from "@nivo/line";
 import { useAppContext } from "@/components/ContextApi/AppContext";
 import appConstant from "@/services/appConstant";
 
-const LineChart: FC<{ data: Serie[] }> = ({ data }) => {
+const LineChart: FC<{
+  data: Serie[];
+  title: string;
+  axisBottomTitle: string;
+  axisLeftTitle: string;
+  color?: string;
+}> = ({ data, title, axisBottomTitle, axisLeftTitle, color = appConstant.lineChart.graphColor }) => {
   const { globalState } = useAppContext();
 
   return (
@@ -54,10 +60,11 @@ const LineChart: FC<{ data: Serie[] }> = ({ data }) => {
             }}
           >
             <strong>{Math.floor(Number(point.data.yFormatted))}</strong>{" "}
-            {Math.floor(Number(point.data.yFormatted)) === 1 ? "student" : "students"}
+            {/* {Math.floor(Number(point.data.yFormatted)) === 1 ? "student" : "students"} */}
+            {title}
           </div>
         )}
-        colors={[appConstant.lineChart.graphColor]} // added
+        colors={[color as string]} // added
         margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
         xScale={{ type: "point" }}
         yScale={{
@@ -75,16 +82,16 @@ const LineChart: FC<{ data: Serie[] }> = ({ data }) => {
           tickSize: 2,
           tickPadding: 8,
           tickRotation: 0,
-          legend: "Months", // added
+          legend: axisBottomTitle, // added
           legendOffset: 40,
           legendPosition: "middle",
         }}
         axisLeft={{
           tickValues: 5, // added
           tickSize: 5,
-          tickPadding: 8,
+          tickPadding: 0,
           tickRotation: 0,
-          legend: "Users", // added
+          legend: axisLeftTitle, // added
           legendOffset: -50,
 
           legendPosition: "middle",
