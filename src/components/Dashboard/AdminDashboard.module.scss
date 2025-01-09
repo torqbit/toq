@@ -1,12 +1,12 @@
 .admin__dashboard {
   max-width: var(--container-width);
   padding: 40px 0px;
-  .analytics__card__wrapper {
+  .analytics__stats__wrapper {
     padding: 10px 0px;
     display: grid;
     gap: 40px;
     grid-template-columns: repeat(auto-fill, 250px);
-    .analyticsCard {
+    .stats {
       background-color: var(--bg-primary);
       p {
         margin: 0;

@@ -9,7 +9,7 @@ import { getDummyArray } from "@/lib/dummyData";
 
 const AnalyticsCard: FC<IOverviewStats> = ({ type, total, comparedPercentage }) => {
   return (
-    <Card className={styles.analyticsCard}>
+    <Card className={styles.stats}>
       <p>Total {type}</p>
       <h2>{total}</h2>
       <Flex align="center">
@@ -35,7 +35,7 @@ const AnalyticsCard: FC<IOverviewStats> = ({ type, total, comparedPercentage }) 
 };
 const AnalyticsCardSkeleton: FC<{}> = () => {
   return (
-    <Card className={styles.analyticsCard}>
+    <Card className={styles.stats}>
       <Skeleton paragraph />
     </Card>
   );
@@ -72,7 +72,7 @@ const AdminDashboard: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
     <section className={styles.admin__dashboard}>
       {contextHolder}
       <h3>Overview</h3>
-      <div className={styles.analytics__card__wrapper}>
+      <div className={styles.analytics__stats__wrapper}>
         {loadingOverview || overviewStats.length === 0
           ? getDummyArray(3).map((d, i) => {
               return <AnalyticsCardSkeleton key={i} />;
