@@ -139,6 +139,7 @@ export default {
     },
   ],
   payment: {
+    currency: "INR",
     lockoutMinutes: 30 * 1000,
     sessionExpiryDuration: 24 * 60 * 60 * 1000,
 

@@ -97,7 +97,7 @@ const BasicInfo: FC<{ title: string; description: string; siteConfig: PageSiteCo
             <Input placeholder="Brand title " />
           </Form.Item>
           <Button loading={loading} htmlType="submit" type="primary">
-            Continue <i>{SvgIcons.arrowRight}</i>
+            Continue <i style={{ fontSize: 18, lineHeight: 0 }}> {SvgIcons.arrowRight}</i>
           </Button>
         </Form>
       </div>

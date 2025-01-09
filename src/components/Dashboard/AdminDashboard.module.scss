@@ -1,0 +1,24 @@
+.admin__dashboard {
+  max-width: var(--container-width);
+  padding: 40px 0px;
+  .analytics__stats__wrapper {
+    padding: 10px 0px;
+    display: grid;
+    gap: 40px;
+    grid-template-columns: repeat(auto-fill, 250px);
+    .stats {
+      background-color: var(--bg-primary);
+      p {
+        margin: 0;
+      }
+      h2 {
+        margin: 0 0 10px 0;
+        color: var(--font-secondary);
+      }
+      i {
+        font-size: 14px;
+        line-height: 0;
+      }
+    }
+  }
+}

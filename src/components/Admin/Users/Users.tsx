@@ -377,7 +377,7 @@ const Users: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
           tabBarExtraContent={
             <Button type="primary" onClick={showDrawer} className={styles.add_user_btn}>
               <span>Add User</span>
-              {SvgIcons.arrowRight}
+              <i style={{ fontSize: 18, lineHeight: 0 }}> {SvgIcons.arrowRight}</i>
             </Button>
           }
           defaultActiveKey="1"

@@ -421,3 +421,9 @@ export function areAnswersEqualForKey(arr1: (string | number)[], arr2: (string |
   return true; // Arrays match index-wise
 }
 
+export const compareByPercentage = (current: number, previous: number) => {
+  if (previous === 0) {
+    return current === 0 ? 0 : 100;
+  }
+  return Math.floor(((current - previous) / previous) * 100);
+};

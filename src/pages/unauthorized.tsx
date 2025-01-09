@@ -26,7 +26,7 @@ const UnAuthorized: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) 
             {router.query.from === "lesson" && (
               <Button type="primary" onClick={() => router.push("/courses")}>
                 <Flex justify="space-between" gap={10}>
-                  Browse Courses {SvgIcons.arrowRight}
+                  Browse Courses <i style={{ fontSize: 18, lineHeight: 0 }}> {SvgIcons.arrowRight}</i>
                 </Flex>{" "}
               </Button>
             )}

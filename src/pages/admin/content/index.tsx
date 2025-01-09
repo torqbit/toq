@@ -422,7 +422,7 @@ const Content: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
                   className={styles.add_user_btn}
                 >
                   <span>{activeTab}</span>
-                  {SvgIcons.arrowRight}
+                  <i style={{ fontSize: 18, lineHeight: 0 }}> {SvgIcons.arrowRight}</i>
                 </Button>
               )}
             </>

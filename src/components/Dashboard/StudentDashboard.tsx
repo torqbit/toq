@@ -77,7 +77,7 @@ const StudentDashboard: FC<{
                 >
                   <Flex align="center" gap={10}>
                     <span>Browse Courses</span>
-                    <i style={{ lineHeight: 0 }}>{SvgIcons.arrowRight}</i>
+                    <i style={{ fontSize: 18, lineHeight: 0 }}> {SvgIcons.arrowRight}</i>
                   </Flex>
                 </Button>
               )}
