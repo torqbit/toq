@@ -46,7 +46,7 @@ const AddFeatureForm: FC<{
     <div className={styles.feature__card__form}>
       <div>
         <Form.Item layout="vertical" name={`icon${index}`} label="Upload icon">
-          <ImgCrop rotationSlider aspect={1 / 1}>
+          <ImgCrop fillColor={"transparent"} rotationSlider aspect={1 / 1}>
             <Upload
               showUploadList={false}
               maxCount={1}

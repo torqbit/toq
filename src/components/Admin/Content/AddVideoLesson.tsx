@@ -377,6 +377,7 @@ const AddVideoLesson: FC<{
                   {!resourceVideoUploading && (
                     <div className={styles.actionDropdown}>
                       <ImgCrop
+                        fillColor={"transparent"}
                         rotationSlider
                         aspect={16 / 8}
                         onModalOk={(file) => {

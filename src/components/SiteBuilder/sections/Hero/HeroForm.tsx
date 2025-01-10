@@ -101,7 +101,7 @@ const HeroForm: FC<{
   }, [heroConfig]);
 
   const lightHeroImage = (
-    <ImgCrop rotationSlider aspect={2 / 1}>
+    <ImgCrop rotationSlider aspect={2 / 1} fillColor={"transparent"}>
       <Upload maxCount={1} showUploadList={false} beforeUpload={(file) => beforeUpload(file, "lightModePath")}>
         {heroImages.lightModePath === "" ? (
           <Button icon={<UploadOutlined />} style={{ width: 240, height: 120 }}>
@@ -123,7 +123,7 @@ const HeroForm: FC<{
   );
 
   const darkHeroImage = (
-    <ImgCrop rotationSlider aspect={2 / 1}>
+    <ImgCrop rotationSlider aspect={2 / 1} fillColor={"transparent"}>
       <Upload maxCount={1} showUploadList={false} beforeUpload={(file) => beforeUpload(file, "darkModePath")}>
         {heroImages.darkModePath === "" ? (
           <Button icon={<UploadOutlined />} style={{ width: 240, height: 120 }}>

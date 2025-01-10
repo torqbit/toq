@@ -350,12 +350,19 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
             theme={globalState.theme == "dark" ? darkThemeConfig(siteConfig) : antThemeConfig(siteConfig)}
           >
             <Head>
-              <title>Torqbit | Learn to build software products</title>
+              <title>{`${siteConfig.brand?.name} · ${siteConfig.brand?.title}`}</title>
 
-              <meta name="description" content="Learn, build and solve the problems that matters the most" />
-              <meta property="og:image" content={"https://cdn.torqbit.com/website/img/torqbit-landing.png"} />
+              <meta name="description" content={siteConfig.brand?.description} />
+              <meta
+                property="og:image"
+                content={
+                  siteConfig.brand?.themeSwitch && siteConfig.brand.defaultTheme == "dark"
+                    ? siteConfig.heroSection?.banner?.darkModePath
+                    : siteConfig.heroSection?.banner?.lightModePath
+                }
+              />
 
-              <link rel="icon" href="/favicon.ico" />
+              <link rel="icon" href={siteConfig.brand?.favicon} />
             </Head>
 
             {globalState.onlineStatus ? (
