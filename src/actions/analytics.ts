@@ -26,10 +26,14 @@ class Analytics {
      WHERE createdAt >= DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 1 MONTH), '%Y-%m-01') 
      AND createdAt < DATE_FORMAT(CURDATE(), '%Y-%m-01') AND orderStatus = ${orderStatus.SUCCESS}) AS previous`;
 
-    return new APIResponse(true, 200, "", {
-      totalEarning: result[0].total,
-      comparedPercentage: compareByPercentage(result[0].current, result[0].previous),
-    });
+    if (result.length > 0) {
+      return new APIResponse(true, 200, "", {
+        totalEarning: result[0].total,
+        comparedPercentage: compareByPercentage(result[0].current, result[0].previous),
+      });
+    } else {
+      return new APIResponse(false, 404, "Earnings Data not found");
+    }
   }
   async getTotalEnrollments(): Promise<APIResponse<IEnrollmentResponse>> {
     const enrollmentsResult = await prisma.$queryRaw<IResponseStats[]>`
@@ -49,13 +53,17 @@ class Analytics {
 
    `;
 
-    return new APIResponse(true, 200, "", {
-      totalEnrollment: Number(enrollmentsResult[0].total),
-      comparedPercentage: compareByPercentage(
-        Number(enrollmentsResult[0].current),
-        Number(enrollmentsResult[0].previous)
-      ),
-    });
+    if (enrollmentsResult.length > 0) {
+      return new APIResponse(true, 200, "", {
+        totalEnrollment: Number(enrollmentsResult[0].total),
+        comparedPercentage: compareByPercentage(
+          Number(enrollmentsResult[0].current),
+          Number(enrollmentsResult[0].previous)
+        ),
+      });
+    } else {
+      return new APIResponse(false, 404, "Enrollment Data not found");
+    }
   }
   async getTotalUsers(): Promise<APIResponse<IUsersResponse>> {
     const usersResult = await prisma.$queryRaw<IResponseStats[]>`
@@ -74,11 +82,14 @@ class Analytics {
      AND createdAt < DATE_FORMAT(CURDATE(), '%Y-%m-01') AND  role = ${Role.STUDENT}) AS previous ;
 
    `;
-
-    return new APIResponse(true, 200, "", {
-      totalUsers: Number(usersResult[0].total),
-      comparedPercentage: compareByPercentage(Number(usersResult[0].current), Number(usersResult[0].previous)),
-    });
+    if (usersResult.length > 0) {
+      return new APIResponse(true, 200, "", {
+        totalUsers: Number(usersResult[0].total),
+        comparedPercentage: compareByPercentage(Number(usersResult[0].current), Number(usersResult[0].previous)),
+      });
+    } else {
+      return new APIResponse(false, 404, "User Data not found");
+    }
   }
   getDateCondition(duration: AnalyticsDuration) {
     const currentDate = new Date();
