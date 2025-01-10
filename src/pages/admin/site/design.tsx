@@ -45,19 +45,6 @@ const SiteDesign: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) =>
     sendMessageToIframe();
   }, [config]);
 
-  const onChangeTheme = (theme: Theme) => {
-    if (theme === "dark") {
-      localStorage.setItem("theme", "dark");
-    } else {
-      localStorage.setItem("theme", "light");
-    }
-
-    dispatch({
-      type: "SWITCH_THEME",
-      payload: theme,
-    });
-  };
-
   const updateYamlFile = async () => {
     const res = await postFetch({ config }, "/api/v1/admin/site/site-info/update");
     const result = await res.json();
