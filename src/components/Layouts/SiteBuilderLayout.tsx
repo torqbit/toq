@@ -117,7 +117,6 @@ const SiteBuilderLayout: FC<{
 
       reader.onload = () => {
         try {
-          // Parse the YAML content into a JavaScript object
           const { site } = yaml.load(reader.result as string) as any;
           setConfig && setConfig(site as PageSiteConfig);
 
@@ -141,7 +140,7 @@ const SiteBuilderLayout: FC<{
   const downloadYamlFile = () => {
     if (session?.role == Role.ADMIN) {
       try {
-        const yamlString = yaml.dump(siteConfig);
+        const yamlString = yaml.dump({ site: siteConfig });
 
         const blob = new Blob([yamlString], { type: "application/x-yaml" });
 
