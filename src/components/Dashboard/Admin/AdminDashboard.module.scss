@@ -6,6 +6,10 @@
     display: grid;
     gap: 40px;
     grid-template-columns: repeat(auto-fill, 250px);
+    p {
+      margin: 0;
+    }
+
     .stats {
       background-color: var(--bg-primary);
       p {

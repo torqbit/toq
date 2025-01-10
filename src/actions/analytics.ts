@@ -1,3 +1,4 @@
+import { getDummyArray } from "@/lib/dummyData";
 import prisma from "@/lib/prisma";
 import { compareByPercentage } from "@/lib/utils";
 import appConstant from "@/services/appConstant";
@@ -131,20 +132,62 @@ class Analytics {
         };
     }
   }
-  async getEarnings(duration: AnalyticsDuration): Promise<APIResponse<IAnalyticResponse>> {
-    const currentDetail = await prisma.order.aggregate({
-      _sum: {
-        amount: true,
-      },
+  async getEarningsByDurtaion(duration: AnalyticsDuration): Promise<APIResponse<IAnalyticResponse>> {
+    const transactions = await prisma.order.groupBy({
+      by: ["createdAt"],
       where: {
         orderStatus: orderStatus.SUCCESS,
-
         createdAt: {
           gte: this.getDateCondition(duration).startDate,
           lte: this.getDateCondition(duration).endDate,
         },
       },
+      _sum: {
+        amount: true,
+      },
     });
+
+    let data: { x: string; y: number }[] = [];
+
+    switch (duration) {
+      case "month":
+        data = await this.generateMonthlyData(
+          transactions.map((t) => {
+            return {
+              amount: t._sum.amount || 0,
+              createdAt: t.createdAt,
+            };
+          })
+        );
+
+        break;
+
+      case "quarter":
+        data = await this.generateQuarterlyData(
+          transactions.map((t) => {
+            return {
+              amount: t._sum.amount || 0,
+              createdAt: t.createdAt,
+            };
+          })
+        );
+        break;
+      case "year":
+        data = await this.generateYearlyData(
+          transactions.map((t) => {
+            return {
+              amount: t._sum.amount || 0,
+              createdAt: t.createdAt,
+            };
+          })
+        );
+        break;
+
+      default:
+        break;
+    }
+
+    let totalAmount = transactions.map((t) => t._sum.amount).reduce((sum, amount) => Number(sum) + Number(amount), 0);
 
     const previousDetail = await prisma.order.aggregate({
       _sum: {
@@ -161,33 +204,95 @@ class Analytics {
 
     return new APIResponse(true, 200, "", {
       info: {
-        total: `${currentDetail._sum.amount || 0}`,
+        total: `${totalAmount || 0}`,
         type: "Earnings",
-        comparedPercentage: compareByPercentage(currentDetail._sum.amount || 0, previousDetail._sum.amount || 0),
+        comparedPercentage: compareByPercentage(totalAmount || 0, previousDetail._sum.amount || 0),
       },
       data: [
         {
           id: "line",
-
-          data: [
-            {
-              x: this.getDateCondition(duration).previousStartDate.toLocaleString(
-                "default",
-                duration === "year" ? { year: "numeric" } : { month: "long" }
-              ),
-              y: Number(previousDetail._sum.amount),
-            },
-            {
-              x: this.getDateCondition(duration).startDate.toLocaleString(
-                "default",
-                duration === "year" ? { year: "numeric" } : { month: "long" }
-              ),
-              y: Number(currentDetail._sum.amount),
-            },
-          ],
+          data,
         },
       ],
     });
+  }
+
+  async generateMonthlyData(transactions: { amount: number; createdAt: Date }[]) {
+    const totalDaysInMonth = new Date(
+      new Date(this.getDateCondition("month").startDate).getFullYear(),
+      new Date(this.getDateCondition("month").startDate).getMonth() + 1,
+      0
+    ).getDate();
+
+    const allDaysArray = Array.from({ length: totalDaysInMonth }, (_, i) => ({
+      date: (i + 1).toString(),
+      amount: 0,
+    }));
+
+    transactions.forEach((transaction) => {
+      const day = transaction.createdAt.getDate().toString();
+      const amount = transaction.amount;
+
+      const dayIndex = allDaysArray.findIndex((item) => item.date === day);
+      if (dayIndex !== -1) {
+        allDaysArray[dayIndex].amount = Number(amount);
+      }
+    });
+
+    return allDaysArray.map((item) => ({
+      x: item.date,
+      y: item.amount,
+    }));
+  }
+
+  async generateQuarterlyData(transactions: { amount: number; createdAt: Date }[]) {
+    const currentQuarterMonths = this.getQuarterMonths(new Date(this.getDateCondition("quarter").startDate));
+
+    // Initialize the result array for the quarter
+    const result = currentQuarterMonths.map((month) => {
+      const monthTransactions = transactions.filter((transaction) => transaction.createdAt.getMonth() === month.index);
+
+      const totalAmount = monthTransactions.reduce((sum, transaction) => sum + transaction.amount, 0);
+
+      return {
+        x: month.name,
+        y: totalAmount,
+      };
+    });
+
+    return result;
+  }
+
+  async generateYearlyData(transactions: { amount: number; createdAt: Date }[]) {
+    const result = Array.from({ length: 12 }, (_, i) => {
+      const monthTransactions = transactions.filter((transaction) => transaction.createdAt.getMonth() === i);
+
+      const totalAmount = monthTransactions.reduce((sum, transaction) => sum + transaction.amount, 0);
+
+      return {
+        x: new Date(0, i).toLocaleString("default", { month: "short" }),
+        y: totalAmount,
+      };
+    });
+
+    return result;
+  }
+
+  getQuarterMonths(startDate: Date) {
+    const month = startDate.getMonth();
+    let quarterStartMonth = Math.floor(month / 3) * 3;
+
+    return [
+      { name: new Date(0, quarterStartMonth).toLocaleString("default", { month: "long" }), index: quarterStartMonth },
+      {
+        name: new Date(0, quarterStartMonth + 1).toLocaleString("default", { month: "long" }),
+        index: quarterStartMonth + 1,
+      },
+      {
+        name: new Date(0, quarterStartMonth + 2).toLocaleString("default", { month: "long" }),
+        index: quarterStartMonth + 2,
+      },
+    ];
   }
 }
 

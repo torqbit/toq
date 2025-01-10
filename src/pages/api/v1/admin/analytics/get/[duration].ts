@@ -11,7 +11,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const { duration, type } = req.query;
     switch (type as AnalyticsType) {
       case "Earnings":
-        let earningDetail = await analytics.getEarnings(duration as AnalyticsDuration);
+        let earningDetail = await analytics.getEarningsByDurtaion(duration as AnalyticsDuration);
         return res.status(earningDetail.status).json({
           success: earningDetail.success,
           message: "Earning detail has been fetched",

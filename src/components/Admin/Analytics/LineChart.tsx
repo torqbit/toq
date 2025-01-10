@@ -75,7 +75,7 @@ const LineChart: FC<{
           reverse: false,
         }}
         yFormat=" >-.2f"
-        curve="catmullRom"
+        curve="linear"
         axisTop={null}
         axisRight={null}
         axisBottom={{
@@ -89,7 +89,7 @@ const LineChart: FC<{
         axisLeft={{
           tickValues: 5, // added
           tickSize: 5,
-          tickPadding: 0,
+          tickPadding: 5,
           tickRotation: 0,
           legend: axisLeftTitle, // added
           legendOffset: -50,

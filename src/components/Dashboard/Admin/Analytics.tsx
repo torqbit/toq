@@ -68,7 +68,7 @@ const Analytics: FC<{
       {!loading ? (
         <Flex vertical gap={50}>
           <Flex align="center" justify="space-between">
-            <p>{getDescription(info.type)}</p>
+            {getDescription(info.type)}
             <Segmented
               className={styles.segment}
               value={segment}
