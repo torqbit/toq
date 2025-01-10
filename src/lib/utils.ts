@@ -406,6 +406,9 @@ export function extractValue(link: string) {
 }
 
 export function areAnswersEqualForKey(arr1: (string | number)[], arr2: (string | number)[]): boolean {
+  if (!arr2) {
+    return false;
+  }
   // Compare the length of the arrays
   if (arr1?.length !== arr2?.length) {
     return false;

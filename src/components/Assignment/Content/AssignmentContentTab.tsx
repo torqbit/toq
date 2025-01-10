@@ -232,14 +232,19 @@ const AssignmentContentTab: FC<{ lessonId?: number }> = ({ lessonId }) => {
               >
                 Back
               </Button>
-              <Button type="primary" loading={saveLoading} onClick={onSubmitQuestion}>
+              <Button
+                type="primary"
+                loading={saveLoading}
+                onClick={onSubmitQuestion}
+                disabled={evaluatioinResult !== null && currentQuestionIndex + 1 === questions.length ? true : false}
+              >
                 {selectedAnswers[currentQuestionIndex + 1]?.length > 0 &&
                 !areAnswersEqualForKey(
                   selectedAnswers[currentQuestionIndex + 1],
                   savedAsnwers[currentQuestionIndex + 1]
                 )
                   ? "Submit"
-                  : "Skip"}{" "}
+                  : "Skip"}
                 <RightOutlined />
               </Button>
             </Space>
