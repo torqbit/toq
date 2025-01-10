@@ -250,7 +250,7 @@ const EventForm: FC<{ details?: Events }> = ({ details }) => {
               />
             </Form.Item>
             <Form.Item className={styles.video_container} label="Add  banner">
-              <ImgCrop rotationSlider aspect={16 / 9}>
+              <ImgCrop fillColor={"transparent"} rotationSlider aspect={16 / 9}>
                 <Upload
                   name="avatar"
                   listType="picture-card"

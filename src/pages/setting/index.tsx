@@ -58,7 +58,7 @@ const ProfileSetting: FC<{
           <div className={styles.content_center}>
             <div className={styles.left_content}>
               <Form.Item name="image">
-                <ImgCrop rotationSlider>
+                <ImgCrop fillColor={"transparent"} rotationSlider>
                   <Upload
                     name="avatar"
                     listType="picture-card"

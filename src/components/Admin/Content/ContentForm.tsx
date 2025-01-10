@@ -234,7 +234,7 @@ const ContentForm: FC<{
               description={`Upload a banner for the ${contentType.toLowerCase()}`}
               input={
                 <div className={styles.video_container}>
-                  <ImgCrop rotationSlider aspect={16 / 9}>
+                  <ImgCrop fillColor={"transparent"} rotationSlider aspect={16 / 9}>
                     <Upload
                       name="avatar"
                       listType="picture-card"
