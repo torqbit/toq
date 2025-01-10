@@ -23,7 +23,7 @@ site:
       github: https://github.com/torqbit
       youtube: https://youtube.com/@torqbit
     name: Torqbit
-    brandColor: "#9b087b"
+    brandColor: "#8980fd"
     title: Making online fun and easy
     icon: /icon/torqbit.png
   darkMode: true
@@ -75,9 +75,9 @@ site:
       description: Description on blogs
     faq:
       enabled: true
-      items: null
+      items:
     testimonials:
       enabled: true
       title: "Teachers love our product "
       description: "Find out what excites our users, when using our product "
-      items: null
+      items:
