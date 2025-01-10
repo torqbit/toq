@@ -110,6 +110,7 @@ const antThemeConfig = (siteConfig: PageSiteConfig) => {
         footerPaddingInline: 20,
         footerPaddingBlock: 10,
         paddingLG: 20,
+        colorSplit: "#eee",
       },
       Collapse: {
         headerBg: "#fff",

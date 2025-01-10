@@ -126,7 +126,6 @@ const Sidebar: FC<{ menu: MenuProps["items"]; siteConfig: PageSiteConfig }> = ({
                   style={{
                     fontSize: 20,
                     lineHeight: 0,
-                    color: "var(--font-secondary)",
                     cursor: "pointer",
                   }}
                 >

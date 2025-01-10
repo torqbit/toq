@@ -139,15 +139,15 @@ p {
 }
 
 :root[data-theme="dark"] {
-  --bg-secondary: #202433;
-  --bg-primary: #283040;
+  --bg-secondary: #242424;
+  --bg-primary: #2c2c2c;
   --bg-segment: #202124f5;
   --bg-selected-segment: #202433;
   --bg-content-form: #202433;
   --font-mktg-secondary: #c8cddd;
   --segment-bg: #151823;
   --strike: #caa3ae;
-  --placeholder: #939db8;
+  --placeholder: #a3a3a3;
   --offline-bg: #283040;
   --font-trainer-secondary: #d4d4d4;
   --font-offline-secondary: #d4d4d4;
@@ -161,13 +161,13 @@ p {
   --container-width: 1000px;
   --marketing-container-width: 1200px;
 
-  --icon-color: #939db8;
+  --icon-color: #b9b9b9;
 
   --tag-preview: linear-gradient(#1c1e2f, #1c1e2f) padding-box, linear-gradient(to right, #e05050, #475fe5) border-box;
   --font-primary: #fff;
   --font-dropdown-label: #fff;
   --secondary-bg: #1c1e2f;
-  --bg-elevated: #374362;
+  --bg-elevated: #454545;
   --mktg-card-bg: #202433;
   --wave-color: #153953;
   --font-label: #888;
@@ -176,13 +176,13 @@ p {
 
   --font-warning: #faad14;
   --hover-text: #c4c4c4;
-  --font-secondary: #939db8;
-  --font-footer: #939db8;
+  --font-secondary: #b9b9b9;
+  --font-footer: #b9b9b9;
   --draft-bg: #202433;
   --publish-bg: #202433;
-  --bg-tag: #374362;
+  --bg-tag: #454545;
   --font-tag: #d5d5d5;
-  --border-color: #2f3647;
+  --border-color: #454545;
   --ft-color: #fff;
   --card-bg: #0e1326;
   --hd-box-shadow: 0px 0px 35px 4px rgba(0, 0, 0, 0.29);
