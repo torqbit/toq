@@ -160,7 +160,7 @@ const AddFAQ: FC<{ siteConfig: PageSiteConfig; setConfig: (value: PageSiteConfig
             type="link"
           >
             <Flex align="center">
-              <i>{SvgIcons.plusBtn}</i>
+              <i style={{ fontSize: 18, lineHeight: 0 }}>{SvgIcons.plusBtn}</i>
               Add more
             </Flex>
           </Button>

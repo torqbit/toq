@@ -2,13 +2,14 @@ import { FC, useEffect, useState } from "react";
 import React from "react";
 import Head from "next/head";
 import { useAppContext } from "../ContextApi/AppContext";
-import { Button, ConfigProvider, Flex, Layout, message, Tabs, TabsProps } from "antd";
+import { Button, ConfigProvider, Dropdown, Flex, Layout, message, Tabs, TabsProps, Upload } from "antd";
 import darkThemeConfig from "@/services/darkThemeConfig";
 import antThemeConfig from "@/services/antThemeConfig";
 import SpinLoader from "../SpinLoader/SpinLoader";
 import { PageSiteConfig } from "@/services/siteConstant";
 import { useMediaQuery } from "react-responsive";
-import { User } from "@prisma/client";
+import { Role, User } from "@prisma/client";
+import * as yaml from "js-yaml";
 
 import { Theme } from "@/types/theme";
 
@@ -16,7 +17,9 @@ import styles from "./SiteBuilder.module.scss";
 import Link from "next/link";
 import SvgIcons from "../SvgIcons";
 import { useRouter } from "next/router";
-import { postFetch } from "@/services/request";
+import { RcFile } from "antd/es/upload";
+import { createSlug } from "@/lib/utils";
+import { useSession } from "next-auth/react";
 
 const { Content, Sider } = Layout;
 const SiteBuilderLayout: FC<{
@@ -24,14 +27,15 @@ const SiteBuilderLayout: FC<{
   siteDesigner?: React.ReactNode;
   siteContent?: React.ReactNode;
   siteConfig: PageSiteConfig;
+  setConfig?: (value: PageSiteConfig) => void;
   updateYamlFile?: () => void;
   user?: User;
-}> = ({ children, siteDesigner, siteContent, user, siteConfig, updateYamlFile }) => {
+}> = ({ children, siteDesigner, siteContent, setConfig, user, siteConfig, updateYamlFile }) => {
   const { globalState, dispatch } = useAppContext();
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
   const router = useRouter();
   const [messageApi, contexHolder] = message.useMessage();
-
+  const { data: session } = useSession();
   const [loading, setLoading] = useState<boolean>(false);
   const { brand } = siteConfig;
 
@@ -107,6 +111,59 @@ const SiteBuilderLayout: FC<{
     onCheckTheme();
   }, []);
 
+  const handleYamlFileUpload = async (file: RcFile) => {
+    try {
+      const reader = new FileReader();
+
+      reader.onload = () => {
+        try {
+          // Parse the YAML content into a JavaScript object
+          const { site } = yaml.load(reader.result as string) as any;
+          setConfig && setConfig(site as PageSiteConfig);
+
+          messageApi.success("Site configuration has been loaded");
+        } catch (error) {
+          console.log(error, "error");
+          messageApi.error("Failed to parse YAML file.");
+        }
+      };
+
+      reader.onerror = () => {
+        messageApi.error("Failed to read file.");
+      };
+
+      reader.readAsText(file);
+    } catch (error) {
+      message.error("Error handling the file.");
+    }
+  };
+
+  const downloadYamlFile = () => {
+    if (session?.role == Role.ADMIN) {
+      try {
+        const yamlString = yaml.dump(siteConfig);
+
+        const blob = new Blob([yamlString], { type: "application/x-yaml" });
+
+        const url = URL.createObjectURL(blob);
+
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `${createSlug(`${siteConfig.brand?.name}`).trim()}.yaml`;
+        link.click();
+
+        URL.revokeObjectURL(url);
+
+        messageApi.success("YAML file downloaded successfully!");
+      } catch (error) {
+        messageApi.error("Failed to download YAML file.");
+      }
+    } else {
+      messageApi.warning("You are not authorized to download this file");
+      return;
+    }
+  };
+
   return (
     <>
       {contexHolder}
@@ -175,6 +232,41 @@ const SiteBuilderLayout: FC<{
 
                 <Tabs
                   tabBarGutter={40}
+                  tabBarExtraContent={
+                    <Dropdown.Button
+                      size="small"
+                      onClick={downloadYamlFile}
+                      icon={<i style={{ fontSize: 14, lineHeight: 0 }}>{SvgIcons.chevronDown}</i>}
+                      menu={{
+                        items: [
+                          {
+                            key: 1,
+
+                            label: (
+                              <Upload
+                                name="avatar"
+                                listType="text"
+                                showUploadList={false}
+                                beforeUpload={(file) => {
+                                  handleYamlFileUpload(file);
+                                }}
+                              >
+                                <Flex align="center" gap={5}>
+                                  <i style={{ fontSize: 15, lineHeight: 0 }}>{SvgIcons.plusBtn}</i>
+                                  <span style={{ fontSize: 13 }}>Import</span>
+                                </Flex>
+                              </Upload>
+                            ),
+                          },
+                        ],
+                      }}
+                    >
+                      <Flex align="center" gap={2}>
+                        <i style={{ fontSize: 15, lineHeight: 0 }}>{SvgIcons.download}</i>
+                        <span style={{ fontSize: 13 }}>Export</span>
+                      </Flex>
+                    </Dropdown.Button>
+                  }
                   tabBarStyle={{ padding: "0px 20px", margin: 0 }}
                   activeKey={siteContent ? "content" : "design"}
                   className={styles.site_config_tabs}

@@ -626,8 +626,8 @@ export default {
   download: (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      height={15}
-      width={15}
+      height={"1em"}
+      width={"1em"}
       fill="none"
       viewBox="0 0 24 24"
       strokeWidth={1.5}
@@ -1469,8 +1469,8 @@ export default {
       viewBox="0 0 24 24"
       strokeWidth={1.5}
       stroke="currentColor"
-      height={20}
-      width={20}
+      height={"1em"}
+      width={"1em"}
     >
       <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
     </svg>

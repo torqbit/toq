@@ -165,7 +165,7 @@ const Curriculum: FC<{
                   handleNewChapter();
                 }}
               >
-                {SvgIcons.plusBtn}
+                <i style={{ fontSize: 18, lineHeight: 0 }}>{SvgIcons.plusBtn}</i>
                 <div> Add Chapter</div>
               </Button>
 

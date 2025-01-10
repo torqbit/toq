@@ -8,10 +8,12 @@ import { PageSiteConfig } from "@/services/siteConstant";
 import { Theme } from "@/types/theme";
 import { message } from "antd";
 import { GetServerSidePropsContext, NextPage } from "next";
+import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 
 const SiteDesign: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const router = useRouter();
   const [config, setConfig] = useState<PageSiteConfig>(siteConfig);
   const [activeKey, setActiveKey] = useState<string>("");
   const [messageApi, contentHolder] = message.useMessage();
@@ -60,9 +62,8 @@ const SiteDesign: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) =>
     const res = await postFetch({ config }, "/api/v1/admin/site/site-info/update");
     const result = await res.json();
     if (res.ok) {
-      onChangeTheme(config.brand?.defaultTheme as Theme);
-
       messageApi.success(result.message);
+      router.reload();
     } else {
       messageApi.error(result.error);
     }
@@ -72,6 +73,7 @@ const SiteDesign: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) =>
     <SiteBuilderLayout
       updateYamlFile={updateYamlFile}
       siteConfig={siteConfig}
+      setConfig={setConfig}
       siteDesigner={
         <SiteDesigner setActiveKey={setActiveKey} activeKey={activeKey} config={config} updateSiteConfig={setConfig} />
       }
