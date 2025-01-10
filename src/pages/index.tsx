@@ -29,7 +29,8 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
   const { site } = getSiteConfig();
   const siteConfig = site;
-  const courselist = siteConfig.sections?.courses?.enable && (await listCourseListItems(user));
+  const courselist: ICourseListItem[] | undefined =
+    siteConfig.sections?.courses?.enable && (await listCourseListItems(user));
   const blogList = siteConfig.sections?.blog?.enable && (await getBlogList());
 
   return {

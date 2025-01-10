@@ -379,7 +379,7 @@ export const listCourseListItems = async (token: JWT | null): Promise<ICourseLis
         difficultyLevel: c.difficultyLevel,
         author: c.user.name,
         price: c.coursePrice,
-        trailerThumbnail: c.tvThumbnail || undefined,
+        trailerThumbnail: c.tvThumbnail || null,
         currency: appConstant.currency,
         state: c.state,
         userRole: userRole,

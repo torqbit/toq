@@ -104,7 +104,7 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
       Number(router.query.id),
       (result) => {
         messageApi.success(result.message);
-        router.push(`/admin/content`);
+        router.push(`/courses`);
       },
       (error) => {
         messageApi.error(error);
@@ -488,7 +488,7 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
       <section className={styles.add_course_page}>
         <div className={styles.add_course_header}>
           <div className={styles.left_icon}>
-            <Link href="/admin/content">{SvgIcons.xMark}</Link>
+            <Link href="/courses">{SvgIcons.xMark}</Link>
             <Divider type="vertical" style={{ height: "1.2rem" }} />
             <h4>Edit Course</h4>
           </div>

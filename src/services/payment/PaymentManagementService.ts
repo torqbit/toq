@@ -59,10 +59,10 @@ export class PaymentManagemetService {
             config: cf.providerDetail,
           });
         } else {
-          return new APIResponse<any>(false, 404, "Failed to fetched the gateway configuration");
+          return new APIResponse<any>(false, 404, "Payment gateway has not been configured");
         }
       default:
-        return new APIResponse<any>(false, 400, "No configuration found for the given payment gateway");
+        return new APIResponse<any>(false, 404, "No configuration found for the given payment gateway");
     }
   };
 

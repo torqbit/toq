@@ -35,8 +35,6 @@ export const CourseViewItem: FC<{ course: ICourseListItem }> = ({ course }) => {
     },
   ];
 
-  console.log(course);
-
   return (
     <Card
       className={styles.course__card}
@@ -109,6 +107,7 @@ export const CoursesListView: FC<{
   role?: Role;
 }> = ({ courses, currentTheme, siteConfig, handleCourseCreate, emptyView, role }) => {
   const [tab, setTab] = useState("1");
+
   const items: TabsProps["items"] = [
     {
       key: "1",
@@ -155,7 +154,17 @@ export const CoursesListView: FC<{
       {role && role !== Role.STUDENT && (
         <>
           <h4>Courses</h4>
-          <Tabs tabBarGutter={40} items={items} activeKey={tab} onChange={(k) => setTab(k)} />
+          <Tabs
+            tabBarGutter={40}
+            items={items}
+            activeKey={tab}
+            onChange={(k) => setTab(k)}
+            tabBarExtraContent={
+              <Button type="primary" onClick={handleCourseCreate}>
+                Add Course
+              </Button>
+            }
+          />
         </>
       )}
 
