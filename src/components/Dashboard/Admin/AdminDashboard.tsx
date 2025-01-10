@@ -2,16 +2,22 @@ import { FC, useEffect, useState } from "react";
 import { PageSiteConfig } from "@/services/siteConstant";
 import styles from "./AdminDashboard.module.scss";
 import { Card, Flex, message, Skeleton, Tabs, TabsProps, Tag } from "antd";
-import SvgIcons from "../SvgIcons";
-import { IOverviewStats } from "@/types/courses/analytics";
+
+import { AnalyticsDuration, AnalyticsType, IAnalyticResponse, IAnalyticStats } from "@/types/courses/analytics";
 import AnalyticsService from "@/services/AnalyticsService";
 import { getDummyArray } from "@/lib/dummyData";
+import SvgIcons from "@/components/SvgIcons";
+import Analytics from "./Analytics";
+import appConstant from "@/services/appConstant";
+import { Serie } from "@nivo/line";
 
-const AnalyticsCard: FC<IOverviewStats> = ({ type, total, comparedPercentage }) => {
+const AnalyticsCard: FC<IAnalyticStats> = ({ type, total, comparedPercentage }) => {
   return (
     <Card className={styles.stats}>
       <p>Total {type}</p>
-      <h2>{total}</h2>
+      <h2>
+        {type == "Earnings" && appConstant.payment.currency} {total}
+      </h2>
       <Flex align="center">
         {comparedPercentage !== 0 ? (
           <Tag color={comparedPercentage > 0 ? "green" : "volcano"}>
@@ -44,13 +50,47 @@ const AnalyticsCardSkeleton: FC<{}> = () => {
 const AdminDashboard: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const [messageApi, contextHolder] = message.useMessage();
   const [loadingOverview, setLoadingOverview] = useState<boolean>(false);
-  const [overviewStats, setOverViewStat] = useState<IOverviewStats[]>([]);
-  const [tab, setTab] = useState("1");
+  const [loadingAnalytics, setLoadingAnalytics] = useState<boolean>(false);
+
+  const [overviewStats, setOverViewStat] = useState<IAnalyticStats[]>([]);
+
+  const [analyticStats, setAnalyticStat] = useState<IAnalyticResponse>();
+
+  const [tab, setTab] = useState<AnalyticsType>("Earnings");
+
+  const handleAnalytics = (duration: AnalyticsDuration, type: AnalyticsType) => {
+    setLoadingAnalytics(true);
+    AnalyticsService.analyticStats(
+      duration,
+      type,
+      (result) => {
+        setAnalyticStat(result.analyticStats);
+        setLoadingAnalytics(false);
+      },
+      (error) => {
+        messageApi.error(error);
+        setLoadingAnalytics(false);
+      }
+    );
+  };
   const items: TabsProps["items"] = [
     {
-      key: "1",
+      key: "Earnings",
       label: "Earnings",
-      children: <></>,
+      children: (
+        <>
+          {analyticStats?.info && (
+            <Analytics
+              key={"Earnings"}
+              loading={loadingAnalytics}
+              info={analyticStats.info as IAnalyticStats}
+              handleAnalytic={handleAnalytics}
+              data={analyticStats.data}
+              siteConfig={siteConfig}
+            />
+          )}
+        </>
+      ),
     },
   ];
 
@@ -59,6 +99,8 @@ const AdminDashboard: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
     AnalyticsService.overviewStats(
       (result) => {
         setOverViewStat(result.overviewStats);
+        handleAnalytics("month", "Earnings");
+
         setLoadingOverview(false);
       },
       (error) => {
@@ -67,6 +109,11 @@ const AdminDashboard: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
       }
     );
   }, []);
+
+  const hadleTabs = (value: AnalyticsType) => {
+    setTab(value);
+    handleAnalytics("month", value);
+  };
 
   return (
     <section className={styles.admin__dashboard}>
@@ -82,7 +129,14 @@ const AdminDashboard: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
             })}
       </div>
       <div className={styles.analytics__tab__wrapper}>
-        <Tabs tabBarGutter={40} items={items} activeKey={tab} onChange={(k) => setTab(k)} />
+        <Tabs
+          tabBarGutter={40}
+          items={items}
+          activeKey={tab}
+          onChange={(k) => {
+            hadleTabs(k as AnalyticsType);
+          }}
+        />
       </div>
     </section>
   );

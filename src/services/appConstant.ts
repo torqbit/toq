@@ -111,7 +111,6 @@ export default {
   assignmentMinScore: 1,
   assignmentMaxScore: 10,
   assignmentPassingMarks: 8,
-  currency: "INR",
   certificateTempFolder: "certificates",
   mediaTempDir: "media",
   assignmentTempDir: "assignments",

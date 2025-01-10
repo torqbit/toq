@@ -1,4 +1,4 @@
-import { IOverviewStats } from "@/types/courses/analytics";
+import { AnalyticsDuration, AnalyticsType, IAnalyticResponse, IAnalyticStats } from "@/types/courses/analytics";
 import { getFetch } from "./request";
 export type UserAnalyseData = {
   year: any;
@@ -9,7 +9,8 @@ export type ApiResponse = {
   success: boolean;
   error: string;
   message: string;
-  overviewStats: IOverviewStats[];
+  overviewStats: IAnalyticStats[];
+  analyticStats: IAnalyticResponse;
   totalMembers: number;
   totalEnrolled: number;
   activeMembers: number;
@@ -96,6 +97,19 @@ class AnalyticsSerivce {
 
   overviewStats = (onSuccess: (response: ApiResponse) => void, onFailure: (message: string) => void) => {
     getFetch(`/api/v1/admin/analytics/overview`).then((result) => {
+      result.json().then((r) => {
+        const apiResponse = r as ApiResponse;
+        apiResponse.success ? onSuccess(apiResponse) : onFailure(apiResponse.error);
+      });
+    });
+  };
+  analyticStats = (
+    duration: AnalyticsDuration,
+    type: AnalyticsType,
+    onSuccess: (response: ApiResponse) => void,
+    onFailure: (message: string) => void
+  ) => {
+    getFetch(`/api/v1/admin/analytics/get/${duration}?type=${type}`).then((result) => {
       result.json().then((r) => {
         const apiResponse = r as ApiResponse;
         apiResponse.success ? onSuccess(apiResponse) : onFailure(apiResponse.error);
