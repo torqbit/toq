@@ -59,7 +59,8 @@ const PaymentHistory: FC = () => {
           {OrderDetail.status === $Enums.paymentStatus.SUCCESS && (
             <Link href={`/setting/invoice/download/${OrderDetail.invoiceId}`} target="_blank">
               <Flex align="center" gap={5} justify="center">
-                {SvgIcons.download} Download
+                <i style={{ fontSize: 18, lineHeight: 0 }}>{SvgIcons.download}</i>
+                Download
               </Flex>{" "}
             </Link>
           )}
