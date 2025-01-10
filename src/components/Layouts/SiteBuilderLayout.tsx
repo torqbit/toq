@@ -149,7 +149,7 @@ const SiteBuilderLayout: FC<{
 
         const link = document.createElement("a");
         link.href = url;
-        link.download = `${createSlug(`${siteConfig.brand?.name}`)}.yaml`;
+        link.download = `${createSlug(`${siteConfig.brand?.name}`).trim()}.yaml`;
         link.click();
 
         URL.revokeObjectURL(url);

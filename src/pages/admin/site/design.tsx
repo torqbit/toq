@@ -62,7 +62,6 @@ const SiteDesign: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) =>
     const res = await postFetch({ config }, "/api/v1/admin/site/site-info/update");
     const result = await res.json();
     if (res.ok) {
-      // onChangeTheme(config.brand?.defaultTheme as Theme);
       messageApi.success(result.message);
       router.reload();
     } else {
