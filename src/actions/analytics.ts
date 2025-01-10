@@ -32,7 +32,10 @@ class Analytics {
         comparedPercentage: compareByPercentage(result[0].current, result[0].previous),
       });
     } else {
-      return new APIResponse(false, 404, "Earnings Data not found");
+      return new APIResponse(true, 200, "Earnings Data not found", {
+        totalEarning: 0,
+        comparedPercentage: 0,
+      });
     }
   }
   async getTotalEnrollments(): Promise<APIResponse<IEnrollmentResponse>> {
@@ -62,7 +65,10 @@ class Analytics {
         ),
       });
     } else {
-      return new APIResponse(false, 404, "Enrollment Data not found");
+      return new APIResponse(true, 200, "Enrollment Data not found", {
+        totalEnrollment: 0,
+        comparedPercentage: 0,
+      });
     }
   }
   async getTotalUsers(): Promise<APIResponse<IUsersResponse>> {
@@ -88,7 +94,10 @@ class Analytics {
         comparedPercentage: compareByPercentage(Number(usersResult[0].current), Number(usersResult[0].previous)),
       });
     } else {
-      return new APIResponse(false, 404, "User Data not found");
+      return new APIResponse(true, 200, "User Data not found", {
+        totalUsers: 0,
+        comparedPercentage: 0,
+      });
     }
   }
   getDateCondition(duration: AnalyticsDuration) {

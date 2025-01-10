@@ -30,6 +30,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         comparedPercentage: Number(usersDetail.body?.comparedPercentage),
       },
     ];
+
     return res.status(earningDetail.status).json({
       success: earningDetail.success,
       message: "Overview has been fetched",
