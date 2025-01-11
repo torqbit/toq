@@ -1,17 +1,19 @@
 import { PageSiteConfig } from "@/services/siteConstant";
 import { ICourseListItem } from "@/types/courses/Course";
 import { Theme } from "@/types/theme";
-import { FC, ReactNode, useState } from "react";
+import { FC, ReactNode, useEffect, useState } from "react";
 import styles from "./CourseListView.module.scss";
-import { Button, Card, Flex, Space, Tabs, TabsProps, Tag, Dropdown, MenuProps } from "antd";
+import { Button, Card, Flex, Space, Tabs, TabsProps, Tag, Dropdown, MenuProps, Progress } from "antd";
 import { Role, StateType } from "@prisma/client";
-import { capsToPascalCase } from "@/lib/utils";
+import { capsToPascalCase, validateImage } from "@/lib/utils";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import SvgIcons from "@/components/SvgIcons";
 const { Meta } = Card;
 export const CourseViewItem: FC<{ course: ICourseListItem; previewMode?: boolean }> = ({ course, previewMode }) => {
   const router = useRouter();
   const [showDummyPurchase, setDummyBtn] = useState(typeof previewMode !== undefined && previewMode);
+  const [validImage, setImageValid] = useState<boolean>(true);
 
   const handleEdit = (id: number) => {
     router.push(`admin/content/course/${id}/edit`);
@@ -36,25 +38,45 @@ export const CourseViewItem: FC<{ course: ICourseListItem; previewMode?: boolean
     },
   ];
 
+  const checkImageValidation = async (url: string) => {
+    const isValid = await validateImage(url);
+    setImageValid(isValid);
+  };
+
+  useEffect(() => {
+    course.trailerThumbnail && checkImageValidation(course.trailerThumbnail);
+  }, [course.trailerThumbnail]);
+
   return (
     <Card
       className={styles.course__card}
-      cover={<img className={styles.card__img} alt={`thumbnail of ${course.title}`} src={course.trailerThumbnail} />}
+      cover={
+        validImage ? (
+          <img className={styles.card__img} alt={`thumbnail of ${course.title}`} src={course.trailerThumbnail} />
+        ) : (
+          <div className={styles.invalid__img}>
+            <i>{SvgIcons.academicCap}</i>
+          </div>
+        )
+      }
     >
       <Meta
         className={styles.meta}
         title={
           <>
-            <Space>
-              <Tag bordered={true} style={{ fontWeight: "normal" }}>
-                {course.difficultyLevel}
-              </Tag>
-              {course.state === StateType.DRAFT && (
-                <Tag bordered={true} color="warning" style={{ fontWeight: "normal" }}>
-                  {capsToPascalCase(StateType.DRAFT)}
+            <Flex vertical gap={5}>
+              <Space>
+                <Tag bordered={true} style={{ fontWeight: "normal" }}>
+                  {course.difficultyLevel}
                 </Tag>
-              )}
-            </Space>
+                {course.state === StateType.DRAFT && (
+                  <Tag bordered={true} color="warning" style={{ fontWeight: "normal" }}>
+                    {capsToPascalCase(StateType.DRAFT)}
+                  </Tag>
+                )}
+              </Space>
+            </Flex>
+
             <h4 style={{ marginTop: 5, marginBottom: 5 }}>{course.title}</h4>
             <p style={{ fontWeight: "normal", marginBottom: 0, fontSize: 14 }}>
               A course by <b>{course.author}</b>
