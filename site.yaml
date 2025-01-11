@@ -15,7 +15,7 @@ site:
     description: Master the art of product building and turn your ideas into
       successful, scalable products
     ogImage: /icon/torqbit.png
-    themeSwitch: false
+    themeSwitch: true
     defaultTheme: light
     favicon: /favicon.ico
     socialLinks:
@@ -67,17 +67,17 @@ site:
             workshops.
     courses:
       enable: true
-      title: Courses list
-      description: Courses description for alll
+      title: Our Courses
+      description: Learn from the best instructors around the world
     blog:
       enable: true
       title: Blogs
       description: Description on blogs
     faq:
       enabled: true
-      items:
+      items: null
     testimonials:
       enabled: true
       title: "Teachers love our product "
       description: "Find out what excites our users, when using our product "
-      items:
+      items: null

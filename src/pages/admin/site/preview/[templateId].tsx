@@ -11,6 +11,7 @@ import getCourseList from "@/actions/getCourseList";
 import getBlogList from "@/actions/getBlogList";
 import { IBlogCard } from "@/types/landing/blog";
 import { ICourseListItem } from "@/types/courses/Course";
+import { listCourseListItems } from "@/actions/courses";
 
 const PreviewPage: FC<{
   user: User;
@@ -86,7 +87,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
   const allCourses =
     site.sections?.courses?.enable &&
-    (await getCourseList()).map((list, i) => {
+    (await listCourseListItems(user)).map((list, i) => {
       return {
         ...list,
         link: "#courses",

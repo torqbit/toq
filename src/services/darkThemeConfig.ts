@@ -2,6 +2,17 @@ import { Theme } from "@/types/theme";
 import { PageSiteConfig } from "./siteConstant";
 import { IBrandConfig } from "@/types/schema";
 
+export const themeColors = {
+  dark: {
+    bgPrimary: "#2c2c2c",
+    bgSecondary: "#242424",
+    fontPrimary: "#fff",
+    fontSecondary: "#b9b9b9",
+    colorSplit: "#454545",
+    bgTertiary: "#131313",
+  },
+  light: {},
+};
 export const getIconTheme = (
   theme: Theme,
   brand?: IBrandConfig
@@ -9,8 +20,8 @@ export const getIconTheme = (
   switch (theme) {
     case "dark":
       return {
-        bgColor: "#283040",
-        fontColor: "#939db8",
+        bgColor: themeColors.dark.bgPrimary,
+        fontColor: themeColors.dark.fontSecondary,
         brandColor: brand?.brandColor || "blue",
       };
     case "light":
@@ -32,16 +43,16 @@ const darkThemeConfig = (siteConfig: PageSiteConfig) => {
   return {
     token: {
       borderRadius: 4,
-      colorText: "#939db8",
-      colorBgContainer: "#283040",
-      colorBorder: "#374362",
+      colorText: themeColors.dark.fontSecondary,
+      colorBgContainer: themeColors.dark.bgPrimary,
+      colorBorder: themeColors.dark.colorSplit,
       colorTextPlaceholder: "#666",
       colorPrimary: `${siteConfig.brand?.brandColor}`,
-      colorSplit: "#2f3647",
+      colorSplit: themeColors.dark.colorSplit,
       hoverBorderColor: `${siteConfig.brand?.brandColor}`,
       activeBorderColor: `${siteConfig.brand?.brandColor}`,
-      colorTextDisabled: "#939db8",
-      colorTextDescription: "#939db8",
+      colorTextDisabled: themeColors.dark.fontSecondary,
+      colorTextDescription: themeColors.dark.fontSecondary,
     },
 
     Badge: {
@@ -50,10 +61,10 @@ const darkThemeConfig = (siteConfig: PageSiteConfig) => {
 
     components: {
       Layout: {
-        bodyBg: "#202433",
+        bodyBg: themeColors.dark.bgSecondary,
       },
       Steps: {
-        colorSplit: "#2f3647",
+        colorSplit: themeColors.dark.colorSplit,
       },
       Statistic: {
         contentFontSize: 12,
@@ -66,17 +77,17 @@ const darkThemeConfig = (siteConfig: PageSiteConfig) => {
         defaultColor: `${siteConfig.brand?.brandColor}`,
       },
       Tree: {
-        nodeSelectedBg: "#283040",
-        directoryNodeSelectedBg: "#283040",
+        nodeSelectedBg: themeColors.dark.bgPrimary,
+        directoryNodeSelectedBg: themeColors.dark.bgPrimary,
         directoryNodeSelectedColor: "#fff",
       },
       Menu: {
-        itemColor: "#939db8",
+        itemColor: themeColors.dark.fontSecondary,
         groupTitleColor: "#eee",
-        itemActiveBg: "#202433",
-        itemSelectedBg: "#202433",
+        itemActiveBg: themeColors.dark.bgSecondary,
+        itemSelectedBg: themeColors.dark.bgSecondary,
         itemSelectedColor: "#fff",
-        itemBg: "#283040",
+        itemBg: themeColors.dark.bgPrimary,
       },
       Radio: {
         buttonSolidCheckedActiveBg: "#000",
@@ -88,122 +99,122 @@ const darkThemeConfig = (siteConfig: PageSiteConfig) => {
         color: "#666",
       },
       Divider: {
-        colorSplit: "#374362",
+        colorSplit: themeColors.dark.colorSplit,
       },
       Popover: {
-        colorBgElevated: "#283040",
+        colorBgElevated: themeColors.dark.bgPrimary,
       },
       Card: {
         paddingLG: 20,
-        colorBorderSecondary: "#2f3647",
+        colorBorderSecondary: themeColors.dark.colorSplit,
       },
       Form: {
         labelColor: "#888",
       },
       Button: {
-        defaultBg: "#283040",
+        defaultBg: themeColors.dark.bgPrimary,
         groupBorderColor: "#000",
         colorPrimaryActive: "#fff",
       },
       Input: {
         borderRadius: 4,
         activeShadow: "none",
-        activeBg: "#222938",
-        hoverBg: "#222938",
+        activeBg: themeColors.dark.bgTertiary,
+        hoverBg: themeColors.dark.bgSecondary,
         addonBg: "#383e4b",
 
-        colorTextPlaceholder: "#939db8",
-        activeBorderColor: "#939db8",
+        colorTextPlaceholder: themeColors.dark.fontSecondary,
+        activeBorderColor: themeColors.dark.fontSecondary,
       },
 
       Select: {
-        activeBorderColor: "#939db8",
-        optionSelectedColor: "#939db8",
-        optionActiveBg: "#202433",
-        colorBgContainer: "#283040",
-        colorBgElevated: "#283040",
-        optionSelectedBg: "#202433",
-        colorTextPlaceholder: "#939db8",
+        activeBorderColor: themeColors.dark.fontSecondary,
+        optionSelectedColor: themeColors.dark.fontSecondary,
+        optionActiveBg: themeColors.dark.bgSecondary,
+        colorBgContainer: themeColors.dark.bgPrimary,
+        colorBgElevated: themeColors.dark.bgPrimary,
+        optionSelectedBg: themeColors.dark.bgSecondary,
+        colorTextPlaceholder: themeColors.dark.fontSecondary,
         activeShadow: "none",
       },
 
       Dropdown: {
         colorPrimary: "#666",
         controlItemBgActive: "#EEE",
-        colorText: "#939db8",
-        controlItemBgHover: "#283040",
-        colorBgElevated: "#202433",
+        colorText: themeColors.dark.fontSecondary,
+        controlItemBgHover: themeColors.dark.bgPrimary,
+        colorBgElevated: themeColors.dark.bgSecondary,
         controlItemBgActiveHover: "#dcdcdc",
       },
       List: {
-        colorSplit: "#374362",
+        colorSplit: themeColors.dark.colorSplit,
       },
 
       Tabs: {
         inkBarColor: "#fff",
-        itemColor: "#939db8",
+        itemColor: themeColors.dark.fontSecondary,
         itemActiveColor: "#fff",
         itemSelectedColor: "#fff",
         itemHoverColor: "#fff",
-        cardBg: "#939db8",
+        cardBg: themeColors.dark.fontSecondary,
       },
 
       Drawer: {
         zIndexPopup: 1001,
         padding: 10,
-        colorIcon: "#939db8",
+        colorIcon: themeColors.dark.fontSecondary,
         footerPaddingInline: 20,
         footerPaddingBlock: 10,
         paddingLG: 20,
-        colorBgElevated: "#283040",
+        colorBgElevated: themeColors.dark.bgPrimary,
       },
       Tag: {
-        defaultBg: "#374362",
-        defaultColor: "#939db8",
+        defaultBg: themeColors.dark.colorSplit,
+        defaultColor: themeColors.dark.fontSecondary,
       },
       Collapse: {
-        headerBg: "#283040",
-        colorText: "#939db8",
+        headerBg: themeColors.dark.bgPrimary,
+        colorText: themeColors.dark.fontSecondary,
       },
       Table: {
-        colorBgContainer: "#283040",
-        borderColor: "#2f3647",
-        colorText: "#939db8",
-        headerSplitColor: "#202433",
+        colorBgContainer: themeColors.dark.bgPrimary,
+        borderColor: themeColors.dark.colorSplit,
+        colorText: themeColors.dark.fontSecondary,
+        headerSplitColor: themeColors.dark.bgSecondary,
       },
       Pagination: {
-        colorPrimaryBorder: "#202433",
-        colorPrimary: "#939db8",
-        colorPrimaryHover: "#939db8",
-        colorTextDisabled: "#939db8",
+        colorPrimaryBorder: themeColors.dark.bgSecondary,
+        colorPrimary: themeColors.dark.fontSecondary,
+        colorPrimaryHover: themeColors.dark.fontSecondary,
+        colorTextDisabled: themeColors.dark.fontSecondary,
       },
       Carousel: {
         colorBgContainer: `${siteConfig.brand?.brandColor}`,
       },
       Modal: {
-        contentBg: "#202433",
-        colorIcon: "#939db8",
-        headerBg: "#202433",
+        contentBg: themeColors.dark.bgSecondary,
+        colorIcon: themeColors.dark.fontSecondary,
+        headerBg: themeColors.dark.bgSecondary,
       },
       Switch: {
         colorPrimaryHover: "#68696d",
       },
       Popconfirm: {
-        colorTextHeading: "#939db8",
-        colorText: "#939db8",
+        colorTextHeading: themeColors.dark.fontSecondary,
+        colorText: themeColors.dark.fontSecondary,
       },
       Message: {
-        contentBg: "#283040",
+        contentBg: themeColors.dark.bgPrimary,
       },
       Breadcrumb: {
-        itemColor: "#939db8",
+        itemColor: themeColors.dark.fontSecondary,
         colorBgTextHover: "#000",
-        separatorColor: "#939db8",
+        separatorColor: themeColors.dark.fontSecondary,
       },
       Segmented: {
-        itemSelectedBg: "#283040",
+        itemSelectedBg: themeColors.dark.bgPrimary,
         itemHoverColor: "#fff",
-        trackBg: "#151823",
+        trackBg: themeColors.dark.bgTertiary,
         controlPaddingHorizontal: 30,
         itemColor: "#000",
       },

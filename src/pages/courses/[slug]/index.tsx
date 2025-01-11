@@ -163,7 +163,6 @@ const LearnCoursesPage: NextPage<{
   };
 
   const handlePurchase = async (courseId: number) => {
-    console.log(`inside purchase`);
     setLoading(true);
     try {
       const res = await postFetch(

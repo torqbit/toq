@@ -68,11 +68,7 @@ const Feedback = () => {
             }
           }}
         >
-          {
-            <i style={{ stroke: globalState.theme == "dark" ? "#939db8" : "#666", cursor: "pointer" }}>
-              {SvgIcons.chat}
-            </i>
-          }
+          {<i style={{ cursor: "pointer" }}>{SvgIcons.chat}</i>}
         </Popover>
       </div>
     </Tooltip>

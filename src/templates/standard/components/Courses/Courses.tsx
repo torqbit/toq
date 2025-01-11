@@ -44,8 +44,6 @@ const CourseCard: FC<ICourseCard> = ({
 };
 
 const CourseList: FC<ICourseInfo> = ({ title, description, courseList, previewMode }) => {
-  let cardSize: CourseCardSize = courseList.length === 3 || courseList.length > 4 ? "small" : "large";
-
   return (
     <>
       {courseList.length > 0 && (
@@ -54,16 +52,17 @@ const CourseList: FC<ICourseInfo> = ({ title, description, courseList, previewMo
             <h2>{title}</h2>
             <p style={{ marginBottom: 30 }}>{description}</p>
 
-            {previewMode && courseList.length === 0 ? (
+            {previewMode && courseList.length === 0 && (
               <>
                 <CourseSkeleton size={3} />
               </>
-            ) : (
+            )}
+            {courseList.length > 0 && (
               <div className={courseGrid.course__grid}>
                 {courseList
                   .filter((c) => c.state === StateType.ACTIVE)
                   .map((c, index) => (
-                    <CourseViewItem course={c} key={index} />
+                    <CourseViewItem course={c} key={index} previewMode={true} />
                   ))}
               </div>
             )}

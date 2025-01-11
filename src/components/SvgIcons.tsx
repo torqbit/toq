@@ -2692,6 +2692,7 @@ export default {
       fill="none"
       viewBox="0 0 24 24"
       height={25}
+      stroke="currentColor"
       width={25}
       strokeWidth={1.5}
       className="size-6"
