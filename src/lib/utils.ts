@@ -430,3 +430,20 @@ export const compareByPercentage = (current: number, previous: number) => {
   }
   return Math.floor(((current - previous) / previous) * 100);
 };
+
+export const validateImage = async (url: string) => {
+  try {
+    const response = await fetch(url, {
+      method: "HEAD",
+      cache: "no-cache",
+    });
+
+    if (response.ok && response.headers.get("content-type")?.includes("image")) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    return false;
+  }
+};
