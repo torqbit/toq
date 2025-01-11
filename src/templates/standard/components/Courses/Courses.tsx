@@ -62,7 +62,7 @@ const CourseList: FC<ICourseInfo> = ({ title, description, courseList, previewMo
                 {courseList
                   .filter((c) => c.state === StateType.ACTIVE)
                   .map((c, index) => (
-                    <CourseViewItem course={c} key={index} previewMode={true} />
+                    <CourseViewItem course={c} key={index} previewMode={previewMode} />
                   ))}
               </div>
             )}

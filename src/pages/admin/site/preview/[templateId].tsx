@@ -73,7 +73,7 @@ const PreviewPage: FC<{
       }}
       courseList={courseList}
       blogList={blogList}
-      previewMode
+      previewMode={true}
     />
   );
 };
@@ -90,7 +90,6 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
     (await listCourseListItems(user)).map((list, i) => {
       return {
         ...list,
-        trailerThumbnail: list.trailerThumbnail || "",
         link: "#courses",
       };
     });

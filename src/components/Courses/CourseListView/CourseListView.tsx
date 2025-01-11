@@ -12,9 +12,9 @@ import SvgIcons from "@/components/SvgIcons";
 const { Meta } = Card;
 export const CourseViewItem: FC<{ course: ICourseListItem; previewMode?: boolean }> = ({ course, previewMode }) => {
   const router = useRouter();
-  const [showDummyPurchase, setDummyBtn] = useState(typeof previewMode !== undefined && previewMode);
-  const [validImage, setImageValid] = useState<boolean>(true);
+  const [showDummyPurchase, setDummyBtn] = useState(typeof previewMode !== "undefined" && previewMode);
 
+  console.log("dummy purchase", typeof previewMode == "undefined");
   const handleEdit = (id: number) => {
     router.push(`admin/content/course/${id}/edit`);
   };
@@ -38,21 +38,11 @@ export const CourseViewItem: FC<{ course: ICourseListItem; previewMode?: boolean
     },
   ];
 
-  const checkImageValidation = async (url: string) => {
-    const isValid = await validateImage(url);
-    setImageValid(isValid);
-  };
-
-  useEffect(() => {
-    course.trailerThumbnail && checkImageValidation(course.trailerThumbnail);
-  }, [course.trailerThumbnail]);
-
   return (
     <Card
       className={styles.course__card}
       cover={
-
-        validImage ? (
+        course.trailerThumbnail != null ? (
           <img className={styles.card__img} alt={`thumbnail of ${course.title}`} src={course.trailerThumbnail} />
         ) : (
           <div className={styles.invalid__img}>

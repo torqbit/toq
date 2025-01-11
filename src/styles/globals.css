@@ -699,10 +699,6 @@ a {
   transform: rotate(180deg);
 }
 
-.ant-drawer .ant-drawer-header {
-  /* border-bottom: none; */
-}
-
 /* **************** Lesson Sider ******************** */
 .lesson_sider {
   transition: all 0.4s ease-in-out !important;
