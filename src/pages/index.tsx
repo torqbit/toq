@@ -36,12 +36,14 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
       user,
       siteConfig,
       courseList:
-        courselist?.map((list) => {
-          return {
-            ...list,
-            trailerThumbnail: list.trailerThumbnail || "",
-          };
-        }) || [],
+        courselist && courselist?.length > 0
+          ? courselist?.map((list) => {
+              return {
+                ...list,
+                trailerThumbnail: list.trailerThumbnail || "",
+              };
+            })
+          : [],
       blogList: blogList || [],
     },
   };
