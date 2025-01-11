@@ -28,6 +28,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         evaluation: {
           select: {
             score: true,
+            maximumScore: true,
           },
         },
       },
@@ -52,7 +53,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       return res.status(200).json({
         success: true,
         latestSubmissionStatus,
-        score: maxScore,
+        score: latestSubmissions[0].evaluation?.score,
+        maximumScore: latestSubmissions[0].evaluation?.maximumScore,
         submitLimit: latestSubmissions.length,
       });
     } else {

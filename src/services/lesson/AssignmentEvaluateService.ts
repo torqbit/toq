@@ -1,23 +1,21 @@
-import { AssignmentType, MCQAssignment } from "@/types/courses/assignment";
+import { AssignmentType, MCQAssignment, QuestionScore } from "@/types/courses/assignment";
 
 type Answers = {
   [key: number]: string[];
 };
 
-type QuestionScore = {
-  questionIndex: number;
-  score: number;
-};
-
 type EvaluationResult = {
-  totalScore: number;
+  score: number;
   isPassed: boolean;
   passingScore: number;
-  totalMarks: number;
+  maximumScore: number;
   eachQuestionScore?: QuestionScore[];
 };
 
 class AssignmentEvaluationService {
+  scored = 0;
+  maximumScore = 0;
+
   constructor() {}
 
   evaluateMCQAssignment(
@@ -26,7 +24,6 @@ class AssignmentEvaluationService {
     passingScorePercentage: number,
     assignmentDetail: MCQAssignment
   ): EvaluationResult {
-    let totalScore = 0;
     let totalQuestions = assignmentDetail.questions.length;
     let correctAnswers: Answers = {};
     let eachQuestionScore: QuestionScore[] = [];
@@ -40,7 +37,7 @@ class AssignmentEvaluationService {
         const selectedAnswer = selectedAnswers[questionId] || [];
         if (this.arraysEqual(correctAnswer, selectedAnswer)) {
           eachQuestionScore.push({ questionIndex: Number(questionId), score: maximumPoints });
-          totalScore += maximumPoints;
+          this.scored += maximumPoints;
         } else {
           eachQuestionScore.push({ questionIndex: Number(questionId), score: 0 });
         }
@@ -48,14 +45,14 @@ class AssignmentEvaluationService {
     }
 
     const passingScore = (totalQuestions * maximumPoints * passingScorePercentage) / 100;
-    const totalMarks = totalQuestions * maximumPoints;
-    const isPassed = totalScore >= passingScore;
+    this.maximumScore = totalQuestions * maximumPoints;
+    const isPassed = this.scored >= passingScore;
 
     return {
-      totalScore,
+      score: this.scored,
       isPassed,
       passingScore,
-      totalMarks,
+      maximumScore: this.maximumScore,
       eachQuestionScore,
     };
   }
@@ -63,9 +60,9 @@ class AssignmentEvaluationService {
   private evaluateSubjectiveAssignment(): EvaluationResult {
     // TODO
     return {
-      totalScore: 0,
+      score: 0,
       isPassed: false,
-      totalMarks: 0,
+      maximumScore: 0,
       passingScore: 0,
     };
   }
@@ -81,5 +78,7 @@ class AssignmentEvaluationService {
   };
 }
 
-export { AssignmentEvaluationService, AssignmentType };
+export { AssignmentType };
 export type { Answers, EvaluationResult };
+
+export default new AssignmentEvaluationService();

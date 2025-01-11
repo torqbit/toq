@@ -38,6 +38,7 @@ const ViewAssignment: FC<{
   const [tabKey, setTabKey] = useState<AssignmenTab>("view_assignment");
   const [subStatus, setSubStatus] = useState<submissionStatus>();
   const [score, setScore] = useState<number>();
+  const [maximumScore, setMaximumScore] = useState<number>();
   const [submitLimit, setSubmitLimit] = useState<number>(0);
   const { globalState } = useAppContext();
   const router = useRouter();
@@ -59,6 +60,7 @@ const ViewAssignment: FC<{
 
         if (result.score) {
           setScore(result.score);
+          setMaximumScore(result.maximumScore);
         }
         if (
           result.submitLimit === appConstant.assignmentSubmissionLimit &&
@@ -178,7 +180,7 @@ const ViewAssignment: FC<{
                   <div className={style.dot}></div>
 
                   <div>
-                    {score}/{appConstant.assignmentMaxScore} Points
+                    {score}/{maximumScore} Points
                   </div>
                 </>
               )}

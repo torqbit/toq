@@ -571,6 +571,9 @@ model AssignmentEvaluation {
   submissionId Int                  @unique
   authorId     String
   score        Int
+  passingScore Int?                 @default(0)
+  maximumScore Int?                 @default(0)
+  scoreSummary Json?
   comment      Json
   createdAt    DateTime             @default(now())
   updatedAt    DateTime             @default(now())

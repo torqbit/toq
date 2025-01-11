@@ -10,7 +10,7 @@ import { AssignmentType, IAssignmentDetails, MCQAssignment } from "@/types/cours
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const query = req.query;
-    const { lessonId, isAnswer } = query;
+    const { lessonId, isNoAnswer } = query;
 
     const assignmentDetail = await prisma?.assignment.findUnique({
       where: {
@@ -40,8 +40,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         maximumScore: assignmentDetail.maximumPoints,
         passingScore: assignmentDetail.passingScore,
       };
-
-      if (detail.content._type === AssignmentType.MCQ && !isAnswer) {
+      if (detail.content._type === AssignmentType.MCQ && isNoAnswer === "true") {
         let assignmentContent = detail.content as MCQAssignment;
         let questions = assignmentContent.questions;
         let updateQuestion = questions.map((question) => {

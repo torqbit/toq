@@ -101,8 +101,22 @@ export interface IAssignmentSubmissoionDetail {
   id: number;
   content: IAssignmentDetails;
   status: submissionStatus;
-  isPassed: boolean;
+}
+
+// ++++++++++++++++++++++++++++++++++ Assignment Evaluation Interface ++++++++++++++++++++++++++++++++
+
+export type QuestionScore = {
+  questionIndex: number;
+  score: number;
+};
+
+export interface MCQEvaluationResult {
+  eachQuestionScore: QuestionScore[];
+}
+
+export interface IEvaluationResult extends IAssignmentDetails {
+  score: number;
   passingScore: number;
-  totalMarks: number;
-  totalScore: number;
+  maximumScore: number;
+  scoreSummary: MCQEvaluationResult;
 }

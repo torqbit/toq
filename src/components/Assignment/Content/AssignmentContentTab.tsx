@@ -8,6 +8,7 @@ import MCQViewAssignment from "./MCQViewAssignment/MCQViewAssignment";
 import {
   AssignmentType,
   IAssignmentSubmissoionDetail,
+  IEvaluationResult,
   MCQAssignment,
   MCQASubmissionContent,
   MultipleChoiceQA,
@@ -22,6 +23,7 @@ const AssignmentContentTab: FC<{ lessonId?: number }> = ({ lessonId }) => {
   const router = useRouter();
   const [assignmentDetail, setAssignmentDetail] = useState<IAssignmentDetail>();
   const [submissionDetail, setSubmissionDetail] = useState<IAssignmentSubmissoionDetail | null>(null);
+  const [evaluatioinResult, setEvaluationResult] = useState<IEvaluationResult | null>(null);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [questions, setQuestions] = useState<MultipleChoiceQA[]>([]);
   const [selectedAnswers, setSelectedAnswers] = useState<SelectedAnswersType>({});
@@ -30,11 +32,11 @@ const AssignmentContentTab: FC<{ lessonId?: number }> = ({ lessonId }) => {
   const [saveLoading, setSaveLoading] = useState<boolean>(false);
   const [refresh, setRefresh] = useState<boolean>(false);
   const [messageApi, contextHolder] = message.useMessage();
-  const getAssignmentDetail = (lessonId: number) => {
+  const getAssignmentDetail = (lessonId: number, isNoAnswer: boolean) => {
     setLoading(true);
     AssignmentService.getAssignment(
       lessonId,
-      submissionDetail?.status !== "NOT_SUBMITTED" ? true : false,
+      isNoAnswer,
       (result) => {
         setAssignmentDetail(result.assignmentDetail);
         if (result.assignmentDetail.content._type === AssignmentType.MCQ) {
@@ -50,7 +52,7 @@ const AssignmentContentTab: FC<{ lessonId?: number }> = ({ lessonId }) => {
   };
   useEffect(() => {
     resetState();
-    lessonId && getAssignmentDetail(lessonId);
+    lessonId && getAssignmentDetail(lessonId, true);
   }, [lessonId]);
 
   const resetState = () => {
@@ -124,6 +126,10 @@ const AssignmentContentTab: FC<{ lessonId?: number }> = ({ lessonId }) => {
       lessonId as number,
       assignmentDetail?.assignmentId as number,
       (result) => {
+        if (result?.submissionContent && result?.submissionContent?.status !== "NOT_SUBMITTED") {
+          getEvaluationResult(result?.submissionContent?.id);
+          lessonId && getAssignmentDetail(lessonId, false);
+        }
         if (result.submissionContent) {
           setSubmissionDetail(result.submissionContent);
         }
@@ -143,9 +149,24 @@ const AssignmentContentTab: FC<{ lessonId?: number }> = ({ lessonId }) => {
     );
   };
 
+  const getEvaluationResult = async (submissionId: number) => {
+    AssignmentService.getEvaluationResult(
+      router.query.slug as string,
+      lessonId as number,
+      assignmentDetail?.assignmentId as number,
+      submissionId,
+      (result) => {
+        setEvaluationResult(result.evaluationResult);
+      },
+      (error) => {
+        messageApi.error(error);
+      }
+    );
+  };
+
   useEffect(() => {
     getAssignmentSubmission();
-  }, [refresh, lessonId, assignmentDetail?.assignmentId]);
+  }, [refresh, lessonId]);
 
   const onClickToEvaluate = async () => {
     if (!submissionDetail?.id) return;
@@ -180,10 +201,16 @@ const AssignmentContentTab: FC<{ lessonId?: number }> = ({ lessonId }) => {
               </h5>
               {submissionDetail && submissionDetail?.status !== "NOT_SUBMITTED" && (
                 <Tag
-                  color={submissionDetail?.isPassed ? "green" : "red"}
+                  color={
+                    evaluatioinResult?.scoreSummary?.eachQuestionScore[currentQuestionIndex]?.score ===
+                    assignmentDetail?.maximumScore
+                      ? "green"
+                      : "red"
+                  }
                   style={{ border: "none", padding: "5px 10px" }}
                 >
-                  Scored {submissionDetail?.totalScore}/{submissionDetail?.totalMarks}
+                  Scored {evaluatioinResult?.scoreSummary?.eachQuestionScore[currentQuestionIndex]?.score}/
+                  {assignmentDetail?.maximumScore}
                 </Tag>
               )}
             </Flex>
@@ -205,14 +232,19 @@ const AssignmentContentTab: FC<{ lessonId?: number }> = ({ lessonId }) => {
               >
                 Back
               </Button>
-              <Button type="primary" loading={saveLoading} onClick={onSubmitQuestion}>
+              <Button
+                type="primary"
+                loading={saveLoading}
+                onClick={onSubmitQuestion}
+                disabled={evaluatioinResult !== null && currentQuestionIndex + 1 === questions.length ? true : false}
+              >
                 {selectedAnswers[currentQuestionIndex + 1]?.length > 0 &&
                 !areAnswersEqualForKey(
                   selectedAnswers[currentQuestionIndex + 1],
                   savedAsnwers[currentQuestionIndex + 1]
                 )
                   ? "Submit"
-                  : "Skip"}{" "}
+                  : "Skip"}
                 <RightOutlined />
               </Button>
             </Space>

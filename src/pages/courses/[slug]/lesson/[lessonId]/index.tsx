@@ -466,7 +466,7 @@ const LessonPage: NextPage<{ siteConfig: PageSiteConfig; courseId: number }> = (
   const getAssignmentDetail = (lessonId: number) => {
     AssignmentService.getAssignment(
       lessonId,
-      false,
+      true,
       (result) => {
         setAssignmentDetail(result.assignmentDetail);
       },
