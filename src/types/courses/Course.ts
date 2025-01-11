@@ -46,7 +46,7 @@ export interface ICourseListItem {
   price: number;
   currency: string;
   state: StateType;
-  trailerThumbnail?: string;
+  trailerThumbnail: string | null;
   userRole?: Role;
 }
 

@@ -1,9 +1,10 @@
 import SpinLoader from "@/components/SpinLoader/SpinLoader";
 import SvgIcons from "@/components/SvgIcons";
+import { themeColors } from "@/services/darkThemeConfig";
 import styles from "@/styles/Preview.module.scss";
 import { IChapterView, ICourseDetailView } from "@/types/courses/Course";
 import { UserOutlined } from "@ant-design/icons";
-import { ResourceContentType, Role } from "@prisma/client";
+import { orderStatus, ResourceContentType, Role } from "@prisma/client";
 import { Avatar, Button, Collapse, CollapseProps, Flex, Tabs } from "antd";
 
 import { CSSProperties, FC } from "react";
@@ -39,8 +40,9 @@ const Preview: FC<{
   previewMode: boolean;
   handlePurchase: (courseId: number) => void;
   handleLessonRedirection: (courseId: number) => void;
+  registrationStatus?: orderStatus;
   extraStyle?: CSSProperties;
-}> = ({ courseDetail, previewMode, handlePurchase, handleLessonRedirection, extraStyle }) => {
+}> = ({ courseDetail, previewMode, handlePurchase, handleLessonRedirection, registrationStatus, extraStyle }) => {
   return (
     <section className={styles.preview_container} style={extraStyle}>
       <h4>{courseDetail.name}</h4>
@@ -152,8 +154,15 @@ const Preview: FC<{
                 {courseDetail.role === Role.STUDENT && (
                   <>
                     <Flex gap={10} align="center" vertical justify="center">
+                      {registrationStatus && registrationStatus == orderStatus.FAILED && (
+                        <>
+                          <i style={{ fontSize: "3.5rem", lineHeight: 0, color: themeColors.commons.success }}>
+                            {SvgIcons.checkBadgeFilled}
+                          </i>
+                          <h4>You have already purchased this course on {courseDetail.enrolmentDate}</h4>
+                        </>
+                      )}
                       <i style={{ fontSize: "3.5rem", lineHeight: 0 }}>{SvgIcons.checkBadgeFilled}</i>
-
                       <h4>You have already purchased this course on {courseDetail.enrolmentDate}</h4>
                     </Flex>
                     <Button
@@ -175,29 +184,29 @@ const Preview: FC<{
             <p>
               <b>This course includes</b>
             </p>
-            <Flex gap={10} style={{ height: 36 }}>
+            <Flex gap={10} align="center" style={{ marginBottom: "1em" }}>
               <i>{SvgIcons.playFilled}</i>
-              <p>{courseDetail.contentDurationInHrs} hours of content</p>
+              <div>{courseDetail.contentDurationInHrs} hours of content</div>
             </Flex>
-            <Flex gap={10} style={{ height: 36 }}>
+            <Flex gap={10} align="center" style={{ marginBottom: "1em" }}>
               <i>{SvgIcons.bookOpenFilled}</i>
-              <p>{courseDetail.assignmentsCount} assignments</p>
+              <div>{courseDetail.assignmentsCount} assignments</div>
             </Flex>
-            <Flex gap={10} style={{ height: 36 }}>
+            <Flex gap={10} align="center" style={{ marginBottom: "1em" }}>
               <i>{SvgIcons.clockFilled}</i>
-              <p>{courseDetail.expiryInDays} days of access</p>
+              <div>{courseDetail.expiryInDays} days of access</div>
             </Flex>
-            <Flex gap={10} style={{ height: 36 }}>
+            <Flex gap={10} align="center" style={{ marginBottom: "1em" }}>
               <i>{SvgIcons.checkBadgeFilled}</i>
-              <p>Certificate on completion</p>
+              <div>Certificate on completion</div>
             </Flex>
-            <Flex gap={10} style={{ height: 36 }}>
+            <Flex gap={10} align="center" style={{ marginBottom: "1em" }}>
               <i>{SvgIcons.calendarDaysFilled}</i>
-              <p>Free access to workshops</p>
+              <div>Free access to workshops</div>
             </Flex>
-            <Flex gap={10} style={{ height: 36 }}>
+            <Flex gap={10} align="center" style={{ marginBottom: "1em" }}>
               <i>{SvgIcons.chatBubbleFilled}</i>
-              <p>Access to Discussion</p>
+              <div>Access to Discussion</div>
             </Flex>
           </div>
 

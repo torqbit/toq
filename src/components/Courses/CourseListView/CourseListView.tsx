@@ -51,6 +51,7 @@ export const CourseViewItem: FC<{ course: ICourseListItem; previewMode?: boolean
     <Card
       className={styles.course__card}
       cover={
+
         validImage ? (
           <img className={styles.card__img} alt={`thumbnail of ${course.title}`} src={course.trailerThumbnail} />
         ) : (

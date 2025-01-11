@@ -95,7 +95,6 @@ const AddFAQ: FC<{ siteConfig: PageSiteConfig; setConfig: (value: PageSiteConfig
   };
 
   const handleEdit = (index: number) => {
-    console.log(index, "this is edit");
     setOpen(true);
     setActiveKey(index);
     setEdit(true);

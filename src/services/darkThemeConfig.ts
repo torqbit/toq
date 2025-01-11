@@ -3,6 +3,9 @@ import { PageSiteConfig } from "./siteConstant";
 import { IBrandConfig } from "@/types/schema";
 
 export const themeColors = {
+  commons: {
+    success: "#52c41a",
+  },
   dark: {
     bgPrimary: "#2c2c2c",
     bgSecondary: "#242424",
