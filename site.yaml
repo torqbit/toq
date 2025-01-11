@@ -67,8 +67,8 @@ site:
             workshops.
     courses:
       enable: true
-      title: Courses list
-      description: Courses description for alll
+      title: Our Courses
+      description: Learn from the best instructors around the world
     blog:
       enable: true
       title: Blogs

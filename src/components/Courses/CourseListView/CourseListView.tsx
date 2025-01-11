@@ -9,8 +9,9 @@ import { capsToPascalCase } from "@/lib/utils";
 import { useRouter } from "next/router";
 import Link from "next/link";
 const { Meta } = Card;
-export const CourseViewItem: FC<{ course: ICourseListItem }> = ({ course }) => {
+export const CourseViewItem: FC<{ course: ICourseListItem; previewMode?: boolean }> = ({ course, previewMode }) => {
   const router = useRouter();
+  const [showDummyPurchase, setDummyBtn] = useState(typeof previewMode !== undefined && previewMode);
 
   const handleEdit = (id: number) => {
     router.push(`admin/content/course/${id}/edit`);
@@ -67,14 +68,18 @@ export const CourseViewItem: FC<{ course: ICourseListItem }> = ({ course }) => {
           {course.currency} {course.price}
         </div>
 
-        {course.userRole &&
+        {showDummyPurchase && <Button type="default">Buy Now</Button>}
+
+        {!showDummyPurchase &&
+          course.userRole &&
           (course.userRole === Role.AUTHOR || course.userRole === Role.ADMIN) &&
           course.state == StateType.DRAFT && (
             <Button onClick={(e) => handleEdit(course.id)} type="default">
               Edit
             </Button>
           )}
-        {course.userRole &&
+        {!showDummyPurchase &&
+          course.userRole &&
           (course.userRole === Role.AUTHOR || course.userRole === Role.ADMIN) &&
           course.state == StateType.ACTIVE && (
             <Dropdown.Button
@@ -87,12 +92,16 @@ export const CourseViewItem: FC<{ course: ICourseListItem }> = ({ course }) => {
               Manage
             </Dropdown.Button>
           )}
-        {course.userRole && course.userRole === Role.NOT_ENROLLED && (
+        {!showDummyPurchase && course.userRole && course.userRole === Role.NOT_ENROLLED && (
           <Button type="default" onClick={(e) => handlePurchase(course.slug)}>
             Buy Now
           </Button>
         )}
-        {course.userRole && course.userRole === Role.STUDENT && <Button type="default">Go to Course</Button>}
+        {!showDummyPurchase && course.userRole && course.userRole === Role.STUDENT && (
+          <Button type="default" onClick={(e) => handlePurchase(course.slug)}>
+            Go to Course
+          </Button>
+        )}
       </Flex>
     </Card>
   );

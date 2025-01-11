@@ -6,8 +6,6 @@ import { getToken } from "next-auth/jwt";
 import { PageSiteConfig } from "@/services/siteConstant";
 import StandardTemplate from "@/templates/standard/StandardTemplate";
 import { getSiteConfig } from "@/services/getSiteConfig";
-import { ICourseCard } from "@/types/landing/courses";
-import getCourseList from "@/actions/getCourseList";
 import getBlogList from "@/actions/getBlogList";
 import { IBlogCard } from "@/types/landing/blog";
 import { ICourseListItem } from "@/types/courses/Course";

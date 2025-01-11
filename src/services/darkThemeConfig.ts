@@ -9,6 +9,7 @@ export const themeColors = {
     fontPrimary: "#fff",
     fontSecondary: "#b9b9b9",
     colorSplit: "#454545",
+    bgTertiary: "#131313",
   },
   light: {},
 };
@@ -43,7 +44,7 @@ const darkThemeConfig = (siteConfig: PageSiteConfig) => {
     token: {
       borderRadius: 4,
       colorText: themeColors.dark.fontSecondary,
-      colorBgContainer: "#2c2c2c",
+      colorBgContainer: themeColors.dark.bgPrimary,
       colorBorder: themeColors.dark.colorSplit,
       colorTextPlaceholder: "#666",
       colorPrimary: `${siteConfig.brand?.brandColor}`,
@@ -60,7 +61,7 @@ const darkThemeConfig = (siteConfig: PageSiteConfig) => {
 
     components: {
       Layout: {
-        bodyBg: "#242424",
+        bodyBg: themeColors.dark.bgSecondary,
       },
       Steps: {
         colorSplit: themeColors.dark.colorSplit,
@@ -76,17 +77,17 @@ const darkThemeConfig = (siteConfig: PageSiteConfig) => {
         defaultColor: `${siteConfig.brand?.brandColor}`,
       },
       Tree: {
-        nodeSelectedBg: "#2c2c2c",
-        directoryNodeSelectedBg: "#2c2c2c",
+        nodeSelectedBg: themeColors.dark.bgPrimary,
+        directoryNodeSelectedBg: themeColors.dark.bgPrimary,
         directoryNodeSelectedColor: "#fff",
       },
       Menu: {
         itemColor: themeColors.dark.fontSecondary,
         groupTitleColor: "#eee",
-        itemActiveBg: "#242424",
-        itemSelectedBg: "#242424",
+        itemActiveBg: themeColors.dark.bgSecondary,
+        itemSelectedBg: themeColors.dark.bgSecondary,
         itemSelectedColor: "#fff",
-        itemBg: "#2c2c2c",
+        itemBg: themeColors.dark.bgPrimary,
       },
       Radio: {
         buttonSolidCheckedActiveBg: "#000",
@@ -101,7 +102,7 @@ const darkThemeConfig = (siteConfig: PageSiteConfig) => {
         colorSplit: themeColors.dark.colorSplit,
       },
       Popover: {
-        colorBgElevated: "#2c2c2c",
+        colorBgElevated: themeColors.dark.bgPrimary,
       },
       Card: {
         paddingLG: 20,
@@ -111,15 +112,15 @@ const darkThemeConfig = (siteConfig: PageSiteConfig) => {
         labelColor: "#888",
       },
       Button: {
-        defaultBg: "#2c2c2c",
+        defaultBg: themeColors.dark.bgPrimary,
         groupBorderColor: "#000",
         colorPrimaryActive: "#fff",
       },
       Input: {
         borderRadius: 4,
         activeShadow: "none",
-        activeBg: "#222938",
-        hoverBg: "#222938",
+        activeBg: themeColors.dark.bgTertiary,
+        hoverBg: themeColors.dark.bgSecondary,
         addonBg: "#383e4b",
 
         colorTextPlaceholder: themeColors.dark.fontSecondary,
@@ -129,10 +130,10 @@ const darkThemeConfig = (siteConfig: PageSiteConfig) => {
       Select: {
         activeBorderColor: themeColors.dark.fontSecondary,
         optionSelectedColor: themeColors.dark.fontSecondary,
-        optionActiveBg: "#242424",
-        colorBgContainer: "#2c2c2c",
-        colorBgElevated: "#2c2c2c",
-        optionSelectedBg: "#242424",
+        optionActiveBg: themeColors.dark.bgSecondary,
+        colorBgContainer: themeColors.dark.bgPrimary,
+        colorBgElevated: themeColors.dark.bgPrimary,
+        optionSelectedBg: themeColors.dark.bgSecondary,
         colorTextPlaceholder: themeColors.dark.fontSecondary,
         activeShadow: "none",
       },
@@ -141,8 +142,8 @@ const darkThemeConfig = (siteConfig: PageSiteConfig) => {
         colorPrimary: "#666",
         controlItemBgActive: "#EEE",
         colorText: themeColors.dark.fontSecondary,
-        controlItemBgHover: "#2c2c2c",
-        colorBgElevated: "#242424",
+        controlItemBgHover: themeColors.dark.bgPrimary,
+        colorBgElevated: themeColors.dark.bgSecondary,
         controlItemBgActiveHover: "#dcdcdc",
       },
       List: {
@@ -165,24 +166,24 @@ const darkThemeConfig = (siteConfig: PageSiteConfig) => {
         footerPaddingInline: 20,
         footerPaddingBlock: 10,
         paddingLG: 20,
-        colorBgElevated: "#2c2c2c",
+        colorBgElevated: themeColors.dark.bgPrimary,
       },
       Tag: {
         defaultBg: themeColors.dark.colorSplit,
         defaultColor: themeColors.dark.fontSecondary,
       },
       Collapse: {
-        headerBg: "#2c2c2c",
+        headerBg: themeColors.dark.bgPrimary,
         colorText: themeColors.dark.fontSecondary,
       },
       Table: {
-        colorBgContainer: "#2c2c2c",
+        colorBgContainer: themeColors.dark.bgPrimary,
         borderColor: themeColors.dark.colorSplit,
         colorText: themeColors.dark.fontSecondary,
-        headerSplitColor: "#242424",
+        headerSplitColor: themeColors.dark.bgSecondary,
       },
       Pagination: {
-        colorPrimaryBorder: "#242424",
+        colorPrimaryBorder: themeColors.dark.bgSecondary,
         colorPrimary: themeColors.dark.fontSecondary,
         colorPrimaryHover: themeColors.dark.fontSecondary,
         colorTextDisabled: themeColors.dark.fontSecondary,
@@ -191,9 +192,9 @@ const darkThemeConfig = (siteConfig: PageSiteConfig) => {
         colorBgContainer: `${siteConfig.brand?.brandColor}`,
       },
       Modal: {
-        contentBg: "#242424",
+        contentBg: themeColors.dark.bgSecondary,
         colorIcon: themeColors.dark.fontSecondary,
-        headerBg: "#242424",
+        headerBg: themeColors.dark.bgSecondary,
       },
       Switch: {
         colorPrimaryHover: "#68696d",
@@ -203,7 +204,7 @@ const darkThemeConfig = (siteConfig: PageSiteConfig) => {
         colorText: themeColors.dark.fontSecondary,
       },
       Message: {
-        contentBg: "#2c2c2c",
+        contentBg: themeColors.dark.bgPrimary,
       },
       Breadcrumb: {
         itemColor: themeColors.dark.fontSecondary,
@@ -211,9 +212,9 @@ const darkThemeConfig = (siteConfig: PageSiteConfig) => {
         separatorColor: themeColors.dark.fontSecondary,
       },
       Segmented: {
-        itemSelectedBg: "#2c2c2c",
+        itemSelectedBg: themeColors.dark.bgPrimary,
         itemHoverColor: "#fff",
-        trackBg: "#151823",
+        trackBg: themeColors.dark.bgTertiary,
         controlPaddingHorizontal: 30,
         itemColor: "#000",
       },

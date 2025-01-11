@@ -91,14 +91,12 @@ p {
   --bg-selected: #f0f0f0;
   --selected-side-bar: #696a6b;
   --font-primary: #000;
-  --mktg-card-bg: #f4f4f8;
   --font-label: #888;
   --primary-button: #000;
   --segment-bg: #e0dfdf;
   --delete-button: #ea0303;
   --card-bg-color: #dadada;
   --card-font-color: #959595;
-  --chapter-list: #888888;
   --header-bg: #fff;
   --main-bg: #f0f0f0;
   --draft-bg: #f6eee3;
@@ -114,26 +112,21 @@ p {
   --border-radius: 4px;
   --ft-color-dull: #848484;
   --hover-text: #373737;
-  --wave-color: #c4c4c4;
   --ft-color: #0e1326;
   --font-footer: #939db8;
   --strike: #ad5742;
   --theme-btn-bg: #fff;
   --label-color: #68696d;
   --font-placeholder: "#888";
-
   --container-width: 1000px;
-
   --secondary-bg: #1c1e2f;
   --bg-header: #ffffff9e;
-
   --success: #4ece91;
   --danger: #ff0000;
   --primary: #4096ff;
   --border-color: #d9d9d9;
   --font-mktg-secondary: #484b54;
   --tag-preview: linear-gradient(#1c1e2f, #1c1e2f) padding-box, linear-gradient(to right, #e05050, #475fe5) border-box;
-
   --hero-gradient: linear-gradient(120deg, #f7f8fd 0%, #fff 100%);
   --hover-bg: var(--header-bg);
 }
@@ -168,11 +161,9 @@ p {
   --font-dropdown-label: #fff;
   --secondary-bg: #1c1e2f;
   --bg-elevated: #454545;
-  --mktg-card-bg: #202433;
-  --wave-color: #153953;
   --font-label: #888;
   --font-placeholder: #888;
-  --bg-header: #2f364794;
+  --bg-header: #47474794;
 
   --font-warning: #faad14;
   --hover-text: #c4c4c4;
