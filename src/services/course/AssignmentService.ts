@@ -178,7 +178,7 @@ class AssignmentSerivce {
   getLatestSubmissionStatus = (
     lessonId: number,
     assignmentId: number,
-    courseId: number,
+    courseId: string,
     onSuccess: (response: ApiResponse) => void,
     onFailure: (message: string) => void
   ) => {

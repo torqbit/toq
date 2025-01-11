@@ -2,7 +2,7 @@ import { FC, useEffect, useState } from "react";
 import style from "@/styles/LearnLecture.module.scss";
 import AssignmentService from "@/services/course/AssignmentService";
 import { IAssignmentDetail } from "@/types/courses/Course";
-import { Button, Flex, message, Radio, Space, Tag } from "antd";
+import { Button, Flex, message, Popconfirm, Radio, Space, Tag } from "antd";
 import SpinLoader from "../../SpinLoader/SpinLoader";
 import MCQViewAssignment from "./MCQViewAssignment/MCQViewAssignment";
 import {
@@ -19,7 +19,10 @@ import { useRouter } from "next/router";
 import { areAnswersEqualForKey } from "@/lib/utils";
 import { submissionStatus } from "@prisma/client";
 
-const AssignmentContentTab: FC<{ lessonId?: number }> = ({ lessonId }) => {
+const AssignmentContentTab: FC<{
+  lessonId?: number;
+  getEvaluateScore: (assignmentId: number, lessonId: number, courseId: string) => void;
+}> = ({ lessonId, getEvaluateScore }) => {
   const router = useRouter();
   const [assignmentDetail, setAssignmentDetail] = useState<IAssignmentDetail>();
   const [submissionDetail, setSubmissionDetail] = useState<IAssignmentSubmissoionDetail | null>(null);
@@ -176,6 +179,7 @@ const AssignmentContentTab: FC<{ lessonId?: number }> = ({ lessonId }) => {
       lessonId as number,
       submissionDetail.id as number,
       (result) => {
+        getEvaluateScore(assignmentDetail?.assignmentId as number, lessonId as number, router.query.slug as string);
         setRefresh(!refresh);
         setLoading(false);
       },
@@ -232,33 +236,31 @@ const AssignmentContentTab: FC<{ lessonId?: number }> = ({ lessonId }) => {
               >
                 Back
               </Button>
-              <Button
-                type="primary"
-                loading={saveLoading}
-                onClick={onSubmitQuestion}
-                disabled={evaluatioinResult !== null && currentQuestionIndex + 1 === questions.length ? true : false}
-              >
+              <Button type="primary" loading={saveLoading} onClick={onSubmitQuestion}>
                 {selectedAnswers[currentQuestionIndex + 1]?.length > 0 &&
                 !areAnswersEqualForKey(
                   selectedAnswers[currentQuestionIndex + 1],
                   savedAsnwers[currentQuestionIndex + 1]
                 )
                   ? "Submit"
+                  : evaluatioinResult
+                  ? "Next"
                   : "Skip"}
                 <RightOutlined />
               </Button>
             </Space>
-            <Button
-              type="primary"
-              color="#70e000"
-              disabled={
-                !submissionDetail?.id ||
-                (submissionDetail && submissionDetail.status !== submissionStatus.NOT_SUBMITTED)
-              }
-              onClick={onClickToEvaluate}
+            <Popconfirm
+              title="Finish & complete"
+              description="Are you sure want to submit! It can't be undo"
+              onConfirm={onClickToEvaluate}
+              onCancel={() => {}}
+              okText="Yes"
+              cancelText="No"
             >
-              Finish & complete <ArrowRightOutlined />
-            </Button>
+              <Button type="primary" color="#70e000">
+                Finish & complete <ArrowRightOutlined />
+              </Button>
+            </Popconfirm>
           </Flex>
         </div>
       )}
