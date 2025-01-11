@@ -115,6 +115,7 @@ export default {
   mediaTempDir: "media",
   assignmentTempDir: "assignments",
   invoiceTempDir: "invoices",
+  currency: "INR",
 
   contacts: [
     {

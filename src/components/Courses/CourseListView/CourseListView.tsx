@@ -39,7 +39,9 @@ export const CourseViewItem: FC<{ course: ICourseListItem; previewMode?: boolean
   return (
     <Card
       className={styles.course__card}
-      cover={<img className={styles.card__img} alt={`thumbnail of ${course.title}`} src={course.trailerThumbnail} />}
+      cover={
+        <img className={styles.card__img} alt={`thumbnail of ${course.title}`} src={course.trailerThumbnail || ""} />
+      }
     >
       <Meta
         className={styles.meta}
