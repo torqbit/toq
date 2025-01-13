@@ -44,7 +44,7 @@ const LearnCoursesPage: NextPage<{
   const [loading, setLoading] = useState<boolean>();
   const [nextLessonId, setNextLessonId] = useState<number>();
   const [paymentDisable, setPaymentDisable] = useState<boolean>(false);
-  const [paymentStatusLoading, setPaymentStatusLaoding] = useState<boolean>(false);
+  const [paymentStatusLoading, setPaymentStatusLoading] = useState<boolean>(false);
   const [refresh, setRefresh] = useState<boolean>(false);
   const [orderId, setOrderId] = useState<string>("");
 
@@ -107,61 +107,6 @@ const LearnCoursesPage: NextPage<{
     );
   };
 
-  const onEnrollCourse = async () => {
-    setLoading(true);
-    try {
-      if (
-        courseDetail?.course.userRole === Role.AUTHOR ||
-        courseDetail?.course.userRole === Role.ADMIN ||
-        courseDetail?.course.userRole === Role.STUDENT
-      ) {
-        router.replace(`/courses/${router.query.slug}/lesson/${nextLessonId}`);
-        return;
-      }
-      const res = await postFetch(
-        {
-          courseId: Number(courseId),
-          orderId,
-        },
-        "/api/v1/course/enroll"
-      );
-      const result = (await res.json()) as IResponse;
-
-      if (res.ok && result.success) {
-        getPaymentStatus();
-        if (courseDetail?.course.courseType === $Enums.CourseType.FREE) {
-          setLoading(false);
-          setRefresh(!refresh);
-
-          modal.success({
-            title: result.message,
-            onOk: () => {
-              handleLessonRedirection(courseId);
-            },
-          });
-        } else if (courseDetail?.course.courseType === $Enums.CourseType.PAID) {
-          handleCheckout(result.gatewayResponse.sessionId, result.gatewayName);
-        }
-      } else {
-        if (result.alreadyEnrolled) {
-          router.replace(`/courses/${router.query.slug}/lesson/${nextLessonId}`);
-          setLoading(false);
-        } else {
-          if (result.phoneNotFound && result.error) {
-            setModal({ active: true, message: result.error });
-          } else {
-            messageApi.error(result.error);
-          }
-          getPaymentStatus();
-          setLoading(false);
-        }
-      }
-    } catch (err: any) {
-      messageApi.error("Error while enrolling course ", err?.message);
-      setLoading(false);
-    }
-  };
-
   const handlePurchase = async (courseId: number) => {
     setLoading(true);
     try {
@@ -174,7 +119,6 @@ const LearnCoursesPage: NextPage<{
       const result = (await res.json()) as IResponse;
 
       if (res.ok && result.success) {
-        // getPaymentStatus();
         if (courseDetail?.course.courseType === $Enums.CourseType.FREE) {
           setLoading(false);
           setRefresh(!refresh);
@@ -198,7 +142,6 @@ const LearnCoursesPage: NextPage<{
           } else {
             messageApi.error(result.error);
           }
-          // getPaymentStatus();
           setLoading(false);
         }
       }
@@ -220,10 +163,12 @@ const LearnCoursesPage: NextPage<{
   }, [courseId, refresh]);
 
   const getPaymentStatus = async () => {
-    setPaymentStatusLaoding(true);
+    setPaymentStatusLoading(true);
     const res = await getFetch(`/api/v1/course/payment/paymentStatus?courseId=${courseId}`);
     const result = (await res.json()) as IResponse;
     if (router.query.callback) {
+      console.log(router.query.callback);
+      setPaymentStatus(result.status);
       setAlertConfig({ type: result.alertType, message: result.alertMessage, description: result.alertDescription });
     }
 
@@ -231,11 +176,11 @@ const LearnCoursesPage: NextPage<{
       setPaymentDisable(result.paymentDisable);
       setOrderId(result.orderId);
       setPaymentStatus(result.status);
-      setPaymentStatusLaoding(false);
+      setPaymentStatusLoading(false);
     } else {
       setPaymentDisable(false);
       setPaymentStatus(result.status);
-      setPaymentStatusLaoding(false);
+      setPaymentStatusLoading(false);
     }
   };
 
@@ -261,37 +206,17 @@ const LearnCoursesPage: NextPage<{
                   previewMode={false}
                   handlePurchase={() => router.push(`/login?redirect=courses/${router.query.slug}`)}
                   handleLessonRedirection={() => {}}
+                  paymentCallback={router.query.callback === "payment"}
                   extraStyle={{ padding: "100px 0 50px" }}
                 />
               )
             }
-          >
-            {/* <CoursePreview
-              courseId={Number(courseId)}
-              nextLessonId={nextLessonId}
-              courseDetails={course}
-              chapters={lessons}
-              onEnrollCourse={() => {}}
-              paymentDisable={false}
-            /> */}
-          </MarketingLayout>
+          ></MarketingLayout>
         </>
       ) : (
         <AppLayout siteConfig={siteConfig}>
           {contextMessageHolder}
           {contextModalHolder}
-
-          {router.query.callback && alertConfig.message && (
-            <Alert
-              message={alertConfig.message}
-              description={alertConfig.description}
-              type={alertConfig.type}
-              showIcon
-              onClose={onCloseAlert}
-              closable
-              className={styles.alertMessage}
-            />
-          )}
 
           <div style={{ padding: "20px 0" }}>
             {courseViewDetail && (
@@ -299,6 +224,7 @@ const LearnCoursesPage: NextPage<{
                 courseDetail={courseViewDetail}
                 previewMode={false}
                 handlePurchase={handlePurchase}
+                paymentCallback={router.query.callback === "payment"}
                 handleLessonRedirection={handleLessonRedirection}
               />
             )}
