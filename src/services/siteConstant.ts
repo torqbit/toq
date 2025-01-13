@@ -18,7 +18,7 @@ export const DEFAULT_THEME = {
       },
       {
         title: "Blog",
-        link: "/blog",
+        link: "/blogs",
       },
     ],
   },

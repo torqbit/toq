@@ -8,7 +8,7 @@ site:
       - title: Events
         link: /events
       - title: Blog
-        link: /blog
+        link: /blogs
   brand:
     logo: /img/brand/logo.png
     darkLogo: /img/brand/logo-dark.png
@@ -75,11 +75,11 @@ site:
       description: Description on blogs
     faq:
       enabled: true
-      items: null
+      items:
       title: FAQ
       description: Frequently asked questions by the students
     testimonials:
       enabled: true
       title: "Teachers love our product "
       description: "Find out what excites our users, when using our product "
-      items: null
+      items:

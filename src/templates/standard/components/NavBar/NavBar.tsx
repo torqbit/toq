@@ -1,5 +1,4 @@
 import { FC, ReactElement } from "react";
-import Image from "next/image";
 import { Button, Flex } from "antd";
 import Link from "next/link";
 import { INavBarProps } from "@/types/landing/navbar";
