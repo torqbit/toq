@@ -60,7 +60,7 @@ const ChapterLabel: FC<{
       <Flex justify="space-between" align="center">
         <div style={{ cursor: "pointer" }}>
           <Flex gap={10} align="center" onClick={() => onChange(keyValue)}>
-            {icon}
+            <i style={{ lineHeight: 0, fontSize: 18, color: "var(--font-secondary)" }}>{icon}</i>
             <div> {title}</div>
           </Flex>
         </div>

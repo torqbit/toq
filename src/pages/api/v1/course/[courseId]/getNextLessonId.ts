@@ -7,7 +7,7 @@ import { withAuthentication } from "@/lib/api-middlewares/with-authentication";
 import { errorHandler } from "@/lib/api-middlewares/errorHandler";
 
 import { getCookieName } from "@/lib/utils";
-import { StateType } from "@prisma/client";
+import { Role, StateType } from "@prisma/client";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   let cookieName = getCookieName();
@@ -105,14 +105,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           },
         },
       });
-
-      if (courseDetail?.authorId === userId) {
+      if (courseDetail?.authorId === userId || token?.role === Role.ADMIN) {
         return res.status(200).json({ success: true, nextLessonId: courseDetail?.chapters[0].resource[0].resourceId });
       }
     }
 
     return res.status(400).json({
       success: false,
+      error: "Something went wrong, Contact the support team",
     });
   } catch (err) {
     return errorHandler(err, res);

@@ -80,7 +80,9 @@ const LessonItem: FC<{
           <Flex justify="space-between" align="center" onClick={() => {}}>
             <div className={styles.title_container}>
               <Flex gap={10} align="center">
-                {completed ? SvgIcons.check : icon}
+                <i style={{ lineHeight: 0, fontSize: 18, color: "var(--font-secondary)" }}>
+                  {completed ? SvgIcons.check : icon}
+                </i>
                 <div style={{ cursor: "auto" }}>{title}</div>
               </Flex>
             </div>
@@ -247,6 +249,7 @@ const LessonPage: NextPage<{ siteConfig: PageSiteConfig; courseId: number }> = (
         findAndSetCurrentLesson(result.lessons, false);
       },
       (error) => {
+        messageApi.error(error);
         setLoading(false);
       }
     );
@@ -288,9 +291,11 @@ const LessonPage: NextPage<{ siteConfig: PageSiteConfig; courseId: number }> = (
               <div style={{ display: "flex" }}>
                 <i style={{ height: 20 }}>
                   {item.isWatched ? (
-                    SvgIcons.check
+                    <i style={{ lineHeight: 0, fontSize: 18, color: "var(--font-secondary)" }}>{SvgIcons.check}</i>
                   ) : (
-                    <>{item.contentType === $Enums.ResourceContentType.Video ? SvgIcons.playBtn : SvgIcons.file}</>
+                    <i style={{ lineHeight: 0, fontSize: 18, color: "var(--font-secondary)" }}>
+                      {item.contentType === $Enums.ResourceContentType.Video ? SvgIcons.playBtn : SvgIcons.file}
+                    </i>
                   )}
                 </i>
                 <p style={{ marginBottom: 0, marginLeft: 5 }}>{item.title}</p>
@@ -343,15 +348,16 @@ const LessonPage: NextPage<{ siteConfig: PageSiteConfig; courseId: number }> = (
   const lessonMenuList: MenuProps["items"] = courseLessons.map((ch, i) => {
     return {
       type: "group",
-      icon: <i style={{ fontSize: 18, width: 20 }}>{SvgIcons.folder}</i>,
+      icon: <i style={{ fontSize: 18, width: 20, lineHeight: 0 }}>{SvgIcons.folder}</i>,
       label: ch.chapterName,
       key: i,
+      style: { height: "auto" },
       children: ch.lessons.map((l) => {
         return {
           label: (
             <Link href={`/courses/${router.query.slug}/lesson/${l.lessonId}`}>
-              <Flex align="center" justify="space-between">
-                <span>{l.title}</span>
+              <Flex align="flex-start" justify="space-between" gap={5}>
+                <span style={{ wordWrap: "break-word", whiteSpace: "normal" }}>{l.title}</span>
                 <Tag style={{ marginRight: 0 }} className={styles.time_tag}>
                   {convertSecToHourandMin(
                     l.contentType === ResourceContentType.Video ? l.videoDuration : Number(l.estimatedDuration) * 60
@@ -360,8 +366,14 @@ const LessonPage: NextPage<{ siteConfig: PageSiteConfig; courseId: number }> = (
               </Flex>
             </Link>
           ),
+
           key: `${l.lessonId}`,
-          icon: getLessonItems(l.contentType as ResourceContentType, l.isWatched),
+
+          icon: (
+            <i style={{ lineHeight: 0, fontSize: 18, marginTop: 3, color: "var(--font-secondary)" }}>
+              {getLessonItems(l.contentType as ResourceContentType, l.isWatched)}
+            </i>
+          ),
         };
       }),
     };
@@ -515,41 +527,52 @@ const LessonPage: NextPage<{ siteConfig: PageSiteConfig; courseId: number }> = (
                     {
                       title: courseDetail?.name,
                     },
+                    {
+                      title: currentLesson?.lesson?.title,
+                    },
                   ]}
                 />
               </Flex>
             </div>
+            {isMobile && (
+              <Flex className={styles.responsive_action_btn} align="center" justify="space-between">
+                <Link href={`/courses/${router.query.slug}`}>
+                  <Button>
+                    <Flex gap={5} align="center">
+                      <i className={styles.goBackArrow}>{SvgIcons.arrowLeft}</i>
+                      <div>Go Back</div>
+                    </Flex>
+                  </Button>
+                </Link>
 
-            <Flex className={styles.responsive_action_btn} align="center" justify="space-between">
-              <Link href={`/courses/${router.query.slug}`}>
-                <Button>
-                  <Flex gap={5} align="center">
-                    <i className={styles.goBackArrow}>{SvgIcons.arrowLeft}</i>
-                    <div>Go Back</div>
-                  </Flex>
-                </Button>
-              </Link>
-              {courseDetail?.userRole === Role.STUDENT && (
-                <>
-                  {currentLesson?.lesson ? (
-                    <>
-                      {currentLesson?.lesson?.isWatched && (
-                        <Button>
-                          <Flex gap={5}>{SvgIcons.check} Completed </Flex>
-                        </Button>
-                      )}
-                      {!currentLesson?.lesson?.isWatched && (
-                        <Button loading={markAsLoading} type="primary" onClick={onMarkAsCompleted}>
-                          Mark as Completed
-                        </Button>
-                      )}
-                    </>
-                  ) : (
-                    <Skeleton.Button />
-                  )}
-                </>
-              )}
-            </Flex>
+                {courseDetail?.userRole === Role.STUDENT && (
+                  <>
+                    {currentLesson?.lesson ? (
+                      <>
+                        {currentLesson?.lesson?.isWatched && (
+                          <Button>
+                            <Flex gap={5}>
+                              {" "}
+                              <i style={{ lineHeight: 0, fontSize: 18, color: "var(--font-secondary)" }}>
+                                {SvgIcons.check}
+                              </i>
+                              Completed{" "}
+                            </Flex>
+                          </Button>
+                        )}
+                        {!currentLesson?.lesson?.isWatched && (
+                          <Button loading={markAsLoading} type="primary" onClick={onMarkAsCompleted}>
+                            Mark as Completed
+                          </Button>
+                        )}
+                      </>
+                    ) : (
+                      <Skeleton.Button />
+                    )}
+                  </>
+                )}
+              </Flex>
+            )}
 
             {!certificateData?.completed ? (
               <div
@@ -597,27 +620,33 @@ const LessonPage: NextPage<{ siteConfig: PageSiteConfig; courseId: number }> = (
                   <Skeleton.Image
                     style={{
                       position: "absolute",
-                      width: isMobile ? "100%" : getVideoPlayerWidth(),
-                      height: "100%",
-                      top: 0,
+                      width: isMobile ? "90vw" : getVideoPlayerWidth(),
+                      height: isMobile ? "50vh" : "calc(100vh - 200px)",
+                      top: currentLesson?.lesson?.contentType === $Enums.ResourceContentType.Video ? 0 : 88,
                     }}
                   />
                 )}
               </div>
             ) : (
               <>
-                <div className={styles.certificatePage}>
+                <div
+                  className={styles.certificatePage}
+                  style={{
+                    width: isMobile ? "100%" : getVideoPlayerWidth(),
+                    height: isMobile ? "50vh" : "calc(100vh - 200px)",
+                  }}
+                >
                   {certificateData?.loading && !courseDetail?.previewMode ? (
-                    <Space direction="vertical" className={styles.generating_loader}>
+                    <Flex vertical gap={60} align="center" justify="center">
                       <SpinLoader className="lesson_loader" />
 
                       <p> Generating Certificate</p>
-                    </Space>
+                    </Flex>
                   ) : (
                     <>
                       {courseDetail?.previewMode ? (
                         <div className={styles.certificateBtn}>
-                          <h1>You have successfully completed this course</h1>
+                          <h4>You have successfully completed this course</h4>
                           <Link href={"/courses"} type="primary">
                             <Button type="primary">
                               Browse Courses
@@ -627,7 +656,7 @@ const LessonPage: NextPage<{ siteConfig: PageSiteConfig; courseId: number }> = (
                         </div>
                       ) : (
                         <div className={styles.certificateBtn}>
-                          <h1>You have successfully completed this course</h1>
+                          <h4>You have successfully completed this course</h4>
                           <Button
                             type="primary"
                             onClick={() => {
@@ -651,6 +680,7 @@ const LessonPage: NextPage<{ siteConfig: PageSiteConfig; courseId: number }> = (
               <Tabs
                 style={{
                   padding: "0 0 10px",
+                  height: "calc(100vh - 200px)",
                   width: isMobile ? "100%" : getVideoPlayerWidth(),
                 }}
                 tabBarExtraContent={
@@ -661,7 +691,12 @@ const LessonPage: NextPage<{ siteConfig: PageSiteConfig; courseId: number }> = (
                           <>
                             {currentLesson?.lesson?.isWatched && (
                               <Button>
-                                <Flex gap={5}>{SvgIcons.check} Completed </Flex>
+                                <Flex gap={5}>
+                                  <i style={{ lineHeight: 0, fontSize: 18, color: "var(--font-secondary)" }}>
+                                    {SvgIcons.check}
+                                  </i>
+                                  Completed{" "}
+                                </Flex>
                               </Button>
                             )}
                             {!currentLesson?.lesson?.isWatched && (
@@ -728,7 +763,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
       },
     });
     const isEnrolled = await getUserEnrolledCoursesId(courseInfo?.courseId, user?.id);
-    if (!isEnrolled && user.id !== courseAuthor?.authorId) {
+    if (!isEnrolled && user.id !== courseAuthor?.authorId && user.role === Role.STUDENT) {
       return {
         redirect: {
           permanent: false,

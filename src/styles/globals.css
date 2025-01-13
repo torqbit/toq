@@ -717,9 +717,7 @@ a {
 
 .lesson_sider .ant-menu-inline .ant-menu-item,
 .collapsed_lesson_sider .ant-menu-inline .ant-menu-item {
-  height: 35px;
-  line-height: 35px;
-  padding-left: 24px !important;
+  align-items: flex-start;
 }
 
 .lesson_sider .ant-menu-item-selected,

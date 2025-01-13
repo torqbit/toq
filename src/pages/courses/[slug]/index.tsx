@@ -93,7 +93,9 @@ const LearnCoursesPage: NextPage<{
       (result) => {
         setNextLessonId(result.nextLessonId);
       },
-      (error) => {}
+      (error) => {
+        messageApi.error(error);
+      }
     );
   };
 
@@ -103,7 +105,9 @@ const LearnCoursesPage: NextPage<{
       (result) => {
         router.replace(`/courses/${router.query.slug}/lesson/${result.nextLessonId}`);
       },
-      (error) => {}
+      (error) => {
+        messageApi.error(error);
+      }
     );
   };
 

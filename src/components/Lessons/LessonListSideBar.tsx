@@ -29,12 +29,12 @@ const LessonListSideBar: FC<{
 
       <Sider
         width={400}
-        style={{ position: "fixed", bottom: 0, right: globalState.lessonCollapsed ? -10 : 0 }}
         theme="light"
         reverseArrow={true}
+        style={{ position: "fixed", bottom: 0, right: globalState.lessonCollapsed ? -10 : 0 }}
         className={`${styles.lesson_sider} ${globalState.lessonCollapsed ? "collapsed_lesson_sider" : "lesson_sider"}`}
         trigger={null}
-        collapsible={false}
+        collapsible={globalState.lessonCollapsed}
       >
         <div className={styles.course_title}>
           <h2>Course Content</h2>
@@ -44,6 +44,7 @@ const LessonListSideBar: FC<{
           mode="inline"
           onSelect={(value) => dispatch({ type: "SET_SELECTED_SIDER_MENU", payload: value.key as ISiderMenu })}
           defaultSelectedKeys={[defaulSelectedKey]}
+          className={styles.menu__item__wrapper}
           selectedKeys={[defaulSelectedKey]}
           style={{ width: "100%", borderInlineEnd: "none" }}
           items={menu}
