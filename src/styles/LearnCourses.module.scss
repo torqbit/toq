@@ -41,16 +41,6 @@
   }
 
   .certificatePage {
-    .generating_loader {
-      // position: relative;
-
-      // p {
-      //   position: absolute;
-      //   top: 50%;
-      //   left: -70px;
-      //   width: 150px;
-      // }
-    }
     display: flex;
     align-items: center;
     justify-content: center;
@@ -235,15 +225,6 @@
     }
 
     .certificatePage {
-      .generating_loader {
-        p {
-          position: absolute;
-          top: 50%;
-          left: -70px;
-          width: 150px;
-        }
-      }
-
       .certificateBtn {
         padding: 0px 20px;
         gap: 20px;
@@ -312,15 +293,6 @@
     }
 
     .certificatePage {
-      .generating_loader {
-        p {
-          position: absolute;
-          top: 50%;
-          left: -70px;
-          width: 150px;
-        }
-      }
-
       .certificateBtn {
         padding: 0px 20px;
         gap: 20px;
