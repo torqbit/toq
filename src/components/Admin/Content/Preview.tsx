@@ -40,9 +40,9 @@ const Preview: FC<{
   previewMode: boolean;
   handlePurchase: (courseId: number) => void;
   handleLessonRedirection: (courseId: number) => void;
-  registrationStatus?: orderStatus;
+  paymentCallback?: boolean;
   extraStyle?: CSSProperties;
-}> = ({ courseDetail, previewMode, handlePurchase, handleLessonRedirection, registrationStatus, extraStyle }) => {
+}> = ({ courseDetail, previewMode, handlePurchase, handleLessonRedirection, paymentCallback, extraStyle }) => {
   return (
     <section className={styles.preview_container} style={extraStyle}>
       <h4>{courseDetail.name}</h4>
@@ -122,7 +122,9 @@ const Preview: FC<{
                 {courseDetail.role === Role.NOT_ENROLLED && (
                   <>
                     <Flex gap={10} align="center" justify="center">
-                      <div className={styles.pricing__currency}>{courseDetail.pricing.currency}</div>
+                      {courseDetail.pricing.amount > 0 && (
+                        <div className={styles.pricing__currency}>{courseDetail.pricing.currency}</div>
+                      )}
                       <h2>{courseDetail.pricing.amount == 0 ? "Free" : courseDetail.pricing.amount}</h2>
                     </Flex>
                     <Button
@@ -131,14 +133,16 @@ const Preview: FC<{
                       style={{ width: 200 }}
                       onClick={(e) => handlePurchase(courseDetail.id)}
                     >
-                      {courseDetail.pricing.amount == 0 ? "Enroll for free" : "Buy Course"}
+                      {courseDetail.pricing.amount == 0 ? "Enroll Now" : "Buy Course"}
                     </Button>
                   </>
                 )}
                 {(courseDetail.role === Role.ADMIN || courseDetail.role === Role.AUTHOR) && (
                   <>
                     <Flex gap={10} align="center" justify="center">
-                      <div className={styles.pricing__currency}>{courseDetail.pricing.currency}</div>
+                      {courseDetail.pricing.amount > 0 && (
+                        <div className={styles.pricing__currency}>{courseDetail.pricing.currency}</div>
+                      )}
                       <h2>{courseDetail.pricing.amount == 0 ? "Free" : courseDetail.pricing.amount}</h2>
                     </Flex>
                     <Button
@@ -154,16 +158,23 @@ const Preview: FC<{
                 {courseDetail.role === Role.STUDENT && (
                   <>
                     <Flex gap={10} align="center" vertical justify="center">
-                      {registrationStatus && registrationStatus == orderStatus.FAILED && (
+                      {paymentCallback && paymentCallback && (
                         <>
                           <i style={{ fontSize: "3.5rem", lineHeight: 0, color: themeColors.commons.success }}>
                             {SvgIcons.checkBadgeFilled}
                           </i>
+                          <h4>
+                            You have successfully <br />
+                            purchased this course
+                          </h4>
+                        </>
+                      )}
+                      {!paymentCallback && (
+                        <>
+                          <i style={{ fontSize: "3.5rem", lineHeight: 0 }}>{SvgIcons.checkBadgeFilled}</i>
                           <h4>You have already purchased this course on {courseDetail.enrolmentDate}</h4>
                         </>
                       )}
-                      <i style={{ fontSize: "3.5rem", lineHeight: 0 }}>{SvgIcons.checkBadgeFilled}</i>
-                      <h4>You have already purchased this course on {courseDetail.enrolmentDate}</h4>
                     </Flex>
                     <Button
                       type="primary"
@@ -194,7 +205,8 @@ const Preview: FC<{
             </Flex>
             <Flex gap={10} align="center" style={{ marginBottom: "1em" }}>
               <i>{SvgIcons.clockFilled}</i>
-              <div>{courseDetail.expiryInDays} days of access</div>
+              {courseDetail.role === Role.STUDENT && <div>{courseDetail.remainingDays} days of access remaining</div>}
+              {courseDetail.role !== Role.STUDENT && <div>{courseDetail.expiryInDays} days of access</div>}
             </Flex>
             <Flex gap={10} align="center" style={{ marginBottom: "1em" }}>
               <i>{SvgIcons.checkBadgeFilled}</i>

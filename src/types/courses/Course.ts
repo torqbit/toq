@@ -189,6 +189,7 @@ export interface ICourseDetailView {
   assignmentsCount: number;
   role: Role;
   enrolmentDate: string | null;
+  remainingDays: number | null;
   pricing: {
     currency: string;
     amount: number;

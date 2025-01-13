@@ -134,6 +134,7 @@ const LoginPage: NextPage<{
               </Form.Item>
               <Button
                 loading={loginLoading}
+                style={{ width: 250, height: 40, display: "block" }}
                 onClick={() => {
                   loginForm.submit();
                 }}
@@ -161,6 +162,7 @@ const LoginPage: NextPage<{
                 return (
                   <>
                     <Button
+                      style={{ width: 250, height: 40 }}
                       onClick={() => {
                         setLoginWithEmail(true);
                       }}

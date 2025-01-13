@@ -223,6 +223,7 @@ export const getCourseDetailedView = async (
   if (courseDBDetails) {
     let userRole: Role = Role.NOT_ENROLLED;
     let enrolmentDate: string | undefined;
+    let remainingDays = null;
     if (user) {
       if (user.role === Role.ADMIN) {
         userRole = Role.ADMIN;
@@ -230,6 +231,7 @@ export const getCourseDetailedView = async (
         userRole = Role.AUTHOR;
       } else {
         //get the registration details for this course and userId
+
         const registrationDetails = await prisma.courseRegistration.findMany({
           select: {
             registrationId: true,
@@ -247,6 +249,16 @@ export const getCourseDetailedView = async (
         });
         if (registrationDetails && registrationDetails.length > 0) {
           userRole = Role.STUDENT;
+          const endDate = new Date(registrationDetails[0].dateJoined);
+          endDate.setDate(registrationDetails[0].dateJoined.getDate() + 180);
+
+          // Get today's date
+          const today = new Date();
+
+          // Calculate the difference in time (in milliseconds) between the end date and today
+          const timeDifference = endDate.getTime() - today.getTime();
+
+          remainingDays = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
           enrolmentDate = registrationDetails[0].dateJoined.toLocaleDateString("en-US", {
             month: "short",
             day: "2-digit",
@@ -258,6 +270,7 @@ export const getCourseDetailedView = async (
 
     let contentDurationInHrs = 0;
     let assignmentCount = 0;
+
     const lessons = courseDBDetails.chapters.flatMap((c) => c.resource);
     lessons.forEach((l) => {
       if (l.assignment && l.assignment.estimatedDuration) {
@@ -306,6 +319,7 @@ export const getCourseDetailedView = async (
       chapters: chapters,
       trailerEmbedUrl: courseDBDetails.tvUrl || undefined,
       role: userRole,
+      remainingDays: remainingDays,
       enrolmentDate: enrolmentDate || null,
       author: {
         name: courseDBDetails.user.name,

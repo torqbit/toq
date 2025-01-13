@@ -28,11 +28,9 @@ class AuthService {
         service_type: true,
       },
     });
+    console.log(configDetails);
     const serviceType = configDetails.map((s) => s.service_type);
-    const allExist =
-      serviceType.includes(ServiceType.CMS) &&
-      serviceType.includes(ServiceType.PAYMENTS) &&
-      serviceType.includes(ServiceType.EMAIL);
+    const allExist = serviceType.includes(ServiceType.CMS) && serviceType.includes(ServiceType.PAYMENTS);
     if (userRole === Role.ADMIN) {
       if (allExist) {
         return redirectUrl !== "undefined" ? redirectUrl : "/dashboard";
