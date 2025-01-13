@@ -32,7 +32,7 @@ const TestimonialDesign: FC<{
         />
       </Flex>
 
-      {config.sections?.testimonials?.items?.length === 0 && (
+      {(config.sections?.testimonials?.items === null || config.sections?.testimonials?.items?.length === 0) && (
         <Flex vertical justify="center" style={{ textAlign: "center" }}>
           <p>No Testimonials exists</p>
           <Button

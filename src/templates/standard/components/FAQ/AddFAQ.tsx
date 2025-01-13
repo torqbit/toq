@@ -1,12 +1,14 @@
 import ConfigForm from "@/components/Configuration/ConfigForm";
 import ConfigFormLayout from "@/components/Configuration/ConfigFormLayout";
-import { Button, CollapseProps, Flex, Form, Input, Popconfirm } from "antd";
+import { Button, CollapseProps, Flex, Form, Input, message, Popconfirm } from "antd";
 import { FC, useState } from "react";
 import styles from "./FAQ.module.scss";
 import { PageSiteConfig } from "@/services/siteConstant";
 import SvgIcons from "@/components/SvgIcons";
 import FAQList from "./FAQList";
 import FAQForm from "./FAQForm";
+import BasicInfoForm from "@/components/SiteBuilder/sections/BasicInfoForm/BasicInfoForm";
+import { postFetch } from "@/services/request";
 
 const AddFAQ: FC<{ siteConfig: PageSiteConfig; setConfig: (value: PageSiteConfig) => void }> = ({
   siteConfig,
@@ -18,6 +20,7 @@ const AddFAQ: FC<{ siteConfig: PageSiteConfig; setConfig: (value: PageSiteConfig
   const [activeKey, setActiveKey] = useState<number>();
   const [isEdit, setEdit] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
+  const [messageApi, contentHolder] = message.useMessage();
   const onSave = () => {
     if (faqList.length > 0) {
       setFaqList([
@@ -145,53 +148,57 @@ const AddFAQ: FC<{ siteConfig: PageSiteConfig; setConfig: (value: PageSiteConfig
 
   return (
     <>
-      {faqList.length > 0 ? (
-        <Flex vertical>
-          <FAQList listItems={items} isEditable={true} />
+      {contentHolder}
 
-          <Button
-            onClick={() => {
-              setEdit(false);
-              setOpen(true);
-            }}
-            className={styles.add__more__btn}
-            style={{ width: "fit-content" }}
-            type="link"
-          >
-            <Flex align="center">
-              <i style={{ fontSize: 18, lineHeight: 0 }}>{SvgIcons.plusBtn}</i>
-              Add more
-            </Flex>
-          </Button>
-        </Flex>
-      ) : (
-        <Flex vertical align="center" justify="center" style={{ height: "calc(100vh - 100px)" }} gap={20}>
-          <img src="/img/common/empty.svg" alt="" />
-          <h4>No FAQ exist </h4>
-          <Button
-            type="primary"
-            onClick={() => {
-              setOpen(true);
-              setEdit(false);
-              form.resetFields();
-            }}
-          >
-            Add FAQ
-          </Button>
-        </Flex>
-      )}
+      <>
+        {faqList.length > 0 ? (
+          <Flex vertical gap={10}>
+            <FAQList listItems={items} isEditable={true} />
 
-      <FAQForm
-        open={open}
-        form={form}
-        isEdit={isEdit}
-        onClose={() => {
-          setOpen(false);
-          form.resetFields();
-          setActiveKey(undefined);
-        }}
-        handleFAQ={handleFAQ}
-      />
+            <Button
+              onClick={() => {
+                setEdit(false);
+                setOpen(true);
+              }}
+              className={styles.add__more__btn}
+              style={{ width: "fit-content" }}
+              type="link"
+            >
+              <Flex align="center">
+                <i style={{ fontSize: 18, lineHeight: 0 }}>{SvgIcons.plusBtn}</i>
+                Add more
+              </Flex>
+            </Button>
+          </Flex>
+        ) : (
+          <Flex vertical align="center" justify="center" style={{ height: "calc(100vh - 300px)" }} gap={20}>
+            <img src="/img/common/empty.svg" alt="" />
+            <h4>No FAQ exist </h4>
+            <Button
+              type="primary"
+              onClick={() => {
+                setOpen(true);
+                setEdit(false);
+                form.resetFields();
+              }}
+            >
+              Add FAQ
+            </Button>
+          </Flex>
+        )}
+
+        <FAQForm
+          open={open}
+          form={form}
+          isEdit={isEdit}
+          onClose={() => {
+            setOpen(false);
+            form.resetFields();
+            setActiveKey(undefined);
+          }}
+          handleFAQ={handleFAQ}
+        />
+      </>
     </>
   );
 };

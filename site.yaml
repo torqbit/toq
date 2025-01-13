@@ -76,6 +76,8 @@ site:
     faq:
       enabled: true
       items: null
+      title: FAQ
+      description: Frequently asked questions by the students
     testimonials:
       enabled: true
       title: "Teachers love our product "
