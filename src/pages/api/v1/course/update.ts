@@ -10,7 +10,7 @@ import { readFieldWithSingleFile } from "@/lib/upload/utils";
 import { ContentManagementService } from "@/services/cms/ContentManagementService";
 import appConstant from "@/services/appConstant";
 import { IChapterView, ICourseDetailView, ILessonView } from "@/types/courses/Course";
-import { courseDifficultyType, ResourceContentType, Role } from "@prisma/client";
+import { courseDifficultyType, ResourceContentType, Role, StateType } from "@prisma/client";
 
 export const config = {
   api: {
@@ -113,6 +113,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                     },
                   },
                 },
+                where: {
+                  state: StateType.ACTIVE,
+                },
               },
             },
           },
@@ -183,12 +186,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         trailerEmbedUrl: updateDetails.tvUrl || undefined,
         author: {
           name: updateDetails.user.name,
-          imageUrl: updateDetails.user.image || undefined,
+          imageUrl: updateDetails.user.image || null,
           designation: `Software engineer`,
         },
         pricing: {
           amount: updateDetails.coursePrice || 0,
-          currency: "INR",
+          currency: appConstant.currency,
         },
         contentDurationInHrs: contentDurationInHrs,
         assignmentsCount: assignmentCount,

@@ -29,7 +29,7 @@ const LessonListSideBar: FC<{
 
       <Sider
         width={400}
-        style={{ position: "absolute", bottom: 0, right: globalState.lessonCollapsed ? -10 : 0 }}
+        style={{ position: "fixed", bottom: 0, right: globalState.lessonCollapsed ? -10 : 0 }}
         theme="light"
         reverseArrow={true}
         className={`${styles.lesson_sider} ${globalState.lessonCollapsed ? "collapsed_lesson_sider" : "lesson_sider"}`}

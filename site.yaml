@@ -15,7 +15,7 @@ site:
     description: Master the art of product building and turn your ideas into
       successful, scalable products
     ogImage: /icon/torqbit.png
-    themeSwitch: true
+    themeSwitch: false
     defaultTheme: light
     favicon: /favicon.ico
     socialLinks:

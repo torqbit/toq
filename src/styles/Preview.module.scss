@@ -29,6 +29,9 @@
       border-bottom: 1px solid var(--border-color);
       color: var(--font-secondary);
 
+      & > div {
+        margin-bottom: 16px;
+      }
       i {
         font-size: 20px;
         line-height: 0;

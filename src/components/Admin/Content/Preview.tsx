@@ -184,27 +184,27 @@ const Preview: FC<{
             <p>
               <b>This course includes</b>
             </p>
-            <Flex gap={10} align="center" style={{ marginBottom: "1em" }}>
+            <Flex gap={10} align="center">
               <i>{SvgIcons.playFilled}</i>
               <div>{courseDetail.contentDurationInHrs} hours of content</div>
             </Flex>
-            <Flex gap={10} align="center" style={{ marginBottom: "1em" }}>
+            <Flex gap={10} align="center">
               <i>{SvgIcons.bookOpenFilled}</i>
               <div>{courseDetail.assignmentsCount} assignments</div>
             </Flex>
-            <Flex gap={10} align="center" style={{ marginBottom: "1em" }}>
+            <Flex gap={10} align="center">
               <i>{SvgIcons.clockFilled}</i>
               <div>{courseDetail.expiryInDays} days of access</div>
             </Flex>
-            <Flex gap={10} align="center" style={{ marginBottom: "1em" }}>
+            <Flex gap={10} align="center">
               <i>{SvgIcons.checkBadgeFilled}</i>
               <div>Certificate on completion</div>
             </Flex>
-            <Flex gap={10} align="center" style={{ marginBottom: "1em" }}>
+            <Flex gap={10} align="center">
               <i>{SvgIcons.calendarDaysFilled}</i>
               <div>Free access to workshops</div>
             </Flex>
-            <Flex gap={10} align="center" style={{ marginBottom: "1em" }}>
+            <Flex gap={10} align="center">
               <i>{SvgIcons.chatBubbleFilled}</i>
               <div>Access to Discussion</div>
             </Flex>

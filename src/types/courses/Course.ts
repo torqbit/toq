@@ -195,7 +195,7 @@ export interface ICourseDetailView {
   };
   author: {
     name: string;
-    imageUrl?: string;
+    imageUrl?: string | null;
     designation?: string;
   };
   trailerEmbedUrl?: string;
