@@ -18,6 +18,7 @@ import { ArrowLeftOutlined, ArrowRightOutlined, CaretLeftFilled, LeftOutlined, R
 import { useRouter } from "next/router";
 import { areAnswersEqualForKey } from "@/lib/utils";
 import { submissionStatus } from "@prisma/client";
+import { themeColors } from "@/services/darkThemeConfig";
 
 const AssignmentContentTab: FC<{
   lessonId?: number;
@@ -129,7 +130,7 @@ const AssignmentContentTab: FC<{
       lessonId as number,
       assignmentDetail?.assignmentId as number,
       (result) => {
-        if (result?.submissionContent && result?.submissionContent?.status !== "NOT_SUBMITTED") {
+        if (result?.submissionContent && result?.submissionContent?.status !== submissionStatus.NOT_SUBMITTED) {
           getEvaluationResult(result?.submissionContent?.id);
           lessonId && getAssignmentDetail(lessonId, false);
         }
@@ -257,7 +258,11 @@ const AssignmentContentTab: FC<{
               okText="Yes"
               cancelText="No"
             >
-              <Button type="primary" color="#70e000" disabled={!!evaluatioinResult}>
+              <Button
+                type="primary"
+                style={{ background: !!evaluatioinResult ? "" : themeColors.commons.success }}
+                disabled={!!evaluatioinResult}
+              >
                 Finish & complete <ArrowRightOutlined />
               </Button>
             </Popconfirm>
