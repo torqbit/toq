@@ -52,7 +52,7 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
     {
       title: "Dashboard",
       icon: SvgIcons.dashboard,
-      link: "admin/dashboard",
+      link: "/dashboard",
       key: "dashboard",
     },
     {
@@ -84,7 +84,7 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
 
   const adminMenu: MenuProps["items"] = [
     {
-      label: <Link href="/admin/dashboard">Dashboard</Link>,
+      label: <Link href="/dashboard">Dashboard</Link>,
       key: "dashboard",
       icon: SvgIcons.dashboard,
     },

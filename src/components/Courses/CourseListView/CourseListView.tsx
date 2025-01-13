@@ -14,7 +14,6 @@ export const CourseViewItem: FC<{ course: ICourseListItem; previewMode?: boolean
   const router = useRouter();
   const [showDummyPurchase, setDummyBtn] = useState(typeof previewMode !== "undefined" && previewMode);
 
-  console.log("dummy purchase", typeof previewMode == "undefined");
   const handleEdit = (id: number) => {
     router.push(`admin/content/course/${id}/edit`);
   };

@@ -209,6 +209,9 @@ export const getCourseDetailedView = async (
                 },
               },
             },
+            where: {
+              state: StateType.ACTIVE,
+            },
           },
         },
       },
@@ -309,7 +312,7 @@ export const getCourseDetailedView = async (
       enrolmentDate: enrolmentDate || null,
       author: {
         name: courseDBDetails.user.name,
-        imageUrl: courseDBDetails.user.image || undefined,
+        imageUrl: courseDBDetails.user.image || null,
         designation: `Software engineer`,
       },
       pricing: {

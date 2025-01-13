@@ -146,7 +146,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           const pms = new PaymentManagemetService();
 
           const paymentData = await pms.processPayment(userConfig, courseConfig);
-
           if (paymentData.success) {
             return res.status(paymentData.status).json({ ...paymentData.body, success: paymentData.success });
           } else {
@@ -156,6 +155,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       }
     }
   } catch (error: any) {
+    console.log(error);
     return errorHandler(error, res);
   }
 };

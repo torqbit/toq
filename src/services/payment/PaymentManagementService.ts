@@ -52,7 +52,6 @@ export class PaymentManagemetService {
             provider_name: gateway,
           },
         });
-        console.log(cf);
         if (cf) {
           return new APIResponse<any>(true, 200, "Succesfully fetched the gateway configuration", {
             state: cf.state,
@@ -146,12 +145,16 @@ export class PaymentManagemetService {
     switch (gatewayName) {
       case $Enums.gatewayProvider.CASHFREE:
         const secretStore = SecretsManager.getSecretsProvider();
-        const clientId = await secretStore.get(paymentsConstants.CF_CLIENT_ID);
-        const clientSecret = await secretStore.get(paymentsConstants.CF_CLIENT_SECRET);
-        if (clientId && clientSecret) {
-          return new CashfreePaymentProvider(clientId, clientSecret);
-        } else {
-          throw new Error("Access key and secret for Cashfree not found");
+        try {
+          const clientId = await secretStore.get(paymentsConstants.CF_CLIENT_ID);
+          const clientSecret = await secretStore.get(paymentsConstants.CF_CLIENT_SECRET);
+          if (clientId && clientSecret) {
+            return new CashfreePaymentProvider(clientId, clientSecret);
+          } else {
+            throw new Error("Access key and secret for Cashfree not found");
+          }
+        } catch (error) {
+          throw error;
         }
 
       default:
@@ -460,7 +463,7 @@ export class PaymentManagemetService {
 
       return new APIResponse(false, 500, "something went wrong.Contact the support team");
     } catch (error: any) {
-      return new APIResponse(false, 500, error);
+      return new APIResponse<PaymentApiResponse>(false, 500, error.message);
     }
   };
 }
