@@ -169,7 +169,7 @@ const Curriculum: FC<{
                 <div> Add Chapter</div>
               </Button>
 
-              {collapse ? (
+              {collapse || activeCollapseKey.length === 0 ? (
                 <Button
                   className={styles.add_btn}
                   onClick={() => {
