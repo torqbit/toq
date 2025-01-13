@@ -257,7 +257,7 @@ const AssignmentContentTab: FC<{
               okText="Yes"
               cancelText="No"
             >
-              <Button type="primary" color="#70e000">
+              <Button type="primary" color="#70e000" disabled={!!evaluatioinResult}>
                 Finish & complete <ArrowRightOutlined />
               </Button>
             </Popconfirm>
