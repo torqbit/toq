@@ -104,6 +104,16 @@
   border-right: 1px solid var(--border-color);
   overflow-y: auto;
 
+  .menu__item__wrapper {
+    > li > ul > li {
+      display: flex;
+      height: auto;
+      padding: 8px 0px;
+      line-height: 1.6;
+      align-self: flex-start;
+    }
+  }
+
   .course_title {
     margin: 20px 0px 0px 15px;
   }
@@ -137,7 +147,7 @@
 }
 
 .lesson_collapsed_btn {
-  position: absolute;
+  position: fixed;
   overflow: hidden;
   width: 30px;
   height: 34px;
@@ -169,7 +179,7 @@
   border-left: 1px solid var(--border-color);
 }
 .lesson_collapsed {
-  right: 18px;
+  right: 10px;
   top: 18px;
   z-index: 6;
   border-top-left-radius: 3px;

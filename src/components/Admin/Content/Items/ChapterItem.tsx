@@ -73,7 +73,7 @@ const SortableItem: FC<{
           </i>
 
           <Flex gap={10} align="center">
-            {icon}
+            <i style={{ lineHeight: 0, color: "var(--font-secondary)", fontSize: 18 }}>{icon}</i>
             <div style={{ cursor: "pointer" }}> {title}</div>
           </Flex>
         </Flex>

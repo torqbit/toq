@@ -79,7 +79,7 @@ ORDER BY chapterSeq, resourceSeq;`;
   });
 };
 
-const getLessonDetailForAuthor = async (courseId: number, userId: string) => {
+const getLessonDetailForAuthor = async (courseId: number, userId: string, userRole: Role) => {
   const getCourseDetail = await prisma.course.findUnique({
     where: {
       courseId: courseId,
@@ -88,7 +88,7 @@ const getLessonDetailForAuthor = async (courseId: number, userId: string) => {
       authorId: true,
     },
   });
-  if (userId === getCourseDetail?.authorId) {
+  if (userId === getCourseDetail?.authorId || userRole === Role.ADMIN) {
     return lessonDetail(courseId, String(userId), Role.AUTHOR);
   } else {
     return lessonForStudent(courseId, String(userId));
@@ -98,9 +98,9 @@ const getLessonDetailForAuthor = async (courseId: number, userId: string) => {
 const getLessonDetail = async (courseId: number, role?: Role, userId?: string) => {
   switch (role) {
     case Role.AUTHOR:
-      return getLessonDetailForAuthor(courseId, String(userId));
+      return getLessonDetailForAuthor(courseId, String(userId), role);
     case Role.ADMIN:
-      return getLessonDetailForAuthor(courseId, String(userId));
+      return getLessonDetailForAuthor(courseId, String(userId), role);
     case Role.MENTOR:
       return lessonDetail(courseId, String(userId), Role.MENTOR);
     case Role.STUDENT:

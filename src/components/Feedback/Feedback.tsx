@@ -41,7 +41,7 @@ const Feedback = () => {
             <>
               {feedback.mailSent ? (
                 <div className={styles.feedbackSentMessage}>
-                  <i>{SvgIcons.check}</i>
+                  <i style={{ lineHeight: 0, fontSize: 18, color: "var(--font-secondary)" }}>{SvgIcons.check}</i>
                   <p>Your feedback has been received!</p>
                 </div>
               ) : (

@@ -21,7 +21,10 @@ const LessonItem: FC<{
       <Flex justify="space-between" align="center">
         <div>
           <Flex gap={10} align="center">
-            {isCompleted ? SvgIcons.check : icon}
+            <i style={{ lineHeight: 0, fontSize: 18, color: "var(--font-secondary)" }}>
+              {" "}
+              {isCompleted ? SvgIcons.check : icon}{" "}
+            </i>
             <div>{title}</div>
           </Flex>
         </div>
