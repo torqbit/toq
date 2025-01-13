@@ -406,7 +406,7 @@ class AssignmentSerivce {
     getFetch(`/api/v1/course/${courseId}/assignment/${assignmentId}/${lessonId}/submission/get`).then((result) => {
       if (result.status == 200) {
         result.json().then((r) => {
-          const apiResponse = r as ApiResponse;
+          const apiResponse = r.body as ApiResponse;
           onSuccess(apiResponse);
         });
       } else {
@@ -429,7 +429,7 @@ class AssignmentSerivce {
       (result) => {
         if (result.status == 200) {
           result.json().then((r) => {
-            const apiResponse = r as ApiResponse;
+            const apiResponse = r.body as ApiResponse;
             onSuccess(apiResponse);
           });
         } else {

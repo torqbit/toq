@@ -10,13 +10,13 @@ import { Role, submissionStatus } from "@prisma/client";
 import { AssignmentType, IAssignmentDetails, MCQAssignment, MCQASubmissionContent } from "@/types/courses/assignment";
 import AssignmentEvaluationService from "@/services/lesson/AssignmentEvaluateService";
 import getUserRole from "@/actions/getRole";
+import { APIResponse } from "@/types/apis";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     let cookieName = getCookieName();
     const token = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
     const { submissionId, lessonId, assignmentId, comment } = req.query;
-    const userRole = await getUserRole(Number(assignmentId), token?.role, String(token?.id));
     const savedSubmission = await prisma.assignmentSubmission.update({
       where: {
         id: Number(submissionId),
@@ -25,7 +25,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         content: true,
       },
       data: {
-        status: "COMPLETED",
+        status: submissionStatus.COMPLETED,
       },
     });
 
@@ -76,13 +76,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           comment: {},
         },
       });
-
-      return res.status(200).json({
-        success: true,
-        message: "Submission completed",
-      });
+      return res.status(200).json(new APIResponse(true, 200, "Evaluation has been completed"));
     } else {
-      return res.status(200).json({ success: false, message: "Evaluation has been completed" });
+      return res.status(404).json(new APIResponse(false, 404, "Evaluation not submitted"));
     }
   } catch (error) {
     console.log(error);

@@ -5,6 +5,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "@/lib/prisma";
 import { getToken } from "next-auth/jwt";
 import { getCookieName } from "@/lib/utils";
+import { APIResponse } from "@/types/apis";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
@@ -27,8 +28,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         createdAt: "desc",
       },
     });
-
-    return res.status(200).json({ success: true, message: "Submission found", submissionContent: savedSubmission });
+    if (savedSubmission) {
+      return res
+        .status(200)
+        .json(new APIResponse(true, 200, "Submission found", { submissionContent: savedSubmission }));
+    } else {
+      return res.status(404).json(new APIResponse(false, 404, "Submission not found"));
+    }
   } catch (error) {
     console.log(error);
     errorHandler(error, res);

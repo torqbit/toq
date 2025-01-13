@@ -6,6 +6,10 @@ import prisma from "@/lib/prisma";
 import { AssignmentCreateRequest } from "@/types/courses/assignment";
 import { JsonObject } from "@prisma/client/runtime/library";
 import { APIResponse } from "@/types/apis";
+import getUserRole from "@/actions/getRole";
+import { Role } from "@prisma/client";
+import { getCookieName } from "@/lib/utils";
+import { getToken } from "next-auth/jwt";
 export const config = {
   api: {
     bodyParser: {
@@ -16,9 +20,14 @@ export const config = {
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
+    let cookieName = getCookieName();
+
+    const token = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
+
     const body = req.body as AssignmentCreateRequest;
     const { lessonId, title, estimatedDurationInMins, details, maximumScore, passingScore } = body;
     const unDetails = details as any;
+
     const lessonCount = await prisma.assignment.count({
       where: {
         lessonId: lessonId,
@@ -60,7 +69,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           lessonId: lessonId,
         },
       });
-      return res.json({ success: true, message: "Assignment has been created" });
+      return res.status(200).json(new APIResponse(true, 200, "Assignment has been created"));
     }
   } catch (error) {
     return errorHandler(error, res);
