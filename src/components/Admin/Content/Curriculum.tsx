@@ -169,23 +169,31 @@ const Curriculum: FC<{
                 <div> Add Chapter</div>
               </Button>
 
-              <Button
-                className={styles.add_btn}
-                onClick={() => {
-                  collapse ? setActiveCollapseKey(items.map((item, i) => `${i + 1}`)) : setActiveCollapseKey([]);
-                  setCollapse(!collapse);
-                }}
-              >
-                {!collapse ? (
-                  <Flex align="center" justify="center" gap={10}>
-                    {SvgIcons.barUpIcon} Collapse All
-                  </Flex>
-                ) : (
+              {collapse ? (
+                <Button
+                  className={styles.add_btn}
+                  onClick={() => {
+                    setActiveCollapseKey(items.map((item, i) => `${i + 1}`));
+                    setCollapse(false);
+                  }}
+                >
                   <Flex align="center" justify="center" gap={10}>
                     {SvgIcons.barsArrowDown} Expand all
                   </Flex>
-                )}
-              </Button>
+                </Button>
+              ) : (
+                <Button
+                  className={styles.add_btn}
+                  onClick={() => {
+                    setActiveCollapseKey([]);
+                    setCollapse(true);
+                  }}
+                >
+                  <Flex align="center" justify="center" gap={10}>
+                    {SvgIcons.barUpIcon} Collapse All
+                  </Flex>
+                </Button>
+              )}
             </Space>
           </Flex>
         )}
