@@ -76,9 +76,13 @@ export const CourseViewItem: FC<{ course: ICourseListItem; previewMode?: boolean
         description={course.description}
       />
       <Flex justify="space-between" align="center" className={styles.card__footer}>
-        <div>
-          {course.currency} {course.price}
-        </div>
+        {course.price > 0 ? (
+          <div>
+            {course.currency} {course.price}
+          </div>
+        ) : (
+          <div>Free</div>
+        )}
 
         {showDummyPurchase && <Button type="default">Buy Now</Button>}
 

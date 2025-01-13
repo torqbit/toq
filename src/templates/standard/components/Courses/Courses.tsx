@@ -36,7 +36,7 @@ const CourseCard: FC<ICourseCard> = ({
         </div>
         <div className={styles.card__footer}>
           {duration}
-          {courseType === CourseType.FREE && price > 0 ? <span>Free</span> : <span>INR {price}</span>}
+          {courseType === CourseType.FREE || price == 0 ? <span>Free</span> : <span>INR {price}</span>}
         </div>
       </div>
     </Link>
