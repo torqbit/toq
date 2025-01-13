@@ -540,7 +540,7 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
         setEdit={setChapterEdit}
       />
 
-      {currResId && (
+      {typeof currResId !== "undefined" && (
         <AddLesson
           showResourceDrawer={showResourceDrawer}
           setVideoLesson={setVideoLesson}

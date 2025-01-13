@@ -66,20 +66,12 @@ const SiteBuilderLayout: FC<{
   };
 
   const onCheckTheme = () => {
-    if (siteConfig.brand?.themeSwitch) {
-      const currentTheme = localStorage.getItem("theme");
-      if (currentTheme === "dark") {
-        localStorage.setItem("theme", "dark");
-      } else {
-        localStorage.setItem("theme", "light");
-      }
+    if (siteConfig.brand?.defaultTheme) {
+      localStorage.setItem("theme", siteConfig.brand?.defaultTheme);
     } else {
-      if (siteConfig.brand?.defaultTheme) {
-        localStorage.setItem("theme", siteConfig.brand?.defaultTheme);
-      } else {
-        localStorage.setItem("theme", "light");
-      }
+      localStorage.setItem("theme", "light");
     }
+
     setGlobalTheme(localStorage.getItem("theme") as Theme);
     dispatch({
       type: "SET_SITE_CONFIG",

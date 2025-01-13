@@ -40,6 +40,7 @@ const BlogContent: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) =
   return (
     <SiteBuilderLayout siteConfig={siteConfig} siteContent={<ContentNavigation activeMenu={"blogs"} />}>
       {contentHolder}
+      <h4 style={{ margin: "0 0 20px 0" }}>Blogs</h4>
       <BasicInfoForm
         form={form}
         onFinish={onSaveBasicInfo}

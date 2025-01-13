@@ -164,13 +164,10 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
   };
 
   const onCheckTheme = () => {
-    if (siteConfig.brand?.themeSwitch) {
-      const currentTheme = localStorage.getItem("theme");
-      if (currentTheme === "dark") {
-        localStorage.setItem("theme", "dark");
-      } else {
-        localStorage.setItem("theme", "light");
-      }
+    const currentTheme = localStorage.getItem("theme");
+
+    if (siteConfig.brand?.themeSwitch && currentTheme) {
+      localStorage.setItem("theme", currentTheme);
     } else {
       if (siteConfig.brand?.defaultTheme) {
         localStorage.setItem("theme", siteConfig.brand?.defaultTheme);

@@ -42,7 +42,16 @@ export const CourseViewItem: FC<{ course: ICourseListItem; previewMode?: boolean
       className={styles.course__card}
       cover={
         course.trailerThumbnail != null ? (
-          <img className={styles.card__img} alt={`thumbnail of ${course.title}`} src={course.trailerThumbnail} />
+          <object
+            type="image/png"
+            data={course.trailerThumbnail}
+            className={styles.card__img}
+            aria-label={`thumbnail of ${course.title}`}
+          >
+            <div className={styles.invalid__img}>
+              <i>{SvgIcons.academicCap}</i>
+            </div>
+          </object>
         ) : (
           <div className={styles.invalid__img}>
             <i>{SvgIcons.academicCap}</i>
@@ -69,16 +78,20 @@ export const CourseViewItem: FC<{ course: ICourseListItem; previewMode?: boolean
 
             <h4 style={{ marginTop: 5, marginBottom: 5 }}>{course.title}</h4>
             <p style={{ fontWeight: "normal", marginBottom: 0, fontSize: 14 }}>
-              A course by <b>{course.author}</b>
+              x A course by <b>{course.author}</b>
             </p>
           </>
         }
         description={course.description}
       />
       <Flex justify="space-between" align="center" className={styles.card__footer}>
-        <div>
-          {course.currency} {course.price}
-        </div>
+        {course.price > 0 ? (
+          <div>
+            {course.currency} {course.price}
+          </div>
+        ) : (
+          <div>Free</div>
+        )}
 
         {showDummyPurchase && <Button type="default">Buy Now</Button>}
 
