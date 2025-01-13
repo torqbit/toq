@@ -99,12 +99,11 @@ const AddAssignment: FC<{
   const [loading, setLoading] = useState<boolean>(false);
   const [editorValue, setDefaultValue] = useState<string>();
   const [submissionType, setSubmissionType] = useState<AssignmentType>();
-  const [programmingLang, setProgrammingLang] = useState<string>("");
   const [questions, setQuestions] = useState<MultipleChoiceQA[]>([createEmptyQuestion("1")]);
   const [archiveUrl, setArchiveUrl] = useState<string>("");
   const [initialCode, setInitialCode] = useState<string>("");
   const [current, setCurrent] = useState<number>(0);
-  const { globalState } = useAppContext();
+
   const handleAssignment = () => {
     if (!submissionType) return message.error("Please select assignment type");
     if (
@@ -232,20 +231,6 @@ const AddAssignment: FC<{
     setSubmissionType(undefined);
     setArchiveUrl("");
     onRefresh();
-  };
-
-  const onDeleteArchive = () => {
-    AssignmentService.deleteAssignmentArchive(
-      archiveUrl,
-      (result) => {
-        message.success(result.message);
-        setArchiveUrl("");
-        assignmentForm.setFieldValue("archiveUrl", "");
-      },
-      (error) => {
-        message.error(error);
-      }
-    );
   };
 
   return (

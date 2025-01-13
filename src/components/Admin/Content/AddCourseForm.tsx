@@ -66,6 +66,7 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const [showResourceDrawer, setResourceDrawer] = useState<boolean>(false);
   const onRefresh = () => {
     setRefresh(!refresh);
+    setResId(0);
   };
 
   const onChange = (key: string) => {

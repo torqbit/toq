@@ -43,14 +43,13 @@ const ViewAssignment: FC<{
   const { globalState } = useAppContext();
   const router = useRouter();
 
-  const getLatestStatus = (assignmentId: number, lessonId: number, courseId: number) => {
+  const getLatestStatus = (assignmentId: number, lessonId: number, courseId: string) => {
     if (submitLimit === appConstant.assignmentSubmissionLimit && subStatus !== submissionStatus.PENDING) {
       return;
     }
     AssignmentService.getLatestSubmissionStatus(
       lessonId,
       assignmentId,
-
       courseId,
       (result) => {
         setSubStatus(result.latestSubmissionStatus);
@@ -82,7 +81,12 @@ const ViewAssignment: FC<{
     {
       key: "view_assignment",
       label: `Assignment`,
-      children: <AssignmentContentTab lessonId={tabKey === "view_assignment" ? lessonId : undefined} />,
+      children: (
+        <AssignmentContentTab
+          lessonId={tabKey === "view_assignment" ? lessonId : undefined}
+          getEvaluateScore={getLatestStatus}
+        />
+      ),
     },
     {
       key: "submission",
@@ -133,7 +137,8 @@ const ViewAssignment: FC<{
     if (router.query.tab) {
       onTabChange(String(router.query.tab));
     }
-    assignmentId && getLatestStatus(Number(assignmentId), Number(router.query.lessonId), Number(router.query.courseId));
+    assignmentId &&
+      getLatestStatus(Number(assignmentId), Number(router.query.lessonId), router.query.courseId as string);
   }, [assignmentId]);
 
   const getTabWidth = () => {
@@ -155,7 +160,7 @@ const ViewAssignment: FC<{
         style={{ width: isMax933Width ? "auto" : getTabWidth(), transition: "all .4s ease" }}
         onChange={(key) => {
           onTabChange(key);
-          getLatestStatus(Number(assignmentId), Number(router.query.lessonId), Number(router.query.courseId));
+          getLatestStatus(Number(assignmentId), Number(router.query.lessonId), String(router.query.courseId));
         }}
         defaultActiveKey={"view_assignment"}
         activeKey={tabKey}
