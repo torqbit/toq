@@ -42,7 +42,16 @@ export const CourseViewItem: FC<{ course: ICourseListItem; previewMode?: boolean
       className={styles.course__card}
       cover={
         course.trailerThumbnail != null ? (
-          <img className={styles.card__img} alt={`thumbnail of ${course.title}`} src={course.trailerThumbnail} />
+          <object
+            type="image/png"
+            data={course.trailerThumbnail}
+            className={styles.card__img}
+            aria-label={`thumbnail of ${course.title}`}
+          >
+            <div className={styles.invalid__img}>
+              <i>{SvgIcons.academicCap}</i>
+            </div>
+          </object>
         ) : (
           <div className={styles.invalid__img}>
             <i>{SvgIcons.academicCap}</i>
@@ -76,9 +85,13 @@ export const CourseViewItem: FC<{ course: ICourseListItem; previewMode?: boolean
         description={course.description}
       />
       <Flex justify="space-between" align="center" className={styles.card__footer}>
-        <div>
-          {course.currency} {course.price}
-        </div>
+        {course.price > 0 ? (
+          <div>
+            {course.currency} {course.price}
+          </div>
+        ) : (
+          <div>Free</div>
+        )}
 
         {showDummyPurchase && <Button type="default">Buy Now</Button>}
 

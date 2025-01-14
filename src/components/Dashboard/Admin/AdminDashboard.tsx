@@ -1,51 +1,13 @@
 import { FC, useEffect, useState } from "react";
 import { PageSiteConfig } from "@/services/siteConstant";
 import styles from "./AdminDashboard.module.scss";
-import { Card, Flex, message, Skeleton, Tabs, TabsProps, Tag } from "antd";
-
+import { message, Tabs, TabsProps } from "antd";
 import { AnalyticsDuration, AnalyticsType, IAnalyticResponse, IAnalyticStats } from "@/types/courses/analytics";
 import AnalyticsService from "@/services/AnalyticsService";
 import { getDummyArray } from "@/lib/dummyData";
-import SvgIcons from "@/components/SvgIcons";
-import Analytics from "./Analytics";
-import appConstant from "@/services/appConstant";
-import { Serie } from "@nivo/line";
-
-const AnalyticsCard: FC<IAnalyticStats> = ({ type, total, comparedPercentage }) => {
-  return (
-    <Card className={styles.stats}>
-      <p>Total {type}</p>
-      <h2>
-        {type == "Earnings" && appConstant.payment.currency} {total}
-      </h2>
-      <Flex align="center">
-        {comparedPercentage !== 0 ? (
-          <Tag color={comparedPercentage > 0 ? "green" : "volcano"}>
-            <Flex align="center" gap={5}>
-              <i>{comparedPercentage < 0 ? SvgIcons.arrowTrendingDown : SvgIcons.arrowTrendingUp}</i>
-              <div>{Math.abs(comparedPercentage)}%</div>
-            </Flex>
-          </Tag>
-        ) : (
-          <Tag>
-            <Flex align="center" gap={5}>
-              <i>{SvgIcons.arrowRight}</i>
-              <div>{Math.abs(comparedPercentage)}%</div>
-            </Flex>
-          </Tag>
-        )}
-        <div>from last month</div>
-      </Flex>
-    </Card>
-  );
-};
-const AnalyticsCardSkeleton: FC<{}> = () => {
-  return (
-    <Card className={styles.stats}>
-      <Skeleton paragraph />
-    </Card>
-  );
-};
+import { AnalyticsCardSkeleton, AnalyticSkeleton } from "@/components/Analytics/AnalyticSkeleton";
+import Analytics from "@/components/Analytics/Analytics";
+import AnalyticsCard from "@/components/Analytics/AnalyticCard";
 
 const AdminDashboard: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const [messageApi, contextHolder] = message.useMessage();
@@ -79,7 +41,7 @@ const AdminDashboard: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
       label: "Earnings",
       children: (
         <>
-          {analyticStats?.info && (
+          {analyticStats?.info ? (
             <Analytics
               key={"Earnings"}
               loading={loadingAnalytics}
@@ -88,6 +50,8 @@ const AdminDashboard: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
               data={analyticStats.data}
               siteConfig={siteConfig}
             />
+          ) : (
+            <AnalyticSkeleton />
           )}
         </>
       ),

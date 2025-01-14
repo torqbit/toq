@@ -6,8 +6,7 @@ import { GetServerSidePropsContext } from "next";
 import { getToken } from "next-auth/jwt";
 import { FC, useEffect, useState } from "react";
 import { getSiteConfig } from "@/services/getSiteConfig";
-import { ICourseCard } from "@/types/landing/courses";
-import getCourseList from "@/actions/getCourseList";
+
 import getBlogList from "@/actions/getBlogList";
 import { IBlogCard } from "@/types/landing/blog";
 import { ICourseListItem } from "@/types/courses/Course";

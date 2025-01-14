@@ -1,4 +1,4 @@
-import { Button, Flex, Form, Input, message, Select, Steps, Tag } from "antd";
+import { Button, Flex, Form, Input, message, Select, Spin, Steps, Tag } from "antd";
 import ConfigFormLayout from "@/components/Configuration/ConfigFormLayout";
 import { FC, ReactNode, useEffect, useState } from "react";
 import cmsClient from "@/lib/admin/cms/cmsClient";
@@ -10,8 +10,9 @@ import { PageSiteConfig } from "@/services/siteConstant";
 import ConfigForm from "@/components/Configuration/ConfigForm";
 import { ConfigurationState } from "@prisma/client";
 import SvgIcons from "@/components/SvgIcons";
-import SpinLoader from "@/components/SpinLoader/SpinLoader";
+
 import { StorageConfig } from "@/types/cms/bunny";
+import { LoadingOutlined } from "@ant-design/icons";
 
 export interface IConfigForm {
   title: string;
@@ -325,9 +326,7 @@ const ContentManagementSystem: FC<{ siteConfig: PageSiteConfig; active: boolean 
 
   return (
     <>
-      {pageLoading ? (
-        <SpinLoader className="settings__spinner" />
-      ) : (
+      <Spin spinning={pageLoading} indicator={<LoadingOutlined spin />} size="large">
         <section>
           {contextHolder}
           <h3>Content Management System</h3>
@@ -468,7 +467,7 @@ const ContentManagementSystem: FC<{ siteConfig: PageSiteConfig; active: boolean 
             ]}
           />
         </section>
-      )}
+      </Spin>
     </>
   );
 };

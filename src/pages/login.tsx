@@ -1,10 +1,10 @@
-import { Alert, Button, ConfigProvider, Form, Input, message, Tooltip } from "antd";
+import { Alert, Button, ConfigProvider, Flex, Form, Input, message, Tooltip } from "antd";
 import React, { useEffect, useState } from "react";
 import styles from "@/styles/Login.module.scss";
 import { signIn, useSession } from "next-auth/react";
 import { NextPage, GetServerSidePropsContext } from "next";
 import { useRouter } from "next/router";
-import SpinLoader from "@/components/SpinLoader/SpinLoader";
+
 import { getToken } from "next-auth/jwt";
 import { authConstants, capitalizeFirstLetter, getCookieName } from "@/lib/utils";
 import Image from "next/image";
@@ -60,10 +60,6 @@ const LoginPage: NextPage<{
     setGitHubLoading(false);
     setGoogleLoading(false);
   };
-
-  if (sessionStatus === "loading") {
-    return <SpinLoader />;
-  }
 
   const handleLogin = async () => {
     setLoginLoading(true);

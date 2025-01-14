@@ -18,7 +18,7 @@ export const DEFAULT_THEME = {
       },
       {
         title: "Blog",
-        link: "/blog",
+        link: "/blogs",
       },
     ],
   },
@@ -104,6 +104,8 @@ export const DEFAULT_THEME = {
     },
 
     faq: {
+      title: "FAQ",
+      description: "FFrequently asked questions by the students",
       items: [
         {
           question: "First question",

@@ -503,96 +503,6 @@ a {
     display: none !important;
   }
 }
-.spinner_container {
-  position: relative;
-}
-
-.lesson_loader {
-  position: absolute;
-  top: 40%;
-  right: -30px;
-  width: 40px;
-  height: 40px;
-  border: 5px solid;
-}
-.lesson_loader,
-.preview_loader,
-.discussions_list_loader {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  border: 9px solid;
-  border-color: #dbdcef;
-  border-right-color: var(--btn-primary);
-  animation: spinner-d3wgkg 1s infinite linear;
-}
-.spinner_container > .course__spinner {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 56px;
-  height: 56px;
-
-  border-radius: 50%;
-  border: 9px solid;
-  border-color: #dbdcef;
-  border-right-color: var(--btn-primary);
-  animation: spinner-d3wgkg 1s infinite linear;
-}
-.spinner_container > .settings__spinner {
-  position: absolute;
-  top: 40%;
-  left: 45%;
-  width: 56px;
-  height: 56px;
-
-  border-radius: 50%;
-  border: 9px solid;
-  border-color: #dbdcef;
-  border-right-color: var(--btn-primary);
-  animation: spinner-d3wgkg 1s infinite linear;
-}
-
-.spinner_container > .discussions_list_loader {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 56px;
-  height: 56px;
-
-  border-radius: 50%;
-  border: 9px solid;
-  border-color: #dbdcef;
-  border-right-color: var(--btn-primary);
-  animation: spinner-d3wgkg 1s infinite linear;
-}
-
-.spinner_container > .spinner {
-  position: absolute;
-  top: calc(50vh - 28px);
-  left: calc(50vw - 28px);
-  width: 56px;
-  height: 56px;
-
-  border-radius: 50%;
-  border: 9px solid;
-  border-color: #dbdcef;
-  border-right-color: var(--btn-primary);
-  animation: spinner-d3wgkg 1s infinite linear;
-}
-
-.spinner_container > .marketing__spinner {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  border: 9px solid;
-  border-color: #dbdcef;
-  border-right-color: var(--btn-primary);
-  animation: spinner-d3wgkg 1s infinite linear;
-}
 
 .chat__popup {
   position: fixed;
@@ -644,22 +554,6 @@ a {
   .evaluate_assign_editor_view {
     height: 300px;
     overflow: auto;
-  }
-  .spinner_container {
-    max-height: 500px;
-  }
-  .spinner_container > .spinner,
-  .spinner_container > .settings__spinner,
-  .spinner_container > .course__spinner,
-  .spinner_container > .marketing__spinner {
-    top: calc(50vh - 28px);
-    left: calc(50vw - 28px);
-  }
-  .lesson_loader {
-    top: 42%;
-    right: -20px;
-    height: 50px;
-    width: 50px;
   }
 }
 
@@ -1039,36 +933,6 @@ a {
 
   justify-content: center;
   z-index: 1;
-}
-.spinner_wrapper {
-  background-color: #e1dddd7d;
-  opacity: 0.8;
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px;
-
-  position: absolute;
-  top: 26px;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  align-items: center;
-
-  justify-content: center;
-  z-index: 1;
-}
-
-.editor_spinner {
-  position: absolute;
-  top: 48%;
-  left: -30px;
-  width: 25px;
-  height: 25px;
-  border-radius: 50%;
-  border: 5px solid;
-  border-color: #dbdcef;
-  border-right-color: var(--btn-primary);
-  animation: spinner-d3wgkg 1s infinite linear;
 }
 
 .segment__wrapper .ant-segmented-item-label {

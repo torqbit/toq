@@ -4,6 +4,8 @@ import { SegmentedValue } from "antd/es/segmented";
 import { FC, useEffect, useState } from "react";
 import OverallMembersList from "../OverallMembersList";
 import CourseMembers from "../CourseMembers";
+import { Flex, Spin } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
 
 const CourseStats: FC<{
   courseId: number;
@@ -69,15 +71,20 @@ const CourseStats: FC<{
   };
 
   useEffect(() => {
+    setLoading(true);
     getOverallMembers();
     getMonthlyMembers();
   }, []);
 
   return (
-    <section>
-      {overallMembers && <OverallMembersList overallMembers={overallMembers} />}
-      {userData.length > 0 && <CourseMembers onChange={onChange} userData={userData} />}
-    </section>
+    <>
+      <Spin spinning={loading} indicator={<LoadingOutlined spin />} size="large">
+        <section>
+          {overallMembers && <OverallMembersList overallMembers={overallMembers} />}
+          {userData.length > 0 && <CourseMembers onChange={onChange} userData={userData} />}
+        </section>
+      </Spin>
+    </>
   );
 };
 

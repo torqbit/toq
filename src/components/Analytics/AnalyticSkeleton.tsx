@@ -1,9 +1,10 @@
 import { FC } from "react";
 
-import styles from "./AdminDashboard.module.scss";
-import { Flex, Segmented, Skeleton } from "antd";
+import styles from "./Analytics.module.scss";
 
-const AnalyticSkeleton: FC<{}> = () => {
+import { Card, Flex, Segmented, Skeleton } from "antd";
+
+export const AnalyticSkeleton: FC<{}> = () => {
   return (
     <div className={styles.analytics__wrapper}>
       <Flex align="center" justify="space-between">
@@ -15,4 +16,11 @@ const AnalyticSkeleton: FC<{}> = () => {
     </div>
   );
 };
-export default AnalyticSkeleton;
+
+export const AnalyticsCardSkeleton: FC<{}> = () => {
+  return (
+    <Card className={styles.stats}>
+      <Skeleton paragraph />
+    </Card>
+  );
+};

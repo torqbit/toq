@@ -238,18 +238,17 @@ const AddAssignment: FC<{
       classNames={{ header: styles.headerWrapper, body: styles.body, footer: `${styles.footer} add_assignment_footer` }}
       width={"55vw"}
       maskClosable={false}
-      closeIcon={false}
+      closeIcon={true}
+      onClose={() => {
+        currResId && !isEdit && onDeleteResource(currResId);
+        setResourceDrawer(false);
+        assignmentForm.resetFields();
+        onRefresh();
+      }}
       className={styles.newResDetails}
       title={
         <div className={styles.drawerHeader}>
           <Space className={styles.drawerTitle}>
-            <CloseOutlined
-              onClick={() => {
-                onClose(true);
-
-                setEdit(false);
-              }}
-            />
             {isEdit ? `Update ${contentType} Details` : `New ${contentType} Details`}
           </Space>
         </div>

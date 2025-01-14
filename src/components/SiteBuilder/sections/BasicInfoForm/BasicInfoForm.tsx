@@ -10,13 +10,13 @@ const BasicInfoForm: FC<{
   onFinish: () => void;
 }> = ({ form, initialValue, onFinish, extraContent }) => {
   return (
-    <ConfigFormLayout isCollapsible showArrow={false} formTitle="Basic info" extraContent={extraContent}>
+    <ConfigFormLayout showArrow={false} formTitle="Basic info" extraContent={extraContent}>
       <Form form={form} initialValues={initialValue} onChange={onFinish}>
         <Flex vertical gap={10}>
           <ConfigForm
             input={
               <Form.Item
-                style={{ width: 300 }}
+                style={{ width: 250 }}
                 name={"title"}
                 rules={[{ required: true, message: "Title is required" }]}
               >
