@@ -87,6 +87,18 @@ const Analytics: FC<{
           />
         );
 
+      case "Enrollments":
+        return (
+          <ToolTipContainer
+            title="Enrolled"
+            value={`${value} ${value > 0 && value > 1 ? "Students" : "Student"}`}
+            date={
+              segment === "month"
+                ? `on ${date} ${new Date().toLocaleString("default", { month: "short" })}`
+                : `in ${date}`
+            }
+          />
+        );
       default:
         return <></>;
     }

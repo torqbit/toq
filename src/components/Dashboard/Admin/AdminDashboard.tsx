@@ -56,6 +56,26 @@ const AdminDashboard: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
         </>
       ),
     },
+    {
+      key: "Enrollments",
+      label: "Enrollments",
+      children: (
+        <>
+          {analyticStats?.info ? (
+            <Analytics
+              key={"Enrollments"}
+              loading={loadingAnalytics}
+              info={analyticStats.info as IAnalyticStats}
+              handleAnalytic={handleAnalytics}
+              data={analyticStats.data}
+              siteConfig={siteConfig}
+            />
+          ) : (
+            <AnalyticSkeleton />
+          )}
+        </>
+      ),
+    },
   ];
 
   useEffect(() => {

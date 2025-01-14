@@ -152,6 +152,7 @@ class Analytics {
         };
     }
   }
+
   async getEarningsByDurtaion(duration: AnalyticsDuration): Promise<APIResponse<IAnalyticResponse>> {
     const transactions = await prisma.order.groupBy({
       by: ["updatedAt"],
@@ -313,6 +314,92 @@ class Analytics {
         index: quarterStartMonth + 2,
       },
     ];
+  }
+
+  async getEnrollment(duration: AnalyticsDuration): Promise<APIResponse<IAnalyticResponse>> {
+    const enrollments = await prisma.courseRegistration.groupBy({
+      by: ["dateJoined"],
+      where: {
+        dateJoined: {
+          gte: this.getDateCondition(duration).startDate,
+          lte: this.getDateCondition(duration).endDate,
+        },
+      },
+      _count: {
+        studentId: true,
+      },
+    });
+
+    console.log(enrollments);
+    let data: { x: string; y: number }[] = [];
+
+    switch (duration) {
+      case "month":
+        data = await this.generateMonthlyData(
+          enrollments.map((t) => {
+            return {
+              amount: t._count.studentId || 0,
+              createdAt: t.dateJoined,
+            };
+          })
+        );
+
+        break;
+
+      case "quarter":
+        data = await this.generateQuarterlyData(
+          enrollments.map((t) => {
+            return {
+              amount: t._count.studentId || 0,
+              createdAt: t.dateJoined,
+            };
+          })
+        );
+        break;
+      case "year":
+        data = await this.generateYearlyData(
+          enrollments.map((t) => {
+            return {
+              amount: t._count.studentId || 0,
+              createdAt: t.dateJoined,
+            };
+          })
+        );
+        break;
+
+      default:
+        break;
+    }
+
+    let totalAmount = enrollments
+      .map((t) => t._count.studentId)
+      .reduce((sum, amount) => Number(sum) + Number(amount), 0);
+
+    const previousDetail = await prisma.courseRegistration.aggregate({
+      _count: {
+        studentId: true,
+      },
+      where: {
+        dateJoined: {
+          gte: this.getDateCondition(duration).previousStartDate,
+          lte: this.getDateCondition(duration).previousEndDate,
+        },
+      },
+    });
+
+    return new APIResponse(true, 200, "", {
+      info: {
+        total: `${totalAmount || 0}`,
+        type: "Enrollments",
+        comparedPercentage: compareByPercentage(totalAmount || 0, previousDetail._count.studentId || 0),
+      },
+      data: [
+        {
+          id: "line",
+          data,
+        },
+      ],
+    });
   }
 }
 

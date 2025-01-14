@@ -17,6 +17,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           message: "Earning detail has been fetched",
           analyticStats: earningDetail.body,
         });
+      case "Enrollments":
+        const enrollmentsDetail = await analytics.getEnrollment(duration as AnalyticsDuration);
+
+        return res.status(enrollmentsDetail.status).json({
+          success: enrollmentsDetail.success,
+          message: "Earning detail has been fetched",
+          analyticStats: enrollmentsDetail.body,
+        });
 
       default:
         return res.status(400).json({ success: false, error: "Analytic type not defined" });
