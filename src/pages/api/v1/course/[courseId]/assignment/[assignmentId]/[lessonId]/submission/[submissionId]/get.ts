@@ -15,13 +15,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       },
     });
 
-    if (evaluationResult?.id) {
-      return res
-        .status(200)
-        .json(new APIResponse(true, 200, "Evaluation result found", { evaluationResult: evaluationResult }));
-    } else {
-      return res.status(404).json(new APIResponse(false, 404, "Evaluation result not found"));
-    }
+    return res.status(200).json(new APIResponse(true, 200, "Evaluation result found", evaluationResult));
   } catch (error) {
     console.log(error);
     errorHandler(error, res);

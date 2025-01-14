@@ -28,13 +28,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         createdAt: "desc",
       },
     });
-    if (savedSubmission) {
-      return res
-        .status(200)
-        .json(new APIResponse(true, 200, "Submission found", { submissionContent: savedSubmission }));
-    } else {
-      return res.status(404).json(new APIResponse(false, 404, "Submission not found"));
-    }
+
+    return res.status(200).json(new APIResponse(true, 200, "Submission found", savedSubmission));
   } catch (error) {
     console.log(error);
     errorHandler(error, res);

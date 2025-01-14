@@ -173,20 +173,20 @@ const AddAssignment: FC<{
       AssignmentService.getAssignment(
         currResId,
         false,
-        (result) => {
-          assignmentForm.setFieldValue("title", result.assignmentDetail.name);
-          assignmentForm.setFieldValue("estimatedDurationInMins", result.assignmentDetail.estimatedDurationInMins);
-          assignmentForm.setFieldValue("assignmentType", result.assignmentDetail.content._type);
-          setSubmissionType(result.assignmentDetail.content._type);
+        (assignmentDetail) => {
+          assignmentForm.setFieldValue("title", assignmentDetail.name);
+          assignmentForm.setFieldValue("estimatedDurationInMins", assignmentDetail.estimatedDurationInMins);
+          assignmentForm.setFieldValue("assignmentType", assignmentDetail.content._type);
+          setSubmissionType(assignmentDetail.content._type);
 
-          switch (result.assignmentDetail.content._type) {
+          switch (assignmentDetail.content._type) {
             case AssignmentType.MCQ:
-              const content = result.assignmentDetail.content as MCQAssignment;
+              const content = assignmentDetail.content as MCQAssignment;
               setQuestions(content.questions);
               setCurrent(1);
               break;
             case AssignmentType.PROGRAMMING_PROJECT:
-              const submissionConf2 = result.assignmentDetail.content as IProgrammingProjectSubmission;
+              const submissionConf2 = assignmentDetail.content as IProgrammingProjectSubmission;
               assignmentForm.setFieldValue("projectFramework", submissionConf2.framework);
               assignmentForm.setFieldValue("archiveUrl", submissionConf2.baseProjectArchiveUrl);
               setArchiveUrl(submissionConf2.baseProjectArchiveUrl);
@@ -196,9 +196,9 @@ const AddAssignment: FC<{
               break;
           }
 
-          if (result.assignmentDetail.maximumScore || result.assignmentDetail.passingScore) {
-            assignmentForm.setFieldValue("maximumScore", result.assignmentDetail.maximumScore);
-            assignmentForm.setFieldValue("passingScore", result.assignmentDetail.passingScore);
+          if (assignmentDetail.maximumScore || assignmentDetail.passingScore) {
+            assignmentForm.setFieldValue("maximumScore", assignmentDetail.maximumScore);
+            assignmentForm.setFieldValue("passingScore", assignmentDetail.passingScore);
             setCurrent(2);
           }
         },

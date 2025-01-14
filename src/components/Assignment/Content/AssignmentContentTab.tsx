@@ -7,14 +7,14 @@ import SpinLoader from "../../SpinLoader/SpinLoader";
 import MCQViewAssignment from "./MCQViewAssignment/MCQViewAssignment";
 import {
   AssignmentType,
-  IAssignmentSubmissoionDetail,
+  IAssignmentSubmissionDetail,
   IEvaluationResult,
   MCQAssignment,
   MCQASubmissionContent,
   MultipleChoiceQA,
   SelectedAnswersType,
 } from "@/types/courses/assignment";
-import { ArrowLeftOutlined, ArrowRightOutlined, CaretLeftFilled, LeftOutlined, RightOutlined } from "@ant-design/icons";
+import { ArrowRightOutlined, LeftOutlined, RightOutlined } from "@ant-design/icons";
 import { useRouter } from "next/router";
 import { areAnswersEqualForKey } from "@/lib/utils";
 import { submissionStatus } from "@prisma/client";
@@ -26,7 +26,7 @@ const AssignmentContentTab: FC<{
 }> = ({ lessonId, getEvaluateScore }) => {
   const router = useRouter();
   const [assignmentDetail, setAssignmentDetail] = useState<IAssignmentDetail>();
-  const [submissionDetail, setSubmissionDetail] = useState<IAssignmentSubmissoionDetail | null>(null);
+  const [submissionDetail, setSubmissionDetail] = useState<IAssignmentSubmissionDetail | null>(null);
   const [evaluatioinResult, setEvaluationResult] = useState<IEvaluationResult | null>(null);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [questions, setQuestions] = useState<MultipleChoiceQA[]>([]);
@@ -41,10 +41,10 @@ const AssignmentContentTab: FC<{
     AssignmentService.getAssignment(
       lessonId,
       isNoAnswer,
-      (result) => {
-        setAssignmentDetail(result.assignmentDetail);
-        if (result.assignmentDetail.content._type === AssignmentType.MCQ) {
-          setQuestions((result.assignmentDetail.content as unknown as MCQAssignment).questions);
+      (assignmentDetail) => {
+        setAssignmentDetail(assignmentDetail);
+        if (assignmentDetail.content._type === AssignmentType.MCQ) {
+          setQuestions((assignmentDetail.content as unknown as MCQAssignment).questions);
         }
         setLoading(false);
       },
@@ -67,7 +67,7 @@ const AssignmentContentTab: FC<{
   };
 
   const handleSelectAnswer = (answer: string | number, id: string) => {
-    if (submissionDetail && submissionDetail?.status !== "NOT_SUBMITTED") return;
+    if (submissionDetail && submissionDetail?.status !== submissionStatus.NOT_SUBMITTED) return;
     setSelectedAnswers((prev: Record<number, (string | number)[]>) => {
       const currentAnswers = prev[Number(id)] || [];
       const isSelected = currentAnswers.includes(answer);
@@ -129,16 +129,17 @@ const AssignmentContentTab: FC<{
       router.query.slug as string,
       lessonId as number,
       assignmentDetail?.assignmentId as number,
-      (result) => {
-        if (result?.submissionContent && result?.submissionContent?.status !== submissionStatus.NOT_SUBMITTED) {
-          getEvaluationResult(result?.submissionContent?.id);
+      (submissionContent) => {
+        console.log(submissionContent, "dd");
+        if (submissionContent && submissionContent?.status !== submissionStatus.NOT_SUBMITTED) {
+          getEvaluationResult(submissionContent?.id);
           lessonId && getAssignmentDetail(lessonId, false);
         }
-        if (result.submissionContent) {
-          setSubmissionDetail(result.submissionContent);
+        if (submissionContent) {
+          setSubmissionDetail(submissionContent);
         }
-        if (result?.submissionContent?.content._type === AssignmentType.MCQ) {
-          const content = result.submissionContent.content as MCQASubmissionContent;
+        if (submissionContent?.content._type === AssignmentType.MCQ) {
+          const content = submissionContent.content as MCQASubmissionContent;
           setSelectedAnswers(content.selectedAnswers);
           setsavedAnswer(content.selectedAnswers);
         } else {
@@ -160,7 +161,7 @@ const AssignmentContentTab: FC<{
       assignmentDetail?.assignmentId as number,
       submissionId,
       (result) => {
-        setEvaluationResult(result.evaluationResult);
+        setEvaluationResult(result);
       },
       (error) => {
         messageApi.error(error);
@@ -204,7 +205,7 @@ const AssignmentContentTab: FC<{
               <h5>
                 Question {currentQuestionIndex + 1}/{questions.length}
               </h5>
-              {submissionDetail && submissionDetail?.status !== "NOT_SUBMITTED" && (
+              {submissionDetail && submissionDetail?.status !== submissionStatus.NOT_SUBMITTED && (
                 <Tag
                   color={
                     evaluatioinResult?.scoreSummary?.eachQuestionScore[currentQuestionIndex]?.score ===
