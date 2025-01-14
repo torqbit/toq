@@ -330,7 +330,6 @@ class Analytics {
       },
     });
 
-    console.log(enrollments);
     let data: { x: string; y: number }[] = [];
 
     switch (duration) {
