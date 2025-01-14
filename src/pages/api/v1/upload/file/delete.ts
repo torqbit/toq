@@ -9,6 +9,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const body = await req.body;
     const { name, dir } = body;
 
+    // Validate name and dir values
+    const isValidName = /^[a-zA-Z0-9-_]+$/.test(name);
+    const isValidDir = /^[a-zA-Z0-9-_]+$/.test(dir);
+    if (!isValidName || !isValidDir) {
+      return res.status(400).json({ success: false, message: "Invalid name or dir value" });
+    }
+
     const service_provider = await prisma.serviceProvider.findFirst({
       where: {
         provider_name: "bunny img",

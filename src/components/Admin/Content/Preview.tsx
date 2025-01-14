@@ -1,13 +1,13 @@
-import SpinLoader from "@/components/SpinLoader/SpinLoader";
 import SvgIcons from "@/components/SvgIcons";
 import { themeColors } from "@/services/darkThemeConfig";
 import styles from "@/styles/Preview.module.scss";
 import { IChapterView, ICourseDetailView } from "@/types/courses/Course";
-import { UserOutlined } from "@ant-design/icons";
+import { LoadingOutlined, UserOutlined } from "@ant-design/icons";
 import { orderStatus, ResourceContentType, Role } from "@prisma/client";
-import { Avatar, Button, Collapse, CollapseProps, Flex, Tabs } from "antd";
+import { Avatar, Button, Collapse, CollapseProps, Flex, Spin, Tabs } from "antd";
 
 import { CSSProperties, FC } from "react";
+import { useMediaQuery } from "react-responsive";
 
 const CurriculumList: FC<{ chapters: IChapterView[] }> = ({ chapters }) => {
   const collapsibleItems: CollapseProps["items"] = chapters.map((c, index) => {
@@ -52,9 +52,10 @@ const Preview: FC<{
       <Flex align="flex-start" justify="flex-start" gap={20}>
         <div>
           <div className={styles.video_container}>
-            <Flex className={styles.spin_wrapper} align="center" justify="center">
-              <SpinLoader className="preview_loader" />
+            <Flex style={{ height: "100%", width: "100%", position: "absolute" }} align="center" justify="center">
+              <Spin indicator={<LoadingOutlined spin />} size="large" />
             </Flex>
+
             {
               <iframe
                 allowFullScreen

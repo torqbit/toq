@@ -59,7 +59,7 @@ const SiteDesign: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) =>
   return (
     <SiteBuilderLayout
       updateYamlFile={updateYamlFile}
-      siteConfig={siteConfig}
+      siteConfig={{ ...siteConfig, brand: { ...siteConfig.brand, defaultTheme: config.brand?.defaultTheme } }}
       setConfig={setConfig}
       siteDesigner={
         <SiteDesigner setActiveKey={setActiveKey} activeKey={activeKey} config={config} updateSiteConfig={setConfig} />

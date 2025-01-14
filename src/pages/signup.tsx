@@ -1,15 +1,14 @@
-import { Alert, Button, ConfigProvider, Form, Input, message, Spin, Tooltip } from "antd";
+import { Alert, Button, ConfigProvider, Flex, Form, Input, message, Tooltip } from "antd";
 import React, { useEffect, useState } from "react";
 import styles from "@/styles/Login.module.scss";
 import { signIn, useSession } from "next-auth/react";
 import { NextPage, GetServerSidePropsContext } from "next";
 import { useRouter } from "next/router";
-import SpinLoader from "@/components/SpinLoader/SpinLoader";
+
 import { getToken } from "next-auth/jwt";
 import { authConstants, capitalizeFirstLetter, getCookieName } from "@/lib/utils";
 import Image from "next/image";
 import getLoginMethods from "@/lib/auth/loginMethods";
-import Link from "next/link";
 import SvgIcons from "@/components/SvgIcons";
 import AuthService from "@/services/auth/AuthService";
 import { getSiteConfig } from "@/services/getSiteConfig";
@@ -59,9 +58,6 @@ const LoginPage: NextPage<{
     root.style.setProperty("--btn-primary", `${siteConfig.brand?.brandColor}`);
   }, []);
 
-  if (sessionStatus === "loading") {
-    return <SpinLoader />;
-  }
   const handleSignup = () => {
     setSignupLoading(true);
 

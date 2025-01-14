@@ -164,7 +164,7 @@ const ContentList: FC<{ contentType: string }> = ({ contentType }) => {
       {contextHolder}
 
       <Flex align="center" justify="space-between" style={{ marginBottom: "20px" }}>
-        <h4 style={{ margin: "0px" }}>{contentType === "BLOG" ? "Blogs" : "Updates"} </h4>
+        <h4 style={{ margin: "0px" }}>{contentType === "BLOG" ? "Blogs list" : "Updates list"} </h4>
         <Link href={`/admin/site/content/${contentType === "BLOG" ? "blogs" : "updates"}/add`}>
           <Button type="primary">
             <Flex align="center" gap={5}>

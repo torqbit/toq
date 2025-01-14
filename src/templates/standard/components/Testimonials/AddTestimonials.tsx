@@ -167,20 +167,6 @@ const AddTestimonial: FC<{ siteConfig: PageSiteConfig; setConfig: (value: PageSi
     });
   };
 
-  const onSaveBasicInfo = () => {
-    siteConfig.sections?.testimonials &&
-      setConfig({
-        ...siteConfig,
-        sections: {
-          ...siteConfig.sections,
-          testimonials: {
-            ...siteConfig.sections?.testimonials,
-            title: basicForm.getFieldsValue().title,
-            description: basicForm.getFieldsValue().description,
-          },
-        },
-      });
-  };
   const handleEdit = (index: number) => {
     setOpen(true);
     setEdit(true);
@@ -237,14 +223,6 @@ const AddTestimonial: FC<{ siteConfig: PageSiteConfig; setConfig: (value: PageSi
   return (
     <section className={styles.add__testimonial}>
       {contentHolder}
-      <BasicInfoForm
-        form={basicForm}
-        onFinish={onSaveBasicInfo}
-        initialValue={{
-          title: siteConfig.sections?.testimonials?.title,
-          description: siteConfig.sections?.testimonials?.description,
-        }}
-      />
 
       {testimonialList.length > 0 ? (
         <Flex vertical className={styles.testimonial__list__container}>
@@ -266,7 +244,7 @@ const AddTestimonial: FC<{ siteConfig: PageSiteConfig; setConfig: (value: PageSi
           </Button>
         </Flex>
       ) : (
-        <Flex vertical align="center" justify="center" gap={20}>
+        <Flex vertical align="center" justify="center" gap={20} style={{ marginBottom: 20 }}>
           <img src="/img/common/empty.svg" alt="" />
 
           <h4>No testimonials exist </h4>

@@ -9,11 +9,12 @@ import AnalyticsService, { UserAnalyseData } from "@/services/AnalyticsService";
 import { useEffect, useState } from "react";
 import { SegmentedValue } from "antd/es/segmented";
 import ProgramService from "@/services/ProgramService";
-import SpinLoader from "@/components/SpinLoader/SpinLoader";
+
 import AppLayout from "@/components/Layouts/AppLayout";
 import { PageSiteConfig } from "@/services/siteConstant";
 import { getSiteConfig } from "@/services/getSiteConfig";
 import CourseStats from "@/components/Admin/Analytics/CourseStats/CourseStats";
+import { LoadingOutlined } from "@ant-design/icons";
 
 const AnalyticsPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const { data: session } = useSession();
@@ -113,14 +114,10 @@ const AnalyticsPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig })
   return (
     <AppLayout siteConfig={siteConfig}>
       <>
-        {loading ? (
-          <SpinLoader />
-        ) : (
-          <section className={styles.analyticsContainer}>
-            <h3>{courseName}</h3>
-            <Tabs tabBarGutter={40} items={items} activeKey={tab} onChange={(k) => setTab(k)} />
-          </section>
-        )}
+        <section className={styles.analyticsContainer}>
+          <h3>{courseName}</h3>
+          <Tabs tabBarGutter={40} items={items} activeKey={tab} onChange={(k) => setTab(k)} />
+        </section>
       </>
     </AppLayout>
   );

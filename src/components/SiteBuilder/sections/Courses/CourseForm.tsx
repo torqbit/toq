@@ -34,7 +34,12 @@ const CourseForm: FC<{
       description: "Add description for your course list ",
       layout: "vertical",
       input: (
-        <Input
+        <Input.TextArea
+          className={styles.text__area__wrapper}
+          showCount={true}
+          rows={3}
+          style={{ marginBottom: 20 }}
+          maxLength={250}
           onChange={(e) => {
             setCourseConfig({ ...courseConfig, description: e.currentTarget.value });
           }}

@@ -19,12 +19,12 @@ class Analytics {
     (SELECT COALESCE(SUM(amount), 0) FROM \`Order\` WHERE  orderStatus = ${orderStatus.SUCCESS}) AS total,
     (SELECT COALESCE(SUM(amount), 0) 
      FROM \`Order\` 
-     WHERE createdAt >= DATE_FORMAT(CURDATE(), '%Y-%m-01') 
-     AND createdAt < DATE_FORMAT(DATE_ADD(CURDATE(), INTERVAL 1 MONTH), '%Y-%m-01') AND orderStatus = ${orderStatus.SUCCESS} ) AS current,
+     WHERE updatedAt >= DATE_FORMAT(CURDATE(), '%Y-%m-01') 
+     AND updatedAt < DATE_FORMAT(DATE_ADD(CURDATE(), INTERVAL 1 MONTH), '%Y-%m-01') AND orderStatus = ${orderStatus.SUCCESS} ) AS current,
     (SELECT COALESCE(SUM(amount), 0) 
      FROM \`Order\`
-     WHERE createdAt >= DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 1 MONTH), '%Y-%m-01') 
-     AND createdAt < DATE_FORMAT(CURDATE(), '%Y-%m-01') AND orderStatus = ${orderStatus.SUCCESS}) AS previous`;
+     WHERE updatedAt >= DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 1 MONTH), '%Y-%m-01') 
+     AND updatedAt < DATE_FORMAT(CURDATE(), '%Y-%m-01') AND orderStatus = ${orderStatus.SUCCESS}) AS previous`;
 
     if (result.length > 0) {
       return new APIResponse(true, 200, "", {
@@ -154,10 +154,10 @@ class Analytics {
   }
   async getEarningsByDurtaion(duration: AnalyticsDuration): Promise<APIResponse<IAnalyticResponse>> {
     const transactions = await prisma.order.groupBy({
-      by: ["createdAt"],
+      by: ["updatedAt"],
       where: {
         orderStatus: orderStatus.SUCCESS,
-        createdAt: {
+        updatedAt: {
           gte: this.getDateCondition(duration).startDate,
           lte: this.getDateCondition(duration).endDate,
         },
@@ -175,7 +175,7 @@ class Analytics {
           transactions.map((t) => {
             return {
               amount: t._sum.amount || 0,
-              createdAt: t.createdAt,
+              createdAt: t.updatedAt,
             };
           })
         );
@@ -187,7 +187,7 @@ class Analytics {
           transactions.map((t) => {
             return {
               amount: t._sum.amount || 0,
-              createdAt: t.createdAt,
+              createdAt: t.updatedAt,
             };
           })
         );
@@ -197,7 +197,7 @@ class Analytics {
           transactions.map((t) => {
             return {
               amount: t._sum.amount || 0,
-              createdAt: t.createdAt,
+              createdAt: t.updatedAt,
             };
           })
         );

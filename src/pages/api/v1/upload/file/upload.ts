@@ -5,6 +5,8 @@ import { ContentManagementService } from "@/services/cms/ContentManagementServic
 import prisma from "@/lib/prisma";
 import { withAuthentication } from "@/lib/api-middlewares/with-authentication";
 import { readFieldWithFile, saveToLocal } from "@/lib/upload/utils";
+import { ServiceType } from "@prisma/client";
+import appConstant from "@/services/appConstant";
 
 export const config = {
   api: {
@@ -25,80 +27,47 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const { fields, files } = (await readFieldWithFile(req)) as any;
 
     if (files.file) {
-      const name = fields.title[0].replaceAll(" ", "_");
-      const dir = fields.dir[0];
-      const fileType = fields.hasOwnProperty("fileType") && fields.fileType[0];
-
-      const extension = getFileExtension(files.file[0].originalFilename);
-      const sourcePath = files.file[0].filepath;
-      const currentTime = new Date().getTime();
-      const fullName = `${name.replace(/\s+/g, "-")}-${currentTime}.${extension}`;
-      const bannerPath = `${dir}${fullName}`;
-
-      const localPath = await saveToLocal(fullName, sourcePath);
-
-      const fileBuffer = await fs.promises.readFile(`${localPath}`);
-
-      const serviceProviderResponse = await prisma?.serviceProvider.findFirst({
-        where: {
-          service_type: "media",
-        },
-      });
-      if (serviceProviderResponse) {
-        const serviceProvider = cms.getServiceProvider(
-          serviceProviderResponse?.provider_name,
-          serviceProviderResponse?.providerDetail
-        );
+      if (fields.hasOwnProperty("videoId")) {
+        const cms = new ContentManagementService().getCMS(appConstant.defaultCMSProvider);
+        const cmsConfig = (await cms.getCMSConfig()).body?.config;
 
         if (fields.hasOwnProperty("existingFilePath")) {
-          const deletionResponse = await cms.deleteFile(`${fields.existingFilePath[0]}`, serviceProvider);
-          if (!deletionResponse.success && deletionResponse.statusCode !== 404) {
-            throw new Error(`Unable to delete the file due to : ${deletionResponse.message}`);
-          }
+          //delete the existing thumbnail
+          await cms.deleteCDNImage(cmsConfig, fields.existingFilePath[0]);
         }
 
-        const uploadResponse = await cms.uploadFile(fullName, fileBuffer, bannerPath, serviceProvider);
-        if (fileType === "thumbnail") {
-          await prisma.video
-            .update({
-              where: {
-                id: Number(fields.videoId[0]),
-              },
-              data: {
-                thumbnail: uploadResponse.fileCDNPath,
-              },
-            })
-            .then(async (result) => {
-              const videoThumbnailResponse = await cms.uploadVideoThumbnail(
-                uploadResponse.fileCDNPath,
-                `${fields.providerVideoId[0]}`,
-                serviceProvider
-              );
-              if (!videoThumbnailResponse.success && videoThumbnailResponse.statusCode !== 404) {
-                throw new Error(`Unable to upload the file due to : ${videoThumbnailResponse.message}`);
-              }
-            });
-        }
-        if (localPath != "") {
-          fs.unlinkSync(`${localPath}`);
-        }
-
-        const findVideoState =
-          fields.hasOwnProperty("videoId") &&
-          (await prisma.video.findUnique({
+        const extension = getFileExtension(files.file[0].originalFilename);
+        const sourcePath = files.file[0].filepath;
+        const fileBuffer = await fs.promises.readFile(`${sourcePath}`);
+        //now upload the image
+        const newThumbnailResponse = await cms.uploadVideoThumbnail(
+          cmsConfig,
+          fileBuffer,
+          extension,
+          fields.providerVideoId[0],
+          Number(fields.videoId[0]),
+          "lesson"
+        );
+        if (newThumbnailResponse.success && newThumbnailResponse.body) {
+          const trailerThumbnail = newThumbnailResponse.body;
+          await prisma.video.update({
             where: {
               id: Number(fields.videoId[0]),
             },
-            select: {
-              state: true,
+            data: {
+              thumbnail: trailerThumbnail,
             },
-          }));
-
-        return res
-          .status(uploadResponse?.statusCode || 200)
-          .json({ ...uploadResponse, videoState: findVideoState?.state });
-      } else {
-        throw new Error("No Media Provder has been configured");
+          });
+          return res
+            .status(200)
+            .json({
+              success: true,
+              message: "Thumbnail has been successfully uploaded",
+              fileCDNPath: trailerThumbnail,
+            });
+        } else {
+          throw new Error("Unable to upload the thumnail, due to missing trailer video details");
+        }
       }
     }
 
