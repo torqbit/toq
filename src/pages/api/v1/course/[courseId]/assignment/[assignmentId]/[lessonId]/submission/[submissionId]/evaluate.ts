@@ -53,30 +53,32 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           assignmentDetail?.content as unknown as MCQAssignment
         );
 
-      await prisma.assignmentSubmission.update({
-        where: {
-          id: Number(submissionId),
-        },
-        data: {
-          status: isPassed ? submissionStatus.PASSED : submissionStatus.FAILED,
-        },
-      });
-
-      await prisma.assignmentEvaluation.create({
-        data: {
-          assignmentId: Number(assignmentId),
-          submissionId: Number(submissionId),
-          authorId: String(token?.id),
-          score: score,
-          passingScore: passingScore,
-          maximumScore: maximumScore,
-          scoreSummary: {
-            _type: assignmentData._type,
-            eachQuestionScore: eachQuestionScore,
+      await prisma.$transaction([
+        prisma.assignmentSubmission.update({
+          where: {
+            id: Number(submissionId),
           },
-          comment: {},
-        },
-      });
+          data: {
+            status: isPassed ? submissionStatus.PASSED : submissionStatus.FAILED,
+          },
+        }),
+        prisma.assignmentEvaluation.create({
+          data: {
+            assignmentId: Number(assignmentId),
+            submissionId: Number(submissionId),
+            authorId: String(token?.id),
+            score: score,
+            passingScore: passingScore,
+            maximumScore: maximumScore,
+            scoreSummary: {
+              _type: assignmentData._type,
+              eachQuestionScore: eachQuestionScore,
+            },
+            comment: {},
+          },
+        }),
+      ]);
+
       return res.status(200).json(new APIResponse(true, 200, "Evaluation has been completed"));
     } else {
       return res.status(404).json(new APIResponse(false, 404, "Evaluation not submitted"));
