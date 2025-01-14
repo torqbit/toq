@@ -219,7 +219,7 @@ const darkThemeConfig = (siteConfig: PageSiteConfig) => {
         itemHoverColor: "#fff",
         trackBg: themeColors.dark.bgTertiary,
         controlPaddingHorizontal: 30,
-        itemColor: "#000",
+        itemColor: themeColors.dark.fontSecondary,
       },
     },
   };
