@@ -42,8 +42,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const assignmentData = assignmentDetail?.content as unknown as IAssignmentDetails;
 
     if (assignmentData._type === AssignmentType.MCQ) {
-      // TODO NEED TO ADD TRANSACTION METHOD
-
       const savedSubmissionData = savedSubmission?.content as unknown as MCQASubmissionContent;
       const { score, isPassed, passingScore, maximumScore, eachQuestionScore } =
         AssignmentEvaluationService.evaluateMCQAssignment(
