@@ -99,7 +99,6 @@ class AnalyticsSerivce {
     getFetch(`/api/v1/admin/analytics/overview`).then((result) => {
       result.json().then((r) => {
         const apiResponse = r as APIResponse<IAnalyticStats[]>;
-        console.log(apiResponse, "response");
         apiResponse.body ? onSuccess(apiResponse.body) : onFailure(`${apiResponse.error}`);
       });
     });

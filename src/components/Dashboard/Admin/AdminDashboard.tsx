@@ -30,7 +30,6 @@ const AdminDashboard: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
         setLoadingAnalytics(false);
       },
       (error) => {
-        console.log(error);
         messageApi.error(error);
         setLoadingAnalytics(false);
       }
