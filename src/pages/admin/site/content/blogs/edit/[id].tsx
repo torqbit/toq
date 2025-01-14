@@ -1,12 +1,13 @@
 import ContentForm from "@/components/Admin/Content/ContentForm";
 import SiteBuilderLayout from "@/components/Layouts/SiteBuilderLayout";
 import ContentNavigation from "@/components/SiteBuilder/ContentNavigation";
-import SpinLoader from "@/components/SpinLoader/SpinLoader";
+
 import BlogService, { IContentData } from "@/services/BlogService";
 import { getSiteConfig } from "@/services/getSiteConfig";
 import { PageSiteConfig } from "@/services/siteConstant";
+import { LoadingOutlined } from "@ant-design/icons";
 import { StateType } from "@prisma/client";
-import { message } from "antd";
+import { Flex, message, Spin } from "antd";
 import { GetServerSidePropsContext, NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -44,9 +45,8 @@ const EditBlog: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   return (
     <SiteBuilderLayout siteConfig={siteConfig} siteContent={<ContentNavigation activeMenu={"blogs"} />}>
       {contextHolder}
-      {loading ? (
-        <SpinLoader />
-      ) : (
+
+      <Spin spinning={loading} indicator={<LoadingOutlined spin />} size="large">
         <ContentForm
           contentType={"BLOG"}
           htmlData={contentData?.htmlData}
@@ -55,7 +55,7 @@ const EditBlog: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
           state={contentData?.state}
           contentId={contentId}
         />
-      )}
+      </Spin>
     </SiteBuilderLayout>
   );
 };

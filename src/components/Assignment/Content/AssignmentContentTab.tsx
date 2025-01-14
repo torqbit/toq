@@ -2,8 +2,7 @@ import { FC, useEffect, useState } from "react";
 import style from "@/styles/LearnLecture.module.scss";
 import AssignmentService from "@/services/course/AssignmentService";
 import { IAssignmentDetail } from "@/types/courses/Course";
-import { Button, Flex, message, Popconfirm, Radio, Space, Tag } from "antd";
-import SpinLoader from "../../SpinLoader/SpinLoader";
+import { Button, Flex, message, Popconfirm, Radio, Space, Spin, Tag } from "antd";
 import MCQViewAssignment from "./MCQViewAssignment/MCQViewAssignment";
 import {
   AssignmentType,
@@ -14,7 +13,14 @@ import {
   MultipleChoiceQA,
   SelectedAnswersType,
 } from "@/types/courses/assignment";
-import { ArrowLeftOutlined, ArrowRightOutlined, CaretLeftFilled, LeftOutlined, RightOutlined } from "@ant-design/icons";
+import {
+  ArrowLeftOutlined,
+  ArrowRightOutlined,
+  CaretLeftFilled,
+  LeftOutlined,
+  LoadingOutlined,
+  RightOutlined,
+} from "@ant-design/icons";
 import { useRouter } from "next/router";
 import { areAnswersEqualForKey } from "@/lib/utils";
 import { submissionStatus } from "@prisma/client";
@@ -192,11 +198,8 @@ const AssignmentContentTab: FC<{
   return (
     <>
       {contextHolder}
-      {loading ? (
-        <Flex align="center" justify="center">
-          <SpinLoader className="editor_spinner" />
-        </Flex>
-      ) : (
+
+      <Spin spinning={loading} indicator={<LoadingOutlined spin />} size="large">
         <div className={style.assignmen_view_tab}>
           <div className={style.assignment_header}>
             <Flex justify="space-between" align="center">
@@ -263,7 +266,7 @@ const AssignmentContentTab: FC<{
             </Popconfirm>
           </Flex>
         </div>
-      )}
+      </Spin>
     </>
   );
 };

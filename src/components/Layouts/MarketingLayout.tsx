@@ -4,10 +4,9 @@ import styles from "@/templates/standard/components/Hero/Hero.module.scss";
 import landingPage from "@/styles/Marketing/LandingPage/LandingPage.module.scss";
 import Head from "next/head";
 import { useAppContext } from "../ContextApi/AppContext";
-import { ConfigProvider } from "antd";
+import { ConfigProvider, Flex, Spin } from "antd";
 import darkThemeConfig from "@/services/darkThemeConfig";
 import antThemeConfig from "@/services/antThemeConfig";
-import SpinLoader from "../SpinLoader/SpinLoader";
 import { DEFAULT_THEME, PageSiteConfig } from "@/services/siteConstant";
 import { useMediaQuery } from "react-responsive";
 import { User } from "@prisma/client";
@@ -15,6 +14,7 @@ import { IBrandInfo } from "@/types/landing/navbar";
 import { Theme } from "@/types/theme";
 import Footer from "@/templates/standard/components/Footer/Footer";
 import NavBar from "@/templates/standard/components/NavBar/NavBar";
+import { LoadingOutlined } from "@ant-design/icons";
 
 const MarketingLayout: FC<{
   children?: React.ReactNode;
@@ -73,24 +73,7 @@ const MarketingLayout: FC<{
   }, [siteConfig.brand?.defaultTheme]);
 
   return (
-    <>
-      {
-        <div
-          style={{
-            position: "fixed",
-            display: globalState.pageLoading ? "unset" : "none",
-            top: 0,
-            left: 0,
-            bottom: 0,
-            right: 0,
-            width: "100%",
-            background: "#fff",
-            zIndex: 10,
-          }}
-        >
-          <SpinLoader className="marketing__spinner" />
-        </div>
-      }
+    <Spin spinning={globalState.pageLoading} indicator={<LoadingOutlined spin />} size="large">
       <ConfigProvider theme={globalState.theme == "dark" ? darkThemeConfig(siteConfig) : antThemeConfig(siteConfig)}>
         <Head>
           <title>{`${siteConfig.brand?.name} · ${siteConfig.brand?.title}`}</title>
@@ -132,7 +115,7 @@ const MarketingLayout: FC<{
           activeTheme={globalState.theme ?? "light"}
         />
       </ConfigProvider>
-    </>
+    </Spin>
   );
 };
 
