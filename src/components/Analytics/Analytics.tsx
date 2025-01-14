@@ -44,7 +44,7 @@ const Analytics: FC<{
         return (
           <p>
             This {segment}, you had <strong>{info.total}</strong> new enrollments, which is
-            <strong>{Math.abs(info.comparedPercentage)}% </strong> {info.comparedPercentage > 0 ? "more" : "less"} than
+            <strong> {Math.abs(info.comparedPercentage)}% </strong> {info.comparedPercentage > 0 ? "more" : "less"} than
             last {segment}
           </p>
         );
