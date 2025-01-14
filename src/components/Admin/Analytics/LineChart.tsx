@@ -9,13 +9,25 @@ const LineChart: FC<{
   title: string;
   axisBottomTitle: string;
   axisLeftTitle: string;
+  yMinLength?: number;
+  yMaxLength?: number;
+  TooltipWrapper: (value: number, date: string) => React.ReactNode;
   color?: string;
-}> = ({ data, title, axisBottomTitle, axisLeftTitle, color = appConstant.lineChart.graphColor }) => {
+}> = ({
+  data,
+  title,
+  axisBottomTitle,
+  axisLeftTitle,
+  color = appConstant.lineChart.graphColor,
+  yMinLength = 0,
+  yMaxLength,
+  TooltipWrapper,
+}) => {
   const { globalState } = useAppContext();
-
   return (
     <>
       <ResponsiveLine
+        key={axisBottomTitle}
         data={data}
         theme={{
           axis: {
@@ -53,24 +65,16 @@ const LineChart: FC<{
             },
           },
         }}
-        tooltip={({ point }) => (
-          <div
-            style={{
-              color: `${globalState.theme === "dark" ? appConstant.lineChart.white : appConstant.lineChart.black}`,
-            }}
-          >
-            <strong>{Math.floor(Number(point.data.yFormatted))}</strong>{" "}
-            {/* {Math.floor(Number(point.data.yFormatted)) === 1 ? "student" : "students"} */}
-            {title}
-          </div>
-        )}
+        tooltip={({ point }) => {
+          return TooltipWrapper(Number(point.data.yFormatted), String(point.data.xFormatted));
+        }}
         colors={[color as string]} // added
-        margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
+        margin={{ top: 50, right: 110, bottom: 50, left: 80 }}
         xScale={{ type: "point" }}
         yScale={{
           type: "linear",
-          min: 0,
-          max: "auto",
+          min: Number(yMinLength),
+          max: yMaxLength || "auto",
           stacked: true,
           reverse: false,
         }}
@@ -88,13 +92,13 @@ const LineChart: FC<{
         }}
         axisLeft={{
           tickValues: 5, // added
-          tickSize: 5,
+          tickSize: 10,
           tickPadding: 5,
           tickRotation: 0,
           legend: axisLeftTitle, // added
-          legendOffset: -50,
-
+          legendOffset: -60,
           legendPosition: "middle",
+          format: (values) => `${values > 1000 ? `${Math.round(values / 1000)}k` : values}`,
         }}
         enableGridX={false}
         enableGridY={false}
