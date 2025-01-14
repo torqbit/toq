@@ -6,6 +6,7 @@ import { APIResponse } from "@/types/apis";
 import {
   AnalyticsDuration,
   IAnalyticResponse,
+  IAnalyticStats,
   IEarningResponse,
   IEnrollmentResponse,
   IResponseStats,
@@ -13,6 +14,36 @@ import {
 } from "@/types/courses/analytics";
 import { orderStatus, Role } from "@prisma/client";
 class Analytics {
+  async getOverviewDetails(): Promise<APIResponse<IAnalyticStats[]>> {
+    const earningDetail = await this.getTotalEarning();
+    const enrollmentDetail = await this.getTotalEnrollments();
+    const usersDetail = await this.getTotalUsers();
+
+    let overviewStats: IAnalyticStats[] = [
+      {
+        type: "Earnings",
+        total: `${earningDetail.body?.totalEarning}`,
+        comparedPercentage: Number(earningDetail.body?.comparedPercentage),
+      },
+      {
+        type: "Enrollments",
+        total: `${enrollmentDetail.body?.totalEnrollment}`,
+        comparedPercentage: Number(enrollmentDetail.body?.comparedPercentage),
+      },
+      {
+        type: "Users",
+        total: `${usersDetail.body?.totalUsers}`,
+        comparedPercentage: Number(usersDetail.body?.comparedPercentage),
+      },
+    ];
+
+    if (earningDetail.success && enrollmentDetail.success && usersDetail.success) {
+      return new APIResponse(true, 200, "Overview has been fetched successfully", overviewStats);
+    } else {
+      return new APIResponse(false, 404, "Overview stats not found");
+    }
+  }
+
   async getTotalEarning(): Promise<APIResponse<IEarningResponse>> {
     const result = await prisma.$queryRaw<IResponseStats[]>` 
     SELECT 

@@ -26,10 +26,11 @@ const AdminDashboard: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
       duration,
       type,
       (result) => {
-        setAnalyticStat(result.analyticStats);
+        setAnalyticStat(result);
         setLoadingAnalytics(false);
       },
       (error) => {
+        console.log(error);
         messageApi.error(error);
         setLoadingAnalytics(false);
       }
@@ -82,7 +83,7 @@ const AdminDashboard: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
     setLoadingOverview(true);
     AnalyticsService.overviewStats(
       (result) => {
-        setOverViewStat(result.overviewStats);
+        setOverViewStat(result);
         handleAnalytics("month", "Earnings");
 
         setLoadingOverview(false);

@@ -1,5 +1,6 @@
 import { AnalyticsDuration, AnalyticsType, IAnalyticResponse, IAnalyticStats } from "@/types/courses/analytics";
 import { getFetch } from "./request";
+import { APIResponse } from "@/types/apis";
 export type UserAnalyseData = {
   year: any;
   month: any;
@@ -9,8 +10,7 @@ export type ApiResponse = {
   success: boolean;
   error: string;
   message: string;
-  overviewStats: IAnalyticStats[];
-  analyticStats: IAnalyticResponse;
+
   totalMembers: number;
   totalEnrolled: number;
   activeMembers: number;
@@ -95,24 +95,25 @@ class AnalyticsSerivce {
     });
   };
 
-  overviewStats = (onSuccess: (response: ApiResponse) => void, onFailure: (message: string) => void) => {
+  overviewStats = (onSuccess: (response: IAnalyticStats[]) => void, onFailure: (message: string) => void) => {
     getFetch(`/api/v1/admin/analytics/overview`).then((result) => {
       result.json().then((r) => {
-        const apiResponse = r as ApiResponse;
-        apiResponse.success ? onSuccess(apiResponse) : onFailure(apiResponse.error);
+        const apiResponse = r as APIResponse<IAnalyticStats[]>;
+        console.log(apiResponse, "response");
+        apiResponse.body ? onSuccess(apiResponse.body) : onFailure(`${apiResponse.error}`);
       });
     });
   };
   analyticStats = (
     duration: AnalyticsDuration,
     type: AnalyticsType,
-    onSuccess: (response: ApiResponse) => void,
+    onSuccess: (response: IAnalyticResponse) => void,
     onFailure: (message: string) => void
   ) => {
     getFetch(`/api/v1/admin/analytics/get/${duration}?type=${type}`).then((result) => {
       result.json().then((r) => {
-        const apiResponse = r as ApiResponse;
-        apiResponse.success ? onSuccess(apiResponse) : onFailure(apiResponse.error);
+        const apiResponse = r as APIResponse<IAnalyticResponse>;
+        apiResponse.body ? onSuccess(apiResponse.body) : onFailure(`${apiResponse.error}`);
       });
     });
   };

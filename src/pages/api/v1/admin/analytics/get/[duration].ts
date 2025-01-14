@@ -14,19 +14,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     switch (type as AnalyticsType) {
       case "Earnings":
         let earningDetail = await analytics.getEarningsByDurtaion(d);
-        return res.status(earningDetail.status).json({
-          success: earningDetail.success,
-          message: "Earning detail has been fetched",
-          analyticStats: earningDetail.body,
-        });
+        return res.status(earningDetail.status).json(earningDetail);
       case "Enrollments":
         const enrollmentsDetail = await analytics.getEnrollment(d);
-
-        return res.status(enrollmentsDetail.status).json({
-          success: enrollmentsDetail.success,
-          message: "Earning detail has been fetched",
-          analyticStats: enrollmentsDetail.body,
-        });
+        return res.status(enrollmentsDetail.status).json(enrollmentsDetail);
 
       default:
         return res.status(400).json({ success: false, error: "Analytic type not defined" });
