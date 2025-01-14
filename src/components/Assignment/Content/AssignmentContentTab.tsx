@@ -198,11 +198,8 @@ const AssignmentContentTab: FC<{
   return (
     <>
       {contextHolder}
-      {loading ? (
-        <Flex style={{ height: "80vh", width: "100%" }} align="center" justify="center">
-          <Spin indicator={<LoadingOutlined spin />} size="large" />
-        </Flex>
-      ) : (
+
+      <Spin spinning={loading} indicator={<LoadingOutlined spin />} size="large">
         <div className={style.assignmen_view_tab}>
           <div className={style.assignment_header}>
             <Flex justify="space-between" align="center">
@@ -269,7 +266,7 @@ const AssignmentContentTab: FC<{
             </Popconfirm>
           </Flex>
         </div>
-      )}
+      </Spin>
     </>
   );
 };

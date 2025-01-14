@@ -112,8 +112,8 @@ const CoursesPage: NextPage<{ siteConfig: PageSiteConfig; userRole: Role }> = ({
           heroSection={<DefaulttHero title="Courses" description="Expand Your Knowledge with Comprehensive Courses" />}
         >
           {contextMessageHolder}
-          <section>
-            {!loading && courses ? (
+          <Spin spinning={loading || !courses} indicator={<LoadingOutlined spin />} size="large">
+            <section>
               <div className="page__wrapper">
                 <CoursesListView
                   courses={courses}
@@ -125,12 +125,8 @@ const CoursesPage: NextPage<{ siteConfig: PageSiteConfig; userRole: Role }> = ({
                   }
                 />
               </div>
-            ) : (
-              <Flex style={{ height: "80vh", width: "100%" }} align="center" justify="center">
-                <Spin indicator={<LoadingOutlined spin />} size="large" />
-              </Flex>
-            )}
-          </section>
+            </section>
+          </Spin>
         </MarketingLayout>
       )}
     </>

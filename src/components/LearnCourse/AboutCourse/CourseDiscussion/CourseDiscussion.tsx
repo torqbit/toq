@@ -173,33 +173,26 @@ const QADiscssionTab: FC<{ resourceId?: number; loading: boolean }> = ({
   return (
     <section className={styles.qa_discussion_tab}>
       <QAForm loadingPage={loading} editorBorderRadius={8} placeholder="Ask a Question" onPost={onQueryPost} />
-      <>
-        {listLoading ? (
-          <Flex style={{ height: "200px", width: "100%" }} align="center" justify="center">
-            <Spin indicator={<LoadingOutlined spin />} size="large" />
-          </Flex>
-        ) : (
-          <>
-            {comments.map((comment, i) => {
-              return (
-                <CommentBox
-                  resourceId={Number(resourceId)}
-                  showReplyDrawer={showReplyDrawer}
-                  comment={comment}
-                  key={i}
-                  listLoading={listLoading}
-                  replyList={false}
-                  comments={comments}
-                  setAllComment={setComments}
-                  onUpdateReplyCount={onUpdateReplyCount}
-                  setCommentCount={setCommentCount}
-                  commentCount={commentCount}
-                />
-              );
-            })}
-          </>
-        )}
-      </>
+
+      <Spin spinning={listLoading} indicator={<LoadingOutlined spin />} size="large">
+        {comments.map((comment, i) => {
+          return (
+            <CommentBox
+              resourceId={Number(resourceId)}
+              showReplyDrawer={showReplyDrawer}
+              comment={comment}
+              key={i}
+              listLoading={listLoading}
+              replyList={false}
+              comments={comments}
+              setAllComment={setComments}
+              onUpdateReplyCount={onUpdateReplyCount}
+              setCommentCount={setCommentCount}
+              commentCount={commentCount}
+            />
+          );
+        })}
+      </Spin>
 
       {router.query.queryId && (
         <Flex align="center" justify="flex-end">

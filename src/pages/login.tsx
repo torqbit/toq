@@ -1,4 +1,4 @@
-import { Alert, Button, ConfigProvider, Flex, Form, Input, message, Spin, Tooltip } from "antd";
+import { Alert, Button, ConfigProvider, Flex, Form, Input, message, Tooltip } from "antd";
 import React, { useEffect, useState } from "react";
 import styles from "@/styles/Login.module.scss";
 import { signIn, useSession } from "next-auth/react";
@@ -17,7 +17,6 @@ import prisma from "@/lib/prisma";
 import { useAppContext } from "@/components/ContextApi/AppContext";
 import darkThemeConfig from "@/services/darkThemeConfig";
 import antThemeConfig from "@/services/antThemeConfig";
-import { LoadingOutlined } from "@ant-design/icons";
 
 const LoginPage: NextPage<{
   loginMethods: { available: string[]; configured: string[] };
@@ -61,14 +60,6 @@ const LoginPage: NextPage<{
     setGitHubLoading(false);
     setGoogleLoading(false);
   };
-
-  if (sessionStatus === "loading") {
-    return (
-      <Flex style={{ height: "80vh", width: "100%" }} align="center" justify="center">
-        <Spin indicator={<LoadingOutlined spin />} size="large" />
-      </Flex>
-    );
-  }
 
   const handleLogin = async () => {
     setLoginLoading(true);

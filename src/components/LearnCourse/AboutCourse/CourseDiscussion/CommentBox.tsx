@@ -202,19 +202,16 @@ const CommentBox: FC<{
               <div className={`${styles.comment_content} `}>
                 {isEdited ? (
                   <div className={`${styles.qa_form_input} "text_editor_wrapper"`}>
-                    {loading && (
-                      <Flex style={{ height: "100px", width: "100%" }} align="center" justify="center">
-                        <Spin indicator={<LoadingOutlined spin />} />
-                      </Flex>
-                    )}
-                    <TextEditor
-                      defaultValue={editComment}
-                      handleDefaultValue={setEditComment}
-                      readOnly={false}
-                      borderRadius={8}
-                      theme="bubble"
-                      placeholder={"Edit Post"}
-                    />
+                    <Spin spinning={loading} indicator={<LoadingOutlined spin />}>
+                      <TextEditor
+                        defaultValue={editComment}
+                        handleDefaultValue={setEditComment}
+                        readOnly={false}
+                        borderRadius={8}
+                        theme="bubble"
+                        placeholder={"Edit Post"}
+                      />
+                    </Spin>
                   </div>
                 ) : (
                   <div className={styles.comment_text_wrapper}>

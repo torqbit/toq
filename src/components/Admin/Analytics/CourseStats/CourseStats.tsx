@@ -78,16 +78,12 @@ const CourseStats: FC<{
 
   return (
     <>
-      {loading ? (
-        <Flex style={{ height: "80vh", width: "100%" }} align="center" justify="center">
-          <Spin indicator={<LoadingOutlined spin />} size="large" />
-        </Flex>
-      ) : (
+      <Spin spinning={loading} indicator={<LoadingOutlined spin />} size="large">
         <section>
           {overallMembers && <OverallMembersList overallMembers={overallMembers} />}
           {userData.length > 0 && <CourseMembers onChange={onChange} userData={userData} />}
         </section>
-      )}
+      </Spin>
     </>
   );
 };

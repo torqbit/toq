@@ -45,11 +45,8 @@ const EditUpdate: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) =>
   return (
     <SiteBuilderLayout siteConfig={siteConfig} siteContent={<ContentNavigation activeMenu={"updates"} />}>
       {contextHolder}
-      {loading ? (
-        <Flex style={{ height: "80vh", width: "100%" }} align="center" justify="center">
-          <Spin indicator={<LoadingOutlined spin />} size="large" />
-        </Flex>
-      ) : (
+
+      <Spin spinning={loading} indicator={<LoadingOutlined spin />} size="large">
         <ContentForm
           contentType={"UPDATE"}
           htmlData={contentData?.htmlData}
@@ -58,7 +55,7 @@ const EditUpdate: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) =>
           state={contentData?.state}
           contentId={contentId}
         />
-      )}
+      </Spin>
     </SiteBuilderLayout>
   );
 };

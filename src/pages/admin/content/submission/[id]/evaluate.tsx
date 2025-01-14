@@ -126,7 +126,7 @@ const EvaluatePage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) 
   return (
     <AppLayout siteConfig={siteConfig}>
       {contextHolder}
-      {!loading ? (
+      <Spin spinning={loading} indicator={<LoadingOutlined spin />} size="large">
         <section className={style.evaluationWrapper}>
           <Breadcrumb
             className={style.breadcrumb}
@@ -235,11 +235,7 @@ const EvaluatePage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) 
             setDrawerOpen={setDrawerOpen}
           />
         </section>
-      ) : (
-        <Flex style={{ height: "80vh", width: "100%" }} align="center" justify="center">
-          <Spin indicator={<LoadingOutlined spin />} size="large" />
-        </Flex>
-      )}
+      </Spin>
     </AppLayout>
   );
 };

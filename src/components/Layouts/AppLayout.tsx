@@ -338,145 +338,131 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
   }, [brand?.brandColor]);
 
   return (
-    <>
-      {globalState.pageLoading ? (
-        <Flex style={{ height: "100vh", width: "100%" }} align="center" justify="center">
-          <Spin indicator={<LoadingOutlined spin />} size="large" />
-        </Flex>
-      ) : (
-        <>
-          <ConfigProvider
-            theme={globalState.theme == "dark" ? darkThemeConfig(siteConfig) : antThemeConfig(siteConfig)}
-          >
-            <Head>
-              <title>{`${siteConfig.brand?.name} · ${siteConfig.brand?.title}`}</title>
+    <Spin spinning={globalState.pageLoading} indicator={<LoadingOutlined spin />} size="large">
+      <ConfigProvider theme={globalState.theme == "dark" ? darkThemeConfig(siteConfig) : antThemeConfig(siteConfig)}>
+        <Head>
+          <title>{`${siteConfig.brand?.name} · ${siteConfig.brand?.title}`}</title>
 
-              <meta name="description" content={siteConfig.brand?.description} />
-              <meta
-                property="og:image"
-                content={
-                  siteConfig.brand?.themeSwitch && siteConfig.brand.defaultTheme == "dark"
-                    ? siteConfig.heroSection?.banner?.darkModePath
-                    : siteConfig.heroSection?.banner?.lightModePath
-                }
-              />
+          <meta name="description" content={siteConfig.brand?.description} />
+          <meta
+            property="og:image"
+            content={
+              siteConfig.brand?.themeSwitch && siteConfig.brand.defaultTheme == "dark"
+                ? siteConfig.heroSection?.banner?.darkModePath
+                : siteConfig.heroSection?.banner?.lightModePath
+            }
+          />
 
-              <link rel="icon" href={siteConfig.brand?.favicon} />
-            </Head>
+          <link rel="icon" href={siteConfig.brand?.favicon} />
+        </Head>
 
-            {globalState.onlineStatus ? (
-              <Layout hasSider className="default-container">
-                <Sidebar menu={adminMenu} siteConfig={siteConfig} />
-                <Layout className={`layout2-wrapper ${styles.layout2_wrapper} `}>
-                  <Content className={`${styles.sider_content} ${styles.className}`}>
-                    <Flex
-                      align="center"
-                      justify="space-between"
-                      className={router.pathname.startsWith("/admin/content/course") ? "" : styles.userNameWrapper}
-                    >
-                      {isMobile && <h4>Hello {user?.user?.name}</h4>}
-                      <Dropdown
-                        className={styles.mobileUserMenu}
-                        menu={{
-                          items: [
-                            {
-                              key: "0",
-                              label: (
-                                <div
-                                  onClick={() => {
-                                    const newTheme: Theme = globalState.theme == "dark" ? "light" : "dark";
-                                    updateTheme(newTheme);
-                                  }}
-                                >
-                                  {globalState.theme !== "dark" ? "Dark mode" : "Light mode"}
-                                </div>
-                              ),
-                            },
-
-                            {
-                              key: "1",
-                              label: "Logout",
-                              onClick: () => {
-                                signOut();
-                              },
-                            },
-                          ],
-                        }}
-                        trigger={["click"]}
-                        placement="bottomRight"
-                        arrow={{ pointAtCenter: true }}
-                      >
-                        <i className={styles.verticalDots}>{SvgIcons.verticalThreeDots}</i>
-                      </Dropdown>
-                    </Flex>
-
-                    {children}
-                  </Content>
-                </Layout>
-                <div className={styles.responsiveNavContainer}>
-                  {responsiveNav.map((nav, i) => {
-                    return (
-                      <>
-                        {nav.title === "Notifications" ? (
-                          <Badge
-                            key={i}
-                            color="blue"
-                            classNames={{ indicator: styles.badgeIndicator }}
-                            count={
-                              globalState.notifications && globalState.notifications > 0 ? globalState.notifications : 0
-                            }
-                            style={{ fontSize: 8, paddingTop: 1.5 }}
-                            size="small"
-                          >
+        {globalState.onlineStatus ? (
+          <Layout hasSider className="default-container">
+            <Sidebar menu={adminMenu} siteConfig={siteConfig} />
+            <Layout className={`layout2-wrapper ${styles.layout2_wrapper} `}>
+              <Content className={`${styles.sider_content} ${styles.className}`}>
+                <Flex
+                  align="center"
+                  justify="space-between"
+                  className={router.pathname.startsWith("/admin/content/course") ? "" : styles.userNameWrapper}
+                >
+                  {isMobile && <h4>Hello {user?.user?.name}</h4>}
+                  <Dropdown
+                    className={styles.mobileUserMenu}
+                    menu={{
+                      items: [
+                        {
+                          key: "0",
+                          label: (
                             <div
-                              key={i}
-                              className={
-                                globalState.selectedResponsiveMenu === nav.link ? styles.selectedNavBar : styles.navBar
-                              }
-                              onClick={() =>
-                                dispatch({ type: "SET_NAVBAR_MENU", payload: nav.link as IResponsiveNavMenu })
-                              }
+                              onClick={() => {
+                                const newTheme: Theme = globalState.theme == "dark" ? "light" : "dark";
+                                updateTheme(newTheme);
+                              }}
                             >
-                              <Link key={i} href={`/${nav.link}`}>
-                                <span></span>
-                                <Flex vertical align="center" gap={5} justify="space-between">
-                                  <i>{nav.icon}</i>
-                                  <div className={styles.navTitle}>{nav.title}</div>
-                                </Flex>
-                              </Link>
+                              {globalState.theme !== "dark" ? "Dark mode" : "Light mode"}
                             </div>
-                          </Badge>
-                        ) : (
-                          <div
-                            key={i}
-                            className={
-                              globalState.selectedResponsiveMenu === nav.key ? styles.selectedNavBar : styles.navBar
-                            }
-                            onClick={() =>
-                              dispatch({ type: "SET_NAVBAR_MENU", payload: nav.key as IResponsiveNavMenu })
-                            }
-                          >
-                            <Link key={i} href={`/${nav.link}`}>
-                              <span></span>
-                              <Flex vertical align="center" gap={5} justify="space-between">
-                                <i>{nav.icon}</i>
-                                <div className={styles.navTitle}>{nav.title}</div>
-                              </Flex>
-                            </Link>
-                          </div>
-                        )}
-                      </>
-                    );
-                  })}
-                </div>
-              </Layout>
-            ) : (
-              <Offline />
-            )}
-          </ConfigProvider>
-        </>
-      )}
-    </>
+                          ),
+                        },
+
+                        {
+                          key: "1",
+                          label: "Logout",
+                          onClick: () => {
+                            signOut();
+                          },
+                        },
+                      ],
+                    }}
+                    trigger={["click"]}
+                    placement="bottomRight"
+                    arrow={{ pointAtCenter: true }}
+                  >
+                    <i className={styles.verticalDots}>{SvgIcons.verticalThreeDots}</i>
+                  </Dropdown>
+                </Flex>
+
+                {children}
+              </Content>
+            </Layout>
+            <div className={styles.responsiveNavContainer}>
+              {responsiveNav.map((nav, i) => {
+                return (
+                  <>
+                    {nav.title === "Notifications" ? (
+                      <Badge
+                        key={i}
+                        color="blue"
+                        classNames={{ indicator: styles.badgeIndicator }}
+                        count={
+                          globalState.notifications && globalState.notifications > 0 ? globalState.notifications : 0
+                        }
+                        style={{ fontSize: 8, paddingTop: 1.5 }}
+                        size="small"
+                      >
+                        <div
+                          key={i}
+                          className={
+                            globalState.selectedResponsiveMenu === nav.link ? styles.selectedNavBar : styles.navBar
+                          }
+                          onClick={() => dispatch({ type: "SET_NAVBAR_MENU", payload: nav.link as IResponsiveNavMenu })}
+                        >
+                          <Link key={i} href={`/${nav.link}`}>
+                            <span></span>
+                            <Flex vertical align="center" gap={5} justify="space-between">
+                              <i>{nav.icon}</i>
+                              <div className={styles.navTitle}>{nav.title}</div>
+                            </Flex>
+                          </Link>
+                        </div>
+                      </Badge>
+                    ) : (
+                      <div
+                        key={i}
+                        className={
+                          globalState.selectedResponsiveMenu === nav.key ? styles.selectedNavBar : styles.navBar
+                        }
+                        onClick={() => dispatch({ type: "SET_NAVBAR_MENU", payload: nav.key as IResponsiveNavMenu })}
+                      >
+                        <Link key={i} href={`/${nav.link}`}>
+                          <span></span>
+                          <Flex vertical align="center" gap={5} justify="space-between">
+                            <i>{nav.icon}</i>
+                            <div className={styles.navTitle}>{nav.title}</div>
+                          </Flex>
+                        </Link>
+                      </div>
+                    )}
+                  </>
+                );
+              })}
+            </div>
+          </Layout>
+        ) : (
+          <Offline />
+        )}
+      </ConfigProvider>
+    </Spin>
   );
 };
 

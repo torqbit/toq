@@ -47,92 +47,88 @@ const QAForm: FC<{
   };
 
   return (
-    <Flex
-      align="flex-end"
-      wrap="wrap"
-      gap={0}
-      justify="flex-end"
-      className={`${styles.qa_form} text_editor_wrapper`}
-      style={style}
-    >
-      {contextHolder}
-      {loading && (
-        <div className={"post_comment_spinner_wrapper"}>
-          <Flex style={{ height: "100%", width: "100%" }} align="center" justify="center">
-            <Spin indicator={<LoadingOutlined spin />} size="large" />
-          </Flex>
-        </div>
-      )}
-      {loadingPage ? (
-        <Skeleton.Input style={{ height: 80, width: 890 }} />
-      ) : (
-        <div className={styles.qa_form_input}>
-          <TextEditor
-            defaultValue={commentText}
-            handleDefaultValue={setCommentText}
-            readOnly={false}
-            theme="bubble"
-            borderRadius={editorBorderRadius}
-            placeholder={placeholder}
-          />
-        </div>
-      )}
-      <div style={{ height: 43 }}>
+    <Spin spinning={loading} indicator={<LoadingOutlined spin />} size="large">
+      <Flex
+        align="flex-end"
+        wrap="wrap"
+        gap={0}
+        justify="flex-end"
+        className={`${styles.qa_form} text_editor_wrapper`}
+        style={style}
+      >
+        {contextHolder}
+
         {loadingPage ? (
-          <Skeleton.Input style={{ width: 890 }} />
+          <Skeleton.Input style={{ height: 80, width: 890 }} />
         ) : (
-          <div className={`${styles.actionButtonWrapper} action_button_wrappper`}>
-            <Flex align="center" gap={5} style={{ height: 18 }}>
-              <Tooltip title="Upload Image">
-                <Upload
-                  name="avatar"
-                  listType="text"
-                  className="upload_editor_image"
-                  showUploadList={false}
-                  onChange={handleChange}
-                >
-                  <i
-                    style={{ fontSize: 18 }}
-                    onMouseOver={() => setActiveHover("image")}
-                    onMouseLeave={() => setActiveHover("")}
-                  >
-                    {activeHover === "image" ? SvgIcons.camera : SvgIcons.cameraOutlined}
-                  </i>
-                </Upload>
-              </Tooltip>
-              <Tooltip title="Add Code">
-                <i
-                  style={{ fontSize: 18 }}
-                  onClick={insertCodeBlock}
-                  onMouseOver={() => setActiveHover("code")}
-                  onMouseLeave={() => setActiveHover("")}
-                >
-                  {activeHover === "code" ? SvgIcons.code : SvgIcons.CodeOutlined}
-                </i>
-              </Tooltip>
-            </Flex>
-            <Flex align="center" gap={0}>
-              <Divider type="vertical" className={styles.action_divider} />
-              <Tooltip title={placeholder === "Reply" ? "Reply" : "Post"}>
-                <i
-                  style={{ fontSize: 18 }}
-                  onMouseOver={() => setActiveHover("send")}
-                  onMouseLeave={() => setActiveHover("")}
-                  onClick={() => {
-                    countAlphabets(replaceEmptyParagraphs(commentText)) === 0
-                      ? message.warning("add a comment first")
-                      : onPost(commentText, setCommentText, setLoading);
-                  }}
-                  title="Post"
-                >
-                  {activeHover === "send" ? SvgIcons.send : SvgIcons.sendOutlined}
-                </i>
-              </Tooltip>
-            </Flex>
+          <div className={styles.qa_form_input}>
+            <TextEditor
+              defaultValue={commentText}
+              handleDefaultValue={setCommentText}
+              readOnly={false}
+              theme="bubble"
+              borderRadius={editorBorderRadius}
+              placeholder={placeholder}
+            />
           </div>
         )}
-      </div>
-    </Flex>
+        <div style={{ height: 43 }}>
+          {loadingPage ? (
+            <Skeleton.Input style={{ width: 890 }} />
+          ) : (
+            <div className={`${styles.actionButtonWrapper} action_button_wrappper`}>
+              <Flex align="center" gap={5} style={{ height: 18 }}>
+                <Tooltip title="Upload Image">
+                  <Upload
+                    name="avatar"
+                    listType="text"
+                    className="upload_editor_image"
+                    showUploadList={false}
+                    onChange={handleChange}
+                  >
+                    <i
+                      style={{ fontSize: 18 }}
+                      onMouseOver={() => setActiveHover("image")}
+                      onMouseLeave={() => setActiveHover("")}
+                    >
+                      {activeHover === "image" ? SvgIcons.camera : SvgIcons.cameraOutlined}
+                    </i>
+                  </Upload>
+                </Tooltip>
+                <Tooltip title="Add Code">
+                  <i
+                    style={{ fontSize: 18 }}
+                    onClick={insertCodeBlock}
+                    onMouseOver={() => setActiveHover("code")}
+                    onMouseLeave={() => setActiveHover("")}
+                  >
+                    {activeHover === "code" ? SvgIcons.code : SvgIcons.CodeOutlined}
+                  </i>
+                </Tooltip>
+              </Flex>
+              <Flex align="center" gap={0}>
+                <Divider type="vertical" className={styles.action_divider} />
+                <Tooltip title={placeholder === "Reply" ? "Reply" : "Post"}>
+                  <i
+                    style={{ fontSize: 18 }}
+                    onMouseOver={() => setActiveHover("send")}
+                    onMouseLeave={() => setActiveHover("")}
+                    onClick={() => {
+                      countAlphabets(replaceEmptyParagraphs(commentText)) === 0
+                        ? message.warning("add a comment first")
+                        : onPost(commentText, setCommentText, setLoading);
+                    }}
+                    title="Post"
+                  >
+                    {activeHover === "send" ? SvgIcons.send : SvgIcons.sendOutlined}
+                  </i>
+                </Tooltip>
+              </Flex>
+            </div>
+          )}
+        </div>
+      </Flex>
+    </Spin>
   );
 };
 

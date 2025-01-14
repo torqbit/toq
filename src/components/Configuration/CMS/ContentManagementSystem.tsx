@@ -326,11 +326,7 @@ const ContentManagementSystem: FC<{ siteConfig: PageSiteConfig; active: boolean 
 
   return (
     <>
-      {pageLoading ? (
-        <Flex style={{ height: "80vh", width: "100%" }} align="center" justify="center">
-          <Spin indicator={<LoadingOutlined spin />} size="large" />
-        </Flex>
-      ) : (
+      <Spin spinning={pageLoading} indicator={<LoadingOutlined spin />} size="large">
         <section>
           {contextHolder}
           <h3>Content Management System</h3>
@@ -471,7 +467,7 @@ const ContentManagementSystem: FC<{ siteConfig: PageSiteConfig; active: boolean 
             ]}
           />
         </section>
-      )}
+      </Spin>
     </>
   );
 };

@@ -158,122 +158,109 @@ const SiteBuilderLayout: FC<{
   return (
     <>
       {contexHolder}
-      {
-        <div
-          style={{
-            position: "fixed",
-            display: globalState.pageLoading ? "unset" : "none",
-            top: 0,
-            left: 0,
-            bottom: 0,
-            right: 0,
-            width: "100%",
-            background: "#fff",
-            zIndex: 10,
-          }}
-        >
-          <Flex style={{ height: "100vh", width: "100%" }} align="center" justify="center">
-            <Spin indicator={<LoadingOutlined spin />} size="large" />
-          </Flex>
-        </div>
-      }
-      <ConfigProvider theme={globalState.theme == "dark" ? darkThemeConfig(siteConfig) : antThemeConfig(siteConfig)}>
-        <Head>
-          <title>{`${siteConfig.brand?.name} · ${siteConfig.brand?.title}`}</title>
-          <meta name="description" content={siteConfig.brand?.description} />
-          <meta
-            property="og:image"
-            content={
-              siteConfig.brand?.themeSwitch && siteConfig.brand.defaultTheme == "dark"
-                ? siteConfig.heroSection?.banner?.darkModePath
-                : siteConfig.heroSection?.banner?.lightModePath
-            }
-          />
-          <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-          <link rel="icon" href={siteConfig.brand?.favicon} />
-        </Head>
-        <div>
-          <Layout hasSider className={styles.site__builder__layout}>
-            <Sider
-              width={350}
-              theme="light"
-              className={`${styles.main_sider} main_sider`}
-              trigger={null}
-              collapsed={false}
-            >
-              <div className={styles.side__bar__container}>
-                <Flex align="center" justify="space-between" className={styles.site__builder__header}>
-                  <Flex align="center" gap={5} justify="center">
-                    <Link className={styles.go_back_btn} href={"/dashboard"}>
-                      <i>{SvgIcons.arrowLeft}</i>
-                    </Link>
-                    <h4 style={{ padding: "0px", margin: 0 }}>Site</h4>
+
+      <Spin spinning={globalState.pageLoading} indicator={<LoadingOutlined spin />} size="large">
+        <ConfigProvider theme={globalState.theme == "dark" ? darkThemeConfig(siteConfig) : antThemeConfig(siteConfig)}>
+          <Head>
+            <title>{`${siteConfig.brand?.name} · ${siteConfig.brand?.title}`}</title>
+            <meta name="description" content={siteConfig.brand?.description} />
+            <meta
+              property="og:image"
+              content={
+                siteConfig.brand?.themeSwitch && siteConfig.brand.defaultTheme == "dark"
+                  ? siteConfig.heroSection?.banner?.darkModePath
+                  : siteConfig.heroSection?.banner?.lightModePath
+              }
+            />
+            <meta
+              name="viewport"
+              content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+            />
+            <link rel="icon" href={siteConfig.brand?.favicon} />
+          </Head>
+          <div>
+            <Layout hasSider className={styles.site__builder__layout}>
+              <Sider
+                width={350}
+                theme="light"
+                className={`${styles.main_sider} main_sider`}
+                trigger={null}
+                collapsed={false}
+              >
+                <div className={styles.side__bar__container}>
+                  <Flex align="center" justify="space-between" className={styles.site__builder__header}>
+                    <Flex align="center" gap={5} justify="center">
+                      <Link className={styles.go_back_btn} href={"/dashboard"}>
+                        <i>{SvgIcons.arrowLeft}</i>
+                      </Link>
+                      <h4 style={{ padding: "0px", margin: 0 }}>Site</h4>
+                    </Flex>
+
+                    {siteDesigner && (
+                      <Button
+                        loading={loading}
+                        onClick={() => {
+                          onUpdateYaml();
+                        }}
+                        type="primary"
+                      >
+                        Save
+                      </Button>
+                    )}
                   </Flex>
 
-                  {siteDesigner && (
-                    <Button
-                      loading={loading}
-                      onClick={() => {
-                        onUpdateYaml();
-                      }}
-                      type="primary"
-                    >
-                      Save
-                    </Button>
-                  )}
-                </Flex>
+                  <Tabs
+                    tabBarGutter={40}
+                    tabBarExtraContent={
+                      <Dropdown.Button
+                        size="small"
+                        onClick={downloadYamlFile}
+                        icon={<i style={{ fontSize: 14, lineHeight: 0 }}>{SvgIcons.chevronDown}</i>}
+                        menu={{
+                          items: [
+                            {
+                              key: 1,
 
-                <Tabs
-                  tabBarGutter={40}
-                  tabBarExtraContent={
-                    <Dropdown.Button
-                      size="small"
-                      onClick={downloadYamlFile}
-                      icon={<i style={{ fontSize: 14, lineHeight: 0 }}>{SvgIcons.chevronDown}</i>}
-                      menu={{
-                        items: [
-                          {
-                            key: 1,
-
-                            label: (
-                              <Upload
-                                name="avatar"
-                                listType="text"
-                                showUploadList={false}
-                                beforeUpload={(file) => {
-                                  handleYamlFileUpload(file);
-                                }}
-                              >
-                                <Flex align="center" gap={5}>
-                                  <i style={{ fontSize: 15, lineHeight: 0 }}>{SvgIcons.plusBtn}</i>
-                                  <span style={{ fontSize: 13 }}>Import</span>
-                                </Flex>
-                              </Upload>
-                            ),
-                          },
-                        ],
-                      }}
-                    >
-                      <Flex align="center" gap={2}>
-                        <i style={{ fontSize: 15, lineHeight: 0 }}>{SvgIcons.download}</i>
-                        <span style={{ fontSize: 13 }}>Export</span>
-                      </Flex>
-                    </Dropdown.Button>
-                  }
-                  tabBarStyle={{ padding: "0px 20px", margin: 0 }}
-                  activeKey={siteContent ? "content" : "design"}
-                  className={styles.site_config_tabs}
-                  items={Tabitems}
-                  onChange={onChange}
-                />
-              </div>
-            </Sider>
-            <Layout>
-              <Content className={styles.sider_content}>{children}</Content>
+                              label: (
+                                <Upload
+                                  name="avatar"
+                                  listType="text"
+                                  showUploadList={false}
+                                  beforeUpload={(file) => {
+                                    handleYamlFileUpload(file);
+                                  }}
+                                >
+                                  <Flex align="center" gap={5}>
+                                    <i style={{ fontSize: 15, lineHeight: 0 }}>{SvgIcons.plusBtn}</i>
+                                    <span style={{ fontSize: 13 }}>Import</span>
+                                  </Flex>
+                                </Upload>
+                              ),
+                            },
+                          ],
+                        }}
+                      >
+                        <Flex align="center" gap={2}>
+                          <i style={{ fontSize: 15, lineHeight: 0 }}>{SvgIcons.download}</i>
+                          <span style={{ fontSize: 13 }}>Export</span>
+                        </Flex>
+                      </Dropdown.Button>
+                    }
+                    tabBarStyle={{ padding: "0px 20px", margin: 0 }}
+                    activeKey={siteContent ? "content" : "design"}
+                    className={styles.site_config_tabs}
+                    items={Tabitems}
+                    onChange={onChange}
+                  />
+                </div>
+              </Sider>
+              <Layout>
+                <Content className={styles.sider_content}>{children}</Content>
+              </Layout>
             </Layout>
-          </Layout>
-        </div>
-      </ConfigProvider>
+          </div>
+        </ConfigProvider>
+      </Spin>
     </>
   );
 };

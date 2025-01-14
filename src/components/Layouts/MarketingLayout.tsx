@@ -73,26 +73,7 @@ const MarketingLayout: FC<{
   }, [siteConfig.brand?.defaultTheme]);
 
   return (
-    <>
-      {
-        <div
-          style={{
-            position: "fixed",
-            display: globalState.pageLoading ? "unset" : "none",
-            top: 0,
-            left: 0,
-            bottom: 0,
-            right: 0,
-            width: "100%",
-            background: "#fff",
-            zIndex: 10,
-          }}
-        >
-          <Flex style={{ height: "100vh", width: "100%" }} align="center" justify="center">
-            <Spin indicator={<LoadingOutlined spin />} size="large" />
-          </Flex>
-        </div>
-      }
+    <Spin spinning={globalState.pageLoading} indicator={<LoadingOutlined spin />} size="large">
       <ConfigProvider theme={globalState.theme == "dark" ? darkThemeConfig(siteConfig) : antThemeConfig(siteConfig)}>
         <Head>
           <title>{`${siteConfig.brand?.name} · ${siteConfig.brand?.title}`}</title>
@@ -134,7 +115,7 @@ const MarketingLayout: FC<{
           activeTheme={globalState.theme ?? "light"}
         />
       </ConfigProvider>
-    </>
+    </Spin>
   );
 };
 

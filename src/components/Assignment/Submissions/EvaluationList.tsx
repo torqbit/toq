@@ -79,40 +79,32 @@ const EvaluatinoList: FC<{ loading: boolean; allSubmission: IAllSubmmissionsDeta
   ];
   return (
     <>
-      {loading ? (
-        <>
-          <Flex style={{ height: "80vh", width: "100%" }} align="center" justify="center">
-            <Spin indicator={<LoadingOutlined spin />} size="large" />
+      <Spin spinning={loading} indicator={<LoadingOutlined spin />} size="large">
+        {allSubmission.length === 0 ? (
+          <Flex vertical className={styles.no_submission_container} align="center" justify="center">
+            <h1>No Submissions</h1>
+            <p>You haven&apos;t submitted the assignment yet</p>
           </Flex>
-        </>
-      ) : (
-        <>
-          {allSubmission.length === 0 ? (
-            <Flex vertical className={styles.no_submission_container} align="center" justify="center">
-              <h1>No Submissions</h1>
-              <p>You haven&apos;t submitted the assignment yet</p>
-            </Flex>
-          ) : (
-            <>
-              <Table
-                pagination={false}
-                className={styles.evaluation_result_table}
-                size="small"
-                columns={columns}
-                dataSource={data}
-                loading={loading}
-              />
+        ) : (
+          <>
+            <Table
+              pagination={false}
+              className={styles.evaluation_result_table}
+              size="small"
+              columns={columns}
+              dataSource={data}
+              loading={loading}
+            />
 
-              <ViewResult
-                score={Number(selectedSubmission?.score)}
-                comment={String(selectedSubmission?.comment)}
-                drawerOpen={drawerOpen}
-                setDrawerOpen={setDrawerOpen}
-              />
-            </>
-          )}
-        </>
-      )}
+            <ViewResult
+              score={Number(selectedSubmission?.score)}
+              comment={String(selectedSubmission?.comment)}
+              drawerOpen={drawerOpen}
+              setDrawerOpen={setDrawerOpen}
+            />
+          </>
+        )}
+      </Spin>
     </>
   );
 };

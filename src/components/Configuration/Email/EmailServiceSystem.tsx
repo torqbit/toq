@@ -96,69 +96,63 @@ const EmailServiceSystem: FC<{ active: boolean }> = ({ active }) => {
 
   return (
     <>
-      {pageLoading ? (
-        <Flex style={{ height: "80vh", width: "100%" }} align="center" justify="center">
-          <Spin indicator={<LoadingOutlined spin />} size="large" />
-        </Flex>
-      ) : (
-        <>
-          {contextHolder}
-          <h3>Email Service</h3>
-          <ConfigFormLayout
-            extraContent={
-              <Flex align="center" gap={10}>
-                {
-                  <Button
-                    disabled
-                    onClick={() => {
-                      emailForm.resetFields;
-                    }}
-                  >
-                    Reset
-                  </Button>
-                }
+      <Spin spinning={pageLoading} indicator={<LoadingOutlined spin />} size="large">
+        {contextHolder}
+        <h3>Email Service</h3>
+        <ConfigFormLayout
+          extraContent={
+            <Flex align="center" gap={10}>
+              {
+                <Button
+                  disabled
+                  onClick={() => {
+                    emailForm.resetFields;
+                  }}
+                >
+                  Reset
+                </Button>
+              }
 
-                {isConnected ? (
-                  <Tag style={{ padding: "5px 10px" }}>
-                    <Flex align="center" gap={5}>
-                      <i style={{ lineHeight: 0, fontSize: 15 }}>{SvgIcons.checkFilled}</i>
-                      <span>Connected</span>
-                    </Flex>
-                  </Tag>
-                ) : (
-                  <Button loading={loading} onClick={() => emailForm.submit()} type="primary">
-                    Test/Save
-                  </Button>
-                )}
-              </Flex>
-            }
-            formTitle={"Email Service"}
-          >
-            <Form form={emailForm} onFinish={saveAndTestEmailCredentials} requiredMark={false}>
-              {emailSecretItems.map((item, i) => {
-                return (
-                  <ConfigForm
-                    input={
-                      <Form.Item
-                        style={{ width: 250 }}
-                        name={item.inputName}
-                        rules={[{ required: true, message: `${item.title} is required` }]}
-                      >
-                        {item.input}
-                      </Form.Item>
-                    }
-                    title={item.title}
-                    description={item.description}
-                    divider={i === emailSecretItems.length - 1 ? false : true}
-                    inputName={""}
-                    optional={item.optional}
-                  />
-                );
-              })}
-            </Form>
-          </ConfigFormLayout>
-        </>
-      )}
+              {isConnected ? (
+                <Tag style={{ padding: "5px 10px" }}>
+                  <Flex align="center" gap={5}>
+                    <i style={{ lineHeight: 0, fontSize: 15 }}>{SvgIcons.checkFilled}</i>
+                    <span>Connected</span>
+                  </Flex>
+                </Tag>
+              ) : (
+                <Button loading={loading} onClick={() => emailForm.submit()} type="primary">
+                  Test/Save
+                </Button>
+              )}
+            </Flex>
+          }
+          formTitle={"Email Service"}
+        >
+          <Form form={emailForm} onFinish={saveAndTestEmailCredentials} requiredMark={false}>
+            {emailSecretItems.map((item, i) => {
+              return (
+                <ConfigForm
+                  input={
+                    <Form.Item
+                      style={{ width: 250 }}
+                      name={item.inputName}
+                      rules={[{ required: true, message: `${item.title} is required` }]}
+                    >
+                      {item.input}
+                    </Form.Item>
+                  }
+                  title={item.title}
+                  description={item.description}
+                  divider={i === emailSecretItems.length - 1 ? false : true}
+                  inputName={""}
+                  optional={item.optional}
+                />
+              );
+            })}
+          </Form>
+        </ConfigFormLayout>
+      </Spin>
     </>
   );
 };

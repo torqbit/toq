@@ -508,8 +508,9 @@ const LessonPage: NextPage<{ siteConfig: PageSiteConfig; courseId: number }> = (
 
   return (
     <AppLayout siteConfig={siteConfig}>
-      {contextMessageHolder}
-      {!loading ? (
+      <Spin spinning={loading} indicator={<LoadingOutlined spin />} size="large">
+        {contextMessageHolder}
+
         <section className={styles.learn_course_page}>
           <div
             className={
@@ -640,7 +641,6 @@ const LessonPage: NextPage<{ siteConfig: PageSiteConfig; courseId: number }> = (
                   {certificateData?.loading && !courseDetail?.previewMode ? (
                     <Flex vertical gap={10} align="center" justify="center">
                       <Spin indicator={<LoadingOutlined spin />} size="large" />
-
                       <p> Generating Certificate</p>
                     </Flex>
                   ) : (
@@ -729,11 +729,7 @@ const LessonPage: NextPage<{ siteConfig: PageSiteConfig; courseId: number }> = (
             </>
           )}
         </section>
-      ) : (
-        <Flex style={{ height: "80vh", width: "100%" }} align="center" justify="center">
-          <Spin indicator={<LoadingOutlined spin />} size="large" />
-        </Flex>
-      )}
+      </Spin>
     </AppLayout>
   );
 };

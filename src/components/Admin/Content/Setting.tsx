@@ -97,11 +97,7 @@ const CourseSetting: FC<{
 
   return (
     <>
-      {settingLoading ? (
-        <Flex style={{ height: "80vh", width: "100%" }} align="center" justify="center">
-          <Spin indicator={<LoadingOutlined spin />} size="large" />
-        </Flex>
-      ) : (
+      <Spin spinning={settingLoading} indicator={<LoadingOutlined spin />} size="large">
         <section className={styles.add_course_setting}>
           <Form form={form} onFinish={onSubmit} layout="vertical" requiredMark={false}>
             <div className={styles.setting_header}>
@@ -391,7 +387,7 @@ const CourseSetting: FC<{
             </ConfigFormLayout>
           </Form>
         </section>
-      )}
+      </Spin>
     </>
   );
 };

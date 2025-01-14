@@ -52,15 +52,7 @@ const ProfileSetting: FC<{
 
   return (
     <div style={{ position: "relative" }}>
-      {pageLoading ? (
-        <Flex
-          style={{ height: isMobile ? "50vh" : "80vh", width: isMobile ? "100vw" : "100%" }}
-          align="center"
-          justify="center"
-        >
-          <Spin indicator={<LoadingOutlined spin />} size="large" />
-        </Flex>
-      ) : (
+      <Spin spinning={pageLoading} indicator={<LoadingOutlined spin />} size="large">
         <section className={styles.user_profile_page}>
           <div className={styles.content_center}>
             <div className={styles.left_content}>
@@ -143,7 +135,7 @@ const ProfileSetting: FC<{
             </div>
           </div>
         </section>
-      )}
+      </Spin>
     </div>
   );
 };
