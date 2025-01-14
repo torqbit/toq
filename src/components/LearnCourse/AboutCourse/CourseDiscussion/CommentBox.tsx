@@ -15,7 +15,7 @@ import {
   UploadProps,
   message,
 } from "antd";
-import { UserOutlined, CloseOutlined } from "@ant-design/icons";
+import { UserOutlined, CloseOutlined, LoadingOutlined } from "@ant-design/icons";
 import { useSession } from "next-auth/react";
 import moment from "moment";
 import { IComment } from "./CourseDiscussion";
@@ -26,7 +26,6 @@ import SvgIcons from "@/components/SvgIcons";
 import { countAlphabets, getBase64, replaceEmptyParagraphs } from "@/lib/utils";
 import PurifyContent from "@/components/PurifyContent/PurifyContent";
 import TextEditor from "@/components/Editor/Quilljs/Editor";
-import SpinLoader from "@/components/SpinLoader/SpinLoader";
 
 moment.locale("en", { ...customFromNow });
 
@@ -204,9 +203,9 @@ const CommentBox: FC<{
                 {isEdited ? (
                   <div className={`${styles.qa_form_input} "text_editor_wrapper"`}>
                     {loading && (
-                      <div className={"spinner_wrapper"}>
-                        <SpinLoader className="editor_spinner" />
-                      </div>
+                      <Flex style={{ height: "100px", width: "100%" }} align="center" justify="center">
+                        <Spin indicator={<LoadingOutlined spin />} />
+                      </Flex>
                     )}
                     <TextEditor
                       defaultValue={editComment}

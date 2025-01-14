@@ -5,14 +5,13 @@ import Head from "next/head";
 import Sidebar from "../Sidebar/Sidebar";
 import { signOut, useSession } from "next-auth/react";
 import { IResponsiveNavMenu, ISiderMenu, useAppContext } from "../ContextApi/AppContext";
-import { Badge, ConfigProvider, Dropdown, Flex, Layout, MenuProps, message } from "antd";
+import { Badge, ConfigProvider, Dropdown, Flex, Layout, MenuProps, message, Spin } from "antd";
 import SvgIcons from "../SvgIcons";
 import Link from "next/link";
 import { UserSession } from "@/lib/types/user";
 import darkThemeConfig from "@/services/darkThemeConfig";
 import antThemeConfig from "@/services/antThemeConfig";
 import { useRouter } from "next/router";
-import SpinLoader from "../SpinLoader/SpinLoader";
 import NotificationService from "@/services/NotificationService";
 import ConversationService from "@/services/ConversationService";
 import { IConversationData } from "@/pages/api/v1/conversation/list";
@@ -21,6 +20,7 @@ import { useMediaQuery } from "react-responsive";
 
 import { Theme } from "@/types/theme";
 import { PageSiteConfig } from "@/services/siteConstant";
+import { LoadingOutlined } from "@ant-design/icons";
 
 const { Content } = Layout;
 
@@ -340,7 +340,9 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
   return (
     <>
       {globalState.pageLoading ? (
-        <SpinLoader />
+        <Flex style={{ height: "100vh", width: "100%" }} align="center" justify="center">
+          <Spin indicator={<LoadingOutlined spin />} size="large" />
+        </Flex>
       ) : (
         <>
           <ConfigProvider

@@ -1,11 +1,11 @@
 import { convertToDayMonthTime } from "@/lib/utils";
 import appConstant from "@/services/appConstant";
 import { IAllSubmmissionsDetail } from "@/services/course/AssignmentService";
-import { Flex, Table } from "antd";
+import { Flex, Spin, Table } from "antd";
 import { FC, useState } from "react";
 import styles from "@/styles/AssignmentEvaluation.module.scss";
 import ViewResult from "./ViewResult";
-import SpinLoader from "../../SpinLoader/SpinLoader";
+import { LoadingOutlined } from "@ant-design/icons";
 
 const EvaluatinoList: FC<{ loading: boolean; allSubmission: IAllSubmmissionsDetail[] }> = ({
   allSubmission,
@@ -17,19 +17,19 @@ const EvaluatinoList: FC<{ loading: boolean; allSubmission: IAllSubmmissionsDeta
   const data =
     allSubmission.length > 0
       ? allSubmission
-        .sort((a, b) => b.submissionId - a.submissionId)
-        .map((s, i) => {
-          return {
-            key: i,
-            DateSubmitted: convertToDayMonthTime(new Date(s.submittedDate)),
-            score: s.score
-              ? `${s.score} / ${appConstant.assignmentMaxScore}`
-              : `- / ${appConstant.assignmentMaxScore}`,
-            pass: s.score ? (s.score >= appConstant.assignmentPassingMarks ? "YES" : "NO") : "NA",
-            isEvaluated: s.evaluated,
-            submissionId: s.submissionId,
-          };
-        })
+          .sort((a, b) => b.submissionId - a.submissionId)
+          .map((s, i) => {
+            return {
+              key: i,
+              DateSubmitted: convertToDayMonthTime(new Date(s.submittedDate)),
+              score: s.score
+                ? `${s.score} / ${appConstant.assignmentMaxScore}`
+                : `- / ${appConstant.assignmentMaxScore}`,
+              pass: s.score ? (s.score >= appConstant.assignmentPassingMarks ? "YES" : "NO") : "NA",
+              isEvaluated: s.evaluated,
+              submissionId: s.submissionId,
+            };
+          })
       : [];
   const columns: any = [
     {
@@ -81,8 +81,8 @@ const EvaluatinoList: FC<{ loading: boolean; allSubmission: IAllSubmmissionsDeta
     <>
       {loading ? (
         <>
-          <Flex align="center" justify="center">
-            <SpinLoader className="editor_spinner" />
+          <Flex style={{ height: "80vh", width: "100%" }} align="center" justify="center">
+            <Spin indicator={<LoadingOutlined spin />} size="large" />
           </Flex>
         </>
       ) : (

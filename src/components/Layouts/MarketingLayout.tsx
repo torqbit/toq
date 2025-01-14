@@ -4,10 +4,9 @@ import styles from "@/templates/standard/components/Hero/Hero.module.scss";
 import landingPage from "@/styles/Marketing/LandingPage/LandingPage.module.scss";
 import Head from "next/head";
 import { useAppContext } from "../ContextApi/AppContext";
-import { ConfigProvider } from "antd";
+import { ConfigProvider, Flex, Spin } from "antd";
 import darkThemeConfig from "@/services/darkThemeConfig";
 import antThemeConfig from "@/services/antThemeConfig";
-import SpinLoader from "../SpinLoader/SpinLoader";
 import { DEFAULT_THEME, PageSiteConfig } from "@/services/siteConstant";
 import { useMediaQuery } from "react-responsive";
 import { User } from "@prisma/client";
@@ -15,6 +14,7 @@ import { IBrandInfo } from "@/types/landing/navbar";
 import { Theme } from "@/types/theme";
 import Footer from "@/templates/standard/components/Footer/Footer";
 import NavBar from "@/templates/standard/components/NavBar/NavBar";
+import { LoadingOutlined } from "@ant-design/icons";
 
 const MarketingLayout: FC<{
   children?: React.ReactNode;
@@ -88,7 +88,9 @@ const MarketingLayout: FC<{
             zIndex: 10,
           }}
         >
-          <SpinLoader className="marketing__spinner" />
+          <Flex style={{ height: "100vh", width: "100%" }} align="center" justify="center">
+            <Spin indicator={<LoadingOutlined spin />} size="large" />
+          </Flex>
         </div>
       }
       <ConfigProvider theme={globalState.theme == "dark" ? darkThemeConfig(siteConfig) : antThemeConfig(siteConfig)}>

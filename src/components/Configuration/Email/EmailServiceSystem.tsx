@@ -1,15 +1,17 @@
-import { Button, Flex, Form, Input, message, Select, Steps, Tag } from "antd";
+import { Button, Flex, Form, Input, message, Select, Spin, Steps, Tag } from "antd";
 import ConfigFormLayout from "../ConfigFormLayout";
 import ConfigForm from "../ConfigForm";
 import { FC, useEffect, useState } from "react";
 import SvgIcons from "@/components/SvgIcons";
 import { EmailCredentialsConfig } from "@/types/cms/email";
 import emailClient from "@/lib/admin/email/email-client";
+import { LoadingOutlined } from "@ant-design/icons";
 
 const EmailServiceSystem: FC<{ active: boolean }> = ({ active }) => {
   const [emailForm] = Form.useForm();
   const [messageApi, contextHolder] = message.useMessage();
   const [loading, setLoading] = useState<boolean>(false);
+  const [pageLoading, setPageLoading] = useState<boolean>(false);
   const [isConnected, setIsConnected] = useState<boolean>(false);
 
   const getEmailCredentials = () => {
@@ -17,15 +19,20 @@ const EmailServiceSystem: FC<{ active: boolean }> = ({ active }) => {
       (response) => {
         setIsConnected(true);
         emailForm.setFieldsValue(response.body);
+        setPageLoading(false);
       },
       (error) => {
+        setPageLoading(false);
+
         messageApi.error(error);
       }
     );
+    setPageLoading(false);
   };
 
   useEffect(() => {
     if (active) {
+      setPageLoading(true);
       getEmailCredentials();
     }
   }, [active]);
@@ -89,61 +96,69 @@ const EmailServiceSystem: FC<{ active: boolean }> = ({ active }) => {
 
   return (
     <>
-      {contextHolder}
-      <h3>Email Service</h3>
-      <ConfigFormLayout
-        extraContent={
-          <Flex align="center" gap={10}>
-            {
-              <Button
-                disabled
-                onClick={() => {
-                  emailForm.resetFields;
-                }}
-              >
-                Reset
-              </Button>
-            }
-
-            {isConnected ? (
-              <Tag style={{ padding: "5px 10px" }}>
-                <Flex align="center" gap={5}>
-                  <i style={{ lineHeight: 0, fontSize: 15 }}>{SvgIcons.checkFilled}</i>
-                  <span>Connected</span>
-                </Flex>
-              </Tag>
-            ) : (
-              <Button loading={loading} onClick={() => emailForm.submit()} type="primary">
-                Test/Save
-              </Button>
-            )}
-          </Flex>
-        }
-        formTitle={"Email Service"}
-      >
-        <Form form={emailForm} onFinish={saveAndTestEmailCredentials} requiredMark={false}>
-          {emailSecretItems.map((item, i) => {
-            return (
-              <ConfigForm
-                input={
-                  <Form.Item
-                    style={{ width: 250 }}
-                    name={item.inputName}
-                    rules={[{ required: true, message: `${item.title} is required` }]}
+      {pageLoading ? (
+        <Flex style={{ height: "80vh", width: "100%" }} align="center" justify="center">
+          <Spin indicator={<LoadingOutlined spin />} size="large" />
+        </Flex>
+      ) : (
+        <>
+          {contextHolder}
+          <h3>Email Service</h3>
+          <ConfigFormLayout
+            extraContent={
+              <Flex align="center" gap={10}>
+                {
+                  <Button
+                    disabled
+                    onClick={() => {
+                      emailForm.resetFields;
+                    }}
                   >
-                    {item.input}
-                  </Form.Item>
+                    Reset
+                  </Button>
                 }
-                title={item.title}
-                description={item.description}
-                divider={i === emailSecretItems.length - 1 ? false : true}
-                inputName={""}
-                optional={item.optional}
-              />
-            );
-          })}
-        </Form>
-      </ConfigFormLayout>
+
+                {isConnected ? (
+                  <Tag style={{ padding: "5px 10px" }}>
+                    <Flex align="center" gap={5}>
+                      <i style={{ lineHeight: 0, fontSize: 15 }}>{SvgIcons.checkFilled}</i>
+                      <span>Connected</span>
+                    </Flex>
+                  </Tag>
+                ) : (
+                  <Button loading={loading} onClick={() => emailForm.submit()} type="primary">
+                    Test/Save
+                  </Button>
+                )}
+              </Flex>
+            }
+            formTitle={"Email Service"}
+          >
+            <Form form={emailForm} onFinish={saveAndTestEmailCredentials} requiredMark={false}>
+              {emailSecretItems.map((item, i) => {
+                return (
+                  <ConfigForm
+                    input={
+                      <Form.Item
+                        style={{ width: 250 }}
+                        name={item.inputName}
+                        rules={[{ required: true, message: `${item.title} is required` }]}
+                      >
+                        {item.input}
+                      </Form.Item>
+                    }
+                    title={item.title}
+                    description={item.description}
+                    divider={i === emailSecretItems.length - 1 ? false : true}
+                    inputName={""}
+                    optional={item.optional}
+                  />
+                );
+              })}
+            </Form>
+          </ConfigFormLayout>
+        </>
+      )}
     </>
   );
 };

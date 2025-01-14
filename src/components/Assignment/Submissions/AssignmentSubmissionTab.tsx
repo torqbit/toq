@@ -1,5 +1,5 @@
 import appConstant from "@/services/appConstant";
-import { Button, Flex, message, Select, Space, Segmented } from "antd";
+import { Button, Flex, message, Select, Space, Segmented, Spin } from "antd";
 import { SegmentedValue } from "antd/es/segmented";
 import { FC, useEffect, useState } from "react";
 import style from "@/styles/LearnLecture.module.scss";
@@ -12,9 +12,9 @@ import { useRouter } from "next/router";
 import PreviewAssignment from "./PreviewAssignment";
 import EvaluatinoList from "./EvaluationList";
 import AssignmentCodeEditor from "./AssignmentCodeEditor";
-import SpinLoader from "@/components/SpinLoader/SpinLoader";
+
 import SvgIcons from "@/components/SvgIcons";
-import { CaretDownOutlined } from "@ant-design/icons";
+import { CaretDownOutlined, LoadingOutlined } from "@ant-design/icons";
 
 const AssignmentSubmissionTab: FC<{
   userRole: Role;
@@ -291,8 +291,8 @@ const AssignmentSubmissionTab: FC<{
 
       {loading ? (
         <>
-          <Flex align="center" justify="center">
-            <SpinLoader className="editor_spinner" />
+          <Flex style={{ height: "80vh", width: "100%" }} align="center" justify="center">
+            <Spin indicator={<LoadingOutlined spin />} size="large" />
           </Flex>
         </>
       ) : (

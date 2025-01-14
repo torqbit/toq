@@ -2,10 +2,9 @@ import { FC, useEffect, useState } from "react";
 import React from "react";
 import Head from "next/head";
 import { useAppContext } from "../ContextApi/AppContext";
-import { Button, ConfigProvider, Dropdown, Flex, Layout, message, Tabs, TabsProps, Upload } from "antd";
+import { Button, ConfigProvider, Dropdown, Flex, Layout, message, Spin, Tabs, TabsProps, Upload } from "antd";
 import darkThemeConfig from "@/services/darkThemeConfig";
 import antThemeConfig from "@/services/antThemeConfig";
-import SpinLoader from "../SpinLoader/SpinLoader";
 import { PageSiteConfig } from "@/services/siteConstant";
 import { useMediaQuery } from "react-responsive";
 import { Role, User } from "@prisma/client";
@@ -20,6 +19,7 @@ import { useRouter } from "next/router";
 import { RcFile } from "antd/es/upload";
 import { createSlug } from "@/lib/utils";
 import { useSession } from "next-auth/react";
+import { LoadingOutlined } from "@ant-design/icons";
 
 const { Content, Sider } = Layout;
 const SiteBuilderLayout: FC<{
@@ -172,7 +172,9 @@ const SiteBuilderLayout: FC<{
             zIndex: 10,
           }}
         >
-          <SpinLoader className="marketing__spinner" />
+          <Flex style={{ height: "100vh", width: "100%" }} align="center" justify="center">
+            <Spin indicator={<LoadingOutlined spin />} size="large" />
+          </Flex>
         </div>
       }
       <ConfigProvider theme={globalState.theme == "dark" ? darkThemeConfig(siteConfig) : antThemeConfig(siteConfig)}>

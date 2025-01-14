@@ -1,10 +1,10 @@
-import { Alert, Button, ConfigProvider, Form, Input, message, Tooltip } from "antd";
+import { Alert, Button, ConfigProvider, Flex, Form, Input, message, Spin, Tooltip } from "antd";
 import React, { useEffect, useState } from "react";
 import styles from "@/styles/Login.module.scss";
 import { signIn, useSession } from "next-auth/react";
 import { NextPage, GetServerSidePropsContext } from "next";
 import { useRouter } from "next/router";
-import SpinLoader from "@/components/SpinLoader/SpinLoader";
+
 import { getToken } from "next-auth/jwt";
 import { authConstants, capitalizeFirstLetter, getCookieName } from "@/lib/utils";
 import Image from "next/image";
@@ -17,6 +17,7 @@ import prisma from "@/lib/prisma";
 import { useAppContext } from "@/components/ContextApi/AppContext";
 import darkThemeConfig from "@/services/darkThemeConfig";
 import antThemeConfig from "@/services/antThemeConfig";
+import { LoadingOutlined } from "@ant-design/icons";
 
 const LoginPage: NextPage<{
   loginMethods: { available: string[]; configured: string[] };
@@ -62,7 +63,11 @@ const LoginPage: NextPage<{
   };
 
   if (sessionStatus === "loading") {
-    return <SpinLoader />;
+    return (
+      <Flex style={{ height: "80vh", width: "100%" }} align="center" justify="center">
+        <Spin indicator={<LoadingOutlined spin />} size="large" />
+      </Flex>
+    );
   }
 
   const handleLogin = async () => {

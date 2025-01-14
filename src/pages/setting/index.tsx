@@ -3,10 +3,10 @@ import styleLayout from "@/styles/Dashboard.module.scss";
 import styles from "@/styles/Profile.module.scss";
 import { useSession } from "next-auth/react";
 
-import { Button, Form, Input, Tabs, TabsProps, message, Tooltip, Upload, InputNumber } from "antd";
+import { Button, Form, Input, Tabs, TabsProps, message, Tooltip, Upload, InputNumber, Spin, Flex } from "antd";
 import { GetServerSidePropsContext, NextPage } from "next";
 import { Session } from "next-auth";
-import SpinLoader from "@/components/SpinLoader/SpinLoader";
+
 import { useAppContext } from "@/components/ContextApi/AppContext";
 import { LoadingOutlined, UserOutlined } from "@ant-design/icons";
 import SvgIcons from "@/components/SvgIcons";
@@ -18,6 +18,7 @@ import { PageSiteConfig } from "@/services/siteConstant";
 import { getBase64 } from "@/lib/utils";
 import ProgramService from "@/services/ProgramService";
 import { useRouter } from "next/router";
+import { useMediaQuery } from "react-responsive";
 
 const ProfileSetting: FC<{
   user: Session;
@@ -29,6 +30,8 @@ const ProfileSetting: FC<{
 }> = ({ user, onUpdateProfile, userProfile, setUserProfile, setFile, updateLoading }) => {
   const [pageLoading, setPageLoading] = useState<boolean>(false);
   const [userProfileUploading, setuserProfileUploading] = useState<boolean>(false);
+  const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
+
   const router = useRouter();
   const uploadFile = async (file: any, title: string) => {
     if (file) {
@@ -48,11 +51,15 @@ const ProfileSetting: FC<{
   }, [router.query.tab]);
 
   return (
-    <>
+    <div style={{ position: "relative" }}>
       {pageLoading ? (
-        <>
-          <SpinLoader />
-        </>
+        <Flex
+          style={{ height: isMobile ? "50vh" : "80vh", width: isMobile ? "100vw" : "100%" }}
+          align="center"
+          justify="center"
+        >
+          <Spin indicator={<LoadingOutlined spin />} size="large" />
+        </Flex>
       ) : (
         <section className={styles.user_profile_page}>
           <div className={styles.content_center}>
@@ -137,7 +144,7 @@ const ProfileSetting: FC<{
           </div>
         </section>
       )}
-    </>
+    </div>
   );
 };
 

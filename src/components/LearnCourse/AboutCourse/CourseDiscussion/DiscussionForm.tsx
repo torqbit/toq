@@ -1,11 +1,12 @@
-import { Button, Divider, Flex, Skeleton, Tooltip, Upload, UploadProps } from "antd";
+import { Button, Divider, Flex, Skeleton, Spin, Tooltip, Upload, UploadProps } from "antd";
 import React, { FC, useState } from "react";
 import styles from "@/styles/LearnLecture.module.scss";
 import { message } from "antd";
 import SvgIcons from "@/components/SvgIcons";
 import { countAlphabets, getBase64, replaceEmptyParagraphs } from "@/lib/utils";
 import TextEditor from "@/components/Editor/Quilljs/Editor";
-import SpinLoader from "@/components/SpinLoader/SpinLoader";
+
+import { LoadingOutlined } from "@ant-design/icons";
 
 const QAForm: FC<{
   loadingPage: boolean;
@@ -57,7 +58,9 @@ const QAForm: FC<{
       {contextHolder}
       {loading && (
         <div className={"post_comment_spinner_wrapper"}>
-          <SpinLoader className="editor_spinner" />
+          <Flex style={{ height: "100%", width: "100%" }} align="center" justify="center">
+            <Spin indicator={<LoadingOutlined spin />} size="large" />
+          </Flex>
         </div>
       )}
       {loadingPage ? (

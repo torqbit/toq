@@ -78,7 +78,7 @@ export const CourseViewItem: FC<{ course: ICourseListItem; previewMode?: boolean
 
             <h4 style={{ marginTop: 5, marginBottom: 5 }}>{course.title}</h4>
             <p style={{ fontWeight: "normal", marginBottom: 0, fontSize: 14 }}>
-              x A course by <b>{course.author}</b>
+              A course by <b>{course.author}</b>
             </p>
           </>
         }

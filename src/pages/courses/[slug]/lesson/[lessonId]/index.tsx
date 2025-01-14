@@ -34,7 +34,7 @@ import { ICourseProgressUpdateResponse } from "@/lib/types/program";
 import { getUserEnrolledCoursesId } from "@/actions/getEnrollCourses";
 import { generateDayAndYear, getCookieName, getExtension } from "@/lib/utils";
 import { getToken } from "next-auth/jwt";
-import SpinLoader from "@/components/SpinLoader/SpinLoader";
+
 import { useMediaQuery } from "react-responsive";
 import { $Enums, ResourceContentType, Role } from "@prisma/client";
 import ViewAssignment from "@/components/Assignment/ViewAssignment";
@@ -45,6 +45,7 @@ import LessonListSideBar from "@/components/Lessons/LessonListSideBar";
 import AppLayout from "@/components/Layouts/AppLayout";
 import { PageSiteConfig } from "@/services/siteConstant";
 import { getSiteConfig } from "@/services/getSiteConfig";
+import { LoadingOutlined } from "@ant-design/icons";
 
 export interface ICertficateData {
   loading: boolean;
@@ -637,8 +638,8 @@ const LessonPage: NextPage<{ siteConfig: PageSiteConfig; courseId: number }> = (
                   }}
                 >
                   {certificateData?.loading && !courseDetail?.previewMode ? (
-                    <Flex vertical gap={60} align="center" justify="center">
-                      <SpinLoader className="lesson_loader" />
+                    <Flex vertical gap={10} align="center" justify="center">
+                      <Spin indicator={<LoadingOutlined spin />} size="large" />
 
                       <p> Generating Certificate</p>
                     </Flex>
@@ -729,7 +730,9 @@ const LessonPage: NextPage<{ siteConfig: PageSiteConfig; courseId: number }> = (
           )}
         </section>
       ) : (
-        <SpinLoader className="course__spinner" />
+        <Flex style={{ height: "80vh", width: "100%" }} align="center" justify="center">
+          <Spin indicator={<LoadingOutlined spin />} size="large" />
+        </Flex>
       )}
     </AppLayout>
   );

@@ -6,7 +6,7 @@ import Courses from "@/components/Courses/Courses";
 import { Spin, message, Flex, Button } from "antd";
 
 import ProgramService from "@/services/ProgramService";
-import SpinLoader from "@/components/SpinLoader/SpinLoader";
+
 import AppLayout from "@/components/Layouts/AppLayout";
 import { getSiteConfig } from "@/services/getSiteConfig";
 import { PageSiteConfig } from "@/services/siteConstant";
@@ -22,6 +22,7 @@ import { Theme } from "@/types/theme";
 import { ICourseListItem } from "@/types/courses/Course";
 import { CoursesListView } from "@/components/Courses/CourseListView/CourseListView";
 import { useSession } from "next-auth/react";
+import { LoadingOutlined } from "@ant-design/icons";
 
 const CoursesView: FC<{
   courses: Course[];
@@ -125,7 +126,9 @@ const CoursesPage: NextPage<{ siteConfig: PageSiteConfig; userRole: Role }> = ({
                 />
               </div>
             ) : (
-              <SpinLoader className="course__spinner" />
+              <Flex style={{ height: "80vh", width: "100%" }} align="center" justify="center">
+                <Spin indicator={<LoadingOutlined spin />} size="large" />
+              </Flex>
             )}
           </section>
         </MarketingLayout>

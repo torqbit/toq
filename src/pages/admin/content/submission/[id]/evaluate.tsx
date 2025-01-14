@@ -1,6 +1,5 @@
-import SpinLoader from "@/components/SpinLoader/SpinLoader";
 import AssignmentService, { ISubmissionDetail } from "@/services/course/AssignmentService";
-import { Breadcrumb, Button, Drawer, Flex, Form, InputNumber, message, Modal, Segmented, Space } from "antd";
+import { Breadcrumb, Button, Drawer, Flex, Form, InputNumber, message, Modal, Segmented, Space, Spin } from "antd";
 import { GetServerSidePropsContext, NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -20,6 +19,7 @@ import { submissionStatus } from "@prisma/client";
 import AppLayout from "@/components/Layouts/AppLayout";
 import { PageSiteConfig } from "@/services/siteConstant";
 import { getSiteConfig } from "@/services/getSiteConfig";
+import { LoadingOutlined } from "@ant-design/icons";
 
 const EvaluatePage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -178,7 +178,7 @@ const EvaluatePage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) 
                       <AssignmentCodeEditor
                         assignmentFiles={submissionDetail?.assignmentFiles as string[]}
                         fileMap={submissionDetail?.content as Map<string, string>}
-                        updateAssignmentMap={() => { }}
+                        updateAssignmentMap={() => {}}
                         readOnly={true}
                       />
                     )}
@@ -236,7 +236,9 @@ const EvaluatePage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) 
           />
         </section>
       ) : (
-        <SpinLoader />
+        <Flex style={{ height: "80vh", width: "100%" }} align="center" justify="center">
+          <Spin indicator={<LoadingOutlined spin />} size="large" />
+        </Flex>
       )}
     </AppLayout>
   );
