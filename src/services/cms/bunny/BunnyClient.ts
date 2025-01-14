@@ -223,8 +223,8 @@ export class BunnyClient {
   deleteCDNImage = async (filePath: string, linkedHostname: string, zoneName: string): Promise<APIResponse<string>> => {
     const parseUrl = filePath && url.parse(filePath);
     const existingPath = parseUrl && parseUrl.pathname;
-    if (parseUrl && parseUrl.host === linkedHostname) {
-      const deleteUrl = `https://storage.bunnycdn.com/${zoneName}/${existingPath}`;
+    if (parseUrl && parseUrl.host === linkedHostname && this.isValidPath(existingPath)) {
+      const deleteUrl = `https://storage.bunnycdn.com/${zoneName}/${encodeURIComponent(existingPath)}`;
       const response = await fetch(deleteUrl, this.getDeleteOption());
       if (response.ok) {
         return new APIResponse(true, response.status, response.statusText);
@@ -534,4 +534,8 @@ export class BunnyClient {
       "Successfully deleted the watermark"
     );
   };
+  isValidPath(path: string): boolean {
+    const allowedPathPattern = /^\/[a-zA-Z0-9_\-\/]+$/;
+    return allowedPathPattern.test(path);
+  }
 }
