@@ -58,7 +58,7 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
     {
       title: "Course",
       icon: SvgIcons.courses,
-      link: "admin/courses",
+      link: "/courses",
       key: "courses",
     },
     {
@@ -94,15 +94,16 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
       icon: <i style={{ fontSize: 18 }}>{SvgIcons.site}</i>,
     },
     {
+      label: <Link href="/courses">Academy</Link>,
+      key: "courses",
+      icon: SvgIcons.courses,
+    },
+    {
       label: <Link href="/admin/settings">Settings</Link>,
       key: "settings",
       icon: SvgIcons.setting,
     },
-    {
-      label: <Link href="/courses">Courses</Link>,
-      key: "courses",
-      icon: SvgIcons.courses,
-    },
+
     {
       label: <Link href="/events">Events</Link>,
       key: "events",

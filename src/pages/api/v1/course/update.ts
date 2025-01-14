@@ -133,7 +133,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           slug: name,
         },
       });
-
       let contentDurationInHrs = 0;
       let assignmentCount = 0;
       const lessons = updateDetails.chapters.flatMap((c) => c.resource);
@@ -183,6 +182,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         expiryInDays: updateDetails.expiryInDays,
         difficultyLevel: updateDetails.difficultyLevel || courseDifficultyType.Beginner,
         chapters: chapters,
+        remainingDays: updateDetails.expiryInDays,
         trailerEmbedUrl: updateDetails.tvUrl || undefined,
         author: {
           name: updateDetails.user.name,
