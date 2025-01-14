@@ -18,7 +18,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       case "Enrollments":
         const enrollmentsDetail = await analytics.getEnrollment(d);
         return res.status(enrollmentsDetail.status).json(enrollmentsDetail);
-
+      case "Users":
+        const usersDetail = await analytics.getUserDetailByDuration(d);
+        return res.status(usersDetail.status).json(usersDetail);
       default:
         return res.status(400).json({ success: false, error: "Analytic type not defined" });
     }

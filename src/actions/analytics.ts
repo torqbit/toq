@@ -431,6 +431,88 @@ class Analytics {
       ],
     });
   }
+  async getUserDetailByDuration(duration: AnalyticsDuration): Promise<APIResponse<IAnalyticResponse>> {
+    const users = await prisma.user.groupBy({
+      by: ["createdAt"],
+      where: {
+        dateJoined: {
+          gte: this.getDateCondition(duration).startDate,
+          lte: this.getDateCondition(duration).endDate,
+        },
+      },
+      _count: {
+        id: true,
+      },
+    });
+
+    let data: { x: string; y: number }[] = [];
+
+    switch (duration) {
+      case "month":
+        data = await this.generateMonthlyData(
+          users.map((t) => {
+            return {
+              amount: t._count.id || 0,
+              createdAt: t.createdAt,
+            };
+          })
+        );
+
+        break;
+
+      case "quarter":
+        data = await this.generateQuarterlyData(
+          users.map((t) => {
+            return {
+              amount: t._count.id || 0,
+              createdAt: t.createdAt,
+            };
+          })
+        );
+        break;
+      case "year":
+        data = await this.generateYearlyData(
+          users.map((t) => {
+            return {
+              amount: t._count.id || 0,
+              createdAt: t.createdAt,
+            };
+          })
+        );
+        break;
+
+      default:
+        break;
+    }
+
+    let totalAmount = users.map((t) => t._count.id).reduce((sum, amount) => Number(sum) + Number(amount), 0);
+
+    const previousDetail = await prisma.courseRegistration.aggregate({
+      _count: {
+        studentId: true,
+      },
+      where: {
+        dateJoined: {
+          gte: this.getDateCondition(duration).previousStartDate,
+          lte: this.getDateCondition(duration).previousEndDate,
+        },
+      },
+    });
+
+    return new APIResponse(true, 200, "", {
+      info: {
+        total: `${totalAmount || 0}`,
+        type: "Users",
+        comparedPercentage: compareByPercentage(totalAmount || 0, previousDetail._count.studentId || 0),
+      },
+      data: [
+        {
+          id: "line",
+          data,
+        },
+      ],
+    });
+  }
 }
 
 export default new Analytics();

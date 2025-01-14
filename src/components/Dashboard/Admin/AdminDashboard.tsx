@@ -76,6 +76,26 @@ const AdminDashboard: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
         </>
       ),
     },
+    {
+      key: "Users",
+      label: "Users",
+      children: (
+        <>
+          {analyticStats?.info ? (
+            <Analytics
+              key={"Users"}
+              loading={loadingAnalytics}
+              info={analyticStats.info as IAnalyticStats}
+              handleAnalytic={handleAnalytics}
+              data={analyticStats.data}
+              siteConfig={siteConfig}
+            />
+          ) : (
+            <AnalyticSkeleton />
+          )}
+        </>
+      ),
+    },
   ];
 
   useEffect(() => {
