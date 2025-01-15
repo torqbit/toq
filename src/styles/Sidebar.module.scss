@@ -4,6 +4,14 @@
   box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
   border-right: 1px solid var(--border-color);
 
+  .menu {
+    li.menu__item {
+      border-radius: 0;
+      margin: 4px 0;
+      width: 100%;
+    }
+  }
+
   .logo {
     padding: 15px 16px 30px 16px;
     display: flex;
@@ -104,6 +112,27 @@
   border-right: 1px solid var(--border-color);
   overflow-y: auto;
 
+  li.lesson__item__group {
+    height: auto;
+
+    li.lesson__item {
+      height: auto;
+      line-height: 1.6;
+      border-radius: 0;
+      margin: 0;
+    }
+  }
+
+  .menu__item__wrapper {
+    > li > ul > li {
+      display: flex;
+      height: auto;
+      padding: 8px 0px;
+      line-height: 1.6;
+      align-self: flex-start;
+    }
+  }
+  
   .course_title {
     margin: 20px 0px 0px 15px;
   }

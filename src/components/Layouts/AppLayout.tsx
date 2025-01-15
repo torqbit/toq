@@ -1,6 +1,7 @@
 import { FC, useEffect, useState } from "react";
 import React from "react";
 import styles from "../../styles/Layout2.module.scss";
+import sidebar from "@/styles/Sidebar.module.scss";
 import Head from "next/head";
 import Sidebar from "../Sidebar/Sidebar";
 import { signOut, useSession } from "next-auth/react";
@@ -122,32 +123,38 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
     {
       label: <Link href="/dashboard">Dashboard</Link>,
       key: "dashboard",
+      className: sidebar.menu__item,
       icon: SvgIcons.dashboard,
     },
     {
-      label: <Link href="/admin/site/design">Site Design</Link>,
+      label: <Link href="/admin/site/design">Site Editor</Link>,
       key: "site",
+      className: sidebar.menu__item,
       icon: <i style={{ fontSize: 18 }}>{SvgIcons.site}</i>,
     },
     {
       label: <Link href="/courses">Academy</Link>,
       key: "courses",
+      className: sidebar.menu__item,
       icon: SvgIcons.courses,
     },
     {
       label: <Link href="/admin/settings">Settings</Link>,
       key: "settings",
+      className: sidebar.menu__item,
       icon: SvgIcons.setting,
     },
     {
       label: <Link href="/events">Events</Link>,
       key: "events",
+      className: sidebar.menu__item,
       icon: <i style={{ fontSize: 18 }}>{SvgIcons.events}</i>,
     },
 
     {
       label: <Link href="/notifications">Notifications</Link>,
       key: "notifications",
+      className: sidebar.menu__item,
       icon: (
         <Badge
           color="blue"

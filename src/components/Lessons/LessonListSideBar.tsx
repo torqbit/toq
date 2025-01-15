@@ -37,7 +37,7 @@ const LessonListSideBar: FC<{
         collapsible={globalState.lessonCollapsed}
       >
         <div className={styles.course_title}>
-          <h2>Course Content</h2>
+          <h3>Course Content</h3>
         </div>
 
         <Menu

@@ -2,6 +2,7 @@ import SvgIcons from "@/components/SvgIcons";
 import ProgramService from "@/services/ProgramService";
 import { CourseLessons, IAssignmentDetail, VideoLesson } from "@/types/courses/Course";
 import styles from "@/styles/LearnCourses.module.scss";
+import sidebar from "@/styles/Sidebar.module.scss";
 import {
   Avatar,
   Breadcrumb,
@@ -352,6 +353,7 @@ const LessonPage: NextPage<{ siteConfig: PageSiteConfig; courseId: number }> = (
       icon: <i style={{ fontSize: 18, width: 20, lineHeight: 0 }}>{SvgIcons.folder}</i>,
       label: ch.chapterName,
       key: i,
+      className: sidebar.lesson__item__group,
       style: { height: "auto" },
       children: ch.lessons.map((l) => {
         return {
@@ -367,9 +369,9 @@ const LessonPage: NextPage<{ siteConfig: PageSiteConfig; courseId: number }> = (
               </Flex>
             </Link>
           ),
-
           key: `${l.lessonId}`,
-
+          style: { alignItems: "flex-start", paddingLeft: 20 },
+          className: sidebar.lesson__item,
           icon: (
             <i
               style={{
