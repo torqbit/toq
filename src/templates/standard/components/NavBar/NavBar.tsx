@@ -15,6 +15,7 @@ const NavBar: FC<INavBarProps> = ({
   isMobile,
   defaultNavlink,
   homeLink,
+  previewMode,
 }): ReactElement => {
   return (
     <section className={styles.navigation_main_container}>
@@ -27,6 +28,7 @@ const NavBar: FC<INavBarProps> = ({
           isMobile={isMobile}
           homeLink={homeLink}
           defaultNavlink={defaultNavlink}
+          previewMode={previewMode}
         />
       ) : (
         <div className={styles.navBarContainer}>
@@ -62,7 +64,7 @@ const NavBar: FC<INavBarProps> = ({
                 </ul>
               )}
               <Flex align="center" gap={20}>
-                {showThemeSwitch && <ThemeSwitch activeTheme={activeTheme} />}
+                {showThemeSwitch && <ThemeSwitch activeTheme={activeTheme} previewMode={previewMode} />}
 
                 <Link href={user ? `/dashboard` : `${defaultNavlink}`} aria-label="Get started">
                   <Button type="primary">{user ? "Go to Dashboard" : "Get Started"}</Button>

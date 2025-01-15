@@ -51,13 +51,21 @@ const MarketingLayout: FC<{
   const onCheckTheme = () => {
     const currentTheme = localStorage.getItem("theme");
 
-    if (siteConfig.brand?.defaultTheme) {
-      localStorage.setItem("theme", siteConfig.brand?.defaultTheme);
+    if (!previewMode) {
+      if (siteConfig.brand?.themeSwitch && currentTheme) {
+        localStorage.setItem("theme", currentTheme);
+      } else {
+        if (siteConfig.brand?.defaultTheme) {
+          localStorage.setItem("theme", siteConfig.brand?.defaultTheme);
+        } else {
+          localStorage.setItem("theme", "light");
+        }
+      }
+      setGlobalTheme(localStorage.getItem("theme") as Theme);
     } else {
-      localStorage.setItem("theme", "light");
+      setGlobalTheme(siteConfig.brand?.defaultTheme as Theme);
     }
 
-    setGlobalTheme(localStorage.getItem("theme") as Theme);
     dispatch({
       type: "SET_SITE_CONFIG",
       payload: siteConfig,
@@ -88,32 +96,33 @@ const MarketingLayout: FC<{
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
         <link rel="icon" href={siteConfig.brand?.favicon} />
       </Head>
+      <section className={styles.heroWrapper}>
+        {NavBarComponent && (
+          <NavBarComponent
+            user={user}
+            isMobile={isMobile}
+            defaultNavlink={previewMode ? "#" : "/login"}
+            homeLink={homeLink ? homeLink : "/"}
+            items={siteConfig.navBar?.links ?? []}
+            showThemeSwitch={siteConfig.brand?.themeSwitch ?? DEFAULT_THEME.brand.themeSwitch}
+            activeTheme={globalState.theme ?? "light"}
+            brand={brandInfo}
+            previewMode={previewMode}
+          />
+        )}
+
+        {heroSection}
+      </section>
       <Spin spinning={globalState.pageLoading} indicator={<LoadingOutlined spin />} size="large">
-        <section className={styles.heroWrapper}>
-          {NavBarComponent && (
-            <NavBarComponent
-              user={user}
-              isMobile={isMobile}
-              defaultNavlink={previewMode ? "#" : "/login"}
-              homeLink={homeLink ? homeLink : "/"}
-              items={siteConfig.navBar?.links ?? []}
-              showThemeSwitch={siteConfig.brand?.themeSwitch ?? DEFAULT_THEME.brand.themeSwitch}
-              activeTheme={globalState.theme ?? "light"}
-              brand={brandInfo}
-            />
-          )}
-
-          {heroSection}
-        </section>
         <div className={landingPage.children_wrapper}>{children}</div>
-
-        <Footer
-          siteConfig={siteConfig}
-          homeLink={homeLink ? homeLink : "/"}
-          isMobile={isMobile}
-          activeTheme={globalState.theme ?? "light"}
-        />
       </Spin>
+
+      <Footer
+        siteConfig={siteConfig}
+        homeLink={homeLink ? homeLink : "/"}
+        isMobile={isMobile}
+        activeTheme={globalState.theme ?? "light"}
+      />
     </ConfigProvider>
   );
 };

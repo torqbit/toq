@@ -104,16 +104,6 @@
   border-right: 1px solid var(--border-color);
   overflow-y: auto;
 
-  .menu__item__wrapper {
-    > li > ul > li {
-      display: flex;
-      height: auto;
-      padding: 8px 0px;
-      line-height: 1.6;
-      align-self: flex-start;
-    }
-  }
-
   .course_title {
     margin: 20px 0px 0px 15px;
   }

@@ -371,7 +371,14 @@ const LessonPage: NextPage<{ siteConfig: PageSiteConfig; courseId: number }> = (
           key: `${l.lessonId}`,
 
           icon: (
-            <i style={{ lineHeight: 0, fontSize: 18, marginTop: 3, color: "var(--font-secondary)" }}>
+            <i
+              style={{
+                lineHeight: 0,
+                fontSize: 18,
+                marginTop: 3,
+                color: "var(--font-secondary)",
+              }}
+            >
               {getLessonItems(l.contentType as ResourceContentType, l.isWatched)}
             </i>
           ),
