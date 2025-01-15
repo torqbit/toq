@@ -102,21 +102,27 @@ const Sidebar: FC<{ menu: MenuProps["items"]; siteConfig: PageSiteConfig }> = ({
       </div>
       <div>
         {!globalState.collapsed && (
-          <Flex align="center" justify="space-between" className={styles.actionsWrapper}>
-            <Tooltip
-              className={styles.actionTooltip}
-              title={`Switch to ${globalState?.theme == "dark" ? "light" : "dark"} mode`}
-            >
-              <Button
-                type="default"
-                shape="circle"
-                onClick={() => {
-                  const newTheme: Theme = globalState?.theme == "dark" ? "light" : "dark";
-                  updateTheme(newTheme);
-                }}
-                icon={globalState?.theme == "dark" ? SvgIcons.sun : SvgIcons.moon}
-              />
-            </Tooltip>
+          <Flex
+            align="center"
+            justify={siteConfig.brand?.themeSwitch ? "space-between" : "space-evenly"}
+            className={styles.actionsWrapper}
+          >
+            {siteConfig.brand?.themeSwitch && (
+              <Tooltip
+                className={styles.actionTooltip}
+                title={`Switch to ${globalState?.theme == "dark" ? "light" : "dark"} mode`}
+              >
+                <Button
+                  type="default"
+                  shape="circle"
+                  onClick={() => {
+                    const newTheme: Theme = globalState?.theme == "dark" ? "light" : "dark";
+                    updateTheme(newTheme);
+                  }}
+                  icon={globalState?.theme == "dark" ? SvgIcons.sun : SvgIcons.moon}
+                />
+              </Tooltip>
+            )}
 
             <Feedback />
 

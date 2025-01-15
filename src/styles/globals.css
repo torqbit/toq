@@ -50,10 +50,10 @@ h6 {
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
-
-a {
+a:hover {
   color: var(--btn-primary);
 }
+
 li,
 strong,
 ul {

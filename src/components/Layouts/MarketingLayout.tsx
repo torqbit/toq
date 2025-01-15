@@ -73,23 +73,22 @@ const MarketingLayout: FC<{
   }, [siteConfig.brand?.defaultTheme]);
 
   return (
-    <Spin spinning={globalState.pageLoading} indicator={<LoadingOutlined spin />} size="large">
-      <ConfigProvider theme={globalState.theme == "dark" ? darkThemeConfig(siteConfig) : antThemeConfig(siteConfig)}>
-        <Head>
-          <title>{`${siteConfig.brand?.name} · ${siteConfig.brand?.title}`}</title>
-          <meta name="description" content={siteConfig.brand?.description} />
-          <meta
-            property="og:image"
-            content={
-              siteConfig.brand?.themeSwitch && siteConfig.brand.defaultTheme == "dark"
-                ? siteConfig.heroSection?.banner?.darkModePath
-                : siteConfig.heroSection?.banner?.lightModePath
-            }
-          />
-          <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-          <link rel="icon" href={siteConfig.brand?.favicon} />
-        </Head>
-
+    <ConfigProvider theme={globalState.theme == "dark" ? darkThemeConfig(siteConfig) : antThemeConfig(siteConfig)}>
+      <Head>
+        <title>{`${siteConfig.brand?.name} · ${siteConfig.brand?.title}`}</title>
+        <meta name="description" content={siteConfig.brand?.description} />
+        <meta
+          property="og:image"
+          content={
+            siteConfig.brand?.themeSwitch && siteConfig.brand.defaultTheme == "dark"
+              ? siteConfig.heroSection?.banner?.darkModePath
+              : siteConfig.heroSection?.banner?.lightModePath
+          }
+        />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <link rel="icon" href={siteConfig.brand?.favicon} />
+      </Head>
+      <Spin spinning={globalState.pageLoading} indicator={<LoadingOutlined spin />} size="large">
         <section className={styles.heroWrapper}>
           {NavBarComponent && (
             <NavBarComponent
@@ -114,8 +113,8 @@ const MarketingLayout: FC<{
           isMobile={isMobile}
           activeTheme={globalState.theme ?? "light"}
         />
-      </ConfigProvider>
-    </Spin>
+      </Spin>
+    </ConfigProvider>
   );
 };
 
