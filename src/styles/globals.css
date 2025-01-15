@@ -612,9 +612,6 @@ a {
 .collapsed_lesson_sider .ant-menu-submenu-title {
   padding-left: 12px !important;
 }
-.lesson_sider .ant-menu-item {
-  height: auto !important;
-}
 
 .lesson_sider .ant-menu-inline .ant-menu-item,
 .collapsed_lesson_sider .ant-menu-inline .ant-menu-item {

@@ -100,10 +100,6 @@
     margin-inline: 0px !important;
     width: 100% !important;
     border-radius: 0px !important;
-    > ul > li {
-      min-height: auto !important;
-      padding: 10px 10px 10px 24px !important;
-    }
   }
 }
 
@@ -115,16 +111,6 @@
   box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
   border-right: 1px solid var(--border-color);
   overflow-y: auto;
-
-  .menu__item__wrapper {
-    > li > ul > li {
-      // display: flex;
-      // height: auto;
-      // padding: 8px 0px;
-      line-height: 1.6;
-      // align-self: flex-start;
-    }
-  }
 
   .course_title {
     margin: 20px 0px 0px 15px;
