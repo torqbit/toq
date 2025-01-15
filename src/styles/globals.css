@@ -54,6 +54,10 @@ h6 {
 a {
   color: var(--btn-primary);
 }
+a:hover {
+  color: var(--btn-primary);
+}
+
 li,
 strong,
 ul {

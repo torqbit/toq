@@ -44,7 +44,7 @@ const Analytics: FC<{
         return (
           <p>
             This {segment}, you had <strong>{info.total}</strong> new enrollments, which is
-            <strong>{Math.abs(info.comparedPercentage)}% </strong> {info.comparedPercentage > 0 ? "more" : "less"} than
+            <strong> {Math.abs(info.comparedPercentage)}% </strong> {info.comparedPercentage > 0 ? "more" : "less"} than
             last {segment}
           </p>
         );
@@ -87,6 +87,30 @@ const Analytics: FC<{
           />
         );
 
+      case "Enrollments":
+        return (
+          <ToolTipContainer
+            title="Enrolled"
+            value={`${value} ${value > 0 && value > 1 ? "students" : "Student"}`}
+            date={
+              segment === "month"
+                ? `on ${date} ${new Date().toLocaleString("default", { month: "short" })}`
+                : `in ${date}`
+            }
+          />
+        );
+      case "Users":
+        return (
+          <ToolTipContainer
+            title="Users"
+            value={`${value} ${value > 0 && value > 1 ? "users" : "user"}`}
+            date={
+              segment === "month"
+                ? `on ${date} ${new Date().toLocaleString("default", { month: "short" })}`
+                : `in ${date}`
+            }
+          />
+        );
       default:
         return <></>;
     }

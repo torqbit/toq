@@ -7,7 +7,7 @@ import { INavBarProps } from "@/types/landing/navbar";
 import ThemeSwitch from "@/components/ThemeSwitch/ThemeSwitch";
 import Hamburger from "hamburger-react";
 
-const MobileNav: FC<INavBarProps> = ({ items, showThemeSwitch, activeTheme, brand }) => {
+const MobileNav: FC<INavBarProps> = ({ items, showThemeSwitch, activeTheme, brand, previewMode }) => {
   const [showSideNav, setSideNav] = useState(false);
 
   const onAnchorClick = () => {
@@ -43,7 +43,7 @@ const MobileNav: FC<INavBarProps> = ({ items, showThemeSwitch, activeTheme, bran
                   )}
                 </Flex>
               </Link>
-              {showSideNav && showThemeSwitch && <ThemeSwitch activeTheme={activeTheme} />}
+              {showSideNav && showThemeSwitch && <ThemeSwitch activeTheme={activeTheme} previewMode={previewMode} />}
             </div>
           }
           placement="left"

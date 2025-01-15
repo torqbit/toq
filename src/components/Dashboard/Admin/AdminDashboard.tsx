@@ -26,7 +26,7 @@ const AdminDashboard: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
       duration,
       type,
       (result) => {
-        setAnalyticStat(result.analyticStats);
+        setAnalyticStat(result);
         setLoadingAnalytics(false);
       },
       (error) => {
@@ -56,13 +56,53 @@ const AdminDashboard: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
         </>
       ),
     },
+    {
+      key: "Enrollments",
+      label: "Enrollments",
+      children: (
+        <>
+          {analyticStats?.info ? (
+            <Analytics
+              key={"Enrollments"}
+              loading={loadingAnalytics}
+              info={analyticStats.info as IAnalyticStats}
+              handleAnalytic={handleAnalytics}
+              data={analyticStats.data}
+              siteConfig={siteConfig}
+            />
+          ) : (
+            <AnalyticSkeleton />
+          )}
+        </>
+      ),
+    },
+    {
+      key: "Users",
+      label: "Users",
+      children: (
+        <>
+          {analyticStats?.info ? (
+            <Analytics
+              key={"Users"}
+              loading={loadingAnalytics}
+              info={analyticStats.info as IAnalyticStats}
+              handleAnalytic={handleAnalytics}
+              data={analyticStats.data}
+              siteConfig={siteConfig}
+            />
+          ) : (
+            <AnalyticSkeleton />
+          )}
+        </>
+      ),
+    },
   ];
 
   useEffect(() => {
     setLoadingOverview(true);
     AnalyticsService.overviewStats(
       (result) => {
-        setOverViewStat(result.overviewStats);
+        setOverViewStat(result);
         handleAnalytics("month", "Earnings");
 
         setLoadingOverview(false);

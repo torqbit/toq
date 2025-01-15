@@ -447,3 +447,11 @@ export const validateImage = async (url: string) => {
     return false;
   }
 };
+
+export function getFormattedDate(date: Date) {
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Month is zero-based, so add 1
+  const day = date.getDate().toString().padStart(2, "0"); // Ensure day is always two digits
+
+  return `${year}-${month}-${day}`;
+}

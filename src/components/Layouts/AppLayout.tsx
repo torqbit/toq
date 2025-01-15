@@ -22,6 +22,7 @@ import { useMediaQuery } from "react-responsive";
 import { Theme } from "@/types/theme";
 import { PageSiteConfig } from "@/services/siteConstant";
 import { LoadingOutlined } from "@ant-design/icons";
+import { Role } from "@prisma/client";
 
 const { Content } = Layout;
 
@@ -83,6 +84,41 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
     },
   ];
 
+  const userMenu: MenuProps["items"] = [
+    {
+      label: <Link href="/dashboard">Dashboard</Link>,
+      key: "dashboard",
+      icon: SvgIcons.dashboard,
+    },
+
+    {
+      label: <Link href="/courses">Courses</Link>,
+      key: "courses",
+      icon: SvgIcons.courses,
+    },
+    {
+      label: <Link href="/events">Events</Link>,
+      key: "events",
+      icon: <i style={{ fontSize: 18 }}>{SvgIcons.events}</i>,
+    },
+
+    {
+      label: <Link href="/notifications">Notifications</Link>,
+      key: "notifications",
+      icon: (
+        <Badge
+          color="blue"
+          classNames={{ indicator: styles.badgeIndicator }}
+          count={globalState.notifications && globalState.notifications > 0 ? globalState.notifications : 0}
+          style={{ fontSize: 10, paddingTop: 1.5 }}
+          size="small"
+        >
+          {SvgIcons.notification}
+        </Badge>
+      ),
+    },
+  ];
+
   const adminMenu: MenuProps["items"] = [
     {
       label: <Link href="/dashboard">Dashboard</Link>,
@@ -108,7 +144,6 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
       className: sidebar.menu__item,
       icon: SvgIcons.setting,
     },
-
     {
       label: <Link href="/events">Events</Link>,
       key: "events",
@@ -346,27 +381,26 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
   }, [brand?.brandColor]);
 
   return (
-    <Spin spinning={globalState.pageLoading} indicator={<LoadingOutlined spin />} size="large">
-      <ConfigProvider theme={globalState.theme == "dark" ? darkThemeConfig(siteConfig) : antThemeConfig(siteConfig)}>
-        <Head>
-          <title>{`${siteConfig.brand?.name} · ${siteConfig.brand?.title}`}</title>
+    <ConfigProvider theme={globalState.theme == "dark" ? darkThemeConfig(siteConfig) : antThemeConfig(siteConfig)}>
+      <Head>
+        <title>{`${siteConfig.brand?.name} · ${siteConfig.brand?.title}`}</title>
 
-          <meta name="description" content={siteConfig.brand?.description} />
-          <meta
-            property="og:image"
-            content={
-              siteConfig.brand?.themeSwitch && siteConfig.brand.defaultTheme == "dark"
-                ? siteConfig.heroSection?.banner?.darkModePath
-                : siteConfig.heroSection?.banner?.lightModePath
-            }
-          />
+        <meta name="description" content={siteConfig.brand?.description} />
+        <meta
+          property="og:image"
+          content={
+            siteConfig.brand?.themeSwitch && siteConfig.brand.defaultTheme == "dark"
+              ? siteConfig.heroSection?.banner?.darkModePath
+              : siteConfig.heroSection?.banner?.lightModePath
+          }
+        />
 
-          <link rel="icon" href={siteConfig.brand?.favicon} />
-        </Head>
-
+        <link rel="icon" href={siteConfig.brand?.favicon} />
+      </Head>
+      <Spin spinning={globalState.pageLoading} indicator={<LoadingOutlined spin />} size="large">
         {globalState.onlineStatus ? (
           <Layout hasSider className="default-container">
-            <Sidebar menu={adminMenu} siteConfig={siteConfig} />
+            <Sidebar menu={user?.role && user.role == Role.ADMIN ? adminMenu : userMenu} siteConfig={siteConfig} />
             <Layout className={`layout2-wrapper ${styles.layout2_wrapper} `}>
               <Content className={`${styles.sider_content} ${styles.className}`}>
                 <Flex
@@ -469,8 +503,8 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
         ) : (
           <Offline />
         )}
-      </ConfigProvider>
-    </Spin>
+      </Spin>
+    </ConfigProvider>
   );
 };
 

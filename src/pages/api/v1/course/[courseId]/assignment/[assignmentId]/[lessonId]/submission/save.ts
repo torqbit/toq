@@ -6,7 +6,9 @@ import prisma from "@/lib/prisma";
 import { getToken } from "next-auth/jwt";
 import { compareByHash, getCookieName, mapToArray } from "@/lib/utils";
 
-import { submissionStatus } from "@prisma/client";
+import { Role, submissionStatus } from "@prisma/client";
+import getUserRole from "@/actions/getRole";
+import { APIResponse } from "@/types/apis";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
@@ -15,7 +17,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const token = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
     const body = req.body;
     const { assignmentId, lessonId, content } = body;
-
     const savedSubmission = await prisma.assignmentSubmission.findFirst({
       where: {
         assignmentId: Number(assignmentId),
@@ -62,7 +63,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
       return res
         .status(200)
-        .json({ success: true, message: "Assignment has been saved", codeDetail: createSavedAssignment.content });
+        .json(new APIResponse(true, 200, "Assignment has been saved", { codeDetail: createSavedAssignment.content }));
     }
   } catch (error) {
     console.log(error);

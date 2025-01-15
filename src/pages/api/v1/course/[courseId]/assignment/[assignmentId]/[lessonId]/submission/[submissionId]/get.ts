@@ -3,14 +3,10 @@ import { withAuthentication } from "@/lib/api-middlewares/with-authentication";
 import { withMethods } from "@/lib/api-middlewares/with-method";
 import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "@/lib/prisma";
-import { getToken } from "next-auth/jwt";
-import { getCookieName } from "@/lib/utils";
+import { APIResponse } from "@/types/apis";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
-    let cookieName = getCookieName();
-
-    const token = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
     const { submissionId } = req.query;
 
     const evaluationResult = await prisma.assignmentEvaluation.findUnique({
@@ -19,9 +15,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       },
     });
 
-    return res
-      .status(200)
-      .json({ success: true, message: "Evaluation result found", evaluationResult: evaluationResult });
+    return res.status(200).json(new APIResponse(true, 200, "Evaluation result found", evaluationResult));
   } catch (error) {
     console.log(error);
     errorHandler(error, res);

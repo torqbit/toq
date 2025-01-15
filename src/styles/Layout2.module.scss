@@ -3,6 +3,9 @@
   display: flex;
   height: 100vh;
   overflow-x: hidden;
+  a {
+    color: var(--font-secondary);
+  }
 
   .layout_header {
     padding: 40px 40px 0 40px;

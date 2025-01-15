@@ -373,7 +373,14 @@ const LessonPage: NextPage<{ siteConfig: PageSiteConfig; courseId: number }> = (
           style: { alignItems: "flex-start", paddingLeft: 20 },
           className: sidebar.lesson__item,
           icon: (
-            <i style={{ lineHeight: 0, fontSize: 18, marginTop: 3, color: "var(--font-secondary)" }}>
+            <i
+              style={{
+                lineHeight: 0,
+                fontSize: 18,
+                marginTop: 3,
+                color: "var(--font-secondary)",
+              }}
+            >
               {getLessonItems(l.contentType as ResourceContentType, l.isWatched)}
             </i>
           ),
@@ -483,7 +490,7 @@ const LessonPage: NextPage<{ siteConfig: PageSiteConfig; courseId: number }> = (
       lessonId,
       true,
       (result) => {
-        setAssignmentDetail(result.assignmentDetail);
+        setAssignmentDetail(result);
       },
       (error) => {
         messageApi.error(error);

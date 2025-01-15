@@ -66,10 +66,16 @@ const SiteBuilderLayout: FC<{
   };
 
   const onCheckTheme = () => {
-    if (siteConfig.brand?.defaultTheme) {
-      localStorage.setItem("theme", siteConfig.brand?.defaultTheme);
+    const currentTheme = localStorage.getItem("theme");
+
+    if (siteConfig.brand?.themeSwitch && currentTheme) {
+      localStorage.setItem("theme", currentTheme);
     } else {
-      localStorage.setItem("theme", "light");
+      if (siteConfig.brand?.defaultTheme) {
+        localStorage.setItem("theme", siteConfig.brand?.defaultTheme);
+      } else {
+        localStorage.setItem("theme", "light");
+      }
     }
 
     setGlobalTheme(localStorage.getItem("theme") as Theme);
@@ -159,25 +165,22 @@ const SiteBuilderLayout: FC<{
     <>
       {contexHolder}
 
-      <Spin spinning={globalState.pageLoading} indicator={<LoadingOutlined spin />} size="large">
-        <ConfigProvider theme={globalState.theme == "dark" ? darkThemeConfig(siteConfig) : antThemeConfig(siteConfig)}>
-          <Head>
-            <title>{`${siteConfig.brand?.name} · ${siteConfig.brand?.title}`}</title>
-            <meta name="description" content={siteConfig.brand?.description} />
-            <meta
-              property="og:image"
-              content={
-                siteConfig.brand?.themeSwitch && siteConfig.brand.defaultTheme == "dark"
-                  ? siteConfig.heroSection?.banner?.darkModePath
-                  : siteConfig.heroSection?.banner?.lightModePath
-              }
-            />
-            <meta
-              name="viewport"
-              content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-            />
-            <link rel="icon" href={siteConfig.brand?.favicon} />
-          </Head>
+      <ConfigProvider theme={globalState.theme == "dark" ? darkThemeConfig(siteConfig) : antThemeConfig(siteConfig)}>
+        <Head>
+          <title>{`${siteConfig.brand?.name} · ${siteConfig.brand?.title}`}</title>
+          <meta name="description" content={siteConfig.brand?.description} />
+          <meta
+            property="og:image"
+            content={
+              siteConfig.brand?.themeSwitch && siteConfig.brand.defaultTheme == "dark"
+                ? siteConfig.heroSection?.banner?.darkModePath
+                : siteConfig.heroSection?.banner?.lightModePath
+            }
+          />
+          <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+          <link rel="icon" href={siteConfig.brand?.favicon} />
+        </Head>
+        <Spin spinning={globalState.pageLoading} indicator={<LoadingOutlined spin />} size="large">
           <div>
             <Layout hasSider className={styles.site__builder__layout}>
               <Sider
@@ -259,8 +262,8 @@ const SiteBuilderLayout: FC<{
               </Layout>
             </Layout>
           </div>
-        </ConfigProvider>
-      </Spin>
+        </Spin>
+      </ConfigProvider>
     </>
   );
 };

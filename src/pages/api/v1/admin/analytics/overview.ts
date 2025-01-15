@@ -9,33 +9,8 @@ import appConstant from "@/services/appConstant";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
-    const earningDetail = await analytics.getTotalEarning();
-    const enrollmentDetail = await analytics.getTotalEnrollments();
-    const usersDetail = await analytics.getTotalUsers();
-
-    let overviewStats: IAnalyticStats[] = [
-      {
-        type: "Earnings",
-        total: `${earningDetail.body?.totalEarning}`,
-        comparedPercentage: Number(earningDetail.body?.comparedPercentage),
-      },
-      {
-        type: "Enrollments",
-        total: `${enrollmentDetail.body?.totalEnrollment}`,
-        comparedPercentage: Number(enrollmentDetail.body?.comparedPercentage),
-      },
-      {
-        type: "Users",
-        total: `${usersDetail.body?.totalUsers}`,
-        comparedPercentage: Number(usersDetail.body?.comparedPercentage),
-      },
-    ];
-
-    return res.status(earningDetail.status).json({
-      success: earningDetail.success,
-      message: "Overview has been fetched",
-      overviewStats,
-    });
+    const overviewResponse = await analytics.getOverviewDetails();
+    return res.status(overviewResponse.status).json(overviewResponse);
   } catch (error) {
     return errorHandler(error, res);
   }

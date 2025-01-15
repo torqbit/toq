@@ -1,11 +1,12 @@
 import { getDummyArray } from "@/lib/dummyData";
 import prisma from "@/lib/prisma";
-import { compareByPercentage } from "@/lib/utils";
+import { compareByPercentage, convertToDayMonthTime, getFormattedDate } from "@/lib/utils";
 import appConstant from "@/services/appConstant";
 import { APIResponse } from "@/types/apis";
 import {
   AnalyticsDuration,
   IAnalyticResponse,
+  IAnalyticStats,
   IEarningResponse,
   IEnrollmentResponse,
   IResponseStats,
@@ -13,6 +14,36 @@ import {
 } from "@/types/courses/analytics";
 import { orderStatus, Role } from "@prisma/client";
 class Analytics {
+  async getOverviewDetails(): Promise<APIResponse<IAnalyticStats[]>> {
+    const earningDetail = await this.getTotalEarning();
+    const enrollmentDetail = await this.getTotalEnrollments();
+    const usersDetail = await this.getTotalUsers();
+
+    let overviewStats: IAnalyticStats[] = [
+      {
+        type: "Earnings",
+        total: `${earningDetail.body?.totalEarning}`,
+        comparedPercentage: Number(earningDetail.body?.comparedPercentage),
+      },
+      {
+        type: "Enrollments",
+        total: `${enrollmentDetail.body?.totalEnrollment}`,
+        comparedPercentage: Number(enrollmentDetail.body?.comparedPercentage),
+      },
+      {
+        type: "Users",
+        total: `${usersDetail.body?.totalUsers}`,
+        comparedPercentage: Number(usersDetail.body?.comparedPercentage),
+      },
+    ];
+
+    if (earningDetail.success && enrollmentDetail.success && usersDetail.success) {
+      return new APIResponse(true, 200, "Overview has been fetched successfully", overviewStats);
+    } else {
+      return new APIResponse(false, 404, "Overview stats not found");
+    }
+  }
+
   async getTotalEarning(): Promise<APIResponse<IEarningResponse>> {
     const result = await prisma.$queryRaw<IResponseStats[]>` 
     SELECT 
@@ -152,20 +183,43 @@ class Analytics {
         };
     }
   }
+
   async getEarningsByDurtaion(duration: AnalyticsDuration): Promise<APIResponse<IAnalyticResponse>> {
-    const transactions = await prisma.order.groupBy({
-      by: ["updatedAt"],
-      where: {
-        orderStatus: orderStatus.SUCCESS,
-        updatedAt: {
-          gte: this.getDateCondition(duration).startDate,
-          lte: this.getDateCondition(duration).endDate,
-        },
-      },
-      _sum: {
-        amount: true,
-      },
-    });
+    const transactionQuery = async (duration: AnalyticsDuration) => {
+      switch (duration) {
+        case "month":
+          return await prisma.$queryRaw<{ amount: number; createdAt: string }[]>`
+    SELECT 
+    DATE(paymentTime) AS createdAt,
+     SUM(amount) AS amount
+     FROM 
+    \`Order\`
+     WHERE 
+     paymentTime >= ${getFormattedDate(
+       new Date(this.getDateCondition(duration).startDate)
+     )} AND paymentTime <= ${getFormattedDate(new Date(this.getDateCondition(duration).endDate))}
+     GROUP BY 
+     DATE(paymentTime);
+       `;
+
+        default:
+          return await prisma.$queryRaw<{ amount: number; createdAt: string }[]>`
+       SELECT 
+      MONTH(paymentTime) AS createdAt,
+      SUM(amount) AS amount
+      FROM 
+      \`Order\`
+      WHERE 
+       paymentTime >= ${getFormattedDate(
+         new Date(this.getDateCondition(duration).startDate)
+       )} AND paymentTime <= ${getFormattedDate(new Date(this.getDateCondition(duration).endDate))}
+      GROUP BY 
+      MONTH(paymentTime);
+ `;
+      }
+    };
+
+    const transactions = await transactionQuery(duration);
 
     let data: { x: string; y: number }[] = [];
 
@@ -174,8 +228,8 @@ class Analytics {
         data = await this.generateMonthlyData(
           transactions.map((t) => {
             return {
-              amount: t._sum.amount || 0,
-              createdAt: t.updatedAt,
+              amount: t.amount || 0,
+              createdAt: new Date(t.createdAt) || new Date(),
             };
           })
         );
@@ -185,9 +239,10 @@ class Analytics {
       case "quarter":
         data = await this.generateQuarterlyData(
           transactions.map((t) => {
+            let orderDate = new Date(`${t.createdAt}-01`);
             return {
-              amount: t._sum.amount || 0,
-              createdAt: t.updatedAt,
+              amount: t.amount || 0,
+              createdAt: t.createdAt ? orderDate : new Date(),
             };
           })
         );
@@ -195,9 +250,11 @@ class Analytics {
       case "year":
         data = await this.generateYearlyData(
           transactions.map((t) => {
+            let orderDate = new Date(`${t.createdAt}-01`);
+
             return {
-              amount: t._sum.amount || 0,
-              createdAt: t.updatedAt,
+              amount: t.amount || 0,
+              createdAt: t.createdAt && orderDate ? orderDate : new Date(),
             };
           })
         );
@@ -207,7 +264,7 @@ class Analytics {
         break;
     }
 
-    let totalAmount = transactions.map((t) => t._sum.amount).reduce((sum, amount) => Number(sum) + Number(amount), 0);
+    let totalAmount = transactions.map((t) => t.amount).reduce((sum, amount) => Number(sum) + Number(amount), 0);
 
     const previousDetail = await prisma.order.aggregate({
       _sum: {
@@ -252,10 +309,9 @@ class Analytics {
     transactions.forEach((transaction) => {
       const day = transaction.createdAt.getDate().toString();
       const amount = transaction.amount;
-
       const dayIndex = allDaysArray.findIndex((item) => item.date === day);
       if (dayIndex !== -1) {
-        allDaysArray[dayIndex].amount = Number(amount);
+        allDaysArray[dayIndex].amount += Number(amount);
       }
     });
 
@@ -313,6 +369,225 @@ class Analytics {
         index: quarterStartMonth + 2,
       },
     ];
+  }
+
+  async getEnrollment(duration: AnalyticsDuration): Promise<APIResponse<IAnalyticResponse>> {
+    const enrollmentQuery = async (duration: AnalyticsDuration) => {
+      switch (duration) {
+        case "month":
+          return await prisma.$queryRaw<{ total: number; enrollDate: string }[]>`
+      SELECT 
+      DATE(dateJoined) AS enrollDate,
+       COUNT(studentId) AS total
+       FROM 
+       CourseRegistration
+       WHERE 
+       dateJoined >= ${getFormattedDate(
+         new Date(this.getDateCondition(duration).startDate)
+       )} AND dateJoined <= ${getFormattedDate(new Date(this.getDateCondition(duration).endDate))}
+       GROUP BY 
+       DATE(dateJoined);
+         `;
+
+        default:
+          return await prisma.$queryRaw<{ total: number; enrollDate: string }[]>`
+         SELECT 
+        MONTH(dateJoined) AS enrollDate,
+        COUNT(studentId) AS total
+        FROM 
+        CourseRegistration
+        WHERE 
+        dateJoined >= ${getFormattedDate(
+          new Date(this.getDateCondition(duration).startDate)
+        )} AND dateJoined <= ${getFormattedDate(new Date(this.getDateCondition(duration).endDate))}
+        GROUP BY 
+        MONTH(dateJoined);
+   `;
+      }
+    };
+
+    const enrollments = await enrollmentQuery(duration);
+
+    let data: { x: string; y: number }[] = [];
+
+    switch (duration) {
+      case "month":
+        data = await this.generateMonthlyData(
+          enrollments.map((t) => {
+            return {
+              amount: t.total || 0,
+              createdAt: new Date(t.enrollDate),
+            };
+          })
+        );
+
+        break;
+
+      case "quarter":
+        data = await this.generateQuarterlyData(
+          enrollments.map((t) => {
+            let orderDate = new Date(`${t.enrollDate}-01`);
+
+            return {
+              amount: Number(t.total) || 0,
+              createdAt: t.enrollDate && orderDate ? orderDate : new Date(),
+            };
+          })
+        );
+        break;
+      case "year":
+        data = await this.generateYearlyData(
+          enrollments.map((t) => {
+            let orderDate = new Date(`${t.enrollDate}-01`);
+
+            return {
+              amount: Number(t.total) || 0,
+              createdAt: t.enrollDate && orderDate ? orderDate : new Date(),
+            };
+          })
+        );
+        break;
+
+      default:
+        break;
+    }
+
+    let totalAmount = enrollments.map((t) => t.total).reduce((sum, amount) => Number(sum) + Number(amount), 0);
+
+    const previousDetail = await prisma.courseRegistration.aggregate({
+      _count: {
+        studentId: true,
+      },
+      where: {
+        dateJoined: {
+          gte: this.getDateCondition(duration).previousStartDate,
+          lte: this.getDateCondition(duration).previousEndDate,
+        },
+      },
+    });
+
+    return new APIResponse(true, 200, "", {
+      info: {
+        total: `${totalAmount || 0}`,
+        type: "Enrollments",
+        comparedPercentage: compareByPercentage(totalAmount || 0, previousDetail._count.studentId || 0),
+      },
+      data: [
+        {
+          id: "line",
+          data,
+        },
+      ],
+    });
+  }
+  async getUserDetailByDuration(duration: AnalyticsDuration): Promise<APIResponse<IAnalyticResponse>> {
+    const userQuery = async (duration: AnalyticsDuration) => {
+      switch (duration) {
+        case "month":
+          return await prisma.$queryRaw<{ total: number; createdAt: string }[]>`
+      SELECT 
+      DATE(createdAt) AS createdAt ,
+       COUNT(id) AS total
+       FROM 
+       User
+       WHERE 
+       createdAt >= ${getFormattedDate(
+         new Date(this.getDateCondition(duration).startDate)
+       )} AND createdAt <= ${getFormattedDate(new Date(this.getDateCondition(duration).endDate))}
+       GROUP BY 
+       DATE(createdAt);
+         `;
+
+        default:
+          return await prisma.$queryRaw<{ total: number; createdAt: string }[]>`
+         SELECT 
+        MONTH(createdAt) AS createdAt,
+        COUNT(id) AS total
+        FROM 
+        User
+        WHERE 
+        createdAt >= ${getFormattedDate(
+          new Date(this.getDateCondition(duration).startDate)
+        )} AND createdAt <= ${getFormattedDate(new Date(this.getDateCondition(duration).endDate))}
+        GROUP BY 
+        MONTH(createdAt);
+   `;
+      }
+    };
+
+    const users = await userQuery(duration);
+
+    let data: { x: string; y: number }[] = [];
+
+    switch (duration) {
+      case "month":
+        data = await this.generateMonthlyData(
+          users.map((t) => {
+            return {
+              amount: Number(t.total) || 0,
+              createdAt: new Date(t.createdAt),
+            };
+          })
+        );
+
+        break;
+
+      case "quarter":
+        data = await this.generateQuarterlyData(
+          users.map((t) => {
+            let orderDate = new Date(`${t.createdAt}-01`);
+
+            return {
+              amount: Number(t.total) || 0,
+              createdAt: t.createdAt && orderDate ? orderDate : new Date(),
+            };
+          })
+        );
+        break;
+      case "year":
+        data = await this.generateYearlyData(
+          users.map((t) => {
+            let orderDate = new Date(`${t.createdAt}-01`);
+
+            return {
+              amount: Number(t.total) || 0,
+              createdAt: t.createdAt && orderDate ? orderDate : new Date(),
+            };
+          })
+        );
+        break;
+
+      default:
+        break;
+    }
+
+    let totalAmount = users.map((t) => t.total).reduce((sum, amount) => Number(sum) + Number(amount), 0);
+
+    const previousDetail = await prisma.courseRegistration.aggregate({
+      _count: {
+        studentId: true,
+      },
+      where: {
+        dateJoined: {
+          gte: this.getDateCondition(duration).previousStartDate,
+          lte: this.getDateCondition(duration).previousEndDate,
+        },
+      },
+    });
+
+    return new APIResponse(true, 200, "", {
+      info: {
+        total: `${totalAmount || 0}`,
+        type: "Users",
+        comparedPercentage: compareByPercentage(totalAmount || 0, previousDetail._count.studentId || 0),
+      },
+      data: [
+        {
+          id: "line",
+          data,
+        },
+      ],
+    });
   }
 }
 
