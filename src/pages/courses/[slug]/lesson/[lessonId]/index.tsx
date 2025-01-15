@@ -357,7 +357,7 @@ const LessonPage: NextPage<{ siteConfig: PageSiteConfig; courseId: number }> = (
         return {
           label: (
             <Link href={`/courses/${router.query.slug}/lesson/${l.lessonId}`}>
-              <Flex align="flex-start" justify="space-between" gap={5}>
+              <Flex align="flex-start" justify="space-between" gap={5} style={{ lineHeight: 1.5 }}>
                 <span style={{ wordWrap: "break-word", whiteSpace: "normal" }}>{l.title}</span>
                 <Tag style={{ marginRight: 0 }} className={styles.time_tag}>
                   {convertSecToHourandMin(
@@ -371,7 +371,15 @@ const LessonPage: NextPage<{ siteConfig: PageSiteConfig; courseId: number }> = (
           key: `${l.lessonId}`,
 
           icon: (
-            <i style={{ lineHeight: 0, fontSize: 18, marginTop: 3, color: "var(--font-secondary)" }}>
+            <i
+              style={{
+                lineHeight: 0,
+                fontSize: 18,
+                marginTop: 3,
+                color: "var(--font-secondary)",
+                alignSelf: "flex-start",
+              }}
+            >
               {getLessonItems(l.contentType as ResourceContentType, l.isWatched)}
             </i>
           ),

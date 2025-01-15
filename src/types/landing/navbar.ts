@@ -16,6 +16,7 @@ export interface INavBarProps {
   brand: IBrandInfo;
   defaultNavlink?: string;
   homeLink: string;
+  previewMode?: boolean;
   items: {
     title: string;
     link: string;

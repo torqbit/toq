@@ -93,6 +93,7 @@ const Sidebar: FC<{ menu: MenuProps["items"]; siteConfig: PageSiteConfig }> = ({
 
         <Menu
           mode="inline"
+          rootClassName={styles.content__menu__wrapper}
           onSelect={(value) => dispatch({ type: "SET_SELECTED_SIDER_MENU", payload: value.key as ISiderMenu })}
           defaultSelectedKeys={["dashboard"]}
           selectedKeys={[globalState.selectedSiderMenu]}

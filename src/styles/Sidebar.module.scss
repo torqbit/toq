@@ -95,6 +95,18 @@
   }
 }
 
+.content__menu__wrapper {
+  li {
+    margin-inline: 0px !important;
+    width: 100% !important;
+    border-radius: 0px !important;
+    > ul > li {
+      min-height: auto !important;
+      padding: 10px 10px 10px 24px !important;
+    }
+  }
+}
+
 .lesson_sider {
   margin-top: -20px;
   height: 100vh;
@@ -106,11 +118,11 @@
 
   .menu__item__wrapper {
     > li > ul > li {
-      display: flex;
-      height: auto;
-      padding: 8px 0px;
+      // display: flex;
+      // height: auto;
+      // padding: 8px 0px;
       line-height: 1.6;
-      align-self: flex-start;
+      // align-self: flex-start;
     }
   }
 
