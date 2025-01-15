@@ -481,7 +481,7 @@ const LessonPage: NextPage<{ siteConfig: PageSiteConfig; courseId: number }> = (
       lessonId,
       true,
       (result) => {
-        setAssignmentDetail(result.assignmentDetail);
+        setAssignmentDetail(result);
       },
       (error) => {
         messageApi.error(error);

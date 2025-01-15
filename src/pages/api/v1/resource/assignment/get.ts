@@ -4,8 +4,8 @@ import { withMethods } from "@/lib/api-middlewares/with-method";
 import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "@/lib/prisma";
 import { IAssignmentDetail } from "@/types/courses/Course";
-import { JsonObject } from "@prisma/client/runtime/library";
 import { AssignmentType, IAssignmentDetails, MCQAssignment } from "@/types/courses/assignment";
+import { APIResponse } from "@/types/apis";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
@@ -56,13 +56,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         } as IAssignmentDetails;
       }
 
-      return res.json({
-        success: true,
-        message: " Assignment detail has been fetched",
-        assignmentDetail: detail,
-      });
+      return res.status(200).json(new APIResponse(true, 200, "Assignment detail has been fetched", detail));
     } else {
-      return res.status(400).json({ success: false, error: "No assignment has been found" });
+      return res.status(400).json(new APIResponse(false, 400, "No assignment has been found"));
     }
   } catch (error) {
     console.log(error);

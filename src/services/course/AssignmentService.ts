@@ -4,9 +4,10 @@ import { IAssignmentDetail } from "@/types/courses/Course";
 import {
   AssignmentCreateRequest,
   IAssignmentDetails,
-  IAssignmentSubmissoionDetail,
+  IAssignmentSubmissionDetail,
   IEvaluationResult,
 } from "@/types/courses/assignment";
+import { APIResponse } from "@/types/apis";
 
 export interface ISubmissionTableInfo {
   key: number;
@@ -62,7 +63,7 @@ interface ApiResponse {
   message: string;
   preview: string;
   assignmentDetail: IAssignmentDetail;
-  submissionContent: IAssignmentSubmissoionDetail;
+  submissionContent: IAssignmentSubmissionDetail;
   evaluationResult: IEvaluationResult;
   allAssignmentData: Assignment[];
   codeDetail: Map<string, string>;
@@ -135,14 +136,14 @@ class AssignmentSerivce {
   getAssignment = (
     lessonId: number,
     isNoAnswer: boolean,
-    onSuccess: (response: ApiResponse) => void,
+    onSuccess: (response: IAssignmentDetail) => void,
     onFailure: (message: string) => void
   ) => {
     getFetch(`/api/v1/resource/assignment/get?lessonId=${lessonId}&isNoAnswer=${isNoAnswer}`).then((result) => {
       if (result.status == 200) {
         result.json().then((r) => {
-          const apiResponse = r as ApiResponse;
-          onSuccess(apiResponse);
+          const apiResponse = r as APIResponse<IAssignmentDetail>;
+          apiResponse.body && onSuccess(apiResponse.body);
         });
       } else {
         result.json().then((r) => {
@@ -400,14 +401,14 @@ class AssignmentSerivce {
     courseId: string,
     lessonId: number,
     assignmentId: number,
-    onSuccess: (response: ApiResponse) => void,
+    onSuccess: (response: IAssignmentSubmissionDetail) => void,
     onFailure: (message: string) => void
   ) => {
     getFetch(`/api/v1/course/${courseId}/assignment/${assignmentId}/${lessonId}/submission/get`).then((result) => {
       if (result.status == 200) {
         result.json().then((r) => {
-          const apiResponse = r as ApiResponse;
-          onSuccess(apiResponse);
+          const apiResponse = r as APIResponse<IAssignmentSubmissionDetail>;
+          apiResponse.body && onSuccess(apiResponse.body);
         });
       } else {
         result.json().then((r) => {
@@ -422,15 +423,15 @@ class AssignmentSerivce {
     lessonId: number,
     assignmentId: number,
     submissionId: number,
-    onSuccess: (response: ApiResponse) => void,
+    onSuccess: (response: IEvaluationResult) => void,
     onFailure: (message: string) => void
   ) => {
     getFetch(`/api/v1/course/${courseId}/assignment/${assignmentId}/${lessonId}/submission/${submissionId}/get`).then(
       (result) => {
         if (result.status == 200) {
           result.json().then((r) => {
-            const apiResponse = r as ApiResponse;
-            onSuccess(apiResponse);
+            const apiResponse = r as APIResponse<IEvaluationResult>;
+            apiResponse.body && onSuccess(apiResponse.body);
           });
         } else {
           result.json().then((r) => {

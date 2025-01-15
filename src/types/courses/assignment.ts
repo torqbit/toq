@@ -97,7 +97,7 @@ export interface AssignmentCreateRequest {
   title: string;
 }
 
-export interface IAssignmentSubmissoionDetail {
+export interface IAssignmentSubmissionDetail {
   id: number;
   content: IAssignmentDetails;
   status: submissionStatus;
