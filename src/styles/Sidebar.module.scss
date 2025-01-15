@@ -104,6 +104,15 @@
   border-right: 1px solid var(--border-color);
   overflow-y: auto;
 
+  li.lesson__item__group {
+    height: auto;
+
+    li.lesson__item {
+      height: auto;
+      line-height: 1.6;
+    }
+  }
+
   .menu__item__wrapper {
     > li > ul > li {
       display: flex;
