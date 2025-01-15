@@ -14,7 +14,7 @@ import {
   SelectedAnswersType,
 } from "@/types/courses/assignment";
 
-import { ArrowRightOutlined, LeftOutlined, RightOutlined } from "@ant-design/icons";
+import { ArrowRightOutlined, LeftOutlined, LoadingOutlined, RightOutlined } from "@ant-design/icons";
 import { useRouter } from "next/router";
 import { areAnswersEqualForKey } from "@/lib/utils";
 import { submissionStatus } from "@prisma/client";
