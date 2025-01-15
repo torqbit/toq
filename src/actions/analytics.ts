@@ -6,6 +6,7 @@ import { APIResponse } from "@/types/apis";
 import {
   AnalyticsDuration,
   IAnalyticResponse,
+  IAnalyticStats,
   IEarningResponse,
   IEnrollmentResponse,
   IResponseStats,
@@ -13,6 +14,36 @@ import {
 } from "@/types/courses/analytics";
 import { orderStatus, Role } from "@prisma/client";
 class Analytics {
+  async getOverviewDetails(): Promise<APIResponse<IAnalyticStats[]>> {
+    const earningDetail = await this.getTotalEarning();
+    const enrollmentDetail = await this.getTotalEnrollments();
+    const usersDetail = await this.getTotalUsers();
+
+    let overviewStats: IAnalyticStats[] = [
+      {
+        type: "Earnings",
+        total: `${earningDetail.body?.totalEarning}`,
+        comparedPercentage: Number(earningDetail.body?.comparedPercentage),
+      },
+      {
+        type: "Enrollments",
+        total: `${enrollmentDetail.body?.totalEnrollment}`,
+        comparedPercentage: Number(enrollmentDetail.body?.comparedPercentage),
+      },
+      {
+        type: "Users",
+        total: `${usersDetail.body?.totalUsers}`,
+        comparedPercentage: Number(usersDetail.body?.comparedPercentage),
+      },
+    ];
+
+    if (earningDetail.success && enrollmentDetail.success && usersDetail.success) {
+      return new APIResponse(true, 200, "Overview has been fetched successfully", overviewStats);
+    } else {
+      return new APIResponse(false, 404, "Overview stats not found");
+    }
+  }
+
   async getTotalEarning(): Promise<APIResponse<IEarningResponse>> {
     const result = await prisma.$queryRaw<IResponseStats[]>` 
     SELECT 
@@ -152,6 +183,7 @@ class Analytics {
         };
     }
   }
+
   async getEarningsByDurtaion(duration: AnalyticsDuration): Promise<APIResponse<IAnalyticResponse>> {
     const transactions = await prisma.order.groupBy({
       by: ["updatedAt"],
@@ -313,6 +345,173 @@ class Analytics {
         index: quarterStartMonth + 2,
       },
     ];
+  }
+
+  async getEnrollment(duration: AnalyticsDuration): Promise<APIResponse<IAnalyticResponse>> {
+    const enrollments = await prisma.courseRegistration.groupBy({
+      by: ["dateJoined"],
+      where: {
+        dateJoined: {
+          gte: this.getDateCondition(duration).startDate,
+          lte: this.getDateCondition(duration).endDate,
+        },
+      },
+      _count: {
+        studentId: true,
+      },
+    });
+
+    let data: { x: string; y: number }[] = [];
+
+    switch (duration) {
+      case "month":
+        data = await this.generateMonthlyData(
+          enrollments.map((t) => {
+            return {
+              amount: t._count.studentId || 0,
+              createdAt: t.dateJoined,
+            };
+          })
+        );
+
+        break;
+
+      case "quarter":
+        data = await this.generateQuarterlyData(
+          enrollments.map((t) => {
+            return {
+              amount: t._count.studentId || 0,
+              createdAt: t.dateJoined,
+            };
+          })
+        );
+        break;
+      case "year":
+        data = await this.generateYearlyData(
+          enrollments.map((t) => {
+            return {
+              amount: t._count.studentId || 0,
+              createdAt: t.dateJoined,
+            };
+          })
+        );
+        break;
+
+      default:
+        break;
+    }
+
+    let totalAmount = enrollments
+      .map((t) => t._count.studentId)
+      .reduce((sum, amount) => Number(sum) + Number(amount), 0);
+
+    const previousDetail = await prisma.courseRegistration.aggregate({
+      _count: {
+        studentId: true,
+      },
+      where: {
+        dateJoined: {
+          gte: this.getDateCondition(duration).previousStartDate,
+          lte: this.getDateCondition(duration).previousEndDate,
+        },
+      },
+    });
+
+    return new APIResponse(true, 200, "", {
+      info: {
+        total: `${totalAmount || 0}`,
+        type: "Enrollments",
+        comparedPercentage: compareByPercentage(totalAmount || 0, previousDetail._count.studentId || 0),
+      },
+      data: [
+        {
+          id: "line",
+          data,
+        },
+      ],
+    });
+  }
+  async getUserDetailByDuration(duration: AnalyticsDuration): Promise<APIResponse<IAnalyticResponse>> {
+    const users = await prisma.user.groupBy({
+      by: ["createdAt"],
+      where: {
+        dateJoined: {
+          gte: this.getDateCondition(duration).startDate,
+          lte: this.getDateCondition(duration).endDate,
+        },
+      },
+      _count: {
+        id: true,
+      },
+    });
+
+    let data: { x: string; y: number }[] = [];
+
+    switch (duration) {
+      case "month":
+        data = await this.generateMonthlyData(
+          users.map((t) => {
+            return {
+              amount: t._count.id || 0,
+              createdAt: t.createdAt,
+            };
+          })
+        );
+
+        break;
+
+      case "quarter":
+        data = await this.generateQuarterlyData(
+          users.map((t) => {
+            return {
+              amount: t._count.id || 0,
+              createdAt: t.createdAt,
+            };
+          })
+        );
+        break;
+      case "year":
+        data = await this.generateYearlyData(
+          users.map((t) => {
+            return {
+              amount: t._count.id || 0,
+              createdAt: t.createdAt,
+            };
+          })
+        );
+        break;
+
+      default:
+        break;
+    }
+
+    let totalAmount = users.map((t) => t._count.id).reduce((sum, amount) => Number(sum) + Number(amount), 0);
+
+    const previousDetail = await prisma.courseRegistration.aggregate({
+      _count: {
+        studentId: true,
+      },
+      where: {
+        dateJoined: {
+          gte: this.getDateCondition(duration).previousStartDate,
+          lte: this.getDateCondition(duration).previousEndDate,
+        },
+      },
+    });
+
+    return new APIResponse(true, 200, "", {
+      info: {
+        total: `${totalAmount || 0}`,
+        type: "Users",
+        comparedPercentage: compareByPercentage(totalAmount || 0, previousDetail._count.studentId || 0),
+      },
+      data: [
+        {
+          id: "line",
+          data,
+        },
+      ],
+    });
   }
 }
 
