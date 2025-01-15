@@ -4,7 +4,6 @@ import { Avatar, Button, Dropdown, Flex, Layout, Menu, MenuProps, Modal, Space, 
 
 import { UserOutlined } from "@ant-design/icons";
 import Link from "next/link";
-import Image from "next/image";
 import { signOut, useSession } from "next-auth/react";
 import SvgIcons from "../SvgIcons";
 import { ISiderMenu, useAppContext } from "../ContextApi/AppContext";
@@ -95,6 +94,7 @@ const Sidebar: FC<{ menu: MenuProps["items"]; siteConfig: PageSiteConfig }> = ({
           mode="inline"
           onSelect={(value) => dispatch({ type: "SET_SELECTED_SIDER_MENU", payload: value.key as ISiderMenu })}
           defaultSelectedKeys={["dashboard"]}
+          className={styles.menu}
           selectedKeys={[globalState.selectedSiderMenu]}
           style={{ width: "100%", borderInlineEnd: "none" }}
           items={menu}

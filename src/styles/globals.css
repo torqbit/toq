@@ -638,11 +638,6 @@ a {
   border-radius: 0;
 }
 
-.main_sider .ant-menu-inline .ant-menu-item {
-  height: 35px;
-  line-height: 35px;
-}
-
 .main_sider .ant-menu-item-selected,
 .main_sider .ant-menu-item-active {
   border-right: 3px solid var(--btn-primary);
