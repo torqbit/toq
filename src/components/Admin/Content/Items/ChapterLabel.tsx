@@ -82,7 +82,7 @@ const ChapterLabel: FC<{
                       key: 2,
                       label: "Assignment",
                       onClick: () => {
-                        onAddResource(id, "Assignment");
+                        onAddResource(id, ResourceContentType.Assignment);
                       },
                     },
                   ],

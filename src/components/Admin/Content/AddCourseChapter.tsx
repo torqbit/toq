@@ -55,7 +55,7 @@ const AddCourseChapter: FC<{
       chaptereData,
       (result) => {
         setLoading(false);
-        messageApi.info(result.message);
+        messageApi.success(result.message);
         onRefresh();
         showChapterDrawer(false);
         form.resetFields();

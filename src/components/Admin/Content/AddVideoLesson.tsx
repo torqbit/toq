@@ -207,8 +207,7 @@ const AddVideoLesson: FC<{
       const postRes = await postWithFile(formData, `/api/v1/upload/file/upload`);
       if (!postRes.ok) {
         setThumbnailUploading(false);
-
-        throw new Error("Failed to upload file");
+        messageApi.error(`Failed to upload the thumbnail`);
       }
       const res = await postRes.json();
 
@@ -266,7 +265,6 @@ const AddVideoLesson: FC<{
               onClick={() => {
                 setResourceDrawer(false);
                 currResId && !isEdit && onDeleteResource(currResId);
-
                 form.resetFields();
               }}
             >
