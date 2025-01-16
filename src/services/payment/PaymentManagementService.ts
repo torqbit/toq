@@ -2,6 +2,7 @@ import {
   $Enums,
   ConfigurationState,
   CourseRegistration,
+  CourseType,
   Order,
   orderStatus,
   paymentStatus,
@@ -393,12 +394,11 @@ export class PaymentManagemetService {
     const orders = await prisma.$queryRaw<
       any[]
     >`SELECT o.orderStatus as status,o.amount,o.updatedAt as paymentDate,o.productId,o.gatewayOrderId,o.currency,co.name as courseName,invoice.id as invoiceId FROM \`Order\` AS o  
-    INNER JOIN Course as co ON co.courseId = o.productId
-       LEFT OUTER JOIN Invoice as invoice ON invoice.studentId = ${studentId}  AND invoice.orderId = o.gatewayOrderId
-     WHERE o.studentId = ${studentId} AND o.updatedAt =  (SELECT MAX(updatedAt)
+    INNER JOIN Course as co ON co.courseId = o.productId AND co.coursePrice > 0
+    LEFT OUTER JOIN Invoice as invoice ON invoice.studentId = ${studentId}  AND invoice.orderId = o.gatewayOrderId 
+    WHERE o.studentId = ${studentId} AND o.updatedAt =  (SELECT MAX(updatedAt) 
     FROM \`Order\` AS b 
-    WHERE o.courseId = b.productId AND o.studentId = ${studentId}) ORDER BY o.updatedAt ASC`;
-
+    WHERE o.productId = b.productId AND o.studentId = ${studentId}) ORDER BY o.updatedAt ASC`;
     return orders;
   };
 
