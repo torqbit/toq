@@ -158,11 +158,9 @@ const Setting: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
       case "profile":
         setActiveKey("profile");
         return router.push(`/setting?tab=${key}`);
-
       case "payment":
         setActiveKey("payment");
         return router.push(`/setting?tab=${key}`);
-
       default:
         return setActiveKey("profile");
     }
@@ -210,9 +208,13 @@ const Setting: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
     {
       key: "payment",
       label: "Payment",
-      children: user && <PaymentHistory />,
+      children: user && <PaymentHistory activeTab={activeKey} />,
     },
   ];
+
+  useEffect(() => {
+    onChange(router.query.tab as string);
+  }, []);
 
   return (
     <>
@@ -233,9 +235,12 @@ const Setting: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
         >
           {contextMessageHolder}
 
-          <section className={styleLayout.setting_content}>
+          <section
+            className={styleLayout.setting_content}
+            style={{ width: "var(--marketing-container-width", margin: "0 auto", padding: "20px 0" }}
+          >
             <h3>Setting</h3>
-            <Tabs defaultActiveKey="1" className="content_tab" items={items} onChange={onChange} />
+            <Tabs activeKey={activeKey} className="content_tab" items={items} onChange={onChange} />
           </section>
         </MarketingLayout>
       )}

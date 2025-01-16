@@ -172,7 +172,9 @@ const Preview: FC<{
                       )}
                       {!paymentCallback && (
                         <>
-                          <i style={{ fontSize: "3.5rem", lineHeight: 0 }}>{SvgIcons.checkBadgeFilled}</i>
+                          <i style={{ fontSize: "3.5rem", lineHeight: 0, color: themeColors.commons.success }}>
+                            {SvgIcons.checkBadgeFilled}
+                          </i>
                           <h4>You have already purchased this course on {courseDetail.enrolmentDate}</h4>
                         </>
                       )}

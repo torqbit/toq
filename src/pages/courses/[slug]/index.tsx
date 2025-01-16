@@ -220,9 +220,13 @@ const LearnCoursesPage: NextPage<{
               <Preview
                 courseDetail={courseViewDetail}
                 previewMode={false}
-                handlePurchase={() => router.push(`/login?redirect=courses/${router.query.slug}`)}
+                handlePurchase={() => {
+                  userRole && userRole === Role.STUDENT
+                    ? handlePurchase(courseId)
+                    : router.push(`/login?redirect=courses/${router.query.slug}`);
+                }}
                 handleLessonRedirection={() => {
-                  userRole && userRole === Role.STUDENT && handleLessonRedirection(courseViewDetail.id);
+                  userRole && userRole === Role.STUDENT && handleLessonRedirection(courseId);
                 }}
                 paymentCallback={router.query.callback === "payment"}
                 extraStyle={{ padding: "20px 0 50px" }}
