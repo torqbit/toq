@@ -4,7 +4,7 @@ import styles from "@/templates/standard/components/Hero/Hero.module.scss";
 import landingPage from "@/styles/Marketing/LandingPage/LandingPage.module.scss";
 import Head from "next/head";
 import { useAppContext } from "../ContextApi/AppContext";
-import { Avatar, Badge, Button, ConfigProvider, Dropdown, Flex, Spin } from "antd";
+import { Avatar, Badge, Button, ConfigProvider, Dropdown, Flex, Popover, Spin } from "antd";
 import darkThemeConfig from "@/services/darkThemeConfig";
 import antThemeConfig from "@/services/antThemeConfig";
 import { DEFAULT_THEME, PageSiteConfig } from "@/services/siteConstant";
@@ -19,6 +19,7 @@ import Link from "next/link";
 import ThemeSwitch from "../ThemeSwitch/ThemeSwitch";
 import SvgIcons from "../SvgIcons";
 import { signOut } from "next-auth/react";
+import NotificationList from "../Notification/NotificationList";
 
 const MarketingLayout: FC<{
   children?: React.ReactNode;
@@ -32,7 +33,7 @@ const MarketingLayout: FC<{
 }> = ({ children, heroSection, user, siteConfig, previewMode, homeLink, showFooter = true, navBarWidth }) => {
   const { globalState, dispatch } = useAppContext();
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
-
+  const [openNotification, setOpenNotification] = useState(false);
   const { brand } = siteConfig;
   useEffect(() => {
     const root = document.documentElement;
@@ -112,7 +113,19 @@ const MarketingLayout: FC<{
                   <ThemeSwitch activeTheme={globalState.theme ?? "light"} previewMode={previewMode} />
                 )}
 
-                <Link href={"notifications"} aria-label="Notifications" style={{ marginTop: 2 }}>
+                <Popover
+                  style={{ marginTop: 2 }}
+                  content={
+                    <div style={{ minWidth: "40vw" }}>
+                      <NotificationList siteConfig={siteConfig} />
+                    </div>
+                  }
+                  placement="bottomLeft"
+                  title="Notifications"
+                  trigger="click"
+                  open={openNotification}
+                  onOpenChange={setOpenNotification}
+                >
                   <Badge
                     color="blue"
                     classNames={{ indicator: styles.badgeIndicator }}
@@ -120,11 +133,11 @@ const MarketingLayout: FC<{
                     style={{ fontSize: 10, paddingTop: 1.5 }}
                     size="small"
                   >
-                    <i style={{ lineHeight: 0, color: "var(--font-secondary)", fontSize: 20 }}>
+                    <i style={{ lineHeight: 0, color: "var(--font-secondary)", fontSize: 20, cursor: "pointer" }}>
                       {SvgIcons.notification}
                     </i>
                   </Badge>
-                </Link>
+                </Popover>
               </Flex>
               <Dropdown
                 menu={{
