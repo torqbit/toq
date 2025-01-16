@@ -223,7 +223,11 @@ export const CoursesListView: FC<{
         </div>
       )}
 
-      {typeof role === "undefined" && courses.length == 0 && <>{emptyView}</>}
+      {typeof role === "undefined" && courses.length == 0 && (
+        <Flex justify="center" align="center">
+          {emptyView}
+        </Flex>
+      )}
     </div>
   );
 };

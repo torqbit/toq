@@ -27,7 +27,8 @@ const MarketingLayout: FC<{
   previewMode?: boolean;
   homeLink?: string;
   user?: User;
-}> = ({ children, heroSection, user, siteConfig, previewMode, homeLink }) => {
+  showFooter?: boolean;
+}> = ({ children, heroSection, user, siteConfig, previewMode, homeLink, showFooter = true }) => {
   const { globalState, dispatch } = useAppContext();
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
 
@@ -227,12 +228,14 @@ const MarketingLayout: FC<{
         </div>
       </Spin>
 
-      <Footer
-        siteConfig={siteConfig}
-        homeLink={homeLink ? homeLink : "/"}
-        isMobile={isMobile}
-        activeTheme={globalState.theme ?? "light"}
-      />
+      {showFooter && (
+        <Footer
+          siteConfig={siteConfig}
+          homeLink={homeLink ? homeLink : "/"}
+          isMobile={isMobile}
+          activeTheme={globalState.theme ?? "light"}
+        />
+      )}
     </ConfigProvider>
   );
 };
