@@ -19,6 +19,8 @@ import { getBase64 } from "@/lib/utils";
 import ProgramService from "@/services/ProgramService";
 import { useRouter } from "next/router";
 import { useMediaQuery } from "react-responsive";
+import { Role, User } from "@prisma/client";
+import MarketingLayout from "@/components/Layouts/MarketingLayout";
 
 const ProfileSetting: FC<{
   user: Session;
@@ -213,14 +215,31 @@ const Setting: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   ];
 
   return (
-    <AppLayout siteConfig={siteConfig}>
-      {contextMessageHolder}
+    <>
+      {user && user.role !== Role.STUDENT && (
+        <AppLayout siteConfig={siteConfig}>
+          {contextMessageHolder}
 
-      <section className={styleLayout.setting_content}>
-        <h3>Setting</h3>
-        <Tabs defaultActiveKey="1" className="content_tab" items={items} onChange={onChange} />
-      </section>
-    </AppLayout>
+          <section className={styleLayout.setting_content}>
+            <h3>Setting</h3>
+            <Tabs defaultActiveKey="1" className="content_tab" items={items} onChange={onChange} />
+          </section>
+        </AppLayout>
+      )}
+      {user && user.role === Role.STUDENT && (
+        <MarketingLayout
+          siteConfig={siteConfig}
+          user={{ id: user.id, name: user.user?.name || "", role: user.role, email: user.user?.email } as User}
+        >
+          {contextMessageHolder}
+
+          <section className={styleLayout.setting_content}>
+            <h3>Setting</h3>
+            <Tabs defaultActiveKey="1" className="content_tab" items={items} onChange={onChange} />
+          </section>
+        </MarketingLayout>
+      )}
+    </>
   );
 };
 
