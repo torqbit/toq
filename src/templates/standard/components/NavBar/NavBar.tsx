@@ -16,6 +16,7 @@ const NavBar: FC<INavBarProps> = ({
   homeLink,
   previewMode,
   extraContent,
+  navBarWidth,
 }): ReactElement => {
   return (
     <section className={styles.navigation_main_container}>
@@ -33,7 +34,7 @@ const NavBar: FC<INavBarProps> = ({
         />
       ) : (
         <div className={styles.navBarContainer}>
-          <nav>
+          <nav style={{ width: navBarWidth ? navBarWidth : "var(--marketing-container-width)" }}>
             <Link href={homeLink} aria-label="Go back to landing page">
               <Flex align="center" gap={5}>
                 {typeof brand.logo === "string" && typeof brand.darkLogo === "string" ? (

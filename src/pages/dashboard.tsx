@@ -57,13 +57,23 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
 
   const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
   const { site } = siteConfig;
+
   if (user) {
-    return {
-      props: {
-        siteConfig: site,
-        userRole: user.role,
-      },
-    };
+    if (user.role === Role.STUDENT) {
+      return {
+        redirect: {
+          permanent: false,
+          destination: "/",
+        },
+      };
+    } else {
+      return {
+        props: {
+          siteConfig: site,
+          userRole: user.role,
+        },
+      };
+    }
   } else {
     return {
       props: {
