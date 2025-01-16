@@ -199,7 +199,7 @@ const LearnCoursesPage: NextPage<{
 
   return (
     <>
-      {!userRole ? (
+      {typeof userRole === "undefined" || userRole === Role.STUDENT ? (
         <>
           <MarketingLayout
             siteConfig={siteConfig}
@@ -209,7 +209,9 @@ const LearnCoursesPage: NextPage<{
                   courseDetail={courseViewDetail}
                   previewMode={false}
                   handlePurchase={() => router.push(`/login?redirect=courses/${router.query.slug}`)}
-                  handleLessonRedirection={() => {}}
+                  handleLessonRedirection={() => {
+                    userRole && userRole === Role.STUDENT && handleLessonRedirection(courseViewDetail.id);
+                  }}
                   paymentCallback={router.query.callback === "payment"}
                   extraStyle={{ padding: "100px 0 50px" }}
                 />

@@ -10,7 +10,8 @@ const { Sider } = Layout;
 const LessonListSideBar: FC<{
   menu: MenuProps["items"];
   defaulSelectedKey: string;
-}> = ({ menu, defaulSelectedKey }) => {
+  marketingLayout: boolean;
+}> = ({ menu, defaulSelectedKey, marketingLayout }) => {
   const { globalState, dispatch } = useAppContext();
   return (
     <>
@@ -23,6 +24,7 @@ const LessonListSideBar: FC<{
 
           localStorage.setItem("lessonCollapsed", globalState.lessonCollapsed ? "uncollapsed" : "collapsed");
         }}
+        style={{ top: marketingLayout ? 70 : 18 }}
       >
         <i> {!globalState.lessonCollapsed ? <CloseOutlined /> : SvgIcons.carretLeft}</i>
       </div>
@@ -31,7 +33,12 @@ const LessonListSideBar: FC<{
         width={400}
         theme="light"
         reverseArrow={true}
-        style={{ position: "fixed", bottom: 0, right: globalState.lessonCollapsed ? -10 : 0 }}
+        style={{
+          position: "fixed",
+          bottom: 0,
+          right: globalState.lessonCollapsed ? -10 : 0,
+          top: marketingLayout ? 75 : 0,
+        }}
         className={`${styles.lesson_sider} ${globalState.lessonCollapsed ? "collapsed_lesson_sider" : "lesson_sider"}`}
         trigger={null}
         collapsible={globalState.lessonCollapsed}
