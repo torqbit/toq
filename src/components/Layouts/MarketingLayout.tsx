@@ -28,7 +28,8 @@ const MarketingLayout: FC<{
   homeLink?: string;
   user?: User;
   showFooter?: boolean;
-}> = ({ children, heroSection, user, siteConfig, previewMode, homeLink, showFooter = true }) => {
+  navBarWidth?: string | number;
+}> = ({ children, heroSection, user, siteConfig, previewMode, homeLink, showFooter = true, navBarWidth }) => {
   const { globalState, dispatch } = useAppContext();
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
 
@@ -214,6 +215,7 @@ const MarketingLayout: FC<{
             brand={brandInfo}
             previewMode={previewMode}
             extraContent={getNavBarExtraContent(user?.role)}
+            navBarWidth={navBarWidth}
           />
         )}
 

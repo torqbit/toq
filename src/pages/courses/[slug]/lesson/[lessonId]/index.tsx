@@ -1,42 +1,10 @@
-import SvgIcons from "@/components/SvgIcons";
-import ProgramService from "@/services/ProgramService";
-import { CourseLessons, IAssignmentDetail, VideoLesson } from "@/types/courses/Course";
-import styles from "@/styles/LearnCourses.module.scss";
-import sidebar from "@/styles/Sidebar.module.scss";
-import {
-  Avatar,
-  Breadcrumb,
-  Button,
-  Collapse,
-  Flex,
-  List,
-  MenuProps,
-  Segmented,
-  Skeleton,
-  Space,
-  Spin,
-  Tabs,
-  TabsProps,
-  Tag,
-  message,
-} from "antd";
 import { GetServerSidePropsContext, NextPage } from "next";
 import { useSession } from "next-auth/react";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import { FC, ReactNode, useEffect, useState } from "react";
-import { IResourceDetail } from "@/lib/types/learn";
-import { convertSecToHourandMin } from "@/pages/admin/content";
-import QADiscssionTab from "@/components/LearnCourse/AboutCourse/CourseDiscussion/CourseDiscussion";
-import { postFetch } from "@/services/request";
-import appConstant from "@/services/appConstant";
-
-import { ICourseProgressUpdateResponse } from "@/lib/types/program";
 import { getUserEnrolledCoursesId } from "@/actions/getEnrollCourses";
-import { generateDayAndYear, getCookieName, getExtension } from "@/lib/utils";
+import { getCookieName } from "@/lib/utils";
 import { getToken } from "next-auth/jwt";
 
-import { $Enums, ResourceContentType, Role } from "@prisma/client";
+import { Role, User } from "@prisma/client";
 import prisma from "@/lib/prisma";
 
 import AppLayout from "@/components/Layouts/AppLayout";
@@ -50,11 +18,27 @@ const LessonPage: NextPage<{ siteConfig: PageSiteConfig; courseId: number; userR
   courseId,
   userRole,
 }) => {
+  const { data: user } = useSession();
   return (
     <>
       {typeof userRole === "undefined" || userRole === Role.STUDENT ? (
         <>
-          <MarketingLayout siteConfig={siteConfig}>
+          <MarketingLayout
+            siteConfig={siteConfig}
+            showFooter={false}
+            navBarWidth={"100%"}
+            user={
+              userRole
+                ? ({
+                    id: user?.id,
+                    name: user?.user?.name || "",
+                    email: user?.user?.email || "",
+                    phone: user?.phone || "",
+                    role: userRole,
+                  } as User)
+                : undefined
+            }
+          >
             <LessonView siteConfig={siteConfig} courseId={courseId} marketingLayout={true} />
           </MarketingLayout>
         </>
