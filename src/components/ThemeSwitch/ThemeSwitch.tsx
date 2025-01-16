@@ -27,7 +27,11 @@ const ThemeSwitch: FC<{ activeTheme: Theme; previewMode?: boolean }> = ({ active
           onClick={() => {
             handleTheme(globalState.theme === "dark" ? "light" : "dark");
           }}
-          icon={activeTheme == "dark" ? SvgIcons.sun : SvgIcons.moon}
+          icon={
+            <i style={{ lineHeight: 0, color: "var(--font-secondary)", fontSize: 20 }}>
+              {activeTheme == "dark" ? SvgIcons.sun : SvgIcons.moon}
+            </i>
+          }
         />
       </Tooltip>
     </>

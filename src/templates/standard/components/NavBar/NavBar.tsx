@@ -1,9 +1,8 @@
 import { FC, ReactElement } from "react";
-import { Button, Flex } from "antd";
+import { Flex } from "antd";
 import Link from "next/link";
 import { INavBarProps } from "@/types/landing/navbar";
 import styles from "./NavBar.module.scss";
-import ThemeSwitch from "@/components/ThemeSwitch/ThemeSwitch";
 import MobileNav from "./SideNavBar";
 
 const NavBar: FC<INavBarProps> = ({
@@ -16,6 +15,7 @@ const NavBar: FC<INavBarProps> = ({
   defaultNavlink,
   homeLink,
   previewMode,
+  extraContent,
 }): ReactElement => {
   return (
     <section className={styles.navigation_main_container}>
@@ -29,6 +29,7 @@ const NavBar: FC<INavBarProps> = ({
           homeLink={homeLink}
           defaultNavlink={defaultNavlink}
           previewMode={previewMode}
+          extraContent={<></>}
         />
       ) : (
         <div className={styles.navBarContainer}>
@@ -47,30 +48,7 @@ const NavBar: FC<INavBarProps> = ({
                 {!brand.logo && <h1 className="font-brand">{brand.name}</h1>}
               </Flex>
             </Link>
-            <div className={styles.link_wrapper}>
-              {items.length === 0 ? (
-                <div></div>
-              ) : (
-                <ul>
-                  {items.map((navigation, i) => {
-                    return (
-                      <li key={i}>
-                        <Link href={navigation.link} aria-label={`link to ${navigation.title} page`}>
-                          {navigation.title}
-                        </Link>
-                      </li>
-                    );
-                  })}
-                </ul>
-              )}
-              <Flex align="center" gap={20}>
-                {showThemeSwitch && <ThemeSwitch activeTheme={activeTheme} previewMode={previewMode} />}
-
-                <Link href={user ? `/dashboard` : `${defaultNavlink}`} aria-label="Get started">
-                  <Button type="primary">{user ? "Go to Dashboard" : "Get Started"}</Button>
-                </Link>
-              </Flex>
-            </div>
+            <div className={styles.link_wrapper}>{extraContent}</div>
           </nav>
         </div>
       )}

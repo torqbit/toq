@@ -1,29 +1,25 @@
 .navBarContainer {
-  position: relative;
-  margin: 0 auto;
   z-index: 10;
   display: flex;
   align-items: center;
   justify-content: center;
+  position: fixed;
+  top: -1px;
+  z-index: 10;
+  background-color: var(--bg-primary);
+  height: 60px;
+  width: 100%;
+  box-shadow: var(--box-shadow);
+  backdrop-filter: blur(10px);
+  background: var(--bg-header);
+  padding: 5px 35px;
 
   nav {
-    position: fixed;
-    top: -1px;
-    z-index: 10;
-    background-color: var(--bg-primary);
-    height: 60px;
-    width: 100%;
+    width: var(--marketing-container-width);
+    margin: 0 auto;
     display: flex;
     align-items: center;
-    box-shadow: var(--box-shadow);
-    backdrop-filter: blur(10px);
-    background: var(--bg-header);
-
     justify-content: space-between;
-    padding: 5px 35px;
-
-    box-shadow: var(--box-shadow);
-
     img {
       width: auto;
       height: 30px;

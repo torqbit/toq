@@ -784,7 +784,8 @@ export default {
       viewBox="0 0 24 24"
       strokeWidth={1.5}
       stroke="currentColor"
-      width={18}
+      width={"1em"}
+      height={"1em"}
     >
       <path
         strokeLinecap="round"
@@ -881,7 +882,8 @@ export default {
   notification: (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={18}
+      width={"1em"}
+      height={"1em"}
       fill="none"
       viewBox="0 0 24 24"
       strokeWidth={1.5}
@@ -1009,8 +1011,8 @@ export default {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
-      width={25}
-      height={25}
+      width={"1em"}
+      height={"1em"}
       viewBox="0 0 24 24"
       strokeWidth={1.5}
       stroke="currentColor"
@@ -1027,8 +1029,8 @@ export default {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
-      width={25}
-      height={25}
+      width={"1em"}
+      height={"1em"}
       viewBox="0 0 24 24"
       strokeWidth={1.5}
       stroke="currentColor"
