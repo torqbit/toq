@@ -94,7 +94,13 @@ const CoursesPage: NextPage<{ siteConfig: PageSiteConfig; userRole: Role }> = ({
       {userRole ? (
         <>
           {userRole === Role.STUDENT ? (
-            <MarketingLayout siteConfig={siteConfig} user={{ ...user?.user, role: Role.STUDENT } as User}>
+            <MarketingLayout
+              siteConfig={siteConfig}
+              heroSection={
+                <DefaulttHero title="Courses" description="Expand Your Knowledge with Comprehensive Courses" />
+              }
+              user={{ ...user?.user, role: Role.STUDENT } as User}
+            >
               {contextMessageHolder}
               <Spin spinning={loading || !courses} indicator={<LoadingOutlined spin />} size="large">
                 <section>
@@ -104,7 +110,6 @@ const CoursesPage: NextPage<{ siteConfig: PageSiteConfig; userRole: Role }> = ({
                       siteConfig={siteConfig}
                       currentTheme={globalState.theme || "light"}
                       handleCourseCreate={addCourse}
-                      role={userRole}
                       emptyView={
                         <EmptyCourses size="300px" {...getIconTheme(globalState.theme || "light", siteConfig.brand)} />
                       }
