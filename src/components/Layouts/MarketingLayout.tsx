@@ -114,7 +114,12 @@ const MarketingLayout: FC<{
         {heroSection}
       </section>
       <Spin spinning={globalState.pageLoading} indicator={<LoadingOutlined spin />} size="large">
-        <div className={landingPage.children_wrapper}>{children}</div>
+        <div
+          className={landingPage.children_wrapper}
+          style={{ minHeight: heroSection ? `calc(50vh - 250px)` : `calc(100vh - 250px)` }}
+        >
+          {children}
+        </div>
       </Spin>
 
       <Footer
