@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import styles from "../styles/Dashboard.module.scss";
-import { Flex, message, Switch } from "antd";
+import { Flex, Switch } from "antd";
 import { GetServerSidePropsContext, NextPage } from "next";
 import AppLayout from "@/components/Layouts/AppLayout";
 import { getSiteConfig } from "@/services/getSiteConfig";
@@ -10,35 +10,12 @@ import { getCookieName } from "@/lib/utils";
 import { getToken } from "next-auth/jwt";
 import StudentDashboard from "@/components/Dashboard/StudentDashboard";
 import AdminDashboard from "@/components/Dashboard/Admin/AdminDashboard";
-import ProgramService from "@/services/ProgramService";
 
 const Dashboard: NextPage<{ siteConfig: PageSiteConfig; userRole: Role }> = ({ siteConfig, userRole }) => {
-  const [pageLoading, setPageLoading] = useState<boolean>(false);
-  const [messageApi, contextHolder] = message.useMessage();
-  const [allRegisterCourse, setAllRegisterCourse] = useState<
-    { courseName: string; progress: string; courseId: number; slug: string }[]
-  >([]);
   const [viewMode, setViewMode] = useState<Role>(userRole);
-
-  useEffect(() => {
-    if (viewMode !== Role.ADMIN) {
-      setPageLoading(true);
-      ProgramService.getRegisterCourses(
-        (result) => {
-          setAllRegisterCourse(result.progress);
-          setPageLoading(false);
-        },
-        (error) => {
-          messageApi.error(error);
-          setPageLoading(false);
-        }
-      );
-    }
-  }, [viewMode]);
 
   return (
     <AppLayout siteConfig={siteConfig}>
-      {contextHolder}
       <section className={styles.dashboard_content}>
         <Flex justify="space-between">
           <h3>{viewMode === Role.ADMIN ? "Admin Dashboard" : "Dashboard"}</h3>
@@ -63,7 +40,7 @@ const Dashboard: NextPage<{ siteConfig: PageSiteConfig; userRole: Role }> = ({ s
         {viewMode === Role.ADMIN ? (
           <AdminDashboard siteConfig={siteConfig} />
         ) : (
-          <StudentDashboard siteConfig={siteConfig} allRegisterCourse={allRegisterCourse} pageLoading={pageLoading} />
+          <StudentDashboard siteConfig={siteConfig} userRole={viewMode} />
         )}
       </section>
     </AppLayout>

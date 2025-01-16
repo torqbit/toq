@@ -120,7 +120,11 @@ const Sidebar: FC<{ menu: MenuProps["items"]; siteConfig: PageSiteConfig }> = ({
                     const newTheme: Theme = globalState?.theme == "dark" ? "light" : "dark";
                     updateTheme(newTheme);
                   }}
-                  icon={globalState?.theme == "dark" ? SvgIcons.sun : SvgIcons.moon}
+                  icon={
+                    <i style={{ lineHeight: 0, color: "var(--font-secondary)", fontSize: 20 }}>
+                      {globalState?.theme == "dark" ? SvgIcons.sun : SvgIcons.moon}
+                    </i>
+                  }
                 />
               </Tooltip>
             )}

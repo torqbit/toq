@@ -17,6 +17,7 @@ export interface INavBarProps {
   defaultNavlink?: string;
   homeLink: string;
   previewMode?: boolean;
+  extraContent: React.ReactNode;
   items: {
     title: string;
     link: string;

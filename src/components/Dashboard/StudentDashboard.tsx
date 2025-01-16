@@ -1,5 +1,5 @@
-import { Button, Flex, List, Space, Tabs, TabsProps } from "antd";
-import { FC } from "react";
+import { Button, Flex, List, message, Space, Tabs, TabsProps } from "antd";
+import { FC, useEffect, useState } from "react";
 import { useAppContext } from "../ContextApi/AppContext";
 import { useRouter } from "next/router";
 import SvgIcons, { EmptyCourses } from "../SvgIcons";
@@ -8,6 +8,8 @@ import Link from "next/link";
 import styles from "@/styles/Dashboard.module.scss";
 import { getIconTheme } from "@/services/darkThemeConfig";
 import { PageSiteConfig } from "@/services/siteConstant";
+import { Role } from "@prisma/client";
+import ProgramService from "@/services/ProgramService";
 
 const EnrolledCourseList: FC<{
   courseData: { courseName: string; progress: string; courseId: number; slug: string }[];
@@ -38,26 +40,49 @@ const EnrolledCourseList: FC<{
 
 const StudentDashboard: FC<{
   siteConfig: PageSiteConfig;
-  allRegisterCourse: { courseName: string; progress: string; courseId: number; slug: string }[];
-  pageLoading: boolean;
-}> = ({ siteConfig, allRegisterCourse, pageLoading }) => {
+  userRole: Role;
+}> = ({ siteConfig, userRole }) => {
   const { globalState } = useAppContext();
 
   const router = useRouter();
+
+  const [pageLoading, setPageLoading] = useState<boolean>(false);
+  const [messageApi, contextHolder] = message.useMessage();
+  const [allRegisterCourse, setAllRegisterCourse] = useState<
+    { courseName: string; progress: string; courseId: number; slug: string }[]
+  >([]);
+
+  useEffect(() => {
+    if (userRole == Role.STUDENT) {
+      setPageLoading(true);
+      ProgramService.getRegisterCourses(
+        (result) => {
+          setAllRegisterCourse(result.progress);
+          setPageLoading(false);
+        },
+        (error) => {
+          messageApi.error(error);
+          setPageLoading(false);
+        }
+      );
+    }
+  }, [userRole]);
+
   const onChange = (key: string) => {};
 
   const items: TabsProps["items"] = [
     {
       key: "1",
-      label: "Enrolled Courses",
+      label: "My Learnings",
       className: "some-class",
-      icon: SvgIcons.courses,
+      icon: <i style={{ fontSize: 18, color: "var(--font-primary)" }}>{SvgIcons.courses}</i>,
       children: <EnrolledCourseList courseData={allRegisterCourse} />,
     },
   ];
 
   return (
     <section>
+      {contextHolder}
       {allRegisterCourse.length > 0 ? (
         <>
           <Tabs defaultActiveKey="1" className="content_tab" items={items} onChange={onChange} />

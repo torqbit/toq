@@ -59,7 +59,11 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
     },
     {
       title: "Course",
-      icon: SvgIcons.courses,
+      icon: (
+        <i className={styles.events_icon} style={{ fontSize: 18 }}>
+          {SvgIcons.courses}
+        </i>
+      ),
       link: "/courses",
       key: "courses",
     },
@@ -94,7 +98,11 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
     {
       label: <Link href="/courses">Courses</Link>,
       key: "courses",
-      icon: SvgIcons.courses,
+      icon: (
+        <i style={{ fontSize: 18 }} className={styles.events_icon}>
+          {SvgIcons.courses}
+        </i>
+      ),
     },
     {
       label: <Link href="/events">Events</Link>,
@@ -113,7 +121,7 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
           style={{ fontSize: 10, paddingTop: 1.5 }}
           size="small"
         >
-          {SvgIcons.notification}
+          <i style={{ lineHeight: 0, color: "var(--font-secondary)", fontSize: 18 }}>{SvgIcons.notification}</i>
         </Badge>
       ),
     },
@@ -136,7 +144,11 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
       label: <Link href="/courses">Academy</Link>,
       key: "courses",
       className: sidebar.menu__item,
-      icon: SvgIcons.courses,
+      icon: (
+        <i className={styles.events_icon} style={{ fontSize: 18 }}>
+          {SvgIcons.courses}
+        </i>
+      ),
     },
     {
       label: <Link href="/admin/settings">Settings</Link>,
@@ -163,7 +175,7 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
           style={{ fontSize: 10, paddingTop: 1.5 }}
           size="small"
         >
-          {SvgIcons.notification}
+          <i style={{ lineHeight: 0, color: "var(--font-secondary)", fontSize: 18 }}>{SvgIcons.notification}</i>
         </Badge>
       ),
     },
