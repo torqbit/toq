@@ -162,11 +162,9 @@ const Setting: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
       case "profile":
         setActiveKey("profile");
         return router.push(`/setting?tab=${key}`);
-
       case "payment":
         setActiveKey("payment");
         return router.push(`/setting?tab=${key}`);
-
       default:
         return setActiveKey("profile");
     }
@@ -221,8 +219,10 @@ const Setting: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   ];
 
   useEffect(() => {
-    router.query.tab && onChange(router.query.tab as string);
-  }, [router.query.tab]);
+
+    onChange(router.query.tab as string);
+  }, []);
+
 
   return (
     <>
@@ -247,7 +247,9 @@ const Setting: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
 
           <section
             className={styleLayout.setting_content}
-            style={{ maxWidth: isMobile ? "100vw" : "var(--marketing-container-width)", margin: "0 auto" }}
+
+            style={{ maxWidth: isMobile ? "100vw" : "var(--marketing-container-width)",  margin: "0 auto", padding: "20px 0" }}
+
           >
             <h3>Setting</h3>
             <Tabs activeKey={activeKey} className="content_tab" items={items} onChange={onChange} />

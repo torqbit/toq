@@ -172,7 +172,7 @@ const MarketingLayout: FC<{
             </ul>
 
             <Flex align="center" gap={30}>
-              <Flex align="center" gap={5} style={{ marginTop: 2 }}>
+              <Flex align="center" gap={20} style={{ marginTop: 2 }}>
                 {showThemeSwitch && (
                   <ThemeSwitch activeTheme={globalState.theme ?? "light"} previewMode={previewMode} />
                 )}

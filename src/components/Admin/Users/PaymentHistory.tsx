@@ -83,7 +83,6 @@ const PaymentHistory: FC<{ activeTab: string }> = ({ activeTab }) => {
     try {
       setPaymentData({ ...paymentData, loading: true });
       const res = await getFetch("/api/v1/course/payment/history");
-
       const result = await res.json();
 
       if (result.success) {

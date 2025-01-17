@@ -2,6 +2,7 @@ import {
   $Enums,
   ConfigurationState,
   CourseRegistration,
+  CourseType,
   Order,
   orderStatus,
   paymentStatus,
@@ -394,6 +395,7 @@ export class PaymentManagemetService {
       any[]
     >`SELECT o.orderStatus as status,o.amount,o.updatedAt as paymentDate,o.productId,o.gatewayOrderId,o.currency,co.name as courseName,invoice.id as invoiceId FROM \`Order\` AS o  
     INNER JOIN Course as co ON co.courseId = o.productId AND co.coursePrice > 0 AND o.orderStatus = ${orderStatus.SUCCESS}
+
     LEFT OUTER JOIN Invoice as invoice ON invoice.studentId = ${studentId}  AND invoice.orderId = o.gatewayOrderId 
     WHERE o.studentId = ${studentId} AND o.updatedAt =  (SELECT MAX(updatedAt) 
     FROM \`Order\` AS b 
