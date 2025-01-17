@@ -408,7 +408,7 @@ const LessonView: FC<{ siteConfig: PageSiteConfig; courseId: number; marketingLa
   ];
 
   const ResponsiveLessonItemsList = (
-    <div className={styles.lesson_wrapper}>
+    <div className={styles.lesson_wrapper} style={{ marginBottom: 60 }}>
       <div className={styles.lessons_container}>
         {lessonItems?.map((item, i) => {
           return (
@@ -439,7 +439,7 @@ const LessonView: FC<{ siteConfig: PageSiteConfig; courseId: number; marketingLa
     {
       key: "1",
       label: "Lessons",
-      children: ResponsiveLessonItemsList,
+      children: <div>{ResponsiveLessonItemsList}</div>,
     },
     {
       key: "2",
