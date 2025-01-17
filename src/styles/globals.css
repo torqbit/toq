@@ -546,6 +546,10 @@ a {
 }
 
 @media only screen and (max-width: 435px) {
+  .page__wrapper {
+    width: 100vw;
+    margin: 0 auto;
+  }
   .events_content_wrapper {
     margin-bottom: 60px !important;
   }

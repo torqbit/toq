@@ -53,7 +53,11 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
   const responsiveNav = [
     {
       title: "Dashboard",
-      icon: SvgIcons.dashboard,
+      icon: (
+        <i style={{ fontSize: 18, color: "var(--font-secondary)", lineHeight: 0 }} className={styles.events_icon}>
+          {SvgIcons.dashboard}
+        </i>
+      ),
       link: "/dashboard",
       key: "dashboard",
     },
@@ -75,7 +79,11 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
     },
     {
       title: "Settings",
-      icon: SvgIcons.setting,
+      icon: (
+        <i style={{ fontSize: 18, color: "var(--font-secondary)", lineHeight: 0 }} className={styles.events_icon}>
+          {SvgIcons.setting}
+        </i>
+      ),
       link: "admin/settings",
       key: "settings",
     },
@@ -92,7 +100,11 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
     {
       label: <Link href="/dashboard">Dashboard</Link>,
       key: "dashboard",
-      icon: SvgIcons.dashboard,
+      icon: (
+        <i style={{ fontSize: 18, color: "var(--font-secondary)", lineHeight: 0 }} className={styles.events_icon}>
+          {SvgIcons.dashboard}
+        </i>
+      ),
     },
 
     {
@@ -132,7 +144,11 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
       label: <Link href="/dashboard">Dashboard</Link>,
       key: "dashboard",
       className: sidebar.menu__item,
-      icon: SvgIcons.dashboard,
+      icon: (
+        <i style={{ fontSize: 18, color: "var(--font-secondary)", lineHeight: 0 }} className={styles.events_icon}>
+          {SvgIcons.dashboard}
+        </i>
+      ),
     },
     {
       label: <Link href="/admin/site/design">Site Editor</Link>,
@@ -154,7 +170,11 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
       label: <Link href="/admin/settings">Settings</Link>,
       key: "settings",
       className: sidebar.menu__item,
-      icon: SvgIcons.setting,
+      icon: (
+        <i style={{ fontSize: 18, color: "var(--font-secondary)", lineHeight: 0 }} className={styles.events_icon}>
+          {SvgIcons.setting}
+        </i>
+      ),
     },
     {
       label: <Link href="/events">Events</Link>,

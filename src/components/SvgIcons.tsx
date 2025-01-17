@@ -623,7 +623,8 @@ export default {
   dashboard: (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={18}
+      width={"1em"}
+      height={"1em"}
       fill="none"
       viewBox="0 0 24 24"
       strokeWidth={1.5}
@@ -864,7 +865,8 @@ export default {
   setting: (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={18}
+      width={"1em"}
+      widths={"1em"}
       fill="none"
       viewBox="0 0 24 24"
       strokeWidth={1.5}

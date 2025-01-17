@@ -16,7 +16,7 @@ export type ISiderMenu =
   | "content"
   | "addCourseForm"
   | "configuration";
-export type IResponsiveNavMenu = "dashboard" | "courses" | "events" | "setting" | "notification";
+export type IResponsiveNavMenu = "dashboard" | "courses" | "events" | "blogs" | "setting" | "notification";
 
 // Define your state type
 type AppState = {

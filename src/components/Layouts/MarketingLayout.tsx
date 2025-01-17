@@ -4,7 +4,7 @@ import styles from "@/templates/standard/components/Hero/Hero.module.scss";
 import landingPage from "@/styles/Marketing/LandingPage/LandingPage.module.scss";
 import Head from "next/head";
 import { useAppContext } from "../ContextApi/AppContext";
-import { Avatar, Badge, Button, ConfigProvider, Dropdown, Flex, Popover, Spin } from "antd";
+import { Avatar, Badge, Button, ConfigProvider, Dropdown, Flex, Popover, PopoverProps, Spin } from "antd";
 import darkThemeConfig from "@/services/darkThemeConfig";
 import antThemeConfig from "@/services/antThemeConfig";
 import { DEFAULT_THEME, PageSiteConfig } from "@/services/siteConstant";
@@ -18,8 +18,11 @@ import { LoadingOutlined, UserOutlined } from "@ant-design/icons";
 import Link from "next/link";
 import ThemeSwitch from "../ThemeSwitch/ThemeSwitch";
 import SvgIcons from "../SvgIcons";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import NotificationList from "../Notification/NotificationList";
+import { useRouter } from "next/router";
+import appLayoutStyles from "@/styles/Layout2.module.scss";
+import { TooltipPlacement } from "antd/es/tooltip";
 
 const MarketingLayout: FC<{
   children?: React.ReactNode;
@@ -30,10 +33,24 @@ const MarketingLayout: FC<{
   user?: User;
   showFooter?: boolean;
   navBarWidth?: string | number;
-}> = ({ children, heroSection, user, siteConfig, previewMode, homeLink, showFooter = true, navBarWidth }) => {
+  mobileHeroMinHeight?: string | number;
+}> = ({
+  children,
+  heroSection,
+  user,
+  siteConfig,
+  previewMode,
+  homeLink,
+  showFooter = true,
+  navBarWidth,
+  mobileHeroMinHeight = "30vh",
+}) => {
   const { globalState, dispatch } = useAppContext();
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
   const [openNotification, setOpenNotification] = useState(false);
+  const router = useRouter();
+  const { data: session } = useSession();
+
   const { brand } = siteConfig;
   useEffect(() => {
     const root = document.documentElement;
@@ -49,6 +66,23 @@ const MarketingLayout: FC<{
   };
 
   const setGlobalTheme = (theme: Theme) => {
+    dispatch({
+      type: "SWITCH_THEME",
+      payload: theme,
+    });
+  };
+
+  const updateTheme = async (theme: Theme) => {
+    localStorage.setItem("theme", theme);
+    dispatch({
+      type: "SET_SITE_CONFIG",
+      payload: siteConfig,
+    });
+    dispatch({
+      type: "SET_USER",
+      payload: { ...session },
+    });
+
     dispatch({
       type: "SWITCH_THEME",
       payload: theme,
@@ -87,6 +121,36 @@ const MarketingLayout: FC<{
     onCheckTheme();
   }, [siteConfig.brand?.defaultTheme]);
 
+  const NotificationPopUp: FC<{ placement: TooltipPlacement }> = ({ placement }) => {
+    return (
+      <Popover
+        style={{ marginTop: 2 }}
+        content={
+          <div style={{ minWidth: "40vw" }}>
+            <NotificationList siteConfig={siteConfig} />
+          </div>
+        }
+        placement={placement}
+        title="Notifications"
+        trigger="click"
+        open={openNotification}
+        onOpenChange={setOpenNotification}
+      >
+        <Badge
+          color="blue"
+          classNames={{ indicator: styles.badgeIndicator }}
+          count={globalState.notifications && globalState.notifications > 0 ? globalState.notifications : 0}
+          style={{ fontSize: 10, paddingTop: 1.5 }}
+          size="small"
+        >
+          <i style={{ lineHeight: 0, color: "var(--font-secondary)", fontSize: 20, cursor: "pointer" }}>
+            {SvgIcons.notification}
+          </i>
+        </Badge>
+      </Popover>
+    );
+  };
+
   const getNavBarExtraContent = (userRole?: Role) => {
     let showThemeSwitch = siteConfig.brand?.themeSwitch;
 
@@ -113,31 +177,7 @@ const MarketingLayout: FC<{
                   <ThemeSwitch activeTheme={globalState.theme ?? "light"} previewMode={previewMode} />
                 )}
 
-                <Popover
-                  style={{ marginTop: 2 }}
-                  content={
-                    <div style={{ minWidth: "40vw" }}>
-                      <NotificationList siteConfig={siteConfig} />
-                    </div>
-                  }
-                  placement="bottomLeft"
-                  title="Notifications"
-                  trigger="click"
-                  open={openNotification}
-                  onOpenChange={setOpenNotification}
-                >
-                  <Badge
-                    color="blue"
-                    classNames={{ indicator: styles.badgeIndicator }}
-                    count={globalState.notifications && globalState.notifications > 0 ? globalState.notifications : 0}
-                    style={{ fontSize: 10, paddingTop: 1.5 }}
-                    size="small"
-                  >
-                    <i style={{ lineHeight: 0, color: "var(--font-secondary)", fontSize: 20, cursor: "pointer" }}>
-                      {SvgIcons.notification}
-                    </i>
-                  </Badge>
-                </Popover>
+                <NotificationPopUp placement="bottomLeft" />
               </Flex>
               <Dropdown
                 menu={{
@@ -215,7 +255,62 @@ const MarketingLayout: FC<{
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
         <link rel="icon" href={siteConfig.brand?.favicon} />
       </Head>
-      <section className={styles.heroWrapper}>
+      <section className={styles.heroWrapper} style={{ minHeight: isMobile ? mobileHeroMinHeight : "60px" }}>
+        {isMobile && user?.role == Role.STUDENT ? (
+          <Flex
+            style={{ width: "90vw", padding: "10px 0px" }}
+            align="center"
+            justify="space-between"
+            className={router.pathname.startsWith("/admin/content/course") ? "" : appLayoutStyles.userNameWrapper}
+          >
+            <Link href={"/setting"}>
+              <Flex align="center" gap={10} style={{ cursor: "pointer" }}>
+                <Avatar src={user?.image} icon={<UserOutlined />} />
+                <h4 style={{ margin: 0 }}> {user?.name}</h4>
+              </Flex>
+            </Link>
+            <Flex align="center" gap={10}>
+              <NotificationPopUp placement="bottomRight" />
+
+              <Dropdown
+                className={appLayoutStyles.mobileUserMenu}
+                menu={{
+                  items: [
+                    {
+                      key: "0",
+                      label: (
+                        <div
+                          onClick={() => {
+                            const newTheme: Theme = globalState.theme == "dark" ? "light" : "dark";
+                            updateTheme(newTheme);
+                          }}
+                        >
+                          {globalState.theme !== "dark" ? "Dark mode" : "Light mode"}
+                        </div>
+                      ),
+                    },
+
+                    {
+                      key: "1",
+                      label: "Logout",
+                      onClick: () => {
+                        signOut();
+                      },
+                    },
+                  ],
+                }}
+                trigger={["click"]}
+                placement="bottomRight"
+                arrow={{ pointAtCenter: true }}
+              >
+                <i className={appLayoutStyles.verticalDots}>{SvgIcons.verticalThreeDots}</i>
+              </Dropdown>
+            </Flex>
+          </Flex>
+        ) : (
+          <></>
+        )}
+
         {NavBarComponent && (
           <NavBarComponent
             user={user}
@@ -237,7 +332,7 @@ const MarketingLayout: FC<{
       <Spin spinning={globalState.pageLoading} indicator={<LoadingOutlined spin />} size="large">
         <div
           className={landingPage.children_wrapper}
-          style={{ minHeight: heroSection ? `calc(50vh - 250px)` : `calc(100vh - 250px)` }}
+          style={{ minHeight: isMobile && heroSection ? `calc(50vh - 250px)` : `calc(100vh - 250px)` }}
         >
           {children}
         </div>

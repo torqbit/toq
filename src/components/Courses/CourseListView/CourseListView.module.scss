@@ -44,3 +44,40 @@
     object-fit: cover;
   }
 }
+
+@media only screen and (max-width: 435px) {
+  .course__grid {
+    grid-template-columns: 1fr;
+    margin-bottom: 60px;
+  }
+  .course__card {
+    width: calc(100vw - 40px);
+
+    .card__footer {
+      margin: 15px -20px -20px;
+      padding: 10px 20px;
+      border-top: 1px solid var(--border-color);
+    }
+    .invalid__img {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: calc(100vw - 40px);
+
+      height: auto;
+      height: 168px;
+      border-bottom: 1px solid var(--border-color);
+      i {
+        font-size: 40px;
+        color: var(--font-secondary);
+      }
+    }
+    .card__img {
+      width: calc(100vw - 40px);
+
+      height: auto;
+      max-height: 168px;
+      object-fit: cover;
+    }
+  }
+}
