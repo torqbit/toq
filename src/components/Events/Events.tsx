@@ -6,11 +6,12 @@ import { useMediaQuery } from "react-responsive";
 import EventService, { IEventList } from "@/services/EventService";
 import EventCard from "@/components/Events/EventCard";
 import styles from "@/styles/Marketing/Events/Event.module.scss";
-import { Button, Flex, message, Tabs, TabsProps } from "antd";
+import { Button, Flex, message, Skeleton, Tabs, TabsProps } from "antd";
 import { EmptyEvents } from "../SvgIcons";
 import { getIconTheme } from "@/services/darkThemeConfig";
 import { PageSiteConfig } from "@/services/siteConstant";
 import { Theme } from "@/types/theme";
+import { getDummyArray } from "@/lib/dummyData";
 
 const Events: FC<{
   user: User;
@@ -198,7 +199,10 @@ const Events: FC<{
         {eventData.length > 0 && <Tabs items={items} onChange={onChange} />}
         {eventData.length == 0 && (
           <div className={styles.empty__content}>
-            <EmptyEvents size="300px" {...getIconTheme(globalState.theme || "light", siteConfig.brand)} />
+            <EmptyEvents
+              size={isMobile ? "200px" : "300px"}
+              {...getIconTheme(globalState.theme || "light", siteConfig.brand)}
+            />
             <h4 style={{ marginBottom: 20 }}>No events have been created.</h4>
           </div>
         )}

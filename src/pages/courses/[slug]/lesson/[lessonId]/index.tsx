@@ -24,6 +24,7 @@ const LessonPage: NextPage<{ siteConfig: PageSiteConfig; courseId: number; userR
       {typeof userRole === "undefined" || userRole === Role.STUDENT ? (
         <>
           <MarketingLayout
+            mobileHeroMinHeight={60}
             siteConfig={siteConfig}
             showFooter={false}
             navBarWidth={"100%"}

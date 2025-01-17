@@ -35,9 +35,17 @@ const BlogPage: FC<IProps> = ({ user, blogData, siteConfig }) => {
 
   return (
     <MarketingLayout
+      mobileHeroMinHeight={60}
       siteConfig={siteConfig}
+      showFooter={!isMobile}
       user={user}
-      heroSection={<HeroBlog title="Blog" description="Our engineering experience, explained in detail" />}
+      heroSection={
+        <>
+          {!isMobile && blogData && !globalState.pageLoading && (
+            <HeroBlog title="Blog" description="Our engineering experience, explained in detail" />
+          )}
+        </>
+      }
     >
       {blogData.length === 0 ? (
         <div
@@ -61,68 +69,76 @@ const BlogPage: FC<IProps> = ({ user, blogData, siteConfig }) => {
           </p>
         </div>
       ) : (
-        <div className={styles.blogListPageWrapper}>
-          <div className={styles.primaryBlog}>
-            {blogData.slice(0, 2).map((blog, i) => {
-              return (
-                <Link href={`/blogs/${blog.slug}`} key={i} onClick={() => {}} className={styles.blogCard}>
-                  <Image src={blog.banner} alt="blog-img" height={isMobile ? 175 : 250} width={isMobile ? 350 : 500} />
-                  <div>
-                    <Flex className={styles.authorInfo} align="center" gap={10}>
-                      {blog.authorImage ? (
-                        <Image src={blog.authorImage} alt="blog-img" height={40} width={40} />
-                      ) : (
-                        <div className={styles.userOutlineImage}>
-                          <i>
-                            <UserOutlined style={{ fontSize: 20 }} />
-                          </i>
-                        </div>
-                      )}
-                      <Space direction="vertical" size={5}>
-                        <span>A blog by </span>
-                        <div>{blog.authorName}</div>
-                      </Space>
-                    </Flex>
-                    <h1>{blog.title}</h1>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-          <div>
-            <div
-              className={
-                blogData.slice(2).length > 2
-                  ? styles.secondaryBlog
-                  : `${blogData.slice(2).length === 1 ? styles.singleSecondaryBlog : styles.doubleSecondaryBlog}`
-              }
-            >
-              {blogData.slice(2).map((blog, i) => {
+        <>
+          {isMobile && <h4 style={{ padding: "20px 0 0 20px", margin: 0 }}>Blogs</h4>}
+          <div className={styles.blogListPageWrapper}>
+            <div className={styles.primaryBlog}>
+              {blogData.slice(0, 2).map((blog, i) => {
                 return (
                   <Link href={`/blogs/${blog.slug}`} key={i} onClick={() => {}} className={styles.blogCard}>
-                    <Image src={blog.banner} alt="blog-img" height={175} width={350} />
-                    <div className={styles.infoWrapper}>
+                    <Image
+                      src={blog.banner}
+                      alt="blog-img"
+                      height={isMobile ? 175 : 250}
+                      width={isMobile ? 350 : 500}
+                    />
+                    <div>
                       <Flex className={styles.authorInfo} align="center" gap={10}>
                         {blog.authorImage ? (
                           <Image src={blog.authorImage} alt="blog-img" height={40} width={40} />
                         ) : (
                           <div className={styles.userOutlineImage}>
-                            <UserOutlined style={{ fontSize: 24 }} height={40} width={40} />
+                            <i>
+                              <UserOutlined style={{ fontSize: 20 }} />
+                            </i>
                           </div>
                         )}
                         <Space direction="vertical" size={5}>
-                          <span>A blog by a</span>
+                          <span>A blog by </span>
                           <div>{blog.authorName}</div>
                         </Space>
                       </Flex>
-                      <h2>{blog.title}</h2>
+                      <h1>{blog.title}</h1>
                     </div>
                   </Link>
                 );
               })}
             </div>
+            <div>
+              <div
+                className={
+                  blogData.slice(2).length > 2
+                    ? styles.secondaryBlog
+                    : `${blogData.slice(2).length === 1 ? styles.singleSecondaryBlog : styles.doubleSecondaryBlog}`
+                }
+              >
+                {blogData.slice(2).map((blog, i) => {
+                  return (
+                    <Link href={`/blogs/${blog.slug}`} key={i} onClick={() => {}} className={styles.blogCard}>
+                      <Image src={blog.banner} alt="blog-img" height={175} width={350} />
+                      <div className={styles.infoWrapper}>
+                        <Flex className={styles.authorInfo} align="center" gap={10}>
+                          {blog.authorImage ? (
+                            <Image src={blog.authorImage} alt="blog-img" height={40} width={40} />
+                          ) : (
+                            <div className={styles.userOutlineImage}>
+                              <UserOutlined style={{ fontSize: 24 }} height={40} width={40} />
+                            </div>
+                          )}
+                          <Space direction="vertical" size={5}>
+                            <span>A blog by a</span>
+                            <div>{blog.authorName}</div>
+                          </Space>
+                        </Flex>
+                        <h2>{blog.title}</h2>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
           </div>
-        </div>
+        </>
       )}
     </MarketingLayout>
   );

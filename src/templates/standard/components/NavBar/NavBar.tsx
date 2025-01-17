@@ -31,6 +31,7 @@ const NavBar: FC<INavBarProps> = ({
           defaultNavlink={defaultNavlink}
           previewMode={previewMode}
           extraContent={<></>}
+          user={user}
         />
       ) : (
         <div className={styles.navBarContainer}>

@@ -13,6 +13,13 @@ import { listCourseListItems } from "@/actions/courses";
 import StudentDashboard from "@/components/Dashboard/StudentDashboard";
 import MarketingLayout from "@/components/Layouts/MarketingLayout";
 import dashboardStyles from "@/styles/Dashboard.module.scss";
+import { useMediaQuery } from "react-responsive";
+
+import { useSession } from "next-auth/react";
+import { Theme } from "@/types/theme";
+import { useAppContext } from "@/components/ContextApi/AppContext";
+import { useRouter } from "next/router";
+
 interface IProps {
   user: User;
   siteConfig: PageSiteConfig;
@@ -21,10 +28,18 @@ interface IProps {
 }
 
 const LandingPage: FC<IProps> = ({ user, siteConfig, courseList, blogList }) => {
+  const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
+
   return (
     <>
       {user && user.role == Role.STUDENT ? (
-        <MarketingLayout user={user} siteConfig={siteConfig} homeLink={"/"}>
+        <MarketingLayout
+          mobileHeroMinHeight={60}
+          user={user}
+          siteConfig={siteConfig}
+          homeLink={"/"}
+          showFooter={!isMobile}
+        >
           <section
             className={dashboardStyles.dashboard_content}
             style={{ maxWidth: "var(--marketing-container-width)", margin: "0 auto", padding: "10px  0" }}

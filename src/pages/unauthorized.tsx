@@ -22,6 +22,7 @@ const UnAuthorized: NextPage<{ siteConfig: PageSiteConfig; userRole: Role }> = (
     <>
       {userRole == Role.STUDENT ? (
         <MarketingLayout
+          mobileHeroMinHeight={60}
           user={
             userRole
               ? ({
@@ -48,7 +49,9 @@ const UnAuthorized: NextPage<{ siteConfig: PageSiteConfig; userRole: Role }> = (
             <Space direction="vertical">
               <Flex justify="center" align="center" gap={5} vertical={isMobile}>
                 <i style={{ lineHeight: 0, color: "var(--font-primary)", fontSize: 30 }}>{SvgIcons.lock}</i>{" "}
-                <h1 style={{ textAlign: "center", margin: 0 }}>You are not authorized to view this page</h1>
+                <h1 style={{ textAlign: "center", margin: 0, fontSize: isMobile ? "2rem" : "2.8rem" }}>
+                  You are not authorized to view this page
+                </h1>
               </Flex>
               <Flex align="center" justify="center" gap={20}>
                 {router.query.from === "lesson" && (
