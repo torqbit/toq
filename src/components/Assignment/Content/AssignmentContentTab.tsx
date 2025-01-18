@@ -27,7 +27,7 @@ const AssignmentContentTab: FC<{
   const router = useRouter();
   const [assignmentDetail, setAssignmentDetail] = useState<IAssignmentDetail>();
   const [submissionDetail, setSubmissionDetail] = useState<IAssignmentSubmissionDetail | null>(null);
-  const [evaluatioinResult, setEvaluationResult] = useState<IEvaluationResult | null>(null);
+  const [evaluationResult, setEvaluationResult] = useState<IEvaluationResult | null>(null);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [questions, setQuestions] = useState<MultipleChoiceQA[]>([]);
   const [selectedAnswers, setSelectedAnswers] = useState<SelectedAnswersType>({});
@@ -56,6 +56,7 @@ const AssignmentContentTab: FC<{
   };
   useEffect(() => {
     resetState();
+    setEvaluationResult(null);
     lessonId && getAssignmentDetail(lessonId, true);
   }, [lessonId]);
 
@@ -130,7 +131,6 @@ const AssignmentContentTab: FC<{
       lessonId as number,
       assignmentDetail?.assignmentId as number,
       (submissionContent) => {
-        console.log(submissionContent, "dd");
         if (submissionContent && submissionContent?.status !== submissionStatus.NOT_SUBMITTED) {
           getEvaluationResult(submissionContent?.id);
           lessonId && getAssignmentDetail(lessonId, false);
@@ -205,14 +205,14 @@ const AssignmentContentTab: FC<{
               {submissionDetail && submissionDetail?.status !== submissionStatus.NOT_SUBMITTED && (
                 <Tag
                   color={
-                    evaluatioinResult?.scoreSummary?.eachQuestionScore[currentQuestionIndex]?.score ===
+                    evaluationResult?.scoreSummary?.eachQuestionScore[currentQuestionIndex]?.score ===
                     assignmentDetail?.maximumScore
                       ? "green"
                       : "red"
                   }
                   style={{ border: "none", padding: "5px 10px" }}
                 >
-                  Scored {evaluatioinResult?.scoreSummary?.eachQuestionScore[currentQuestionIndex]?.score}/
+                  Scored {evaluationResult?.scoreSummary?.eachQuestionScore[currentQuestionIndex]?.score}/
                   {assignmentDetail?.maximumScore}
                 </Tag>
               )}
@@ -223,6 +223,7 @@ const AssignmentContentTab: FC<{
               question={questions[currentQuestionIndex]}
               selectedAnswers={selectedAnswers}
               handleSelectAnswer={handleSelectAnswer}
+              isEvaluated={!!evaluationResult}
             />
           )}
 
@@ -235,14 +236,19 @@ const AssignmentContentTab: FC<{
               >
                 Back
               </Button>
-              <Button type="primary" loading={saveLoading} onClick={onSubmitQuestion}>
+              <Button
+                type="primary"
+                loading={saveLoading}
+                onClick={onSubmitQuestion}
+                disabled={!!evaluationResult && currentQuestionIndex === questions.length - 1}
+              >
                 {selectedAnswers[currentQuestionIndex + 1]?.length > 0 &&
                 !areAnswersEqualForKey(
                   selectedAnswers[currentQuestionIndex + 1],
                   savedAsnwers[currentQuestionIndex + 1]
                 )
                   ? "Submit"
-                  : evaluatioinResult
+                  : evaluationResult
                   ? "Next"
                   : "Skip"}
                 <RightOutlined />
@@ -258,8 +264,8 @@ const AssignmentContentTab: FC<{
             >
               <Button
                 type="primary"
-                style={{ background: !!evaluatioinResult ? "" : themeColors.commons.success }}
-                disabled={!!evaluatioinResult}
+                style={{ background: !!evaluationResult ? "" : themeColors.commons.success }}
+                disabled={!!evaluationResult}
               >
                 Finish & complete <ArrowRightOutlined />
               </Button>

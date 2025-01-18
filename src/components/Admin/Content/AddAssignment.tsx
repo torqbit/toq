@@ -73,7 +73,7 @@ export const createEmptyQuestion = (id: string): MultipleChoiceQA => ({
     { key: "B", text: "" },
   ],
   correctOptionIndex: [],
-  answerExplaination: "",
+  answerExplanation: "",
 });
 
 const AddAssignment: FC<{

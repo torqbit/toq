@@ -5,8 +5,9 @@ import { MultipleChoiceQA, SelectedAnswersType } from "@/types/courses/assignmen
 const MCQViewAssignment: FC<{
   question: MultipleChoiceQA;
   selectedAnswers: SelectedAnswersType;
+  isEvaluated: boolean;
   handleSelectAnswer: (answer: string | number, id: string) => void;
-}> = ({ question, selectedAnswers, handleSelectAnswer }) => {
+}> = ({ question, selectedAnswers, handleSelectAnswer, isEvaluated }) => {
   return (
     <div>
       <div style={{ marginBottom: 25 }} key={question?.id}>
@@ -14,6 +15,7 @@ const MCQViewAssignment: FC<{
           question={question}
           selectedAnswer={selectedAnswers[Number(question?.id)] || null}
           onAnswerSelect={handleSelectAnswer}
+          isEvaluated={isEvaluated}
         />
       </div>
     </div>
