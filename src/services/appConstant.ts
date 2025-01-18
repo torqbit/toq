@@ -9,14 +9,8 @@ export default {
   documentExtensions: [
     { value: "pdf", label: "PDF" },
     { value: "doc", label: "Word" },
-    { value: "docx", label: "Word (DOCX)" },
     { value: "xls", label: "Excel" },
-    { value: "xlsx", label: "Excel (XLSX)" },
-    { value: "ppt", label: "PowerPoint" },
-    { value: "pptx", label: "PowerPoint (PPTX)" },
-    { value: "txt", label: "Text" },
-    { value: "rtf", label: "RTF" },
-    { value: "odt", label: "OpenDoc" },
+    { value: "zip", label: "Archive" },
   ],
   projectFramework: [
     {
