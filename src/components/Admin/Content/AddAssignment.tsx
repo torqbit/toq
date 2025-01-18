@@ -3,7 +3,7 @@ import styles from "@/styles/AddAssignment.module.scss";
 import { FC, useEffect, useState } from "react";
 import AssignmentService from "@/services/course/AssignmentService";
 import { ResourceContentType } from "@prisma/client";
-import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
+import { DeleteFilled, MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import {
   IAssignmentDetails,
   AssignmentType,
@@ -82,7 +82,7 @@ const AddAssignment: FC<{
         0
       );
       if (sumOfGradingScore !== Number(assignmentForm.getFieldsValue().maximumScore)) {
-        return message.info("Sum of grading score should be equal to maximum scores");
+        return message.info("Ensure the sum of grading points equals the maximum points.");
       }
     }
 
@@ -406,18 +406,13 @@ const AddAssignment: FC<{
                               {fields.map(({ key, name, ...restField }) => (
                                 <Row key={key} justify="end" gutter={[10, 10]}>
                                   <Col span={3}>
-                                    <Button
-                                      type="text"
-                                      danger
-                                      onClick={() => remove(name)}
-                                      icon={<MinusCircleOutlined />}
-                                    />
+                                    <Button type="text" onClick={() => remove(name)} icon={<DeleteFilled />} />
                                   </Col>
                                   <Col span={10}>
                                     <Form.Item
                                       {...restField}
                                       name={[name, "questionIndex"]}
-                                      rules={[{ required: true }]}
+                                      rules={[{ required: true, message: "Please enter any question no" }]}
                                     >
                                       <Input placeholder="Question 01" />
                                     </Form.Item>

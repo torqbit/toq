@@ -92,7 +92,7 @@ const SubjectiveAssignmentForm: FC<{
             </Form.Item>
           }
           title={"Upload assignment file"}
-          description={"This is the max score for the assignment, that will be based on multiple parameters "}
+          description={"Upload the assignment file. The score will be based on various evaluation parameters."}
           divider={false}
         />
       </div>
