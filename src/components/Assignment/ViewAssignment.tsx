@@ -88,34 +88,34 @@ const ViewAssignment: FC<{
         />
       ),
     },
-    {
-      key: "submission",
-      label: "Submission",
-      children: (
-        <AssignmentSubmissionTab
-          lessonId={lessonId}
-          assignmentId={tabKey === "submission" ? assignmentId : undefined}
-          userRole={userRole}
-          setSubStatus={setSubStatus}
-          subStatus={subStatus as submissionStatus}
-          setScore={setScore}
-          assignmentFiles={assignmentFiles}
-          getLatestStatus={getLatestStatus}
-          setSubmitLimit={setSubmitLimit}
-          submitLimit={submitLimit}
-          onTabChange={onTabChange}
-        />
-      ),
-    },
-    {
-      key: "discussions",
-      label: "Discussions",
-      children: (
-        <div className={style.discussionWrapper}>
-          <QADiscssionTab loading={discussionLoader} resourceId={tabKey === "discussions" ? lessonId : undefined} />
-        </div>
-      ),
-    },
+    // {
+    //   key: "submission",
+    //   label: "Submission",
+    //   children: (
+    //     <AssignmentSubmissionTab
+    //       lessonId={lessonId}
+    //       assignmentId={tabKey === "submission" ? assignmentId : undefined}
+    //       userRole={userRole}
+    //       setSubStatus={setSubStatus}
+    //       subStatus={subStatus as submissionStatus}
+    //       setScore={setScore}
+    //       assignmentFiles={assignmentFiles}
+    //       getLatestStatus={getLatestStatus}
+    //       setSubmitLimit={setSubmitLimit}
+    //       submitLimit={submitLimit}
+    //       onTabChange={onTabChange}
+    //     />
+    //   ),
+    // },
+    // {
+    //   key: "discussions",
+    //   label: "Discussions",
+    //   children: (
+    //     <div className={style.discussionWrapper}>
+    //       <QADiscssionTab loading={discussionLoader} resourceId={tabKey === "discussions" ? lessonId : undefined} />
+    //     </div>
+    //   ),
+    // },
   ];
 
   const getStatusIcon = (status: submissionStatus) => {

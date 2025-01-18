@@ -73,7 +73,7 @@ export const createEmptyQuestion = (id: string): MultipleChoiceQA => ({
     { key: "B", text: "" },
   ],
   correctOptionIndex: [],
-  answerExplaination: "",
+  answerExplanation: "",
 });
 
 const AddAssignment: FC<{
@@ -169,6 +169,7 @@ const AddAssignment: FC<{
   };
 
   useEffect(() => {
+    setQuestions([createEmptyQuestion("1")]);
     if (isEdit) {
       AssignmentService.getAssignment(
         currResId,
@@ -240,6 +241,7 @@ const AddAssignment: FC<{
       maskClosable={false}
       closeIcon={true}
       onClose={() => {
+        setQuestions([createEmptyQuestion("1")]);
         currResId && !isEdit && onDeleteResource(currResId);
         setResourceDrawer(false);
         assignmentForm.resetFields();
