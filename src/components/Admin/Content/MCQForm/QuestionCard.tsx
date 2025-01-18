@@ -72,8 +72,8 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, onQuestionChange,
         onAnswerChange={(values: any) => onQuestionChange({ ...question, correctOptionIndex: values })}
       />
       <QuestionExplanation
-        explanation={question.answerExplaination || ""}
-        onChange={(value: string) => onQuestionChange({ ...question, answerExplaination: value })}
+        explanation={question.answerExplanation || ""}
+        onChange={(value: string) => onQuestionChange({ ...question, answerExplanation: value })}
       />
     </ConfigFormLayout>
   );
