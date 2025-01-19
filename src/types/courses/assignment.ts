@@ -32,7 +32,7 @@ export enum ProjectFramework {
   NEXT_APP = "NEXT_APP",
 }
 
-export type DocumentExtension = "pdf" | "doc" | "docx" | "xls" | "xlsx" | "ppt" | "pptx" | "txt" | "rtf" | "odt";
+export type DocumentExtension = "pdf" | "doc" | "docx" | "xls" | "zip";
 
 export interface IAssignmentDetails {
   _type: AssignmentType;
@@ -81,10 +81,10 @@ export interface MCQASubmissionContent extends IAssignmentDetails {
 }
 
 export interface SubjectiveAssignment extends IAssignmentDetails {
-  title: string;
   description: string;
-  allowFileUpload: boolean;
-  supportFileTypes: string[];
+  file_for_candidate: DocumentExtension;
+  projectArchiveUrl: string;
+  gradingParameters: QuestionScore;
 }
 
 export interface AssignmentCreateRequest {
@@ -92,7 +92,7 @@ export interface AssignmentCreateRequest {
   isEdit: boolean;
   estimatedDurationInMins: number;
   maximumScore: number;
-  passingScore: number;
+  passingScore?: number;
   details: IAssignmentDetails;
   title: string;
 }
