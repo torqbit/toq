@@ -2,7 +2,7 @@ version: "3"
 
 services:
   web:
-    image: torqbit/torqbit:0.1.2-rc3
+    image: torqbit/torqbit:0.1.5-rc1
     ports:
       - "3000:80"
     build: .
