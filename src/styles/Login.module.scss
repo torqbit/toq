@@ -89,4 +89,16 @@
     background-color: var(--bg-primary);
     border: 1px solid var(--border-color);
   }
+
+  .login_page_wrapper > div {
+    max-width: 90vw;
+    margin: 0 auto;
+    padding: 50px;
+    border-radius: 8px;
+    backdrop-filter: blur(10px);
+    background: var(--bg-header);
+    h3 {
+      text-align: center;
+    }
+  }
 }
