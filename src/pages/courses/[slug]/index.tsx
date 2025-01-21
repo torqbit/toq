@@ -22,6 +22,7 @@ import { PaymentManagemetService } from "@/services/payment/PaymentManagementSer
 import { getCourseDetailedView } from "@/actions/courses";
 import Preview from "@/components/Admin/Content/Preview";
 import { useSession } from "next-auth/react";
+import { useMediaQuery } from "react-responsive";
 
 const LearnCoursesPage: NextPage<{
   siteConfig: PageSiteConfig;
@@ -31,6 +32,8 @@ const LearnCoursesPage: NextPage<{
   lessons: CourseLessons[];
   courseId: number;
 }> = ({ siteConfig, userRole, course, courseViewDetail, lessons, courseId }) => {
+  const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
+
   const router = useRouter();
   const [form] = Form.useForm();
   const { data: user } = useSession();
@@ -203,6 +206,8 @@ const LearnCoursesPage: NextPage<{
       {typeof userRole === "undefined" || userRole === Role.STUDENT ? (
         <>
           <MarketingLayout
+            mobileHeroMinHeight={60}
+            showFooter={!isMobile}
             user={
               userRole
                 ? ({
@@ -220,9 +225,13 @@ const LearnCoursesPage: NextPage<{
               <Preview
                 courseDetail={courseViewDetail}
                 previewMode={false}
-                handlePurchase={() => router.push(`/login?redirect=courses/${router.query.slug}`)}
+                handlePurchase={() => {
+                  userRole && userRole === Role.STUDENT
+                    ? handlePurchase(courseId)
+                    : router.push(`/login?redirect=courses/${router.query.slug}`);
+                }}
                 handleLessonRedirection={() => {
-                  userRole && userRole === Role.STUDENT && handleLessonRedirection(courseViewDetail.id);
+                  userRole && userRole === Role.STUDENT && handleLessonRedirection(courseId);
                 }}
                 paymentCallback={router.query.callback === "payment"}
                 extraStyle={{ padding: "20px 0 50px" }}

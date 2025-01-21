@@ -1,41 +1,22 @@
-import {
-  Button,
-  Col,
-  Drawer,
-  Flex,
-  Form,
-  FormInstance,
-  Input,
-  InputNumber,
-  message,
-  Radio,
-  Row,
-  Segmented,
-  Select,
-  Space,
-  Steps,
-  Tag,
-  Upload,
-  UploadProps,
-} from "antd";
+import { Button, Col, Drawer, Form, Input, InputNumber, message, Radio, Row, Space, Steps } from "antd";
 import styles from "@/styles/AddAssignment.module.scss";
 import { FC, useEffect, useState } from "react";
 import AssignmentService from "@/services/course/AssignmentService";
 import { ResourceContentType } from "@prisma/client";
-import { CloseOutlined } from "@ant-design/icons";
-import { useAppContext } from "@/components/ContextApi/AppContext";
+import { DeleteFilled, MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import {
   IAssignmentDetails,
-  IProgrammingLangSubmission,
-  IProgrammingProjectSubmission,
   AssignmentType,
   MultipleChoiceQA,
   MCQAssignment,
+  SubjectiveAssignment,
+  QuestionScore,
 } from "@/types/courses/assignment";
 import ConfigFormLayout from "@/components/Configuration/ConfigFormLayout";
 import ConfigForm from "@/components/Configuration/ConfigForm";
 import MCQForm from "./MCQForm/MCQForm";
 import FormDisableOverlay from "@/components/Configuration/FormDisableOverlay";
+import SubjectiveAssignmentForm from "./SubjectiveAssignment/SubjectiveAssignmentForm";
 
 const AssignmentTypeOptions = [
   {
@@ -50,18 +31,6 @@ const AssignmentTypeOptions = [
     value: AssignmentType.SUBJECTIVE,
     disabled: false,
   },
-  {
-    title: "Program",
-    description: "General purpose programming in languages line C, Java, Python etc.",
-    value: AssignmentType.PROGRAMMING_LANG,
-    disabled: true,
-  },
-  {
-    title: "Project",
-    description: "Support for static website, React and Nextjs and other frameworks coming soon",
-    value: AssignmentType.PROGRAMMING_PROJECT,
-    disabled: true,
-  },
 ];
 
 export const createEmptyQuestion = (id: string): MultipleChoiceQA => ({
@@ -73,7 +42,7 @@ export const createEmptyQuestion = (id: string): MultipleChoiceQA => ({
     { key: "B", text: "" },
   ],
   correctOptionIndex: [],
-  answerExplaination: "",
+  answerExplanation: "",
 });
 
 const AddAssignment: FC<{
@@ -96,15 +65,27 @@ const AddAssignment: FC<{
   onDeleteResource,
 }) => {
   const [assignmentForm] = Form.useForm();
+  const [subjectiveForm] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
-  const [editorValue, setDefaultValue] = useState<string>();
+  const [editorValue, setEditorValue] = useState<string>("");
   const [submissionType, setSubmissionType] = useState<AssignmentType>();
   const [questions, setQuestions] = useState<MultipleChoiceQA[]>([createEmptyQuestion("1")]);
-  const [archiveUrl, setArchiveUrl] = useState<string>("");
-  const [initialCode, setInitialCode] = useState<string>("");
   const [current, setCurrent] = useState<number>(0);
 
-  const handleAssignment = () => {
+  const handleAssignment = async () => {
+    // GRADING PARAMETERS CHECK
+
+    if (assignmentForm.getFieldValue("gradingParameters")?.length) {
+      const questionScores = assignmentForm.getFieldValue("gradingParameters") as QuestionScore[];
+      const sumOfGradingScore = questionScores.reduce(
+        (acc, currentValue) => Number(acc) + Number(currentValue.score),
+        0
+      );
+      if (sumOfGradingScore !== Number(assignmentForm.getFieldsValue().maximumScore)) {
+        return message.info("Ensure the sum of grading points equals the maximum points.");
+      }
+    }
+
     if (!submissionType) return message.error("Please select assignment type");
     if (
       submissionType === AssignmentType.MCQ &&
@@ -129,14 +110,15 @@ const AddAssignment: FC<{
         } as MCQAssignment;
         break;
 
-      case AssignmentType.PROGRAMMING_PROJECT: {
-        const { projectFramework, archiveUrl: projectArchiveUrl } = assignmentForm.getFieldsValue();
-        setArchiveUrl(projectArchiveUrl);
+      case AssignmentType.SUBJECTIVE: {
+        const { file_for_candidate, archiveUrl: projectArchiveUrl } = subjectiveForm.getFieldsValue();
         progAssignment = {
           ...baseAssignment,
-          framework: projectFramework,
-          baseProjectArchiveUrl: archiveUrl,
-        } as IProgrammingProjectSubmission;
+          description: editorValue,
+          file_for_candidate: file_for_candidate,
+          projectArchiveUrl: projectArchiveUrl,
+          gradingParameters: assignmentForm.getFieldValue("gradingParameters"),
+        } as SubjectiveAssignment;
         break;
       }
 
@@ -149,9 +131,9 @@ const AddAssignment: FC<{
       {
         lessonId: Number(currResId),
         title: assignmentForm.getFieldsValue().title,
-        estimatedDurationInMins: assignmentForm.getFieldsValue().estimatedDurationInMins ?? 30,
+        estimatedDurationInMins: assignmentForm.getFieldsValue().estimatedDurationInMins,
         maximumScore: Number(assignmentForm.getFieldsValue().maximumScore),
-        passingScore: Number(assignmentForm.getFieldsValue().passingScore),
+        passingScore: Number(assignmentForm.getFieldsValue().passingScore) || 0,
         isEdit,
         details: progAssignment,
       },
@@ -169,6 +151,7 @@ const AddAssignment: FC<{
   };
 
   useEffect(() => {
+    setQuestions([createEmptyQuestion("1")]);
     if (isEdit) {
       AssignmentService.getAssignment(
         currResId,
@@ -185,13 +168,14 @@ const AddAssignment: FC<{
               setQuestions(content.questions);
               setCurrent(1);
               break;
-            case AssignmentType.PROGRAMMING_PROJECT:
-              const submissionConf2 = assignmentDetail.content as IProgrammingProjectSubmission;
-              assignmentForm.setFieldValue("projectFramework", submissionConf2.framework);
-              assignmentForm.setFieldValue("archiveUrl", submissionConf2.baseProjectArchiveUrl);
-              setArchiveUrl(submissionConf2.baseProjectArchiveUrl);
+            case AssignmentType.SUBJECTIVE:
+              const subjectiveContent = assignmentDetail.content as SubjectiveAssignment;
+              subjectiveForm.setFieldValue("file_for_candidate", subjectiveContent.file_for_candidate);
+              assignmentForm.setFieldValue("gradingParameters", subjectiveContent.gradingParameters);
+              subjectiveForm.setFieldValue("archiveUrl", subjectiveContent.projectArchiveUrl);
+              setEditorValue(subjectiveContent.description);
+              setCurrent(1);
               break;
-
             default:
               break;
           }
@@ -208,6 +192,9 @@ const AddAssignment: FC<{
   }, [currResId, isEdit]);
 
   useEffect(() => {
+    if (editorValue) {
+      setCurrent(2);
+    }
     if (
       questions.length > 0 &&
       questions[0].title !== "" &&
@@ -216,7 +203,7 @@ const AddAssignment: FC<{
     ) {
       setCurrent(2);
     }
-  }, [questions]);
+  }, [questions, editorValue]);
 
   const onClose = (closeDrawer: boolean) => {
     if (closeDrawer) {
@@ -224,12 +211,11 @@ const AddAssignment: FC<{
     }
     setResourceDrawer(false);
     assignmentForm.resetFields();
+    subjectiveForm.resetFields();
     setQuestions([createEmptyQuestion("1")]);
-    setInitialCode("");
     setCurrent(0);
-    setDefaultValue("");
+    setEditorValue("");
     setSubmissionType(undefined);
-    setArchiveUrl("");
     onRefresh();
   };
 
@@ -240,6 +226,7 @@ const AddAssignment: FC<{
       maskClosable={false}
       closeIcon={true}
       onClose={() => {
+        setQuestions([createEmptyQuestion("1")]);
         currResId && !isEdit && onDeleteResource(currResId);
         setResourceDrawer(false);
         assignmentForm.resetFields();
@@ -262,6 +249,7 @@ const AddAssignment: FC<{
             onClick={() => {
               handleAssignment();
               assignmentForm.submit();
+              subjectiveForm.submit();
             }}
             type="primary"
           >
@@ -314,34 +302,30 @@ const AddAssignment: FC<{
                     input={
                       <Form.Item name="assignmentType">
                         <Radio.Group>
-                          <Row gutter={[16, 16]}>
-                            {AssignmentTypeOptions.map((item) => (
-                              <Col span={12}>
-                                <Radio
-                                  key={item.value}
-                                  value={item.value}
-                                  disabled={item.disabled}
-                                  onChange={(e) => {
-                                    setSubmissionType(e.target.value);
-                                    if (current === 0) setCurrent(1);
-                                  }}
-                                  className={`assignment_type_radio ${styles.assignment_type_radio}`}
-                                >
-                                  <Space style={{ width: "100%", justifyContent: "space-between" }}>
-                                    <h5>{item.title}</h5>
-                                    {item.disabled && <Tag color="orange">upcoming</Tag>}
-                                  </Space>
-                                  <p>{item.description}</p>
-                                </Radio>
-                              </Col>
+                          <Space style={{ width: "100%" }}>
+                            {AssignmentTypeOptions.map((item, i) => (
+                              <Radio
+                                key={item.value}
+                                value={item.value}
+                                disabled={item.disabled}
+                                onChange={(e) => {
+                                  setSubmissionType(e.target.value);
+                                  if (current === 0) setCurrent(1);
+                                }}
+                                className={`assignment_type_radio ${styles.assignment_type_radio}`}
+                              >
+                                <h5>{item.title}</h5>
+
+                                <p>{item.description}</p>
+                              </Radio>
                             ))}
-                          </Row>
+                          </Space>
                         </Radio.Group>
                       </Form.Item>
                     }
                     title={"Assignment Type"}
                     description={
-                      "Chose what kind of assignnment you want to give in order to assess the skills of the student "
+                      "Chose what kind of assignment you want to give in order to assess the skills of the student "
                     }
                     divider={false}
                   />
@@ -349,22 +333,51 @@ const AddAssignment: FC<{
               </ConfigFormLayout>
             ),
           },
+          {
+            title: (
+              <>
+                {submissionType === AssignmentType.MCQ && (
+                  <ConfigFormLayout formTitle={"Multiple choice question"} width="100%">
+                    <p>
+                      Provide the list of questions that will be presented to the learners for completing this
+                      assignment
+                    </p>
+                    <MCQForm questions={questions} setQuestions={setQuestions} />
+                    {current < 1 && <FormDisableOverlay message="First complete the previous step" />}
+                  </ConfigFormLayout>
+                )}
+
+                {submissionType === AssignmentType.SUBJECTIVE && (
+                  <ConfigFormLayout formTitle={"Subjective"} width="100%">
+                    <p>
+                      Provide the list of questions that will be presented to the learners for completing this
+                      assignment
+                    </p>
+
+                    <SubjectiveAssignmentForm
+                      subjectiveForm={subjectiveForm}
+                      editorValue={editorValue}
+                      setEditorValue={(v) => setEditorValue(v)}
+                    />
+
+                    {current < 1 && <FormDisableOverlay message="First complete the previous step" />}
+                  </ConfigFormLayout>
+                )}
+              </>
+            ),
+          },
 
           {
             title: (
-              <ConfigFormLayout formTitle={"Multiple choice question"} width="100%">
-                <p>
-                  Provide the list of questions that will be presented to the learners for completing this assignment
-                </p>
-                <MCQForm questions={questions} setQuestions={setQuestions} />
-                {current < 1 && <FormDisableOverlay message="First complete the previous step" />}
-              </ConfigFormLayout>
-            ),
-          },
-          {
-            title: (
               <ConfigFormLayout formTitle={"Setup Grading"} width="100%">
-                <Form form={assignmentForm} initialValues={{ maximumScore: 5, passingScore: 80 }}>
+                <Form
+                  form={assignmentForm}
+                  initialValues={{
+                    maximumScore: 5,
+                    passingScore: 80,
+                    gradingParameters: [{ questionIndex: "", score: 0 }],
+                  }}
+                >
                   <ConfigForm
                     input={
                       <Form.Item name="maximumScore">
@@ -375,16 +388,57 @@ const AddAssignment: FC<{
                     description={"This is the max score for the assignment, that will be based on multiple parameters "}
                     divider={false}
                   />
-                  <ConfigForm
-                    input={
-                      <Form.Item name="passingScore">
-                        <Input addonAfter="%" type="number" defaultValue="80" />
-                      </Form.Item>
-                    }
-                    title={"Passing Scores"}
-                    description={"Setup the passing percentage for this assignment"}
-                    divider={false}
-                  />
+                  {submissionType === AssignmentType.MCQ ? (
+                    <ConfigForm
+                      input={
+                        <Form.Item name="passingScore">
+                          <Input addonAfter="%" type="number" defaultValue="80" />
+                        </Form.Item>
+                      }
+                      title={"Passing Scores"}
+                      description={"Setup the passing percentage for this assignment"}
+                      divider={false}
+                    />
+                  ) : (
+                    <ConfigForm
+                      input={
+                        <Form.List name="gradingParameters">
+                          {(fields, { add, remove }) => (
+                            <>
+                              {fields.map(({ key, name, ...restField }) => (
+                                <Row key={key} justify="end" gutter={[10, 10]}>
+                                  <Col span={3}>
+                                    <Button type="text" onClick={() => remove(name)} icon={<DeleteFilled />} />
+                                  </Col>
+                                  <Col span={10}>
+                                    <Form.Item
+                                      {...restField}
+                                      name={[name, "questionIndex"]}
+                                      rules={[{ required: true, message: "Please enter any question no" }]}
+                                    >
+                                      <Input placeholder="Question 01" />
+                                    </Form.Item>
+                                  </Col>
+                                  <Col span={10}>
+                                    <Form.Item {...restField} name={[name, "score"]} rules={[{ required: true }]}>
+                                      <Input placeholder="points" type="number" addonAfter="points" />
+                                    </Form.Item>
+                                  </Col>
+                                </Row>
+                              ))}
+
+                              <Space size={2} onClick={() => add()} style={{ cursor: "pointer", marginLeft: 53 }}>
+                                <PlusOutlined /> <span>Add another parameter</span>
+                              </Space>
+                            </>
+                          )}
+                        </Form.List>
+                      }
+                      title={"Grading Parameters"}
+                      description={"Add additional parameter, based on with total points will be calculated"}
+                      divider={false}
+                    />
+                  )}
                 </Form>
                 {current < 2 && <FormDisableOverlay message="First complete the previous step" />}
               </ConfigFormLayout>

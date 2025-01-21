@@ -22,7 +22,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         files.file[0],
         files.file[0].originalFilename,
         FileObjectType.ARCHIVE,
-        "assignment"
+        "assignment",
+        fields.existArchiveUrl[0]
       );
       return res
         .status(response.status)

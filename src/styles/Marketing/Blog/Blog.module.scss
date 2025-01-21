@@ -316,15 +316,39 @@ p.emptyPlaceholder:first-child::before {
   }
 
   .blogPageWrapper {
-    max-width: 400px;
-    margin: 60px auto;
+    max-width: 90vw;
+    margin: 0px auto;
+    padding: 20px 0px 50px 0px;
+
     display: flex;
     align-items: center;
-    justify-content: center;
+
+    img {
+      width: 90vw;
+      height: auto;
+    }
 
     h1 {
       margin: 0;
       font-size: 18px;
+      text-align: left;
+    }
+  }
+
+  .blog_info {
+    max-width: 90vw;
+    margin: 0 auto;
+
+    p {
+      color: var(--font-secondary);
+    }
+    img {
+      max-width: 90vw;
+      height: auto;
+    }
+
+    pre {
+      max-width: 80vw;
     }
   }
 

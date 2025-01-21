@@ -7,7 +7,7 @@ import { Button, Form, Input, Tabs, TabsProps, message, Tooltip, Upload, InputNu
 import { GetServerSidePropsContext, NextPage } from "next";
 import { Session } from "next-auth";
 
-import { useAppContext } from "@/components/ContextApi/AppContext";
+import { IResponsiveNavMenu, useAppContext } from "@/components/ContextApi/AppContext";
 import { LoadingOutlined, UserOutlined } from "@ant-design/icons";
 import SvgIcons from "@/components/SvgIcons";
 import ImgCrop from "antd-img-crop";
@@ -29,11 +29,11 @@ const ProfileSetting: FC<{
   setFile: (file: File) => void;
   userProfile: string;
   updateLoading: boolean;
-}> = ({ user, onUpdateProfile, userProfile, setUserProfile, setFile, updateLoading }) => {
+  isMobile: boolean;
+  activeTab: string;
+}> = ({ user, onUpdateProfile, userProfile, setUserProfile, setFile, activeTab, updateLoading, isMobile }) => {
   const [pageLoading, setPageLoading] = useState<boolean>(false);
   const [userProfileUploading, setuserProfileUploading] = useState<boolean>(false);
-  const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
-
   const router = useRouter();
   const uploadFile = async (file: any, title: string) => {
     if (file) {
@@ -46,16 +46,19 @@ const ProfileSetting: FC<{
   };
   useEffect(() => {
     setPageLoading(true);
-    if (user && (!router.query.tab || router.query.tab === "profile")) {
+    if (user && activeTab === "profile") {
       setUserProfile(String(user.user?.image));
       setPageLoading(false);
     }
-  }, [router.query.tab]);
+  }, [activeTab]);
 
   return (
     <div style={{ position: "relative" }}>
       <Spin spinning={pageLoading} indicator={<LoadingOutlined spin />} size="large">
-        <section className={styles.user_profile_page}>
+        <section
+          className={styles.user_profile_page}
+          style={{ marginBottom: isMobile && user.role == Role.STUDENT ? 60 : 20 }}
+        >
           <div className={styles.content_center}>
             <div className={styles.left_content}>
               <Form.Item name="image">
@@ -149,6 +152,7 @@ const Setting: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const [activeKey, setActiveKey] = useState<string>("profile");
   const router = useRouter();
   const [updateLoading, setUpdateLoading] = useState<boolean>(false);
+  const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
 
   const [file, setFile] = useState<File>();
   const { dispatch, globalState } = useAppContext();
@@ -158,11 +162,9 @@ const Setting: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
       case "profile":
         setActiveKey("profile");
         return router.push(`/setting?tab=${key}`);
-
       case "payment":
         setActiveKey("payment");
         return router.push(`/setting?tab=${key}`);
-
       default:
         return setActiveKey("profile");
     }
@@ -204,15 +206,23 @@ const Setting: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
           setUserProfile={setUserProfile}
           setFile={setFile}
           updateLoading={updateLoading}
+          isMobile={isMobile}
+          activeTab={activeKey}
         />
       ),
     },
     {
       key: "payment",
       label: "Payment",
-      children: user && <PaymentHistory />,
+      children: user && <PaymentHistory activeTab={activeKey} />,
     },
   ];
+
+  useEffect(() => {
+
+    onChange(router.query.tab as string);
+  }, []);
+
 
   return (
     <>
@@ -222,20 +232,27 @@ const Setting: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
 
           <section className={styleLayout.setting_content}>
             <h3>Setting</h3>
-            <Tabs defaultActiveKey="1" className="content_tab" items={items} onChange={onChange} />
+            <Tabs activeKey={activeKey} className="content_tab" items={items} onChange={onChange} />
           </section>
         </AppLayout>
       )}
       {user && user.role === Role.STUDENT && (
         <MarketingLayout
+          mobileHeroMinHeight={60}
+          showFooter={!isMobile}
           siteConfig={siteConfig}
           user={{ id: user.id, name: user.user?.name || "", role: user.role, email: user.user?.email } as User}
         >
           {contextMessageHolder}
 
-          <section className={styleLayout.setting_content}>
+          <section
+            className={styleLayout.setting_content}
+
+            style={{ maxWidth: isMobile ? "100vw" : "var(--marketing-container-width)",  margin: "0 auto", padding: "20px 0" }}
+
+          >
             <h3>Setting</h3>
-            <Tabs defaultActiveKey="1" className="content_tab" items={items} onChange={onChange} />
+            <Tabs activeKey={activeKey} className="content_tab" items={items} onChange={onChange} />
           </section>
         </MarketingLayout>
       )}

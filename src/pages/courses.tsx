@@ -23,6 +23,7 @@ import { ICourseListItem } from "@/types/courses/Course";
 import { CoursesListView } from "@/components/Courses/CourseListView/CourseListView";
 import { useSession } from "next-auth/react";
 import { LoadingOutlined } from "@ant-design/icons";
+import { useMediaQuery } from "react-responsive";
 
 const CoursesView: FC<{
   courses: Course[];
@@ -56,9 +57,11 @@ const CoursesView: FC<{
 };
 
 const CoursesPage: NextPage<{ siteConfig: PageSiteConfig; userRole: Role }> = ({ siteConfig, userRole }) => {
-  const [courses, setCourses] = useState<ICourseListItem[]>([]);
+  const [courses, setCourses] = useState<ICourseListItem[]>();
   const [messageApi, contextMessageHolder] = message.useMessage();
   const [loading, setLoading] = useState<boolean>(false);
+  const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
+
   const router = useRouter();
   const { data: user } = useSession();
   const { globalState } = useAppContext();
@@ -95,9 +98,15 @@ const CoursesPage: NextPage<{ siteConfig: PageSiteConfig; userRole: Role }> = ({
         <>
           {userRole === Role.STUDENT ? (
             <MarketingLayout
+              mobileHeroMinHeight={60}
+              showFooter={!isMobile}
               siteConfig={siteConfig}
               heroSection={
-                <DefaulttHero title="Courses" description="Expand Your Knowledge with Comprehensive Courses" />
+                <>
+                  {!isMobile && !loading && courses && (
+                    <DefaulttHero title="Courses" description="Expand Your Knowledge with Comprehensive Courses" />
+                  )}
+                </>
               }
               user={{ ...user?.user, role: Role.STUDENT } as User}
             >
@@ -106,10 +115,12 @@ const CoursesPage: NextPage<{ siteConfig: PageSiteConfig; userRole: Role }> = ({
                 <section>
                   <div className="page__wrapper">
                     <CoursesListView
-                      courses={courses}
+                      courses={courses || []}
+                      loading={loading || !courses}
                       siteConfig={siteConfig}
                       currentTheme={globalState.theme || "light"}
                       handleCourseCreate={addCourse}
+                      role={userRole}
                       emptyView={
                         <EmptyCourses size="300px" {...getIconTheme(globalState.theme || "light", siteConfig.brand)} />
                       }
@@ -123,7 +134,8 @@ const CoursesPage: NextPage<{ siteConfig: PageSiteConfig; userRole: Role }> = ({
               {contextMessageHolder}
               <section>
                 <CoursesListView
-                  courses={courses}
+                  loading={loading || !courses}
+                  courses={courses || []}
                   siteConfig={siteConfig}
                   currentTheme={globalState.theme || "light"}
                   handleCourseCreate={addCourse}
@@ -149,7 +161,8 @@ const CoursesPage: NextPage<{ siteConfig: PageSiteConfig; userRole: Role }> = ({
               <section>
                 <div className="page__wrapper">
                   <CoursesListView
-                    courses={courses}
+                    courses={courses || []}
+                    loading={loading || !courses}
                     siteConfig={siteConfig}
                     currentTheme={globalState.theme || "light"}
                     handleCourseCreate={addCourse}

@@ -15,19 +15,21 @@ const LessonListSideBar: FC<{
   const { globalState, dispatch } = useAppContext();
   return (
     <>
-      <div
-        className={`${styles.lesson_collapsed_btn} ${
-          globalState.lessonCollapsed ? styles.lesson_collapsed : styles.lesson_not_collapsed
-        }`}
-        onClick={() => {
-          dispatch({ type: "SET_LESSON_COLLAPSED", payload: !globalState.lessonCollapsed });
+      {!marketingLayout && (
+        <div
+          className={`${styles.lesson_collapsed_btn} ${
+            globalState.lessonCollapsed ? styles.lesson_collapsed : styles.lesson_not_collapsed
+          }`}
+          onClick={() => {
+            dispatch({ type: "SET_LESSON_COLLAPSED", payload: !globalState.lessonCollapsed });
 
-          localStorage.setItem("lessonCollapsed", globalState.lessonCollapsed ? "uncollapsed" : "collapsed");
-        }}
-        style={{ top: marketingLayout ? 70 : 18 }}
-      >
-        <i> {!globalState.lessonCollapsed ? <CloseOutlined /> : SvgIcons.carretLeft}</i>
-      </div>
+            localStorage.setItem("lessonCollapsed", globalState.lessonCollapsed ? "uncollapsed" : "collapsed");
+          }}
+          style={{ top: marketingLayout ? 70 : 18 }}
+        >
+          <i> {!globalState.lessonCollapsed ? <CloseOutlined /> : SvgIcons.carretLeft}</i>
+        </div>
+      )}
 
       <Sider
         width={400}
@@ -36,12 +38,14 @@ const LessonListSideBar: FC<{
         style={{
           position: "fixed",
           bottom: 0,
-          right: globalState.lessonCollapsed ? -10 : 0,
+          right: !marketingLayout && globalState.lessonCollapsed ? -10 : 0,
           top: marketingLayout ? 75 : 0,
         }}
-        className={`${styles.lesson_sider} ${globalState.lessonCollapsed ? "collapsed_lesson_sider" : "lesson_sider"}`}
+        className={`${styles.lesson_sider} ${
+          !marketingLayout && globalState.lessonCollapsed ? "collapsed_lesson_sider" : "lesson_sider"
+        }`}
         trigger={null}
-        collapsible={globalState.lessonCollapsed}
+        collapsible={marketingLayout ? false : globalState.lessonCollapsed}
       >
         <div className={styles.course_title}>
           <h3>Course Content</h3>
