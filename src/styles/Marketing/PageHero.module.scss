@@ -44,7 +44,8 @@
   .hero__content__wrapper {
     .blogContentContainer {
       width: 350px;
-      min-height: 30vh;
+      min-height: calc(30vh + 60px);
+      margin-top: 20px;
 
       h1 {
         font-size: 30px;

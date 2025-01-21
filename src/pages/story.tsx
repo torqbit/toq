@@ -7,8 +7,11 @@ import { useMediaQuery } from "react-responsive";
 import { getCookieName } from "@/lib/utils";
 import { getToken } from "next-auth/jwt";
 import { PageSiteConfig } from "@/services/siteConstant";
-import { useAppContext } from "@/components/ContextApi/AppContext";
 import { getSiteConfig } from "@/services/getSiteConfig";
+import NoContentFound from "@/components/NoContentFound";
+import { EmptyEvents } from "@/components/SvgIcons";
+import { getIconTheme } from "@/services/darkThemeConfig";
+import { useAppContext } from "@/components/ContextApi/AppContext";
 
 const StoryPage: FC<{ user: User; siteConfig: PageSiteConfig }> = ({ user, siteConfig }) => {
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
@@ -25,26 +28,16 @@ const StoryPage: FC<{ user: User; siteConfig: PageSiteConfig }> = ({ user, siteC
         />
       }
     >
-      <div
-        style={{
-          height: 400,
-          textAlign: "center",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          backgroundColor: globalState.theme === "dark" ? "#283040" : "#fff",
-          color: globalState.theme === "dark" ? "#fff" : "#000",
-        }}
-      >
-        <p
-          style={{
-            maxWidth: isMobile ? 300 : 400,
-            lineHeight: 1.5,
-          }}
-        >
-          There are no stories currently. Visit here later again
-        </p>
-      </div>
+      <NoContentFound
+        content="There are no stories currently.Visit here later again."
+        isMobile={isMobile}
+        icon={
+          <EmptyEvents
+            size={isMobile ? "200px" : "300px"}
+            {...getIconTheme(globalState.theme || "light", siteConfig.brand)}
+          />
+        }
+      />
     </MarketingLayout>
   );
 };

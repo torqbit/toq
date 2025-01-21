@@ -48,10 +48,12 @@
 @media only screen and (max-width: 435px) {
   .course__grid {
     grid-template-columns: 1fr;
-    margin-bottom: 60px;
+    width: 80vw;
+    margin: 0 auto 60px auto;
   }
   .course__card {
-    width: calc(100vw - 40px);
+    width: 80vw;
+    margin: 0 auto;
 
     .card__footer {
       margin: 15px -20px -20px;
