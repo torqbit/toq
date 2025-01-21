@@ -24,7 +24,7 @@ RUN npx prisma generate && yarn build
 
 # Step 2: Prepare Nginx to serve the built app
 FROM node:20-alpine
-RUN apk add --no-cache nginx curl
+RUN apk add --no-cache nginx curl openssl
 # Set working directory for Nginx
 WORKDIR /opt/torqbit
 
