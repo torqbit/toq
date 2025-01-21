@@ -12,6 +12,7 @@ const antThemeConfig = (siteConfig: PageSiteConfig) => {
       activeBorderColor: `${siteConfig.brand?.brandColor}`,
       colorTextDisabled: "#666",
       colorTextDescription: "#666",
+      colorLink: `${siteConfig.brand?.brandColor}`,
     },
     components: {
       Layout: {

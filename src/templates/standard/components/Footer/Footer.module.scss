@@ -8,6 +8,9 @@
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
+    a {
+      color: var(--font-secondary);
+    }
 
     > div:first-child {
       display: flex;
