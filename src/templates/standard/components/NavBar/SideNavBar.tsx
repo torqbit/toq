@@ -127,11 +127,21 @@ const MobileNav: FC<INavBarProps> = ({ items, showThemeSwitch, activeTheme, bran
                         onClick={() => item.title === "Courses" && onAnchorClick()}
                       >
                         {item.title === "Courses" ? (
-                          <a href={item.link} className={styles.menuTitle} aria-label={`link to ${item.title}`}>
+                          <a
+                            href={item.link}
+                            style={{ color: "var(--font-secondary)" }}
+                            className={styles.menuTitle}
+                            aria-label={`link to ${item.title}`}
+                          >
                             <div>{item.title}</div>
                           </a>
                         ) : (
-                          <Link key={i} href={item.link} aria-label={`link to ${item.title}`}>
+                          <Link
+                            key={i}
+                            style={{ color: "var(--font-secondary)" }}
+                            href={item.link}
+                            aria-label={`link to ${item.title}`}
+                          >
                             {item.title}
                           </Link>
                         )}
@@ -142,7 +152,7 @@ const MobileNav: FC<INavBarProps> = ({ items, showThemeSwitch, activeTheme, bran
             </Drawer>
           </section>
           <div className={styles.responsive__header}>
-            <Link href={"/"} className={styles.platformNameLogo}>
+            <Link href={"/"} className={styles.platformNameLogo} style={{ top: 15 }}>
               <Flex align="center" gap={5}>
                 {typeof brand?.logo === "string" && typeof brand.darkLogo === "string" ? (
                   <img
@@ -161,7 +171,12 @@ const MobileNav: FC<INavBarProps> = ({ items, showThemeSwitch, activeTheme, bran
                 )}
               </Flex>
             </Link>
-            <div role="button" className={styles.hamburger} aria-label="Toggle menu">
+            <div
+              role="button"
+              className={styles.hamburger}
+              style={{ position: "absolute", top: 5, right: 10 }}
+              aria-label="Toggle menu"
+            >
               <Hamburger
                 rounded
                 direction="left"
