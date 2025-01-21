@@ -217,7 +217,6 @@ h6 {
 }
 
 a {
-  color: inherit;
   text-decoration: none;
 }
 
@@ -404,6 +403,11 @@ a {
     padding: 0px !important;
   }
 }
+.children__wrapper p,
+.hero__wrapper p {
+  font-size: 1.5rem;
+  line-height: 1.5;
+}
 
 .tabBarContainer {
   .ant-tabs-ink-bar {
@@ -546,7 +550,7 @@ a {
 }
 
 @media only screen and (max-width: 435px) {
-  .children__wrapper,
+  .children__wrapper p,
   .hero__wrapper p {
     font-size: 1.2rem;
     line-height: 1.5;
