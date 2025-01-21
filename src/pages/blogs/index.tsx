@@ -40,11 +40,11 @@ const BlogPage: FC<IProps> = ({ user, blogData, siteConfig }) => {
     <MarketingLayout
       mobileHeroMinHeight={60}
       siteConfig={siteConfig}
-      showFooter={!isMobile}
+      showFooter={!isMobile || !user}
       user={user}
       heroSection={
         <>
-          {!isMobile && blogData && !globalState.pageLoading && (
+          {((!isMobile && blogData && !globalState.pageLoading) || !user) && (
             <HeroBlog title="Blog" description="Our engineering experience, explained in detail" />
           )}
         </>
