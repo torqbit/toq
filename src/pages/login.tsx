@@ -17,6 +17,7 @@ import prisma from "@/lib/prisma";
 import { useAppContext } from "@/components/ContextApi/AppContext";
 import darkThemeConfig from "@/services/darkThemeConfig";
 import antThemeConfig from "@/services/antThemeConfig";
+import Link from "next/link";
 
 const LoginPage: NextPage<{
   loginMethods: { available: string[]; configured: string[] };
@@ -100,7 +101,13 @@ const LoginPage: NextPage<{
       >
         {contextHolder}
         <div className={styles.social_login_container}>
-          <Image src={"/icon/torqbit.png"} height={60} width={60} alt={"logo"} />
+          {siteConfig.brand?.icon && typeof siteConfig.brand.icon === "string" ? (
+            <object type="image/png" data={siteConfig.brand.icon} height={60} width={60} aria-label={`Brand icon`}>
+              <Image src={"/icon/torqbit.png"} height={60} width={60} alt={"logo"} />
+            </object>
+          ) : (
+            <Image src={"/icon/torqbit.png"} height={60} width={60} alt={"logo"} />
+          )}
 
           <h3>Welcome back to {brand?.name}</h3>
 
@@ -152,53 +159,60 @@ const LoginPage: NextPage<{
             </Form>
           )}
 
-          {!emailLogin &&
-            loginMethods.configured.map((provider) => {
-              if (provider === authConstants.CREDENTIALS_AUTH_PROVIDER) {
-                return (
-                  <>
-                    <Button
-                      style={{ width: 250, height: 40 }}
-                      onClick={() => {
-                        setLoginWithEmail(true);
-                      }}
-                      type="primary"
-                      className={styles.google_btn}
-                    >
-                      Login with Email
-                    </Button>
-                  </>
-                );
-              } else {
-                return (
-                  <>
-                    <Tooltip
-                      title={
-                        loginMethods.available.includes(provider)
-                          ? ``
-                          : `Login method disabled for ${capitalizeFirstLetter(
-                              provider
-                            )} due to missing environment variables`
-                      }
-                    >
+          {!emailLogin && (
+            <>
+              {loginMethods.configured.map((provider) => {
+                if (provider === authConstants.CREDENTIALS_AUTH_PROVIDER) {
+                  return (
+                    <>
                       <Button
                         style={{ width: 250, height: 40 }}
-                        onClick={async () => {
-                          signIn(provider, {
-                            callbackUrl: `/login/redirect?redirect=${router.query.redirect}`,
-                          });
+                        onClick={() => {
+                          setLoginWithEmail(true);
                         }}
-                        type="default"
-                        loading={loading && loading?.provider == provider}
-                        disabled={!loginMethods.available.includes(provider)}
+                        type="primary"
+                        className={styles.google_btn}
                       >
-                        Login with {capitalizeFirstLetter(provider)}
+                        Login with Email
                       </Button>
-                    </Tooltip>
-                  </>
-                );
-              }
-            })}
+                    </>
+                  );
+                } else {
+                  return (
+                    <>
+                      <Tooltip
+                        title={
+                          loginMethods.available.includes(provider)
+                            ? ``
+                            : `Login method disabled for ${capitalizeFirstLetter(
+                                provider
+                              )} due to missing environment variables`
+                        }
+                      >
+                        <Button
+                          style={{ width: 250, height: 40 }}
+                          onClick={async () => {
+                            signIn(provider, {
+                              callbackUrl: `/login/redirect?redirect=${router.query.redirect}`,
+                            });
+                          }}
+                          type="default"
+                          loading={loading && loading?.provider == provider}
+                          disabled={!loginMethods.available.includes(provider)}
+                        >
+                          Login with {capitalizeFirstLetter(provider)}
+                        </Button>
+                      </Tooltip>
+                    </>
+                  );
+                }
+              })}
+              <Flex gap={5}>
+                <p>Don&apos;t have an account?</p>
+                <Link href={"/signup"}>Sign up.</Link>
+              </Flex>
+            </>
+          )}
 
           {loginError && (
             <Alert

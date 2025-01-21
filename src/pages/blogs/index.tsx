@@ -16,6 +16,9 @@ import Link from "next/link";
 import { UserOutlined } from "@ant-design/icons";
 import { PageSiteConfig } from "@/services/siteConstant";
 import { getSiteConfig } from "@/services/getSiteConfig";
+import { EmptyEvents } from "@/components/SvgIcons";
+import { getIconTheme } from "@/services/darkThemeConfig";
+import NoContentFound from "@/components/NoContentFound";
 interface IProps {
   user: User;
   siteConfig: PageSiteConfig;
@@ -37,37 +40,27 @@ const BlogPage: FC<IProps> = ({ user, blogData, siteConfig }) => {
     <MarketingLayout
       mobileHeroMinHeight={60}
       siteConfig={siteConfig}
-      showFooter={!isMobile}
+      showFooter={!isMobile || !user}
       user={user}
       heroSection={
         <>
-          {!isMobile && blogData && !globalState.pageLoading && (
+          {((!isMobile && blogData && !globalState.pageLoading) || !user) && (
             <HeroBlog title="Blog" description="Our engineering experience, explained in detail" />
           )}
         </>
       }
     >
       {blogData.length === 0 ? (
-        <div
-          style={{
-            height: 400,
-            textAlign: "center",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            backgroundColor: globalState.theme === "dark" ? "#283040" : "#eee",
-            color: globalState.theme === "dark" ? "#fff" : "#000",
-          }}
-        >
-          <p
-            style={{
-              maxWidth: isMobile ? 300 : 400,
-              lineHeight: 1.5,
-            }}
-          >
-            There are no blogs currently. Visit here later again
-          </p>
-        </div>
+        <NoContentFound
+          content="  There are no blogs currently. Visit here later again"
+          isMobile={isMobile}
+          icon={
+            <EmptyEvents
+              size={isMobile ? "200px" : "300px"}
+              {...getIconTheme(globalState.theme || "light", siteConfig.brand)}
+            />
+          }
+        />
       ) : (
         <>
           {isMobile && <h4 style={{ padding: "20px 0 0 20px", margin: 0 }}>Blogs</h4>}

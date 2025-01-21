@@ -207,7 +207,7 @@ const LearnCoursesPage: NextPage<{
         <>
           <MarketingLayout
             mobileHeroMinHeight={60}
-            showFooter={!isMobile}
+            showFooter={!isMobile || userRole !== Role.STUDENT}
             user={
               userRole
                 ? ({
