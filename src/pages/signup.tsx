@@ -93,7 +93,13 @@ const LoginPage: NextPage<{
       <div className={`${styles.login_page_wrapper} bg__${globalState.theme}`}>
         {contextHolder}
         <div className={styles.social_login_container}>
-          <Image src={"/icon/torqbit.png"} height={60} width={60} alt={"logo"} />
+          {siteConfig.brand?.icon && typeof siteConfig.brand.icon === "string" ? (
+            <object type="image/png" data={siteConfig.brand.icon} height={60} width={60} aria-label={`Brand icon`}>
+              <Image src={"/icon/torqbit.png"} height={60} width={60} alt={"logo"} />
+            </object>
+          ) : (
+            <Image src={"/icon/torqbit.png"} height={60} width={60} alt={"logo"} />
+          )}
           <h3>Welcome to {siteConfig.brand?.name}</h3>
 
           {emailSignup && (
