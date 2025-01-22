@@ -35,10 +35,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       return res.status(200).json({
         info: false,
         success: true,
-        message: "Learing path has been deleted.",
+        message: "Learning path has been deleted.",
       });
     } else {
-      return res.status(404).json({ success: false, error: "Learing path already deleted or not found" });
+      return res.status(404).json({ success: false, error: "Learning path already deleted or not found" });
     }
   } catch (error) {
     return errorHandler(error, res);

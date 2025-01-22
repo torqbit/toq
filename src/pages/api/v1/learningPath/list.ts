@@ -38,7 +38,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       });
       return res.status(200).json({
         success: true,
-        message: "Learing path list has been fetched",
+        message: "Learning path list has been fetched",
         learningPathList,
       });
     } else {
@@ -65,7 +65,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       });
       return res.status(200).json({
         success: true,
-        message: "Learing path list has been fetched",
+        message: "Learning path list has been fetched",
         learningPathList,
       });
     }
