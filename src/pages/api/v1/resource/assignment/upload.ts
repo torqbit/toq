@@ -6,6 +6,7 @@ import { uploadArchive, uploadVideo } from "@/actions/courses";
 import { APIResponse } from "@/types/apis";
 import { readFieldWithFile } from "@/lib/upload/utils";
 import { FileObjectType } from "@/types/cms/common";
+import { removeExtension } from "@/lib/utils";
 
 export const config = {
   api: {
@@ -20,7 +21,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       let response: APIResponse<any>;
       response = await uploadArchive(
         files.file[0],
-        files.file[0].originalFilename,
+        removeExtension(files.file[0].originalFilename),
         FileObjectType.ARCHIVE,
         "assignment",
         fields.existArchiveUrl[0]

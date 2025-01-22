@@ -105,6 +105,11 @@ export interface IAssignmentSubmissionDetail {
 
 // ++++++++++++++++++++++++++++++++++ Assignment Evaluation Interface ++++++++++++++++++++++++++++++++
 
+export interface SubjectiveSubmissionContent extends IAssignmentDetails {
+  answerContent: string;
+  answerArchiveUrl: string;
+}
+
 export type QuestionScore = {
   questionIndex: number;
   score: number;
