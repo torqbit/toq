@@ -25,7 +25,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const { courses, title, description, state } = body;
     const slug = createSlug(title);
-    let learningPathBanner: string | undefined;
+    let learningPathBanner: string;
 
     const authorId = token?.id;
 

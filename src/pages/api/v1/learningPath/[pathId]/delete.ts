@@ -9,10 +9,10 @@ import { ProductType } from "@prisma/client";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
-    const { learingPathId } = req.query;
-    const findLearingPath = await prisma.learningPath.findUnique({
+    const { pathId } = req.query;
+    const findLearningPath = await prisma.learningPath.findUnique({
       where: {
-        id: Number(learingPathId),
+        id: Number(pathId),
       },
       select: {
         banner: true,
@@ -20,15 +20,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       },
     });
 
-    if (findLearingPath) {
+    if (findLearningPath) {
       const cms = new ContentManagementService().getCMS(appConstant.defaultCMSProvider);
       const cmsConfig = (await cms.getCMSConfig()).body?.config;
 
-      findLearingPath.banner && (await cms.deleteCDNImage(cmsConfig, findLearingPath.banner));
+      findLearningPath.banner && (await cms.deleteCDNImage(cmsConfig, findLearningPath.banner));
 
       await prisma.product.delete({
         where: {
-          productId: findLearingPath.id,
+          productId: findLearningPath.id,
           ptype: ProductType.LEARNING_PATH,
         },
       });

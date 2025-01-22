@@ -488,6 +488,7 @@ model LearningPath {
   title               String
   description         String
   banner              String
+  attributes          Json?
   state               StateType             @default(DRAFT)
   authorId            String
   slug                String

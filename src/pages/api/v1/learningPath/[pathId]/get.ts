@@ -6,10 +6,10 @@ import { withAuthentication } from "@/lib/api-middlewares/with-authentication";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
-    const { learingPathId } = req.query;
+    const { pathId } = req.query;
     const detail = await prisma.learningPath.findUnique({
       where: {
-        id: Number(learingPathId),
+        id: Number(pathId),
       },
       select: {
         title: true,
