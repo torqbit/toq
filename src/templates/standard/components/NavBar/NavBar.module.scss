@@ -13,6 +13,9 @@
   backdrop-filter: blur(10px);
   background: var(--bg-header);
   padding: 5px 35px;
+  a {
+    color: var(--font-secondary);
+  }
 
   nav {
     margin: 0 auto;

@@ -26,7 +26,11 @@ const LegalAgreement: FC<IProps> = ({ content, titleDescription, isMobile }) => 
                   {list.description.length > 0 && (
                     <ul>
                       {list.description.map((descrip, i) => {
-                        return <li key={i}>{descrip}</li>;
+                        return (
+                          <li key={i}>
+                            <p>{descrip}</p>
+                          </li>
+                        );
                       })}
                     </ul>
                   )}
@@ -39,7 +43,7 @@ const LegalAgreement: FC<IProps> = ({ content, titleDescription, isMobile }) => 
         {titleDescription ? (
           ""
         ) : (
-          <h2>YOU HAVE READ THESE TERMS OF USE AND AGREE TO ALL OF THE PROVISIONS CONTAINED ABOVE.</h2>
+          <h3>YOU HAVE READ THESE TERMS OF USE AND AGREE TO ALL OF THE PROVISIONS CONTAINED ABOVE.</h3>
         )}
       </div>
     </div>
