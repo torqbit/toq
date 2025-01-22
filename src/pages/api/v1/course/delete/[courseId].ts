@@ -29,9 +29,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       } else {
         const cms = new ContentManagementService().getCMS(appConstant.defaultCMSProvider);
         const cmsConfig = (await cms.getCMSConfig()).body?.config;
-
-        findCourse.thumbnail && (await cms.deleteCDNImage(cmsConfig, findCourse.thumbnail));
-
+        findCourse.tvThumbnail && (await cms.deleteCDNImage(cmsConfig, findCourse.tvThumbnail));
         findCourse.tvProviderId &&
           (await cms.deleteVideo(cmsConfig, findCourse.tvProviderId, findCourse.courseId, "course"));
       }
