@@ -165,10 +165,11 @@ model Course {
   product          Product              @relation(name: "course_product", fields: [courseId], references: [productId])
 
   courseProgress CourseProgress[]
-
+  learningPathCourses LearningPathCourses[]
   @@unique([slug])
   @@unique([courseId, name])
   @@index([authorId])
+  
 }
 
 //****** Course Schema  End******//
@@ -469,6 +470,7 @@ enum paymentMode {
 enum ProductType {
   COURSE
   EVENT
+  LEARNING_PATH
 }
 
 model Product {
@@ -476,6 +478,24 @@ model Product {
   ptype     ProductType
   orders    Order[]
   course    Course?     @relation(name: "course_product")
+  learingPath LearningPath? @relation(name: "learning_path_product")
+}
+
+model LearningPath {
+  id            Int 
+  title         String
+  product       Product              @relation(name: "learning_path_product", fields: [id], references: [productId])
+  learningPathCourses LearningPathCourses[]
+  @@unique([id])
+}
+
+model LearningPathCourses {
+  learningPathId     Int
+  courseId           Int
+  path               LearningPath          @relation(fields: [learningPathId], references: [id], onDelete: Cascade)
+  course             Course                @relation(fields: [courseId], references: [courseId], onDelete: Cascade)
+  @@unique([learningPathId, courseId])
+  @@index([courseId])
 }
 
 model Order {
