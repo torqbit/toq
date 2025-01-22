@@ -476,11 +476,11 @@ enum ProductType {
 }
 
 model Product {
-  productId   Int           @id @default(autoincrement())
-  ptype       ProductType
-  orders      Order[]
-  course      Course?       @relation(name: "course_product")
-  learingPath LearningPath? @relation(name: "learning_path_product")
+  productId    Int           @id @default(autoincrement())
+  ptype        ProductType
+  orders       Order[]
+  course       Course?       @relation(name: "course_product")
+  learningPath LearningPath? @relation(name: "learning_path_product")
 }
 
 model LearningPath {

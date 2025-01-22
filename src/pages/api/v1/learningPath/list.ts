@@ -18,7 +18,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     });
 
     if (token?.role == Role.ADMIN) {
-      const learingPathList = await prisma.learningPath.findMany({
+      const learningPathList = await prisma.learningPath.findMany({
         select: {
           title: true,
           description: true,
@@ -39,10 +39,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       return res.status(200).json({
         success: true,
         message: "Learing path list has been fetched",
-        learingPathList,
+        learningPathList,
       });
     } else {
-      const learingPathList = await prisma.learningPath.findMany({
+      const learningPathList = await prisma.learningPath.findMany({
         where: {
           state: StateType.ACTIVE,
         },
@@ -66,7 +66,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       return res.status(200).json({
         success: true,
         message: "Learing path list has been fetched",
-        learingPathList,
+        learningPathList,
       });
     }
   } catch (error) {

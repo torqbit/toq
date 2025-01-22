@@ -31,7 +31,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     if (token?.role === Role.ADMIN) {
       if (files.file && files.file.length > 0) {
-        const response = await uploadThumbnail(files.file[0], slug, FileObjectType.LEARNING_PATH, "learing_path");
+        const response = await uploadThumbnail(files.file[0], slug, FileObjectType.LEARNING_PATH, "learning_path");
         if (response.success) {
           learningPathBanner = response.body;
         } else {
@@ -82,7 +82,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         return res.status(200).json({
           success: true,
           message: "Learning path has been created",
-          learingPathDetail: response,
+          learningPathDetail: response,
         });
       });
     } else {

@@ -32,7 +32,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       success: true,
       statusCode: 200,
       message: "Learing path detail has been fetched",
-      learingPathDetail: detail,
+      learningPathDetail: detail,
     });
   } catch (error) {
     return errorHandler(error, res);

@@ -23,7 +23,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const body = JSON.parse(fields.course[0]);
 
-    const { courses, title, description, state, learningPathId, banner } = body;
+    const { courses, title, description, state, pathId, banner } = body;
     const slug = createSlug(title);
     let learningPathBanner = banner;
 
@@ -33,7 +33,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           files.file[0],
           slug,
           FileObjectType.LEARNING_PATH,
-          "learing_path",
+          "learning_path",
           banner
         );
         if (response.success) {
@@ -48,7 +48,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       await prisma.$transaction(async (tx) => {
         let response = await tx.learningPath.update({
           where: {
-            id: Number(learningPathId),
+            id: Number(pathId),
           },
           data: {
             title,
@@ -67,7 +67,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         });
 
         const coursesToCreate = courses.map((courseId: number) => ({
-          learningPathId,
+          pathId,
           courseId,
         }));
 
@@ -79,7 +79,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         return res.status(200).json({
           success: true,
           message: "Learning path has been updated",
-          learingPathDetail: response,
+          learningPathDetail: response,
         });
       });
     } else {
