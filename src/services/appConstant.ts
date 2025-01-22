@@ -166,4 +166,15 @@ export default {
     white: "#fff",
     grey: "#eee",
   },
+
+  mimeType: {
+    xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    xls: "application/vnd.ms-excel",
+    csv: "text/csv",
+    pdf: "application/pdf",
+    txt: "text/plain",
+    jpg: "image/jpeg",
+    png: "image/png",
+    gif: "image/gif",
+  } as any,
 };
