@@ -30,7 +30,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const body = JSON.parse(fields.learingPath[0]);
 
     const { courses, title, description, state } = body;
-    console.log(body);
     const slug = createSlug(title);
     const authorId = token?.id;
 

@@ -32,9 +32,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const { courses, title, description, state, pathId, banner } = body;
     const slug = createSlug(title);
 
-    let learningPathBanner = banner;
-    console.log(files);
-
     if (token?.role === Role.ADMIN) {
       const response = await learningPath.updateLearningPath(
         files.file && files.file.length > 0 ? files.file[0] : undefined,
@@ -53,7 +50,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       return res.status(403).json({ success: false, error: "You are not authorized!" });
     }
   } catch (error) {
-    console.log(error);
     return errorHandler(error, res);
   }
 };

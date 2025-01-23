@@ -145,7 +145,6 @@ class LearningPath {
         return { success: true, body: r };
       })
       .catch((error) => {
-        console.log(error);
         return { success: false, body: error };
       });
     return new APIResponse(

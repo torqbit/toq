@@ -31,7 +31,6 @@ const AddLearningPath: NextPage<{
     const data = {
       title: form.getFieldsValue().title,
       courses: form.getFieldsValue().courses.map((opt: string) => {
-        console.log(opt);
         let findId = courseList.find((cl) => {
           return cl.name === opt;
         })?.courseId;
