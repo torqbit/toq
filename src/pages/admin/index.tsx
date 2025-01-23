@@ -257,7 +257,7 @@ const AdminDashboard: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }
       <div className={styles.center_content} style={{ padding: 40 }}>
         {contextholder}
         <div className={styles.adminHeader}>
-          <h2>Admin Dashboard</h2>
+          <h2>Dashboard</h2>
           <Button type="primary" onClick={showDrawer}>
             Add User
           </Button>

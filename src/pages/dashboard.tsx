@@ -18,7 +18,7 @@ const Dashboard: NextPage<{ siteConfig: PageSiteConfig; userRole: Role }> = ({ s
     <AppLayout siteConfig={siteConfig}>
       <section className={styles.dashboard_content}>
         <Flex justify="space-between">
-          <h3>{viewMode === Role.ADMIN ? "Admin Dashboard" : "Dashboard"}</h3>
+          <h3>{viewMode === Role.ADMIN ? "Dashboard" : "Dashboard"}</h3>
           <>
             {userRole === Role.ADMIN && (
               <Flex gap={50} align="center">

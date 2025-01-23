@@ -8,6 +8,7 @@ import { getDummyArray } from "@/lib/dummyData";
 import { AnalyticsCardSkeleton, AnalyticSkeleton } from "@/components/Analytics/AnalyticSkeleton";
 import Analytics from "@/components/Analytics/Analytics";
 import AnalyticsCard from "@/components/Analytics/AnalyticCard";
+import { dummyEarnings, dummyEnrolments } from "@/lib/dummy/stats";
 
 const AdminDashboard: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const [messageApi, contextHolder] = message.useMessage();
@@ -26,7 +27,16 @@ const AdminDashboard: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
       duration,
       type,
       (result) => {
-        setAnalyticStat(result);
+        console.log(result);
+        switch (type) {
+          case "Earnings":
+            setAnalyticStat(dummyEarnings);
+            break;
+          case "Enrollments":
+            setAnalyticStat(dummyEnrolments);
+            break;
+        }
+        //setAnalyticStat(result);
         setLoadingAnalytics(false);
       },
       (error) => {
@@ -122,7 +132,6 @@ const AdminDashboard: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   return (
     <section className={styles.admin__dashboard}>
       {contextHolder}
-      <h3>Overview</h3>
       <div className={styles.analytics__stats__wrapper}>
         {loadingOverview || overviewStats.length === 0
           ? getDummyArray(3).map((d, i) => {
