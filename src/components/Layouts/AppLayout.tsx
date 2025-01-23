@@ -200,10 +200,19 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
       ),
     },
   ];
+
   const onChangeSelectedBar = () => {
     let selectedMenu = router.pathname.split("/")[1];
     if (selectedMenu == "admin") {
-      selectedMenu = router.pathname.split("/")[2];
+      if (router.pathname.split("/")[3] === "path") {
+        selectedMenu = "courses";
+      } else {
+        selectedMenu = router.pathname.split("/")[2];
+      }
+    }
+
+    if (router.pathname.startsWith("/path")) {
+      selectedMenu = "courses";
     }
     dispatch({ type: "SET_SELECTED_SIDER_MENU", payload: selectedMenu as ISiderMenu });
   };
