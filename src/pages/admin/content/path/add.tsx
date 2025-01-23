@@ -22,7 +22,7 @@ const AddLearningPath: NextPage<{ courseList: ILearningCourseList[]; siteConfig:
 
   const onSubmit = (state: StateType, file?: File) => {
     if (!file) {
-      messageApi.warning(`Learing path must have a banner`);
+      messageApi.warning(`Learning path must have a banner`);
       return;
     }
     // setLoading(true);

@@ -24,7 +24,7 @@ const AddLearningPath: NextPage<{
   const router = useRouter();
   const onUpdate = (state: StateType, file?: File) => {
     if (!file) {
-      messageApi.warning(`Learing path must have a banner`);
+      messageApi.warning(`Learning path must have a banner`);
       return;
     }
     setLoading(true);
