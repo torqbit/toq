@@ -20,15 +20,24 @@ const AddLearningPath: NextPage<{ courseList: ILearningCourseList[]; siteConfig:
   const [form] = Form.useForm();
   const [currentState, setCurrentState] = useState<StateType>(StateType.DRAFT);
 
-  const onSubmit = (state: StateType, file?: File) => {
+  const onSubmit = (state: StateType, courses: ILearningCourseList[], file?: File) => {
     if (!file) {
       messageApi.warning(`Learning path must have a banner`);
       return;
     }
-    // setLoading(true);
+    setLoading(true);
     const data = {
       title: form.getFieldsValue().title,
-      courses: form.getFieldsValue().courses,
+      courses:
+        courses.length > 0
+          ? courses.map((l, i) => {
+              return {
+                courseId: l.courseId,
+                learningPathId: 0,
+                sequenceId: i + 1,
+              };
+            })
+          : [],
       state: state,
       description: form.getFieldsValue().description,
     };

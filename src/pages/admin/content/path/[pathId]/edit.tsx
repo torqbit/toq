@@ -12,7 +12,7 @@ import { GetServerSidePropsContext, NextPage } from "next";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
-const AddLearningPath: NextPage<{
+const UpdateLearningPath: NextPage<{
   learningDetail: ILearningPathDetail;
   siteConfig: PageSiteConfig;
   courseList: ILearningCourseList[];
@@ -22,24 +22,20 @@ const AddLearningPath: NextPage<{
   const [form] = Form.useForm();
   const [currentState, setCurrentState] = useState<StateType>(StateType.DRAFT);
   const router = useRouter();
-  const onUpdate = (state: StateType, file?: File) => {
-    if (!file) {
-      messageApi.warning(`Learning path must have a banner`);
-      return;
-    }
+  const onUpdate = (state: StateType, courses: ILearningCourseList[], file?: File) => {
     setLoading(true);
     const data = {
       title: form.getFieldsValue().title,
-      courses: form.getFieldsValue().courses.map((opt: string) => {
-        let findId = courseList.find((cl) => {
-          return cl.name === opt;
-        })?.courseId;
-        if (findId) {
-          return `${courseList.find((l) => l.name == opt)?.courseId}`;
-        } else {
-          return opt;
-        }
-      }),
+      courses:
+        courses.length > 0
+          ? courses.map((l, i) => {
+              return {
+                courseId: l.courseId,
+                learningPathId: Number(router.query.pathId),
+                sequenceId: i + 1,
+              };
+            })
+          : [],
       pathId: Number(router.query.pathId),
       state: state,
       description: form.getFieldsValue().description,
@@ -83,14 +79,14 @@ const AddLearningPath: NextPage<{
         initialValue={{
           title: learningDetail.title,
           description: learningDetail.description,
-          courses: learningDetail?.learningPathCourses.map((l) => `${l.name}`) || [],
+          courses: learningDetail?.learningPathCourses || [],
           banner: learningDetail.banner,
         }}
       />{" "}
     </AppLayout>
   );
 };
-export default AddLearningPath;
+export default UpdateLearningPath;
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const { query } = ctx;

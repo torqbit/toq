@@ -505,6 +505,7 @@ model LearningPath {
 model LearningPathCourses {
   learningPathId Int
   courseId       Int
+  sequenceId     Int
   path           LearningPath @relation(fields: [learningPathId], references: [id], onDelete: Cascade)
   course         Course       @relation(fields: [courseId], references: [courseId], onDelete: Cascade)
 

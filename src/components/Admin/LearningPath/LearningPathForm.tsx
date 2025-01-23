@@ -11,11 +11,14 @@ import { useRouter } from "next/router";
 import { ILearningCourseList } from "@/types/learingPath";
 import { StateType } from "@prisma/client";
 import styles from "./LearningPath.module.scss";
+import CourseSelectForm from "./CourseSelectForm";
+import { DragEndEvent } from "@dnd-kit/core";
+import { arrayMove } from "@dnd-kit/sortable";
 const { TextArea } = Input;
 
 const LearningPathForm: FC<{
   loading: boolean;
-  onSubmit: (state: StateType, file?: File) => void;
+  onSubmit: (state: StateType, courses: ILearningCourseList[], file?: File) => void;
   form: FormInstance;
   pathId?: number;
   currentState: StateType;
@@ -25,7 +28,7 @@ const LearningPathForm: FC<{
   initialValue?: {
     title: string;
     description: string;
-    courses: string[];
+    courses: ILearningCourseList[];
     banner: string;
   };
 }> = ({ pathId, loading, form, onSubmit, currentState, courseList, title, initialValue }) => {
@@ -34,6 +37,21 @@ const LearningPathForm: FC<{
   const [file, setFile] = useState<File>();
   const router = useRouter();
   const [state, setState] = useState<StateType>(currentState);
+  const [items, setItems] = useState<ILearningCourseList[]>(initialValue?.courses || []);
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (active.id !== over?.id) {
+      setItems((prevItems) => {
+        const oldIndex = prevItems.indexOf(prevItems.find((f) => f.courseId === active.id) as any);
+        const newIndex = prevItems.indexOf(prevItems.find((f) => f.courseId === over?.id) as any);
+        let newArray = arrayMove(prevItems, oldIndex, newIndex);
+
+        return newArray;
+      });
+    }
+  };
 
   const uploadFile = async (file: any) => {
     if (file) {
@@ -46,6 +64,21 @@ const LearningPathForm: FC<{
   };
 
   const onDiscard = (pathId: number) => {};
+  const onRemove = (id: number) => {
+    setItems((prevItems) => {
+      let newArray = prevItems.filter((f) => f.courseId !== id);
+
+      return newArray;
+    });
+  };
+
+  const onSelect = (value: string) => {
+    const isExist = items.find((l) => l.courseId === Number(value));
+    if (!isExist) {
+      setItems([...items, courseList.find((l) => l.courseId == Number(value))] as ILearningCourseList[]);
+    }
+    form.resetFields(["courses"]);
+  };
 
   return (
     <>
@@ -53,7 +86,7 @@ const LearningPathForm: FC<{
         <Form
           form={form}
           onFinish={() => {
-            onSubmit(state, file);
+            onSubmit(state, items, file);
           }}
           style={{ maxWidth: "80vw" }}
           layout="vertical"
@@ -133,32 +166,13 @@ const LearningPathForm: FC<{
                     },
                   ]}
                 >
-                  <Select
-                    style={{ width: 350 }}
-                    onChange={(v) => {
-                      return v.map((opt: string) => {
-                        if (
-                          courseList.find((cl) => {
-                            cl.name === opt;
-                          })
-                        ) {
-                          return courseList.find((l) => l.name == opt)?.courseId;
-                        } else {
-                          return opt;
-                        }
-                      });
-                    }}
-                    placeholder="Choose Courses"
-                    mode="multiple"
-                  >
-                    {courseList.map((c, i) => {
-                      return (
-                        <Select.Option key={i} value={`${c.courseId}`}>
-                          {c.name}
-                        </Select.Option>
-                      );
-                    })}
-                  </Select>
+                  <CourseSelectForm
+                    onRemove={onRemove}
+                    courseList={courseList}
+                    items={items}
+                    onSelect={onSelect}
+                    handleDragEnd={handleDragEnd}
+                  />
                 </Form.Item>
               }
               title={"Select Courses"}

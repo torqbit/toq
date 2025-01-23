@@ -14,7 +14,7 @@ class LearningPath {
     description: string,
     state: StateType,
     authorId: string,
-    courses: number[]
+    courses: { learningPathId: number; courseId: number; sequenceId: number }[]
   ): Promise<APIResponse<ILearningPathDetail>> {
     let learningPathBanner: string;
     if (file) {
@@ -55,13 +55,13 @@ class LearningPath {
 
         let learningPathId = response.id;
 
-        const coursesToCreate = courses.map((courseId: number) => ({
-          learningPathId,
-          courseId: Number(courseId),
-        }));
-
-        await prisma.learningPathCourses.createMany({
-          data: coursesToCreate,
+        await tx.learningPathCourses.createMany({
+          data: courses.map((l) => {
+            return {
+              ...l,
+              learningPathId: learningPathId,
+            };
+          }),
           skipDuplicates: true,
         });
 
@@ -88,9 +88,8 @@ class LearningPath {
     title: string,
     description: string,
     state: StateType,
-
     authorId: string,
-    courses: number[],
+    courses: { learningPathId: number; courseId: number; sequenceId: number }[],
     banner: string
   ): Promise<APIResponse<ILearningPathDetail>> {
     let learningPathBanner = banner;
@@ -129,13 +128,14 @@ class LearningPath {
 
         let learningPathId = response.id;
 
-        const coursesToCreate = courses.map((courseId: number) => ({
-          learningPathId,
-          courseId: Number(courseId),
-        }));
+        await tx.learningPathCourses.deleteMany({
+          where: {
+            learningPathId: learningPathId,
+          },
+        });
 
-        await prisma.learningPathCourses.createMany({
-          data: coursesToCreate,
+        await tx.learningPathCourses.createMany({
+          data: courses,
           skipDuplicates: true,
         });
 
@@ -145,6 +145,7 @@ class LearningPath {
         return { success: true, body: r };
       })
       .catch((error) => {
+        console.log(error);
         return { success: false, body: error };
       });
     return new APIResponse(
@@ -180,6 +181,9 @@ class LearningPath {
                 name: true,
               },
             },
+          },
+          orderBy: {
+            sequenceId: "asc",
           },
         },
       },

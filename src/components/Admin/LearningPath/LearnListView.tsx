@@ -61,17 +61,15 @@ export const LearnViewItem: FC<{ learning: ILearningPathDetail; previewMode?: bo
         className={styles.meta}
         title={
           <>
-            <Flex vertical gap={5}>
-              <Space>
-                <Tag bordered={true} style={{ fontWeight: "normal" }}>
-                  {learning.learningPathCourses.length} courses
+            <Flex align="center" justify="space-between" gap={5}>
+              <Tag bordered={true} style={{ fontWeight: "normal" }}>
+                {learning.learningPathCourses.length} courses
+              </Tag>
+              {learning.state === StateType.DRAFT && (
+                <Tag bordered={true} color="warning" style={{ fontWeight: "normal" }}>
+                  {capsToPascalCase(StateType.DRAFT)}
                 </Tag>
-                {learning.state === StateType.DRAFT && (
-                  <Tag bordered={true} color="warning" style={{ fontWeight: "normal" }}>
-                    {capsToPascalCase(StateType.DRAFT)}
-                  </Tag>
-                )}
-              </Space>
+              )}
             </Flex>
 
             <h4 style={{ marginTop: 5, marginBottom: 5 }}>{learning.title}</h4>
@@ -150,7 +148,7 @@ export const LearnListView: FC<{
     },
   ];
   return (
-    <div className={styles.pathList__list}>
+    <div className={styles.courses__list}>
       {loading && (
         <>
           <h4>Learning Paths</h4>
