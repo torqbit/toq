@@ -9,6 +9,12 @@ import { Role } from "@prisma/client";
 import { readFieldWithSingleFile } from "@/lib/upload/utils";
 import { uploadThumbnail } from "@/actions/courses";
 import { FileObjectType } from "@/types/cms/common";
+import learningPath from "@/actions/learningPath";
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
@@ -21,71 +27,33 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     });
     const { fields, files } = (await readFieldWithSingleFile(req)) as any;
 
-    const body = JSON.parse(fields.course[0]);
+    const body = JSON.parse(fields.learingPath[0]);
 
     const { courses, title, description, state, pathId, banner } = body;
     const slug = createSlug(title);
+
     let learningPathBanner = banner;
+    console.log(files);
 
     if (token?.role === Role.ADMIN) {
-      if (files.file && files.file.length > 0) {
-        const response = await uploadThumbnail(
-          files.file[0],
-          slug,
-          FileObjectType.LEARNING_PATH,
-          "learning_path",
-          banner
-        );
-        if (response.success) {
-          learningPathBanner = response.body;
-        } else {
-          console.log(response.error);
-        }
-      } else {
-        throw new Error("Unable to upload the thumnail, due to missing trailer video details");
-      }
+      const response = await learningPath.updateLearningPath(
+        files.file && files.file.length > 0 ? files.file[0] : undefined,
+        pathId,
+        slug,
+        title,
+        description,
+        state,
+        token.id || "",
+        courses,
+        banner
+      );
 
-      await prisma.$transaction(async (tx) => {
-        let response = await tx.learningPath.update({
-          where: {
-            id: Number(pathId),
-          },
-          data: {
-            title,
-            description,
-            slug,
-            state,
-            banner: learningPathBanner || banner,
-          },
-          select: {
-            id: true,
-            title: true,
-            description: true,
-            state: true,
-            banner: true,
-          },
-        });
-
-        const coursesToCreate = courses.map((courseId: number) => ({
-          pathId,
-          courseId,
-        }));
-
-        await prisma.learningPathCourses.createMany({
-          data: coursesToCreate,
-          skipDuplicates: true,
-        });
-
-        return res.status(200).json({
-          success: true,
-          message: "Learning path has been updated",
-          learningPathDetail: response,
-        });
-      });
+      return res.status(response.status).json(response);
     } else {
       return res.status(403).json({ success: false, error: "You are not authorized!" });
     }
   } catch (error) {
+    console.log(error);
     return errorHandler(error, res);
   }
 };
