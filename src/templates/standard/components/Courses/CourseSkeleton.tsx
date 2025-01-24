@@ -5,8 +5,11 @@ import { Flex, Skeleton, Tag } from "antd";
 
 const SkeletonCard: FC<{ size: CourseCardSize }> = ({ size }) => {
   return (
-    <div className={`${styles.courses__card} courses__card__${size} `} style={{ cursor: "pointer" }}>
-      <Skeleton.Image style={{ width: 180, height: 180 }} />
+    <div
+      className={`${styles.courses__card} courses__card__${size} `}
+      style={{ cursor: "pointer", flexDirection: "column", height: 400 }}
+    >
+      <Skeleton.Image style={{ width: 360, height: 180 }} />
 
       <div>
         <div>
