@@ -8,7 +8,7 @@ import { getDummyArray } from "@/lib/dummyData";
 import { AnalyticsCardSkeleton, AnalyticSkeleton } from "@/components/Analytics/AnalyticSkeleton";
 import Analytics from "@/components/Analytics/Analytics";
 import AnalyticsCard from "@/components/Analytics/AnalyticCard";
-import { dummyEarnings, dummyEnrolments } from "@/lib/dummy/stats";
+import { dummyEarnings, dummyEnrolments, dummyOverviewStats, dummyUsers } from "@/lib/dummy/stats";
 
 const AdminDashboard: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const [messageApi, contextHolder] = message.useMessage();
@@ -34,6 +34,9 @@ const AdminDashboard: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
             break;
           case "Enrollments":
             setAnalyticStat(dummyEnrolments);
+            break;
+          case "Users":
+            setAnalyticStat(dummyUsers);
             break;
         }
         //setAnalyticStat(result);
@@ -112,7 +115,8 @@ const AdminDashboard: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
     setLoadingOverview(true);
     AnalyticsService.overviewStats(
       (result) => {
-        setOverViewStat(result);
+        console.log(result);
+        setOverViewStat(dummyOverviewStats);
         handleAnalytics("month", "Earnings");
 
         setLoadingOverview(false);

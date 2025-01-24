@@ -1,4 +1,4 @@
-import { AnalyticsType, IAnalyticResponse } from "@/types/courses/analytics";
+import { AnalyticsType, IAnalyticResponse, IAnalyticStats } from "@/types/courses/analytics";
 
 export const dummyEarnings: IAnalyticResponse = {
   info: {
@@ -277,3 +277,160 @@ export const dummyEnrolments: IAnalyticResponse = {
     },
   ],
 };
+
+export const dummyUsers: IAnalyticResponse = {
+  info: {
+    total: "7580",
+    type: "Users" as AnalyticsType,
+    comparedPercentage: 25,
+  },
+  data: [
+    {
+      id: "line",
+      data: [
+        {
+          x: "1",
+          y: 300,
+        },
+        {
+          x: "2",
+          y: 250,
+        },
+        {
+          x: "3",
+          y: 320,
+        },
+        {
+          x: "4",
+          y: 260,
+        },
+        {
+          x: "5",
+          y: 160,
+        },
+        {
+          x: "6",
+          y: 250,
+        },
+        {
+          x: "7",
+          y: 600,
+        },
+        {
+          x: "8",
+          y: 1560,
+        },
+        {
+          x: "9",
+          y: 260,
+        },
+        {
+          x: "10",
+          y: 350,
+        },
+        {
+          x: "11",
+          y: 260,
+        },
+        {
+          x: "12",
+          y: 460,
+        },
+        {
+          x: "13",
+          y: 990,
+        },
+        {
+          x: "14",
+          y: 850,
+        },
+        {
+          x: "15",
+          y: 650,
+        },
+        {
+          x: "16",
+          y: 500,
+        },
+        {
+          x: "17",
+          y: 290,
+        },
+        {
+          x: "18",
+          y: 390,
+        },
+        {
+          x: "19",
+          y: 340,
+        },
+        {
+          x: "20",
+          y: 390,
+        },
+        {
+          x: "21",
+          y: 450,
+        },
+        {
+          x: "22",
+          y: 300,
+        },
+        {
+          x: "23",
+          y: 460,
+        },
+        {
+          x: "24",
+          y: 788,
+        },
+        {
+          x: "25",
+          y: 312,
+        },
+        {
+          x: "26",
+          y: 24,
+        },
+        {
+          x: "27",
+          y: 336,
+        },
+        {
+          x: "28",
+          y: 224,
+        },
+        {
+          x: "29",
+          y: 870,
+        },
+        {
+          x: "30",
+          y: 160,
+        },
+        {
+          x: "31",
+          y: 300,
+        },
+      ],
+    },
+  ],
+};
+
+export const dummyOverviewStats: IAnalyticStats[] = [
+  {
+    type: "Earnings",
+    total: "75820",
+    comparedPercentage: 40,
+  },
+  {
+    type: "Enrollments",
+    total: "8930",
+    comparedPercentage: 30,
+  },
+  {
+    type: "Users",
+    total: "16780",
+    comparedPercentage: 25,
+  },
+];
