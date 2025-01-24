@@ -5,6 +5,7 @@ import {
   AssignmentCreateRequest,
   IAssignmentDetails,
   IAssignmentSubmissionDetail,
+  IAssignmentSubmissionResponse,
   IEvaluationResult,
 } from "@/types/courses/assignment";
 import { APIResponse } from "@/types/apis";
@@ -319,7 +320,7 @@ class AssignmentSerivce {
       lessonId: number;
       assignmentId: number;
     },
-    onSuccess: (response: ApiResponse) => void,
+    onSuccess: (response: IAssignmentSubmissionResponse) => void,
     onFailure: (message: string) => void
   ) => {
     postFetch(
@@ -328,8 +329,8 @@ class AssignmentSerivce {
     ).then((result) => {
       if (result.status == 200) {
         result.json().then((r) => {
-          const apiResponse = r as ApiResponse;
-          onSuccess(apiResponse);
+          const apiResponse = r as APIResponse<IAssignmentSubmissionResponse>;
+          apiResponse.body && onSuccess(apiResponse.body);
         });
       } else {
         result.json().then((r) => {

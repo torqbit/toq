@@ -102,6 +102,10 @@ export interface IAssignmentSubmissionDetail {
   content: IAssignmentDetails;
   status: submissionStatus;
 }
+export interface IAssignmentSubmissionResponse {
+  id: number;
+  codeDetail: IAssignmentDetails;
+}
 
 // ++++++++++++++++++++++++++++++++++ Assignment Evaluation Interface ++++++++++++++++++++++++++++++++
 

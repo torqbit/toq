@@ -2,7 +2,7 @@ import { FC, useEffect, useState } from "react";
 import style from "@/styles/LearnLecture.module.scss";
 import AssignmentService from "@/services/course/AssignmentService";
 import { IAssignmentDetail } from "@/types/courses/Course";
-import { Button, Flex, message, Popconfirm, Radio, Space, Spin, Tag } from "antd";
+import { Button, Flex, message, Popconfirm, Radio, Result, Space, Spin, Tag } from "antd";
 import MCQViewAssignment from "./MCQViewAssignment/MCQViewAssignment";
 import {
   AssignmentType,
@@ -16,14 +16,14 @@ import {
 
 import { ArrowRightOutlined, LeftOutlined, LoadingOutlined, RightOutlined } from "@ant-design/icons";
 import { useRouter } from "next/router";
-import { areAnswersEqualForKey } from "@/lib/utils";
+import { setLocalStorage } from "@/lib/utils";
 import { submissionStatus } from "@prisma/client";
 import { themeColors } from "@/services/darkThemeConfig";
 
 const AssignmentContentTab: FC<{
   lessonId?: number;
-  getEvaluateScore: (assignmentId: number, lessonId: number, courseId: string) => void;
-}> = ({ lessonId, getEvaluateScore }) => {
+  onMarkAsCompleted: () => void;
+}> = ({ lessonId, onMarkAsCompleted }) => {
   const router = useRouter();
   const [assignmentDetail, setAssignmentDetail] = useState<IAssignmentDetail>();
   const [submissionDetail, setSubmissionDetail] = useState<IAssignmentSubmissionDetail | null>(null);
@@ -35,7 +35,9 @@ const AssignmentContentTab: FC<{
   const [loading, setLoading] = useState<boolean>(false);
   const [saveLoading, setSaveLoading] = useState<boolean>(false);
   const [refresh, setRefresh] = useState<boolean>(false);
+  const [isResultView, setResultView] = useState<boolean>(false);
   const [messageApi, contextHolder] = message.useMessage();
+
   const getAssignmentDetail = (lessonId: number, isNoAnswer: boolean) => {
     setLoading(true);
     AssignmentService.getAssignment(
@@ -54,17 +56,14 @@ const AssignmentContentTab: FC<{
       }
     );
   };
-  useEffect(() => {
-    resetState();
-    setEvaluationResult(null);
-    lessonId && getAssignmentDetail(lessonId, true);
-  }, [lessonId]);
 
   const resetState = () => {
     setCurrentQuestionIndex(0);
     setQuestions([]);
     setSelectedAnswers({});
     setSubmissionDetail(null);
+    setEvaluationResult(null);
+    setResultView(false);
   };
 
   const handleSelectAnswer = (answer: string | number, id: string) => {
@@ -73,59 +72,53 @@ const AssignmentContentTab: FC<{
       const currentAnswers = prev[Number(id)] || [];
       const isSelected = currentAnswers.includes(answer);
 
-      return {
+      const ans = {
         ...prev,
         [id]: isSelected ? currentAnswers.filter((v: string | number) => v !== answer) : [...currentAnswers, answer],
       };
+
+      if (typeof window !== "undefined") {
+        setLocalStorage(`assignment-${lessonId}`, ans);
+      }
+      setsavedAnswer(ans);
+      return ans;
     });
   };
 
   const onSubmitQuestion = () => {
-    if (
-      selectedAnswers[currentQuestionIndex + 1]?.length > 0 &&
-      !areAnswersEqualForKey(selectedAnswers[currentQuestionIndex + 1], savedAsnwers[currentQuestionIndex + 1])
-    ) {
-      setSaveLoading(true);
-      try {
-        let submitData = {
-          content: {
-            selectedAnswers,
-            _type: assignmentDetail?.content._type,
-          },
-          lessonId: lessonId as number,
-          courseId: router.query.slug as string,
-          assignmentId: assignmentDetail?.assignmentId as number,
-        };
-        AssignmentService.saveAssignment(
-          submitData,
-          (result) => {
-            messageApi.success({ content: result.message });
-            setSaveLoading(false);
-            if (currentQuestionIndex + 1 !== questions.length) {
-              setCurrentQuestionIndex((prev) => prev + 1);
-            }
-            setRefresh(!refresh);
-          },
-          (error) => {
-            messageApi.error({ content: error });
-            setSaveLoading(false);
-          }
-        );
-      } catch (error: any) {
-        setSaveLoading(false);
+    setSaveLoading(true);
+    try {
+      let submitData = {
+        content: {
+          selectedAnswers,
+          _type: assignmentDetail?.content._type,
+        },
+        lessonId: lessonId as number,
+        courseId: router.query.slug as string,
+        assignmentId: assignmentDetail?.assignmentId as number,
+      };
+      AssignmentService.saveAssignment(
+        submitData,
+        async (result) => {
+          // messageApi.success({ content: result.message });
+          await onClickToEvaluate(result.id);
+        },
+        (error) => {
+          messageApi.error({ content: error });
+          setSaveLoading(false);
+        }
+      );
+    } catch (error: any) {
+      setSaveLoading(false);
 
-        messageApi.error({
-          content: error,
-        });
-      }
-      return;
-    }
-    if (currentQuestionIndex + 1 !== questions.length) {
-      setCurrentQuestionIndex((prev) => prev + 1);
+      messageApi.error({
+        content: error,
+      });
     }
   };
 
   const getAssignmentSubmission = async () => {
+    setLoading(true);
     AssignmentService.getSubmissionContent(
       router.query.slug as string,
       lessonId as number,
@@ -162,35 +155,48 @@ const AssignmentContentTab: FC<{
       submissionId,
       (result) => {
         setEvaluationResult(result);
+        setResultView(true);
+        setLoading(false);
       },
       (error) => {
         messageApi.error(error);
+      }
+    );
+  };
+
+  const onClickToEvaluate = async (subId: number) => {
+    AssignmentService.completeSubmission(
+      router.query.slug as string,
+      assignmentDetail?.assignmentId as number,
+      lessonId as number,
+      subId as number,
+      (result) => {
+        setRefresh(!refresh);
+        setSaveLoading(false);
+        setCurrentQuestionIndex(0);
+        message.success("Assignment evaluated successfully");
+      },
+      (error) => {
+        messageApi.error(error);
+        setSaveLoading(false);
       }
     );
   };
 
   useEffect(() => {
     getAssignmentSubmission();
+    if (lessonId && typeof window !== "undefined") {
+      const data = localStorage.getItem(`assignment-${lessonId}`);
+      setSelectedAnswers(JSON.parse(data as any));
+      setsavedAnswer(JSON.parse(data as any));
+    }
   }, [refresh, lessonId]);
 
-  const onClickToEvaluate = async () => {
-    if (!submissionDetail?.id) return;
-    AssignmentService.completeSubmission(
-      router.query.slug as string,
-      assignmentDetail?.assignmentId as number,
-      lessonId as number,
-      submissionDetail.id as number,
-      (result) => {
-        getEvaluateScore(assignmentDetail?.assignmentId as number, lessonId as number, router.query.slug as string);
-        setRefresh(!refresh);
-        setLoading(false);
-      },
-      (error) => {
-        messageApi.error(error);
-        setLoading(false);
-      }
-    );
-  };
+  useEffect(() => {
+    resetState();
+    lessonId && getAssignmentDetail(lessonId, true);
+  }, [lessonId]);
+
   return (
     <>
       {contextHolder}
@@ -198,27 +204,70 @@ const AssignmentContentTab: FC<{
       <Spin spinning={loading} indicator={<LoadingOutlined spin />} size="large">
         <div className={style.assignmen_view_tab}>
           <div className={style.assignment_header}>
-            <Flex justify="space-between" align="center">
-              <h5>
-                Question {currentQuestionIndex + 1}/{questions.length}
-              </h5>
-              {submissionDetail && submissionDetail?.status !== submissionStatus.NOT_SUBMITTED && (
-                <Tag
-                  color={
-                    evaluationResult?.scoreSummary?.eachQuestionScore[currentQuestionIndex]?.score ===
-                    assignmentDetail?.maximumScore
-                      ? "green"
-                      : "red"
-                  }
-                  style={{ border: "none", padding: "5px 10px" }}
-                >
-                  Scored {evaluationResult?.scoreSummary?.eachQuestionScore[currentQuestionIndex]?.score}/
-                  {assignmentDetail?.maximumScore}
-                </Tag>
-              )}
-            </Flex>
+            {!isResultView && (
+              <Flex justify="space-between" align="center">
+                <h5>
+                  Question {currentQuestionIndex + 1}/{questions.length}
+                </h5>
+                <Space>
+                  <Button
+                    icon={<LeftOutlined />}
+                    disabled={currentQuestionIndex === 0}
+                    onClick={() => setCurrentQuestionIndex((prev) => prev - 1)}
+                  />
+                  <Button
+                    onClick={() => setCurrentQuestionIndex((prev) => prev + 1)}
+                    icon={<RightOutlined />}
+                    disabled={currentQuestionIndex === questions.length - 1}
+                  />
+                  {submissionDetail && submissionDetail?.status !== submissionStatus.NOT_SUBMITTED ? (
+                    <Button type="primary" onClick={() => setResultView(true)}>
+                      View final score
+                    </Button>
+                  ) : (
+                    <Popconfirm
+                      title="Finish & complete"
+                      description="Are you sure want to submit! It can't be undo"
+                      onConfirm={onSubmitQuestion}
+                      onCancel={() => {}}
+                      okText="Yes"
+                      cancelText="No"
+                    >
+                      <Button
+                        type="primary"
+                        loading={saveLoading}
+                        style={{ background: !!evaluationResult ? "" : themeColors.commons.success }}
+                        disabled={!!evaluationResult}
+                      >
+                        Finish & complete <ArrowRightOutlined />
+                      </Button>
+                    </Popconfirm>
+                  )}
+                </Space>
+              </Flex>
+            )}
           </div>
-          {assignmentDetail?.content._type === AssignmentType.MCQ && questions.length > 0 && (
+          {isResultView && (
+            <Result
+              status={
+                evaluationResult?.scoreSummary?.eachQuestionScore[currentQuestionIndex]?.score ===
+                assignmentDetail?.maximumScore
+                  ? "success"
+                  : "error"
+              }
+              title={`You Scored ${evaluationResult?.score}/${evaluationResult?.maximumScore}`}
+              subTitle={`You got ${evaluationResult?.score}/${evaluationResult?.maximumScore} correct answers. You can review the answer or move on to the next lesson`}
+              extra={[
+                <Button key="buy" onClick={onMarkAsCompleted}>
+                  Next Lesson
+                </Button>,
+                <Button type="primary" key="console" onClick={() => setResultView(false)}>
+                  Review answers
+                </Button>,
+              ]}
+            />
+          )}
+          {!isResultView && assignmentDetail?.content._type === AssignmentType.MCQ && questions.length > 0 && (
             <MCQViewAssignment
               question={questions[currentQuestionIndex]}
               selectedAnswers={selectedAnswers}
@@ -226,51 +275,6 @@ const AssignmentContentTab: FC<{
               isEvaluated={!!evaluationResult}
             />
           )}
-
-          <Flex justify="space-between" align="center" className={style.assignment_footer}>
-            <Space>
-              <Button
-                icon={<LeftOutlined />}
-                disabled={currentQuestionIndex === 0}
-                onClick={() => setCurrentQuestionIndex((prev) => prev - 1)}
-              >
-                Back
-              </Button>
-              <Button
-                type="primary"
-                loading={saveLoading}
-                onClick={onSubmitQuestion}
-                disabled={!!evaluationResult && currentQuestionIndex === questions.length - 1}
-              >
-                {selectedAnswers[currentQuestionIndex + 1]?.length > 0 &&
-                !areAnswersEqualForKey(
-                  selectedAnswers[currentQuestionIndex + 1],
-                  savedAsnwers[currentQuestionIndex + 1]
-                )
-                  ? "Submit"
-                  : evaluationResult
-                  ? "Next"
-                  : "Skip"}
-                <RightOutlined />
-              </Button>
-            </Space>
-            <Popconfirm
-              title="Finish & complete"
-              description="Are you sure want to submit! It can't be undo"
-              onConfirm={onClickToEvaluate}
-              onCancel={() => {}}
-              okText="Yes"
-              cancelText="No"
-            >
-              <Button
-                type="primary"
-                style={{ background: !!evaluationResult ? "" : themeColors.commons.success }}
-                disabled={!!evaluationResult}
-              >
-                Finish & complete <ArrowRightOutlined />
-              </Button>
-            </Popconfirm>
-          </Flex>
         </div>
       </Spin>
     </>
