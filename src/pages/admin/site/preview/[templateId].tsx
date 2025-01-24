@@ -11,13 +11,16 @@ import getBlogList from "@/actions/getBlogList";
 import { IBlogCard } from "@/types/landing/blog";
 import { ICourseListItem } from "@/types/courses/Course";
 import { listCourseListItems } from "@/actions/courses";
+import learningPath from "@/actions/learningPath";
+import { ILearningPathDetail } from "@/types/learingPath";
 
 const PreviewPage: FC<{
   user: User;
   siteConfig: PageSiteConfig;
   courseList: ICourseListItem[];
   blogList: IBlogCard[];
-}> = ({ user, siteConfig, courseList, blogList }) => {
+  learningList: ILearningPathDetail[];
+}> = ({ user, siteConfig, courseList, blogList, learningList }) => {
   const [config, setConfig] = useState<PageSiteConfig>(siteConfig);
 
   useEffect(() => {
@@ -44,6 +47,7 @@ const PreviewPage: FC<{
   return (
     <StandardTemplate
       user={user}
+      learningList={learningList}
       siteConfig={{
         ...config,
         navBar: {
@@ -101,12 +105,15 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
       };
     });
 
+  const pathListResponse = await learningPath.listLearningPath(user?.role, user?.id);
+
   return {
     props: {
       user,
       siteConfig: site,
       courseList: allCourses || [],
       blogList: allBlogs || [],
+      learningList: pathListResponse.body ? pathListResponse.body : [],
     },
   };
 };

@@ -62,6 +62,12 @@ export interface IBlogConfig {
   description?: string;
 }
 
+export interface ILearningConfig {
+  enabled?: boolean;
+  title?: string;
+  description?: string;
+}
+
 export interface ThemeSchema {
   template?: string;
   updated?: boolean;
@@ -75,5 +81,6 @@ export interface ThemeSchema {
     features?: IFeatureInfo;
     faq?: IFaqInfo;
     testimonials?: ITestimonialInfo;
+    learning?: ILearningConfig;
   };
 }

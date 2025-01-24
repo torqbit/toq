@@ -69,6 +69,11 @@ site:
       enable: true
       title: Our Courses
       description: Learn from the best instructors around the world
+    learning:
+      enabled: true
+      title: Our Learning path
+      description: "Learn from the best instructors around the world "
+      enable: false
     blog:
       enable: true
       title: Blogs

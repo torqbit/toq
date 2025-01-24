@@ -69,6 +69,11 @@ export const DEFAULT_THEME = {
       title: "Courses",
       description: "Description for the course list",
     },
+    learning: {
+      enabled: false,
+      title: "Our Learning path",
+      description: "Description for the course list",
+    },
     blog: {
       enable: false,
       title: "Blogs",

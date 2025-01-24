@@ -11,6 +11,7 @@ import BlogForm from "./sections/Blog/BlogForm";
 import FeaturesLayout from "@/templates/standard/components/Feature/FeaturesLayout";
 import FAQDesign from "@/templates/standard/components/FAQ/FAQDesign";
 import TestimonialDesign from "@/templates/standard/components/Testimonials/TestimonialDesign";
+import LearningDesignForm from "./sections/Learning/LearningDesignForm";
 
 const SiteDesigner: FC<{
   config: PageSiteConfig;
@@ -68,6 +69,18 @@ const SiteDesigner: FC<{
       ),
 
       label: collapseHeader("Courses", SvgIcons.courseConfig),
+    },
+    {
+      key: "learning",
+      className: styles.collapse__header,
+
+      children: (
+        <>
+          <LearningDesignForm config={config} updateSiteConfig={updateSiteConfig} />
+        </>
+      ),
+
+      label: collapseHeader("Learning", SvgIcons.courseConfig),
     },
     {
       key: "blogs",

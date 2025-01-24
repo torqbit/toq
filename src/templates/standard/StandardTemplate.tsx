@@ -13,6 +13,8 @@ import FAQ from "./components/FAQ/FAQ";
 import Testimonial from "./components/Testimonials/Testimonials";
 import styles from "./StandardTemplate.module.scss";
 import { ICourseListItem } from "@/types/courses/Course";
+import LearningList from "./components/Learning/LearningList";
+import { ILearningPathDetail } from "@/types/learingPath";
 
 interface IStandardTemplateProps {
   user: User;
@@ -20,9 +22,17 @@ interface IStandardTemplateProps {
   previewMode?: boolean;
   courseList: ICourseListItem[];
   blogList: IBlogCard[];
+  learningList: ILearningPathDetail[];
 }
 
-const StandardTemplate: FC<IStandardTemplateProps> = ({ user, siteConfig, courseList, previewMode, blogList }) => {
+const StandardTemplate: FC<IStandardTemplateProps> = ({
+  user,
+  siteConfig,
+  courseList,
+  previewMode,
+  blogList,
+  learningList,
+}) => {
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
   const featureInfo = siteConfig.sections?.features;
 
@@ -71,6 +81,26 @@ const StandardTemplate: FC<IStandardTemplateProps> = ({ user, siteConfig, course
                 : DEFAULT_THEME.sections.courses.description
             }
             courseList={courseList}
+            previewMode={previewMode}
+            brand={siteConfig.brand}
+          />
+        </section>
+      )}
+
+      {siteConfig.sections?.learning?.enabled && siteConfig.brand && (
+        <section className={styles.section__wrapper} id="learning">
+          <LearningList
+            title={
+              siteConfig.sections.learning.title
+                ? siteConfig.sections.learning.title
+                : DEFAULT_THEME.sections.learning.title
+            }
+            description={
+              siteConfig.sections.learning.description
+                ? siteConfig.sections.learning.description
+                : DEFAULT_THEME.sections.learning.description
+            }
+            learningList={learningList}
             previewMode={previewMode}
             brand={siteConfig.brand}
           />

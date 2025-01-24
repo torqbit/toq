@@ -14,20 +14,18 @@ import StudentDashboard from "@/components/Dashboard/StudentDashboard";
 import MarketingLayout from "@/components/Layouts/MarketingLayout";
 import dashboardStyles from "@/styles/Dashboard.module.scss";
 import { useMediaQuery } from "react-responsive";
-
-import { useSession } from "next-auth/react";
-import { Theme } from "@/types/theme";
-import { useAppContext } from "@/components/ContextApi/AppContext";
-import { useRouter } from "next/router";
+import learningPath from "@/actions/learningPath";
+import { ILearningPathDetail } from "@/types/learingPath";
 
 interface IProps {
   user: User;
   siteConfig: PageSiteConfig;
   courseList: ICourseListItem[];
   blogList: IBlogCard[];
+  learningList: ILearningPathDetail[];
 }
 
-const LandingPage: FC<IProps> = ({ user, siteConfig, courseList, blogList }) => {
+const LandingPage: FC<IProps> = ({ user, siteConfig, courseList, blogList, learningList }) => {
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
 
   return (
@@ -48,7 +46,13 @@ const LandingPage: FC<IProps> = ({ user, siteConfig, courseList, blogList }) => 
           </section>
         </MarketingLayout>
       ) : (
-        <StandardTemplate user={user} siteConfig={siteConfig} courseList={courseList} blogList={blogList} />
+        <StandardTemplate
+          user={user}
+          learningList={learningList}
+          siteConfig={siteConfig}
+          courseList={courseList}
+          blogList={blogList}
+        />
       )}
     </>
   );
@@ -63,6 +67,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const courselist: ICourseListItem[] | undefined =
     siteConfig.sections?.courses?.enable && (await listCourseListItems(user));
   const blogList = siteConfig.sections?.blog?.enable && (await getBlogList());
+  const pathListResponse = await learningPath.listLearningPath(user?.role, user?.id);
 
   return {
     props: {
@@ -70,6 +75,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
       siteConfig,
       courseList: courselist || [],
       blogList: blogList || [],
+      learningList: pathListResponse.body ? pathListResponse.body : [],
     },
   };
 };
