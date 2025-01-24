@@ -2,10 +2,7 @@ import type { GetServerSidePropsContext, NextPage } from "next";
 import styles from "@/styles/Dashboard.module.scss";
 import React, { FC, useEffect, useState } from "react";
 import { Course, Role, StateType, User } from "@prisma/client";
-import Courses from "@/components/Courses/Courses";
-import { Spin, message, Flex, Button } from "antd";
-
-import ProgramService from "@/services/ProgramService";
+import { Spin, message } from "antd";
 
 import AppLayout from "@/components/Layouts/AppLayout";
 import { getSiteConfig } from "@/services/getSiteConfig";
@@ -26,6 +23,8 @@ import learningPath from "@/actions/learningPath";
 import { ILearningPathDetail } from "@/types/learingPath";
 import LearningPathSerivices from "@/services/learningPath/LearningPathSerivices";
 import { LearnListView } from "@/components/Admin/LearningPath/LearnListView";
+import { ICourseListItem } from "@/types/courses/Course";
+import ProgramService from "@/services/ProgramService";
 
 const AcademyPage: NextPage<{ siteConfig: PageSiteConfig; userRole: Role; pathList: ILearningPathDetail[] }> = ({
   siteConfig,

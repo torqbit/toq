@@ -149,7 +149,7 @@ export const CoursesListView: FC<{
   const items: TabsProps["items"] = [
     {
       key: "1",
-      label: "Learning Paths",
+      label: "Courses",
       children: (
         <div className={styles.course__grid}>
           {courses.map((c, index) => (

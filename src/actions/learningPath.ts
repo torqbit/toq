@@ -3,9 +3,11 @@ import prisma from "@/lib/prisma";
 import { APIResponse } from "@/types/apis";
 import { FileObjectType } from "@/types/cms/common";
 
-import { ILearningCourseList, ILearningPathDetail } from "@/types/learingPath";
+import { ILearningCourseList, ILearningPathDetail, ILearningPreviewDetail } from "@/types/learingPath";
 import { ProductType, Role, StateType } from "@prisma/client";
 import { uploadThumbnail } from "./courses";
+import appConstant from "@/services/appConstant";
+import { convertSecToHourandMin } from "@/pages/admin/content";
 class LearningPath {
   async createLearningPath(
     file: any,
@@ -154,6 +156,126 @@ class LearningPath {
       response.success ? "Learning path has been updated" : response.body,
       response.success ? response.body : undefined
     );
+  }
+
+  async getLearningPreviewDetail(
+    pathId: number,
+    userRole?: Role,
+    userId?: string
+  ): Promise<APIResponse<ILearningPreviewDetail>> {
+    const detail = await prisma.learningPath.findUnique({
+      where: {
+        id: Number(pathId),
+      },
+      select: {
+        title: true,
+        description: true,
+        id: true,
+        state: true,
+        slug: true,
+        price: true,
+        banner: true,
+        author: {
+          select: {
+            name: true,
+          },
+        },
+        learningPathCourses: {
+          select: {
+            courseId: true,
+            course: {
+              select: {
+                tvThumbnail: true,
+                description: true,
+                slug: true,
+                name: true,
+                user: {
+                  select: {
+                    image: true,
+                  },
+                },
+                chapters: {
+                  select: {
+                    resource: {
+                      select: {
+                        video: {
+                          select: {
+                            videoDuration: true,
+                          },
+                        },
+                        assignment: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          orderBy: {
+            sequenceId: "asc",
+          },
+        },
+      },
+    });
+
+    const totalAssignments = detail?.learningPathCourses.reduce((total, course) => {
+      const courseAssignments = course.course.chapters.reduce((courseTotal, chapter) => {
+        const chapterAssignments = chapter.resource.filter((resource) => resource.assignment).length;
+        return courseTotal + chapterAssignments;
+      }, 0);
+
+      return total + courseAssignments;
+    }, 0);
+
+    const totalVideoDuration = detail?.learningPathCourses.reduce((total, course) => {
+      const courseDuration = course.course.chapters.reduce((courseTotal, chapter) => {
+        const chapterVideoDuration = chapter.resource.reduce((videoTotal, resource) => {
+          if (resource.video && resource.video.videoDuration) {
+            return videoTotal + resource.video.videoDuration;
+          } else if (resource.assignment && resource.assignment.estimatedDuration) {
+            return videoTotal + Number(resource.assignment.estimatedDuration) * 60;
+          }
+          return videoTotal;
+        }, 0);
+        return courseTotal + chapterVideoDuration;
+      }, 0);
+
+      return total + courseDuration;
+    }, 0);
+
+    if (detail) {
+      const instructors = new Set(detail.learningPathCourses.map((c) => `${c.course.user.image}`));
+
+      let data = {
+        title: detail?.title,
+        id: detail?.id,
+        description: detail?.description,
+        banner: detail?.banner || "",
+        price: detail?.price,
+        slug: detail?.slug,
+        role: userRole,
+        currency: appConstant.currency,
+        assignmentsCount: Number(totalAssignments),
+        contentDurationInHrs: Math.floor(totalVideoDuration || 0 / 60),
+        author: {
+          name: detail.author.name,
+          designation: "a course instructor at OpenAI",
+        },
+        instructors: Array.from(instructors),
+        learningPathCourses: detail.learningPathCourses.map((c) => {
+          return {
+            courseId: c.courseId,
+            slug: c.course.slug || "",
+            banner: c.course.tvThumbnail || "",
+            title: c.course.name,
+            description: c.course.description,
+          };
+        }),
+      };
+      return new APIResponse(true, 200, "Learning path detail has been fetched", data);
+    } else {
+      return new APIResponse(false, 404, "Learning path detail not found");
+    }
   }
 
   async getLearningDetail(pathId: number): Promise<APIResponse<ILearningPathDetail>> {
