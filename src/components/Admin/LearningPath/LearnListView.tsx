@@ -15,6 +15,7 @@ import {
   Progress,
   Skeleton,
   Segmented,
+  message,
 } from "antd";
 import { CourseType, Role, StateType } from "@prisma/client";
 import { capsToPascalCase, validateImage } from "@/lib/utils";
@@ -24,6 +25,9 @@ import SvgIcons from "@/components/SvgIcons";
 import { getDummyArray } from "@/lib/dummyData";
 import { useMediaQuery } from "react-responsive";
 import { ILearningPathDetail } from "@/types/learingPath";
+import { ICourseListItem } from "@/types/courses/Course";
+import { CourseViewItem } from "@/components/Courses/CourseListView/CourseListView";
+import ProgramService from "@/services/ProgramService";
 const { Meta } = Card;
 export const LearnViewItem: FC<{ learning: ILearningPathDetail; previewMode?: boolean; userRole?: Role }> = ({
   learning,
@@ -43,7 +47,7 @@ export const LearnViewItem: FC<{ learning: ILearningPathDetail; previewMode?: bo
 
   const items: MenuProps["items"] = [
     {
-      label: <Link href={`/learning/${learning.slug}`}>View</Link>,
+      label: <Link href={`/path/${learning.slug}`}>View</Link>,
       key: "1",
     },
   ];
@@ -140,12 +144,16 @@ export const LearnViewItem: FC<{ learning: ILearningPathDetail; previewMode?: bo
 
 export const LearnListView: FC<{
   pathList: ILearningPathDetail[];
+
   siteConfig: PageSiteConfig;
   currentTheme: Theme;
   emptyView: ReactNode;
   role?: Role;
   loading: boolean;
 }> = ({ pathList, currentTheme, siteConfig, emptyView, role, loading }) => {
+  const [messageApi, contextMessageHolder] = message.useMessage();
+  const [courses, setCourses] = useState<ICourseListItem[]>();
+  const [loadingCourses, setLoading] = useState<boolean>(false);
   const [tab, setTab] = useState("1");
   const [segmentValue, setSegmentValue] = useState<string>("all");
 
@@ -153,6 +161,13 @@ export const LearnListView: FC<{
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
   const handleLearningCreate = () => {
     return router.push("/admin/content/path/add");
+  };
+  const onChangeTab = (k: string) => {
+    if (k == "2") {
+      getCourses();
+    }
+    setTab(k);
+    setSegmentValue("all");
   };
   const items: TabsProps["items"] = [
     {
@@ -188,9 +203,98 @@ export const LearnListView: FC<{
         </Flex>
       ),
     },
+    {
+      key: "2",
+      label: "Courses",
+      children: (
+        <Flex vertical gap={10}>
+          <Segmented
+            style={{ width: "fit-content" }}
+            onChange={setSegmentValue}
+            options={[
+              { value: "all", label: "All" },
+              { value: StateType.ACTIVE, label: "Published" },
+            ]}
+          />
+          <>
+            {segmentValue === "all" ? (
+              <div>
+                {courses ? (
+                  <div className={styles.course__grid}>
+                    {courses.map((c, index) => (
+                      <CourseViewItem course={c} key={index} />
+                    ))}
+                  </div>
+                ) : (
+                  <div className={styles.course__grid}>
+                    {getDummyArray(3).map((t, i) => {
+                      return (
+                        <Card
+                          key={i}
+                          className={styles.course__card}
+                          cover={
+                            <Skeleton.Image
+                              style={{ width: isMobile ? "Calc(100vw - 40px)" : "300px", height: "168px" }}
+                            />
+                          }
+                        >
+                          <Skeleton />
+                        </Card>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div>
+                {courses ? (
+                  <div className={styles.course__grid}>
+                    {courses
+                      .filter((c) => c.state === StateType.ACTIVE)
+                      .map((c, index) => (
+                        <CourseViewItem course={c} key={index} />
+                      ))}
+                  </div>
+                ) : (
+                  <div className={styles.course__grid}>
+                    {getDummyArray(3).map((t, i) => {
+                      return (
+                        <Card
+                          key={i}
+                          className={styles.course__card}
+                          cover={
+                            <Skeleton.Image
+                              style={{ width: isMobile ? "Calc(100vw - 40px)" : "300px", height: "168px" }}
+                            />
+                          }
+                        >
+                          <Skeleton />
+                        </Card>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            )}
+          </>
+        </Flex>
+      ),
+    },
   ];
+  const getCourses = () => {
+    ProgramService.listCoursesViews((response) => {
+      if (response.success && response.body) {
+        setCourses(response.body);
+        setLoading(false);
+      } else {
+        messageApi.error(response.message);
+        setLoading(false);
+      }
+    });
+  };
   return (
     <div className={styles.courses__list}>
+      {contextMessageHolder}
       {loading && (
         <>
           <h4>Academy </h4>
@@ -219,7 +323,7 @@ export const LearnListView: FC<{
             tabBarGutter={40}
             items={items}
             activeKey={tab}
-            onChange={(k) => setTab(k)}
+            onChange={onChangeTab}
             tabBarExtraContent={
               <Button type="primary" onClick={handleLearningCreate}>
                 Add Learning Path

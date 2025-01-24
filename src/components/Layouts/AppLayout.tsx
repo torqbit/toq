@@ -211,7 +211,7 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
       }
     }
 
-    if (router.pathname.startsWith("/academy")) {
+    if (router.pathname.startsWith("/academy") || router.pathname.startsWith("/path")) {
       selectedMenu = "academy";
     }
     dispatch({ type: "SET_SELECTED_SIDER_MENU", payload: selectedMenu as ISiderMenu });
@@ -220,7 +220,11 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
   const onChangeSelectedNavBar = () => {
     let selectedMenu = router.pathname.split("/")[1];
     if (selectedMenu == "admin") {
-      selectedMenu = router.pathname.split("/")[2];
+      if (router.pathname.split("/")[3] === "path") {
+        selectedMenu = "academy";
+      } else {
+        selectedMenu = router.pathname.split("/")[2];
+      }
     }
 
     dispatch({ type: "SET_NAVBAR_MENU", payload: selectedMenu as IResponsiveNavMenu });

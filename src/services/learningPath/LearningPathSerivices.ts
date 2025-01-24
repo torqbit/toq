@@ -42,6 +42,7 @@ class LearningPathServices {
       });
     });
   };
+
   delete = (
     pathId: number,
     onSuccess: (response: APIResponse<string>) => void,
