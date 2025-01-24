@@ -1,6 +1,19 @@
 import React, { FC, useState } from "react";
 
-import { Button, Dropdown, Flex, Form, FormInstance, Input, Popconfirm, Select, Space, Tooltip, Upload } from "antd";
+import {
+  Button,
+  Dropdown,
+  Flex,
+  Form,
+  FormInstance,
+  Input,
+  message,
+  Popconfirm,
+  Select,
+  Space,
+  Tooltip,
+  Upload,
+} from "antd";
 import SvgIcons from "@/components/SvgIcons";
 import { LoadingOutlined } from "@ant-design/icons";
 import ImgCrop from "antd-img-crop";
@@ -14,6 +27,7 @@ import styles from "./LearningPath.module.scss";
 import CourseSelectForm from "./CourseSelectForm";
 import { DragEndEvent } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
+import LearningPathSerivices from "@/services/learningPath/LearningPathSerivices";
 const { TextArea } = Input;
 
 const LearningPathForm: FC<{
@@ -32,6 +46,7 @@ const LearningPathForm: FC<{
     banner: string;
   };
 }> = ({ pathId, loading, form, onSubmit, currentState, courseList, title, initialValue }) => {
+  const [messageApi, contextHolder] = message.useMessage();
   const [bannerUploading, setBannerUploading] = useState<boolean>(false);
   const [banner, setBanner] = useState<string>(initialValue?.banner || "");
   const [file, setFile] = useState<File>();
@@ -63,11 +78,21 @@ const LearningPathForm: FC<{
     }
   };
 
-  const onDiscard = (pathId: number) => {};
+  const onDiscard = (pathId: number) => {
+    LearningPathSerivices.delete(
+      pathId,
+      (result) => {
+        messageApi.success(result.message);
+        router.push("/academy");
+      },
+      (error) => {
+        messageApi.error(error);
+      }
+    );
+  };
   const onRemove = (id: number) => {
     setItems((prevItems) => {
       let newArray = prevItems.filter((f) => f.courseId !== id);
-
       return newArray;
     });
   };
@@ -82,6 +107,7 @@ const LearningPathForm: FC<{
 
   return (
     <>
+      {contextHolder}
       <section className={styles.add__learing__path__wrapper}>
         <Form
           form={form}
@@ -161,8 +187,8 @@ const LearningPathForm: FC<{
                   name="courses"
                   rules={[
                     {
-                      required: true,
-                      message: "Required courses ",
+                      required: items.length < 2,
+                      message: "Select atleast 2 courses ",
                     },
                   ]}
                 >

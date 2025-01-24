@@ -167,6 +167,7 @@ class LearningPath {
         id: true,
         state: true,
         slug: true,
+        price: true,
         banner: true,
         author: {
           select: {
@@ -227,6 +228,8 @@ class LearningPath {
           description: true,
           state: true,
           slug: true,
+          price: true,
+
           banner: true,
           id: true,
 
@@ -255,6 +258,7 @@ class LearningPath {
           description: true,
           state: true,
           slug: true,
+          price: true,
 
           id: true,
           banner: true,
@@ -282,6 +286,8 @@ class LearningPath {
           description: true,
           state: true,
           slug: true,
+          price: true,
+
           id: true,
 
           banner: true,
