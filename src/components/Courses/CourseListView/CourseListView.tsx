@@ -149,6 +149,17 @@ export const CoursesListView: FC<{
   const items: TabsProps["items"] = [
     {
       key: "1",
+      label: "Learning Paths",
+      children: (
+        <div className={styles.course__grid}>
+          {courses.map((c, index) => (
+            <CourseViewItem course={c} key={index} />
+          ))}
+        </div>
+      ),
+    },
+    {
+      key: "2",
       label: "Published Courses",
       children: (
         <div className={styles.course__grid}>
@@ -161,7 +172,7 @@ export const CoursesListView: FC<{
       ),
     },
     {
-      key: "2",
+      key: "3",
       label: `${role == "AUTHOR" ? "Authored Courses" : "All Courses"}`,
       children: (
         <>

@@ -2,8 +2,21 @@ import { PageSiteConfig } from "@/services/siteConstant";
 import { Theme } from "@/types/theme";
 import { FC, ReactNode, useEffect, useState } from "react";
 import styles from "@/components/Courses/CourseListView/CourseListView.module.scss";
-import { Button, Card, Flex, Space, Tabs, TabsProps, Tag, Dropdown, MenuProps, Progress, Skeleton } from "antd";
-import { Role, StateType } from "@prisma/client";
+import {
+  Button,
+  Card,
+  Flex,
+  Space,
+  Tabs,
+  TabsProps,
+  Tag,
+  Dropdown,
+  MenuProps,
+  Progress,
+  Skeleton,
+  Segmented,
+} from "antd";
+import { CourseType, Role, StateType } from "@prisma/client";
 import { capsToPascalCase, validateImage } from "@/lib/utils";
 import { useRouter } from "next/router";
 import Link from "next/link";
@@ -81,7 +94,7 @@ export const LearnViewItem: FC<{ learning: ILearningPathDetail; previewMode?: bo
         description={learning.description}
       />
       <Flex justify="space-between" align="center" className={styles.card__footer}>
-        <div>Free</div>
+        <div>{learning.price > 0 ? CourseType.PAID : CourseType.FREE}</div>
 
         {!showDummyPurchase &&
           userRole &&
@@ -107,12 +120,17 @@ export const LearnViewItem: FC<{ learning: ILearningPathDetail; previewMode?: bo
           )}
         {!showDummyPurchase && userRole && userRole === Role.NOT_ENROLLED && (
           <Button type="default" onClick={(e) => handlePurchase(learning.slug)}>
-            Enroll Now
+            {learning.price > 0 ? "Buy Now" : "Enroll Now"}
           </Button>
         )}
         {!showDummyPurchase && userRole && userRole === Role.STUDENT && (
           <Button type="default" onClick={(e) => handlePurchase(learning.slug)}>
             Go to Learning
+          </Button>
+        )}
+        {!showDummyPurchase && !userRole && (
+          <Button type="default" onClick={(e) => handlePurchase(learning.slug)}>
+            {learning.price > 0 ? "Buy Now" : "Enroll Now"}
           </Button>
         )}
       </Flex>
@@ -129,6 +147,8 @@ export const LearnListView: FC<{
   loading: boolean;
 }> = ({ pathList, currentTheme, siteConfig, emptyView, role, loading }) => {
   const [tab, setTab] = useState("1");
+  const [segmentValue, setSegmentValue] = useState<string>("all");
+
   const router = useRouter();
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
   const handleLearningCreate = () => {
@@ -139,11 +159,33 @@ export const LearnListView: FC<{
       key: "1",
       label: "Learning Paths",
       children: (
-        <div className={styles.course__grid}>
-          {pathList.map((path, index) => (
-            <LearnViewItem userRole={role} learning={path} key={index} />
-          ))}
-        </div>
+        <Flex vertical gap={10}>
+          <Segmented
+            style={{ width: "fit-content" }}
+            onChange={setSegmentValue}
+            options={[
+              { value: "all", label: "All" },
+              { value: StateType.ACTIVE, label: "Published" },
+            ]}
+          />
+          <>
+            {segmentValue === "all" ? (
+              <div className={styles.course__grid}>
+                {pathList.map((path, index) => (
+                  <LearnViewItem userRole={role} learning={path} key={index} />
+                ))}
+              </div>
+            ) : (
+              <div className={styles.course__grid}>
+                {pathList
+                  .filter((p) => p.state === StateType.ACTIVE)
+                  .map((path, index) => (
+                    <LearnViewItem userRole={role} learning={path} key={index} />
+                  ))}
+              </div>
+            )}
+          </>
+        </Flex>
       ),
     },
   ];
@@ -151,7 +193,7 @@ export const LearnListView: FC<{
     <div className={styles.courses__list}>
       {loading && (
         <>
-          <h4>Learning Paths</h4>
+          <h4>Academy </h4>
           <div className={styles.course__grid}>
             {getDummyArray(3).map((t, i) => {
               return (
@@ -171,7 +213,7 @@ export const LearnListView: FC<{
       )}
       {role && role !== Role.STUDENT && !loading && (
         <>
-          <h4>Learning Paths</h4>
+          <h4>Academy</h4>
 
           <Tabs
             tabBarGutter={40}
@@ -189,7 +231,7 @@ export const LearnListView: FC<{
 
       {role && role === Role.STUDENT && !loading && (
         <>
-          {isMobile && <h4>Learning Paths</h4>}
+          {isMobile && <h4>Academy</h4>}
           <div className={styles.course__grid}>
             {pathList
               .filter((c) => c.state === StateType.ACTIVE)

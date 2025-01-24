@@ -11,6 +11,7 @@ export interface ILearningPathDetail {
   description: string;
   state: StateType;
   banner: string;
+  price: number;
 
   slug: string;
   author: {

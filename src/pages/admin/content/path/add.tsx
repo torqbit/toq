@@ -9,6 +9,7 @@ import { StateType } from "@prisma/client";
 import { Form, message } from "antd";
 
 import { GetServerSidePropsContext, NextPage } from "next";
+import { useRouter } from "next/router";
 import { useState } from "react";
 
 const AddLearningPath: NextPage<{ courseList: ILearningCourseList[]; siteConfig: PageSiteConfig }> = ({
@@ -19,10 +20,15 @@ const AddLearningPath: NextPage<{ courseList: ILearningCourseList[]; siteConfig:
   const [loading, setLoading] = useState<boolean>(false);
   const [form] = Form.useForm();
   const [currentState, setCurrentState] = useState<StateType>(StateType.DRAFT);
+  const router = useRouter();
 
   const onSubmit = (state: StateType, courses: ILearningCourseList[], file?: File) => {
     if (!file) {
       messageApi.warning(`Learning path must have a banner`);
+      return;
+    }
+    if (courses.length < 2) {
+      messageApi.warning(`Learning path must have atleast 2 courses`);
       return;
     }
     setLoading(true);
@@ -58,7 +64,7 @@ const AddLearningPath: NextPage<{ courseList: ILearningCourseList[]; siteConfig:
 
         setLoading(false);
 
-        // router.push(`/admin/site/content/${contentType === "UPDATE" ? "updates" : "blogs"}`);
+        router.push(`/academy`);
       },
       (error) => {
         messageApi.error(error);

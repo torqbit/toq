@@ -27,7 +27,7 @@ import { ILearningPathDetail } from "@/types/learingPath";
 import LearningPathSerivices from "@/services/learningPath/LearningPathSerivices";
 import { LearnListView } from "@/components/Admin/LearningPath/LearnListView";
 
-const PathPage: NextPage<{ siteConfig: PageSiteConfig; userRole: Role; pathList: ILearningPathDetail[] }> = ({
+const AcademyPage: NextPage<{ siteConfig: PageSiteConfig; userRole: Role; pathList: ILearningPathDetail[] }> = ({
   siteConfig,
   userRole,
   pathList,
@@ -122,7 +122,10 @@ const PathPage: NextPage<{ siteConfig: PageSiteConfig; userRole: Role; pathList:
           <MarketingLayout
             siteConfig={siteConfig}
             heroSection={
-              <DefaulttHero title="Courses" description="Expand Your Knowledge with Comprehensive Courses" />
+              <DefaulttHero
+                title="Learning Paths"
+                description="Expand Your Knowledge with Comprehensive Learning path"
+              />
             }
           >
             {contextMessageHolder}
@@ -149,7 +152,7 @@ const PathPage: NextPage<{ siteConfig: PageSiteConfig; userRole: Role; pathList:
   );
 };
 
-export default PathPage;
+export default AcademyPage;
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const { req } = ctx;

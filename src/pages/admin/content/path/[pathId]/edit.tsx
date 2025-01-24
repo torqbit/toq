@@ -23,6 +23,10 @@ const UpdateLearningPath: NextPage<{
   const [currentState, setCurrentState] = useState<StateType>(StateType.DRAFT);
   const router = useRouter();
   const onUpdate = (state: StateType, courses: ILearningCourseList[], file?: File) => {
+    if (courses.length < 2) {
+      messageApi.warning(`Learning path must have atleast 2 courses`);
+      return;
+    }
     setLoading(true);
     const data = {
       title: form.getFieldsValue().title,
@@ -57,8 +61,6 @@ const UpdateLearningPath: NextPage<{
         });
         result.body?.state && setCurrentState(result.body.state);
         setLoading(false);
-
-        // router.push(`/admin/site/content/${contentType === "UPDATE" ? "updates" : "blogs"}`);
       },
       (error) => {
         messageApi.error(error);
@@ -73,6 +75,7 @@ const UpdateLearningPath: NextPage<{
         loading={loading}
         onSubmit={onUpdate}
         form={form}
+        pathId={Number(router.query.pathId)}
         courseList={courseList}
         currentState={currentState}
         title="Update Learning Path"
@@ -94,13 +97,21 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const { site } = siteConfig;
   const getCoursesList = await learningPath.getCoursesList();
   const getDetailResponse = await learningPath.getLearningDetail(Number(query.pathId));
+  if (getDetailResponse && getDetailResponse.success && getDetailResponse.body) {
+    return {
+      props: {
+        siteConfig: site,
+        courseList: getCoursesList.body || [],
 
-  return {
-    props: {
-      siteConfig: site,
-      courseList: getCoursesList.body || [],
-
-      learningDetail: getDetailResponse && getDetailResponse.success ? getDetailResponse.body : undefined,
-    },
-  };
+        learningDetail: getDetailResponse.body,
+      },
+    };
+  } else {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/academy",
+      },
+    };
+  }
 };

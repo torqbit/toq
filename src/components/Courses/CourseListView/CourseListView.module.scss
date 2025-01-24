@@ -11,6 +11,7 @@
   width: 300px;
 
   .meta {
+    min-height: 130px;
     & > div > div:last-child {
       -webkit-line-clamp: 2;
       display: -webkit-box;

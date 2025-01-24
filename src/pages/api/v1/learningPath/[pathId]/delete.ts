@@ -6,6 +6,7 @@ import { withAuthentication } from "@/lib/api-middlewares/with-authentication";
 import { ContentManagementService } from "@/services/cms/ContentManagementService";
 import appConstant from "@/services/appConstant";
 import { ProductType } from "@prisma/client";
+import { APIResponse } from "@/types/apis";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
@@ -32,15 +33,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           ptype: ProductType.LEARNING_PATH,
         },
       });
-      return res.status(200).json({
-        info: false,
-        success: true,
-        message: "Learning path has been deleted.",
-      });
+      return res.status(200).json(new APIResponse(true, 200, "Learning path has been deleted."));
     } else {
-      return res.status(404).json({ success: false, error: "Learning path already deleted or not found" });
+      return res.status(404).json(new APIResponse(false, 404, "Learning path has been already deleted or not found."));
     }
   } catch (error) {
+    console.log(error);
     return errorHandler(error, res);
   }
 };
