@@ -1,29 +1,27 @@
 .navBarContainer {
-  position: relative;
-  margin: 0 auto;
   z-index: 10;
   display: flex;
   align-items: center;
   justify-content: center;
+  position: fixed;
+  top: -1px;
+  z-index: 10;
+  background-color: var(--bg-primary);
+  height: 60px;
+  width: 100%;
+  box-shadow: var(--box-shadow);
+  backdrop-filter: blur(10px);
+  background: var(--bg-header);
+  padding: 5px 35px;
+  a {
+    color: var(--font-secondary);
+  }
 
   nav {
-    position: fixed;
-    top: -1px;
-    z-index: 10;
-    background-color: var(--bg-primary);
-    height: 60px;
-    width: 100%;
+    margin: 0 auto;
     display: flex;
     align-items: center;
-    box-shadow: var(--box-shadow);
-    backdrop-filter: blur(10px);
-    background: var(--bg-header);
-
     justify-content: space-between;
-    padding: 5px 35px;
-
-    box-shadow: var(--box-shadow);
-
     img {
       width: auto;
       height: 30px;
@@ -86,6 +84,9 @@
   display: none;
 }
 
+.responsiveNavContainer {
+  display: none;
+}
 @media only screen and (max-width: 435px) {
   // NavBar
   .sideNaveContainer,
@@ -184,9 +185,58 @@
   .platformNameLogo {
     display: unset;
     position: absolute;
-    top: 10px;
+    top: 13px;
     left: 10px;
     z-index: 2;
     color: var(--font-primary);
+  }
+
+  .responsiveNavContainer {
+    background-color: var(--bg-primary);
+    width: 100%;
+    height: 60px;
+    padding: 0px 10px;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    .navTitle {
+      font-size: 12px;
+    }
+
+    .selectedNavBar {
+      color: var(--font-primary);
+      width: 60px;
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      position: relative;
+      a:hover {
+        color: var(--btn-primary);
+      }
+
+      span {
+        height: 3px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+
+        background-color: var(--btn-primary);
+      }
+    }
+    .navBar {
+      width: 60px;
+
+      color: var(--font-secondary);
+      padding: 10px;
+      span {
+        display: none;
+      }
+    }
   }
 }

@@ -6,11 +6,13 @@ import { useMediaQuery } from "react-responsive";
 import EventService, { IEventList } from "@/services/EventService";
 import EventCard from "@/components/Events/EventCard";
 import styles from "@/styles/Marketing/Events/Event.module.scss";
-import { Button, Flex, message, Tabs, TabsProps } from "antd";
+import { Button, Flex, message, Skeleton, Tabs, TabsProps } from "antd";
 import { EmptyEvents } from "../SvgIcons";
 import { getIconTheme } from "@/services/darkThemeConfig";
 import { PageSiteConfig } from "@/services/siteConstant";
 import { Theme } from "@/types/theme";
+import { getDummyArray } from "@/lib/dummyData";
+import NoContentFound from "../NoContentFound";
 
 const Events: FC<{
   user: User;
@@ -28,32 +30,6 @@ const Events: FC<{
 
   const { dispatch, globalState } = useAppContext();
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
-
-  const noEventExist = (
-    <div
-      style={{
-        height: 400,
-        marginBottom: "20px ",
-        textAlign: "center",
-        borderRadius: 8,
-        display: "flex",
-        padding: 10,
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: globalState.theme === "dark" ? "#283040" : "#fff",
-        color: globalState.theme === "dark" ? "#fff" : "#000",
-      }}
-    >
-      <p
-        style={{
-          maxWidth: isMobile ? 300 : 400,
-          lineHeight: 1.5,
-        }}
-      >
-        There are no events currently. Visit here later again
-      </p>
-    </div>
-  );
 
   const getEventList = () => {
     setLoading(true);
@@ -121,7 +97,16 @@ const Events: FC<{
               )}
             </Flex>
           ) : (
-            noEventExist
+            <NoContentFound
+              content="There are no Events currently.Visit here later again."
+              isMobile={isMobile}
+              icon={
+                <EmptyEvents
+                  size={isMobile ? "200px" : "300px"}
+                  {...getIconTheme(globalState.theme || "light", siteConfig.brand)}
+                />
+              }
+            />
           )}
         </>
       ),
@@ -153,7 +138,16 @@ const Events: FC<{
               )}
             </Flex>
           ) : (
-            noEventExist
+            <NoContentFound
+              content="There are no workshop events currently.Visit here later again."
+              isMobile={isMobile}
+              icon={
+                <EmptyEvents
+                  size={isMobile ? "200px" : "300px"}
+                  {...getIconTheme(globalState.theme || "light", siteConfig.brand)}
+                />
+              }
+            />
           )}
         </>
       ),
@@ -185,7 +179,16 @@ const Events: FC<{
               )}
             </Flex>
           ) : (
-            noEventExist
+            <NoContentFound
+              content="There are no talk events currently.Visit here later again."
+              isMobile={isMobile}
+              icon={
+                <EmptyEvents
+                  size={isMobile ? "200px" : "300px"}
+                  {...getIconTheme(globalState.theme || "light", siteConfig.brand)}
+                />
+              }
+            />
           )}
         </>
       ),
@@ -197,10 +200,16 @@ const Events: FC<{
       <div className={styles.event_list_wrapper}>
         {eventData.length > 0 && <Tabs items={items} onChange={onChange} />}
         {eventData.length == 0 && (
-          <div className={styles.empty__content}>
-            <EmptyEvents size="300px" {...getIconTheme(globalState.theme || "light", siteConfig.brand)} />
-            <h4 style={{ marginBottom: 20 }}>No events have been created.</h4>
-          </div>
+          <NoContentFound
+            content="There are no Events currently.Visit here later again."
+            isMobile={isMobile}
+            icon={
+              <EmptyEvents
+                size={isMobile ? "200px" : "300px"}
+                {...getIconTheme(globalState.theme || "light", siteConfig.brand)}
+              />
+            }
+          />
         )}
       </div>
     </>

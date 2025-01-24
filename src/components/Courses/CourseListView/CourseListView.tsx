@@ -3,12 +3,14 @@ import { ICourseListItem } from "@/types/courses/Course";
 import { Theme } from "@/types/theme";
 import { FC, ReactNode, useEffect, useState } from "react";
 import styles from "./CourseListView.module.scss";
-import { Button, Card, Flex, Space, Tabs, TabsProps, Tag, Dropdown, MenuProps, Progress } from "antd";
+import { Button, Card, Flex, Space, Tabs, TabsProps, Tag, Dropdown, MenuProps, Progress, Skeleton } from "antd";
 import { Role, StateType } from "@prisma/client";
 import { capsToPascalCase, validateImage } from "@/lib/utils";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import SvgIcons from "@/components/SvgIcons";
+import { getDummyArray } from "@/lib/dummyData";
+import { useMediaQuery } from "react-responsive";
 const { Meta } = Card;
 export const CourseViewItem: FC<{ course: ICourseListItem; previewMode?: boolean }> = ({ course, previewMode }) => {
   const router = useRouter();
@@ -139,12 +141,25 @@ export const CoursesListView: FC<{
   handleCourseCreate: () => void;
   emptyView: ReactNode;
   role?: Role;
-}> = ({ courses, currentTheme, siteConfig, handleCourseCreate, emptyView, role }) => {
+  loading: boolean;
+}> = ({ courses, currentTheme, siteConfig, handleCourseCreate, emptyView, role, loading }) => {
   const [tab, setTab] = useState("1");
+  const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
 
   const items: TabsProps["items"] = [
     {
       key: "1",
+      label: "Learning Paths",
+      children: (
+        <div className={styles.course__grid}>
+          {courses.map((c, index) => (
+            <CourseViewItem course={c} key={index} />
+          ))}
+        </div>
+      ),
+    },
+    {
+      key: "2",
       label: "Published Courses",
       children: (
         <div className={styles.course__grid}>
@@ -157,7 +172,7 @@ export const CoursesListView: FC<{
       ),
     },
     {
-      key: "2",
+      key: "3",
       label: `${role == "AUTHOR" ? "Authored Courses" : "All Courses"}`,
       children: (
         <>
@@ -185,7 +200,27 @@ export const CoursesListView: FC<{
   ];
   return (
     <div className={styles.courses__list}>
-      {role && role !== Role.STUDENT && (
+      {loading && (
+        <>
+          <h4>Courses</h4>
+          <div className={styles.course__grid}>
+            {getDummyArray(3).map((t, i) => {
+              return (
+                <Card
+                  key={i}
+                  className={styles.course__card}
+                  cover={
+                    <Skeleton.Image style={{ width: isMobile ? "Calc(100vw - 40px)" : "300px", height: "168px" }} />
+                  }
+                >
+                  <Skeleton />
+                </Card>
+              );
+            })}
+          </div>
+        </>
+      )}
+      {role && role !== Role.STUDENT && !loading && (
         <>
           <h4>Courses</h4>
           <Tabs
@@ -202,9 +237,9 @@ export const CoursesListView: FC<{
         </>
       )}
 
-      {role && role === Role.STUDENT && (
+      {role && role === Role.STUDENT && !loading && (
         <>
-          <h4>Courses</h4>
+          {isMobile && <h4>Courses</h4>}
           <div className={styles.course__grid}>
             {courses
               .filter((c) => c.state === StateType.ACTIVE)
@@ -215,7 +250,7 @@ export const CoursesListView: FC<{
         </>
       )}
 
-      {typeof role === "undefined" && courses.length > 0 && (
+      {typeof role === "undefined" && courses.length > 0 && !loading && (
         <div className={styles.course__grid}>
           {courses.map((c, index) => (
             <CourseViewItem course={c} key={index} />
@@ -223,7 +258,11 @@ export const CoursesListView: FC<{
         </div>
       )}
 
-      {typeof role === "undefined" && courses.length == 0 && <>{emptyView}</>}
+      {typeof role === "undefined" && courses.length == 0 && !loading && (
+        <Flex justify="center" align="center">
+          {emptyView}
+        </Flex>
+      )}
     </div>
   );
 };

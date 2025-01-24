@@ -23,8 +23,8 @@ COPY . .
 RUN npx prisma generate && yarn build 
 
 # Step 2: Prepare Nginx to serve the built app
-FROM node:20-alpine
-RUN apk add --no-cache nginx curl
+FROM node:20-slim
+RUN apt update && apt install -y nginx curl openssl
 # Set working directory for Nginx
 WORKDIR /opt/torqbit
 
@@ -34,7 +34,7 @@ COPY --from=builder /opt/torqbit /opt/torqbit
 
 # Copy custom Nginx configuration if needed (optional)
 COPY nginx.conf /etc/nginx/nginx.conf
-COPY academy.com /etc/nginx/sites-available/academy.com
+COPY academy.com /etc/nginx/sites-available/default
 
 # Expose the port Nginx will run on
 EXPOSE 80

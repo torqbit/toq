@@ -1,7 +1,7 @@
 import type { GetServerSidePropsContext, NextPage } from "next";
 import styles from "@/styles/Dashboard.module.scss";
 import React, { FC, useEffect, useState } from "react";
-import { Course, Role } from "@prisma/client";
+import { Course, Role, User } from "@prisma/client";
 import Courses from "@/components/Courses/Courses";
 import { Spin, message, Flex, Button } from "antd";
 
@@ -23,6 +23,7 @@ import { ICourseListItem } from "@/types/courses/Course";
 import { CoursesListView } from "@/components/Courses/CourseListView/CourseListView";
 import { useSession } from "next-auth/react";
 import { LoadingOutlined } from "@ant-design/icons";
+import { useMediaQuery } from "react-responsive";
 
 const CoursesView: FC<{
   courses: Course[];
@@ -56,10 +57,13 @@ const CoursesView: FC<{
 };
 
 const CoursesPage: NextPage<{ siteConfig: PageSiteConfig; userRole: Role }> = ({ siteConfig, userRole }) => {
-  const [courses, setCourses] = useState<ICourseListItem[]>([]);
+  const [courses, setCourses] = useState<ICourseListItem[]>();
   const [messageApi, contextMessageHolder] = message.useMessage();
   const [loading, setLoading] = useState<boolean>(false);
+  const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
+
   const router = useRouter();
+  const { data: user } = useSession();
   const { globalState } = useAppContext();
 
   useEffect(() => {
@@ -91,43 +95,86 @@ const CoursesPage: NextPage<{ siteConfig: PageSiteConfig; userRole: Role }> = ({
   return (
     <>
       {userRole ? (
-        <AppLayout siteConfig={siteConfig}>
-          {contextMessageHolder}
-          <section>
-            <CoursesListView
-              courses={courses}
+        <>
+          {userRole === Role.STUDENT ? (
+            <MarketingLayout
+              mobileHeroMinHeight={60}
+              showFooter={!isMobile}
               siteConfig={siteConfig}
-              currentTheme={globalState.theme || "light"}
-              handleCourseCreate={addCourse}
-              role={userRole}
-              emptyView={
-                <EmptyCourses size="300px" {...getIconTheme(globalState.theme || "light", siteConfig.brand)} />
+              heroSection={
+                <>
+                  {!isMobile && !loading && courses && (
+                    <DefaulttHero title="Courses" description="Expand Your Knowledge with Comprehensive Courses" />
+                  )}
+                </>
               }
-            />
-          </section>
-        </AppLayout>
-      ) : (
-        <MarketingLayout
-          siteConfig={siteConfig}
-          heroSection={<DefaulttHero title="Courses" description="Expand Your Knowledge with Comprehensive Courses" />}
-        >
-          {contextMessageHolder}
-          <Spin spinning={loading || !courses} indicator={<LoadingOutlined spin />} size="large">
-            <section>
-              <div className="page__wrapper">
+              user={{ ...user?.user, role: Role.STUDENT } as User}
+            >
+              {contextMessageHolder}
+              <Spin spinning={loading || !courses} indicator={<LoadingOutlined spin />} size="large">
+                <section>
+                  <div className="page__wrapper">
+                    <CoursesListView
+                      courses={courses || []}
+                      loading={loading || !courses}
+                      siteConfig={siteConfig}
+                      currentTheme={globalState.theme || "light"}
+                      handleCourseCreate={addCourse}
+                      role={userRole}
+                      emptyView={
+                        <EmptyCourses size="300px" {...getIconTheme(globalState.theme || "light", siteConfig.brand)} />
+                      }
+                    />
+                  </div>
+                </section>
+              </Spin>
+            </MarketingLayout>
+          ) : (
+            <AppLayout siteConfig={siteConfig}>
+              {contextMessageHolder}
+              <section>
                 <CoursesListView
-                  courses={courses}
+                  loading={loading || !courses}
+                  courses={courses || []}
                   siteConfig={siteConfig}
                   currentTheme={globalState.theme || "light"}
                   handleCourseCreate={addCourse}
+                  role={userRole}
                   emptyView={
                     <EmptyCourses size="300px" {...getIconTheme(globalState.theme || "light", siteConfig.brand)} />
                   }
                 />
-              </div>
-            </section>
-          </Spin>
-        </MarketingLayout>
+              </section>
+            </AppLayout>
+          )}
+        </>
+      ) : (
+        <>
+          <MarketingLayout
+            siteConfig={siteConfig}
+            heroSection={
+              <DefaulttHero title="Courses" description="Expand Your Knowledge with Comprehensive Courses" />
+            }
+          >
+            {contextMessageHolder}
+            <Spin spinning={loading || !courses} indicator={<LoadingOutlined spin />} size="large">
+              <section>
+                <div className="page__wrapper">
+                  <CoursesListView
+                    courses={courses || []}
+                    loading={loading || !courses}
+                    siteConfig={siteConfig}
+                    currentTheme={globalState.theme || "light"}
+                    handleCourseCreate={addCourse}
+                    emptyView={
+                      <EmptyCourses size="300px" {...getIconTheme(globalState.theme || "light", siteConfig.brand)} />
+                    }
+                  />
+                </div>
+              </section>
+            </Spin>
+          </MarketingLayout>
+        </>
       )}
     </>
   );

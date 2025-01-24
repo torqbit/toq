@@ -8,17 +8,19 @@ import PurifyContent from "@/components/PurifyContent/PurifyContent";
 interface QuestionCardProps {
   question: MultipleChoiceQA;
   selectedAnswer: any[];
+  isEvaluated: boolean;
   onAnswerSelect: (answer: string | number, id: string) => void;
 }
 
-const QuestionCard: React.FC<QuestionCardProps> = ({ question, selectedAnswer, onAnswerSelect }) => {
+const QuestionCard: React.FC<QuestionCardProps> = ({ question, selectedAnswer, onAnswerSelect, isEvaluated }) => {
   return (
     <div style={{ marginBottom: 15 }}>
       <Flex gap={5}>
         <h3>{question?.id}.</h3>
         <h3 style={{ maxWidth: "525px" }}>{question.title}</h3>
       </Flex>
-      <Flex gap={20} vertical={true}>
+      {question.description && <PurifyContent content={question.description as string} />}
+      <Flex gap={20} vertical={true} style={{ marginTop: 20 }}>
         {question.options.map((option) => (
           <MCQOption
             key={option.key}
@@ -31,12 +33,14 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, selectedAnswer, o
           />
         ))}
       </Flex>
-      <div className={style.question_explanation}>
-        <h5>Explanation</h5>
-        <p>
-          <PurifyContent content={question.description as string} />
-        </p>
-      </div>
+      {isEvaluated && question.answerExplanation && (
+        <div className={style.question_explanation}>
+          <h5>Explanation</h5>
+          <p>
+            <PurifyContent content={question.answerExplanation as string} />
+          </p>
+        </div>
+      )}
     </div>
   );
 };

@@ -2,6 +2,7 @@ import {
   $Enums,
   ConfigurationState,
   CourseRegistration,
+  CourseType,
   Order,
   orderStatus,
   paymentStatus,
@@ -393,12 +394,12 @@ export class PaymentManagemetService {
     const orders = await prisma.$queryRaw<
       any[]
     >`SELECT o.orderStatus as status,o.amount,o.updatedAt as paymentDate,o.productId,o.gatewayOrderId,o.currency,co.name as courseName,invoice.id as invoiceId FROM \`Order\` AS o  
-    INNER JOIN Course as co ON co.courseId = o.productId
-       LEFT OUTER JOIN Invoice as invoice ON invoice.studentId = ${studentId}  AND invoice.orderId = o.gatewayOrderId
-     WHERE o.studentId = ${studentId} AND o.updatedAt =  (SELECT MAX(updatedAt)
-    FROM \`Order\` AS b 
-    WHERE o.courseId = b.productId AND o.studentId = ${studentId}) ORDER BY o.updatedAt ASC`;
+    INNER JOIN Course as co ON co.courseId = o.productId AND co.coursePrice > 0 AND o.orderStatus = ${orderStatus.SUCCESS}
 
+    LEFT OUTER JOIN Invoice as invoice ON invoice.studentId = ${studentId}  AND invoice.orderId = o.gatewayOrderId 
+    WHERE o.studentId = ${studentId} AND o.updatedAt =  (SELECT MAX(updatedAt) 
+    FROM \`Order\` AS b 
+    WHERE o.productId = b.productId AND o.studentId = ${studentId}) ORDER BY o.updatedAt ASC`;
     return orders;
   };
 
@@ -408,7 +409,6 @@ export class PaymentManagemetService {
   ): Promise<APIResponse<PaymentApiResponse>> => {
     const currentTime = new Date();
     const latestOrder = await this.getLatestOrder(userConfig.studentId, courseConfig.courseId);
-
     /**
      * if payment is in success state
      */

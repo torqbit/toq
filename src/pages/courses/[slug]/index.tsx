@@ -6,7 +6,7 @@ import { GetServerSidePropsContext, NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { load } from "@cashfreepayments/cashfree-js";
-import { $Enums, CourseState, orderStatus, Role } from "@prisma/client";
+import { $Enums, CourseState, orderStatus, Role, User } from "@prisma/client";
 import styles from "@/styles/Preview.module.scss";
 import appConstant from "@/services/appConstant";
 import AddPhone from "@/components/AddPhone/AddPhone";
@@ -21,6 +21,8 @@ import prisma from "@/lib/prisma";
 import { PaymentManagemetService } from "@/services/payment/PaymentManagementService";
 import { getCourseDetailedView } from "@/actions/courses";
 import Preview from "@/components/Admin/Content/Preview";
+import { useSession } from "next-auth/react";
+import { useMediaQuery } from "react-responsive";
 
 const LearnCoursesPage: NextPage<{
   siteConfig: PageSiteConfig;
@@ -30,9 +32,11 @@ const LearnCoursesPage: NextPage<{
   lessons: CourseLessons[];
   courseId: number;
 }> = ({ siteConfig, userRole, course, courseViewDetail, lessons, courseId }) => {
+  const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
+
   const router = useRouter();
   const [form] = Form.useForm();
-
+  const { data: user } = useSession();
   const [courseDetail, setCourseDetail] = useState<CourseLessonAPIResponse>({
     success: lessons.length > 0,
     statusCode: lessons.length > 0 ? 200 : 404,
@@ -199,23 +203,41 @@ const LearnCoursesPage: NextPage<{
 
   return (
     <>
-      {!userRole ? (
+      {typeof userRole === "undefined" || userRole === Role.STUDENT ? (
         <>
           <MarketingLayout
-            siteConfig={siteConfig}
-            heroSection={
-              courseViewDetail && (
-                <Preview
-                  courseDetail={courseViewDetail}
-                  previewMode={false}
-                  handlePurchase={() => router.push(`/login?redirect=courses/${router.query.slug}`)}
-                  handleLessonRedirection={() => {}}
-                  paymentCallback={router.query.callback === "payment"}
-                  extraStyle={{ padding: "100px 0 50px" }}
-                />
-              )
+            mobileHeroMinHeight={60}
+            showFooter={!isMobile || userRole !== Role.STUDENT}
+            user={
+              userRole
+                ? ({
+                    id: user?.id,
+                    name: user?.user?.name || "",
+                    email: user?.user?.email || "",
+                    phone: user?.phone || "",
+                    role: userRole,
+                  } as User)
+                : undefined
             }
-          ></MarketingLayout>
+            siteConfig={siteConfig}
+          >
+            {courseViewDetail && (
+              <Preview
+                courseDetail={courseViewDetail}
+                previewMode={false}
+                handlePurchase={() => {
+                  userRole && userRole === Role.STUDENT
+                    ? handlePurchase(courseId)
+                    : router.push(`/login?redirect=courses/${router.query.slug}`);
+                }}
+                handleLessonRedirection={() => {
+                  userRole && userRole === Role.STUDENT && handleLessonRedirection(courseId);
+                }}
+                paymentCallback={router.query.callback === "payment"}
+                extraStyle={{ padding: "20px 0 50px" }}
+              />
+            )}
+          </MarketingLayout>
         </>
       ) : (
         <AppLayout siteConfig={siteConfig}>

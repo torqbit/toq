@@ -42,11 +42,18 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           content: content,
           updatedAt: new Date(),
         },
+        select: {
+          id: true,
+          content: true,
+        },
       });
 
-      return res
-        .status(200)
-        .json({ success: true, message: "Assignment has been saved", codeDetail: updateSavedAssignment.content });
+      return res.status(200).json(
+        new APIResponse(true, 200, "Assignment has been saved", {
+          codeDetail: updateSavedAssignment.content,
+          id: updateSavedAssignment.id,
+        })
+      );
     } else {
       const createSavedAssignment = await prisma.assignmentSubmission.create({
         data: {
@@ -57,13 +64,17 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           updatedAt: new Date(),
         },
         select: {
+          id: true,
           content: true,
         },
       });
 
-      return res
-        .status(200)
-        .json(new APIResponse(true, 200, "Assignment has been saved", { codeDetail: createSavedAssignment.content }));
+      return res.status(200).json(
+        new APIResponse(true, 200, "Assignment has been saved", {
+          codeDetail: createSavedAssignment.content,
+          id: createSavedAssignment.id,
+        })
+      );
     }
   } catch (error) {
     console.log(error);

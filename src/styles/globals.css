@@ -50,6 +50,10 @@ h6 {
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+
+a {
+  color: var(--btn-primary);
+}
 a:hover {
   color: var(--btn-primary);
 }
@@ -213,7 +217,6 @@ h6 {
 }
 
 a {
-  color: inherit;
   text-decoration: none;
 }
 
@@ -400,6 +403,11 @@ a {
     padding: 0px !important;
   }
 }
+.children__wrapper p,
+.hero__wrapper p {
+  font-size: 1.5rem;
+  line-height: 1.5;
+}
 
 .tabBarContainer {
   .ant-tabs-ink-bar {
@@ -542,6 +550,15 @@ a {
 }
 
 @media only screen and (max-width: 435px) {
+  .children__wrapper p,
+  .hero__wrapper p {
+    font-size: 1.2rem;
+    line-height: 1.5;
+  }
+  .page__wrapper {
+    width: 100vw;
+    margin: 0 auto;
+  }
   .events_content_wrapper {
     margin-bottom: 60px !important;
   }
@@ -636,11 +653,6 @@ a {
   margin-inline: 0;
   width: 100%;
   border-radius: 0;
-}
-
-.main_sider .ant-menu-inline .ant-menu-item {
-  height: 35px;
-  line-height: 35px;
 }
 
 .main_sider .ant-menu-item-selected,

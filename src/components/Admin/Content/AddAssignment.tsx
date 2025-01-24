@@ -81,7 +81,10 @@ const AddAssignment: FC<{
         (acc, currentValue) => Number(acc) + Number(currentValue.score),
         0
       );
-      if (sumOfGradingScore !== Number(assignmentForm.getFieldsValue().maximumScore)) {
+      if (
+        submissionType === AssignmentType.SUBJECTIVE &&
+        sumOfGradingScore !== Number(assignmentForm.getFieldsValue().maximumScore)
+      ) {
         return message.info("Ensure the sum of grading points equals the maximum points.");
       }
     }
@@ -151,6 +154,7 @@ const AddAssignment: FC<{
   };
 
   useEffect(() => {
+    setQuestions([createEmptyQuestion("1")]);
     if (isEdit) {
       AssignmentService.getAssignment(
         currResId,
@@ -225,6 +229,7 @@ const AddAssignment: FC<{
       maskClosable={false}
       closeIcon={true}
       onClose={() => {
+        setQuestions([createEmptyQuestion("1")]);
         currResId && !isEdit && onDeleteResource(currResId);
         setResourceDrawer(false);
         assignmentForm.resetFields();

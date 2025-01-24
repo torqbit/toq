@@ -16,6 +16,10 @@ export interface INavBarProps {
   brand: IBrandInfo;
   defaultNavlink?: string;
   homeLink: string;
+  previewMode?: boolean;
+  extraContent: React.ReactNode;
+  navBarWidth?: string | number;
+
   items: {
     title: string;
     link: string;

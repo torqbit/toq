@@ -1,6 +1,7 @@
 import { FC, useEffect, useState } from "react";
 import React from "react";
 import styles from "../../styles/Layout2.module.scss";
+import sidebar from "@/styles/Sidebar.module.scss";
 import Head from "next/head";
 import Sidebar from "../Sidebar/Sidebar";
 import { signOut, useSession } from "next-auth/react";
@@ -52,15 +53,23 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
   const responsiveNav = [
     {
       title: "Dashboard",
-      icon: SvgIcons.dashboard,
+      icon: (
+        <i style={{ fontSize: 18, color: "var(--font-secondary)", lineHeight: 0 }} className={styles.events_icon}>
+          {SvgIcons.dashboard}
+        </i>
+      ),
       link: "/dashboard",
       key: "dashboard",
     },
     {
-      title: "Course",
-      icon: SvgIcons.courses,
-      link: "/courses",
-      key: "courses",
+      title: "Academy",
+      icon: (
+        <i className={styles.events_icon} style={{ fontSize: 18 }}>
+          {SvgIcons.courses}
+        </i>
+      ),
+      link: "/academy",
+      key: "academy",
     },
     {
       title: "Events",
@@ -70,7 +79,11 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
     },
     {
       title: "Settings",
-      icon: SvgIcons.setting,
+      icon: (
+        <i style={{ fontSize: 18, color: "var(--font-secondary)", lineHeight: 0 }} className={styles.events_icon}>
+          {SvgIcons.setting}
+        </i>
+      ),
       link: "admin/settings",
       key: "settings",
     },
@@ -87,13 +100,21 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
     {
       label: <Link href="/dashboard">Dashboard</Link>,
       key: "dashboard",
-      icon: SvgIcons.dashboard,
+      icon: (
+        <i style={{ fontSize: 18, color: "var(--font-secondary)", lineHeight: 0 }} className={styles.events_icon}>
+          {SvgIcons.dashboard}
+        </i>
+      ),
     },
 
     {
-      label: <Link href="/courses">Courses</Link>,
-      key: "courses",
-      icon: SvgIcons.courses,
+      label: <Link href="/courses">Academy</Link>,
+      key: "academy",
+      icon: (
+        <i style={{ fontSize: 18 }} className={styles.events_icon}>
+          {SvgIcons.courses}
+        </i>
+      ),
     },
     {
       label: <Link href="/events">Events</Link>,
@@ -112,7 +133,7 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
           style={{ fontSize: 10, paddingTop: 1.5 }}
           size="small"
         >
-          {SvgIcons.notification}
+          <i style={{ lineHeight: 0, color: "var(--font-secondary)", fontSize: 18 }}>{SvgIcons.notification}</i>
         </Badge>
       ),
     },
@@ -122,32 +143,50 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
     {
       label: <Link href="/dashboard">Dashboard</Link>,
       key: "dashboard",
-      icon: SvgIcons.dashboard,
+      className: sidebar.menu__item,
+      icon: (
+        <i style={{ fontSize: 18, color: "var(--font-secondary)", lineHeight: 0 }} className={styles.events_icon}>
+          {SvgIcons.dashboard}
+        </i>
+      ),
     },
     {
-      label: <Link href="/admin/site/design">Site Design</Link>,
+      label: <Link href="/admin/site/design">Site Editor</Link>,
       key: "site",
+      className: sidebar.menu__item,
       icon: <i style={{ fontSize: 18 }}>{SvgIcons.site}</i>,
     },
     {
-      label: <Link href="/courses">Academy</Link>,
-      key: "courses",
-      icon: SvgIcons.courses,
+      label: <Link href="/academy">Academy</Link>,
+      key: "academy",
+      className: sidebar.menu__item,
+      icon: (
+        <i className={styles.events_icon} style={{ fontSize: 18 }}>
+          {SvgIcons.courses}
+        </i>
+      ),
     },
     {
       label: <Link href="/admin/settings">Settings</Link>,
       key: "settings",
-      icon: SvgIcons.setting,
+      className: sidebar.menu__item,
+      icon: (
+        <i style={{ fontSize: 18, color: "var(--font-secondary)", lineHeight: 0 }} className={styles.events_icon}>
+          {SvgIcons.setting}
+        </i>
+      ),
     },
     {
       label: <Link href="/events">Events</Link>,
       key: "events",
+      className: sidebar.menu__item,
       icon: <i style={{ fontSize: 18 }}>{SvgIcons.events}</i>,
     },
 
     {
       label: <Link href="/notifications">Notifications</Link>,
       key: "notifications",
+      className: sidebar.menu__item,
       icon: (
         <Badge
           color="blue"
@@ -156,15 +195,24 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
           style={{ fontSize: 10, paddingTop: 1.5 }}
           size="small"
         >
-          {SvgIcons.notification}
+          <i style={{ lineHeight: 0, color: "var(--font-secondary)", fontSize: 18 }}>{SvgIcons.notification}</i>
         </Badge>
       ),
     },
   ];
+
   const onChangeSelectedBar = () => {
     let selectedMenu = router.pathname.split("/")[1];
     if (selectedMenu == "admin") {
-      selectedMenu = router.pathname.split("/")[2];
+      if (router.pathname.split("/")[3] === "path") {
+        selectedMenu = "academy";
+      } else {
+        selectedMenu = router.pathname.split("/")[2];
+      }
+    }
+
+    if (router.pathname.startsWith("/academy")) {
+      selectedMenu = "academy";
     }
     dispatch({ type: "SET_SELECTED_SIDER_MENU", payload: selectedMenu as ISiderMenu });
   };

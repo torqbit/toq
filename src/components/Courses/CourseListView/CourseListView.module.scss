@@ -11,6 +11,7 @@
   width: 300px;
 
   .meta {
+    min-height: 130px;
     & > div > div:last-child {
       -webkit-line-clamp: 2;
       display: -webkit-box;
@@ -42,5 +43,44 @@
     height: auto;
     max-height: 168px;
     object-fit: cover;
+  }
+}
+
+@media only screen and (max-width: 435px) {
+  .course__grid {
+    grid-template-columns: 1fr;
+    width: 80vw;
+    margin: 0 auto 60px auto;
+  }
+  .course__card {
+    width: 80vw;
+    margin: 0 auto;
+
+    .card__footer {
+      margin: 15px -20px -20px;
+      padding: 10px 20px;
+      border-top: 1px solid var(--border-color);
+    }
+    .invalid__img {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: calc(100vw - 40px);
+
+      height: auto;
+      height: 168px;
+      border-bottom: 1px solid var(--border-color);
+      i {
+        font-size: 40px;
+        color: var(--font-secondary);
+      }
+    }
+    .card__img {
+      width: calc(100vw - 40px);
+
+      height: auto;
+      max-height: 168px;
+      object-fit: cover;
+    }
   }
 }

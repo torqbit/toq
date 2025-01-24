@@ -56,6 +56,7 @@ const darkThemeConfig = (siteConfig: PageSiteConfig) => {
       activeBorderColor: `${siteConfig.brand?.brandColor}`,
       colorTextDisabled: themeColors.dark.fontSecondary,
       colorTextDescription: themeColors.dark.fontSecondary,
+      colorLink: `${siteConfig.brand?.brandColor}`,
     },
 
     Badge: {

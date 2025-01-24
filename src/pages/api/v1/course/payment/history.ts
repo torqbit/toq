@@ -6,7 +6,6 @@ import { withAuthentication } from "@/lib/api-middlewares/with-authentication";
 import { $Enums, Order } from "@prisma/client";
 import { getCookieName } from "@/lib/utils";
 import { getToken } from "next-auth/jwt";
-import { CashFreeConfig, CoursePaymentConfig, UserConfig } from "@/types/payment";
 import { PaymentManagemetService } from "@/services/payment/PaymentManagementService";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {

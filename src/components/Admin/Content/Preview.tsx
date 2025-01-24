@@ -3,7 +3,7 @@ import { themeColors } from "@/services/darkThemeConfig";
 import styles from "@/styles/Preview.module.scss";
 import { IChapterView, ICourseDetailView } from "@/types/courses/Course";
 import { LoadingOutlined, UserOutlined } from "@ant-design/icons";
-import { orderStatus, ResourceContentType, Role } from "@prisma/client";
+import { ResourceContentType, Role } from "@prisma/client";
 import { Avatar, Button, Collapse, CollapseProps, Flex, Spin, Tabs } from "antd";
 
 import { CSSProperties, FC } from "react";
@@ -43,13 +43,15 @@ const Preview: FC<{
   paymentCallback?: boolean;
   extraStyle?: CSSProperties;
 }> = ({ courseDetail, previewMode, handlePurchase, handleLessonRedirection, paymentCallback, extraStyle }) => {
+  const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
+
   return (
     <section className={styles.preview_container} style={extraStyle}>
       <h4>{courseDetail.name}</h4>
       <p>
         A course by {courseDetail.author.name}, {courseDetail.author.designation}
       </p>
-      <Flex align="flex-start" justify="flex-start" gap={20}>
+      <Flex align="flex-start" justify="flex-start" vertical={isMobile} gap={20}>
         <div>
           <div className={styles.video_container}>
             <Flex style={{ height: "100%", width: "100%", position: "absolute" }} align="center" justify="center">
@@ -172,7 +174,9 @@ const Preview: FC<{
                       )}
                       {!paymentCallback && (
                         <>
-                          <i style={{ fontSize: "3.5rem", lineHeight: 0 }}>{SvgIcons.checkBadgeFilled}</i>
+                          <i style={{ fontSize: "3.5rem", lineHeight: 0, color: themeColors.commons.success }}>
+                            {SvgIcons.checkBadgeFilled}
+                          </i>
                           <h4>You have already purchased this course on {courseDetail.enrolmentDate}</h4>
                         </>
                       )}

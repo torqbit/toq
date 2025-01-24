@@ -1,6 +1,7 @@
 //**** DB CONFIG ****//
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl", "darwin", "windows"]
 }
 
 datasource db {
@@ -37,24 +38,26 @@ model User {
   isActive      Boolean   @default(true)
   role          Role      @default(STUDENT)
 
-  dateJoined           DateTime               @default(now())
-  createdAt            DateTime               @default(now())
+  dateJoined           DateTime             @default(now())
+  createdAt            DateTime             @default(now())
   CourseRegistration   CourseRegistration[]
   account              Account[]
   sessions             Session[]
-  course               Course[]               @relation("userCourse")
+  course               Course[]             @relation("userCourse")
   discussion           Discussion[]
-  fromUserNotification Notification[]         @relation("fromUser")
-  toUserNotification   Notification[]         @relation("toUser")
+  fromUserNotification Notification[]       @relation("fromUser")
+  toUserNotification   Notification[]       @relation("toUser")
   CourseProgress       CourseProgress[]
   conversation         Conversation[]
   blogs                Blog[]
-  orders               Order[]
-  invoices             Invoice[]
-  submissions          AssignmentSubmission[]
-  evaluations          AssignmentEvaluation[]
-  events               Events[]
-  eventsRegistered     EventRegistration[]
+  learningPaths        LearningPath[]
+
+  orders           Order[]
+  invoices         Invoice[]
+  submissions      AssignmentSubmission[]
+  evaluations      AssignmentEvaluation[]
+  events           Events[]
+  eventsRegistered EventRegistration[]
 }
 
 //****** User Schema End ******//
@@ -163,7 +166,8 @@ model Course {
   chapters         Chapter[]
   product          Product              @relation(name: "course_product", fields: [courseId], references: [productId])
 
-  courseProgress CourseProgress[]
+  courseProgress      CourseProgress[]
+  learningPathCourses LearningPathCourses[]
 
   @@unique([slug])
   @@unique([courseId, name])
@@ -468,13 +472,46 @@ enum paymentMode {
 enum ProductType {
   COURSE
   EVENT
+  LEARNING_PATH
 }
 
 model Product {
-  productId Int         @id @default(autoincrement())
-  ptype     ProductType
-  orders    Order[]
-  course    Course?     @relation(name: "course_product")
+  productId    Int           @id @default(autoincrement())
+  ptype        ProductType
+  orders       Order[]
+  course       Course?       @relation(name: "course_product")
+  learningPath LearningPath? @relation(name: "learning_path_product")
+}
+
+model LearningPath {
+  id                  Int
+  title               String
+  description         String
+  banner              String
+  attributes          Json?
+  price               Int                   @default(0)
+  state               StateType             @default(DRAFT)
+  authorId            String
+  slug                String
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @default(now())
+  author              User                  @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  product             Product               @relation(name: "learning_path_product", fields: [id], references: [productId], onDelete: Cascade)
+  learningPathCourses LearningPathCourses[]
+
+  @@unique([id])
+  @@index([authorId])
+}
+
+model LearningPathCourses {
+  learningPathId Int
+  courseId       Int
+  sequenceId     Int
+  path           LearningPath @relation(fields: [learningPathId], references: [id], onDelete: Cascade)
+  course         Course       @relation(fields: [courseId], references: [courseId], onDelete: Cascade)
+
+  @@unique([learningPathId, courseId])
+  @@index([courseId])
 }
 
 model Order {

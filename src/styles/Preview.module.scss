@@ -164,6 +164,16 @@
     padding: 20px;
     min-height: 100vh;
     margin-bottom: 60px;
+    max-width: 90vw;
+    margin: 0 auto;
+
+    .course__details {
+      width: 90vw;
+    }
+    .course__offerings {
+      width: 90vw;
+      margin-bottom: 40px;
+    }
 
     .coursehHeaderLinks {
       .courseName {

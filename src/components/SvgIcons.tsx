@@ -623,7 +623,8 @@ export default {
   dashboard: (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={18}
+      width={"1em"}
+      height={"1em"}
       fill="none"
       viewBox="0 0 24 24"
       strokeWidth={1.5}
@@ -784,7 +785,8 @@ export default {
       viewBox="0 0 24 24"
       strokeWidth={1.5}
       stroke="currentColor"
-      width={18}
+      width={"1em"}
+      height={"1em"}
     >
       <path
         strokeLinecap="round"
@@ -863,7 +865,8 @@ export default {
   setting: (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={18}
+      width={"1em"}
+      widths={"1em"}
       fill="none"
       viewBox="0 0 24 24"
       strokeWidth={1.5}
@@ -881,7 +884,8 @@ export default {
   notification: (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={18}
+      width={"1em"}
+      height={"1em"}
       fill="none"
       viewBox="0 0 24 24"
       strokeWidth={1.5}
@@ -1009,8 +1013,8 @@ export default {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
-      width={25}
-      height={25}
+      width={"1em"}
+      height={"1em"}
       viewBox="0 0 24 24"
       strokeWidth={1.5}
       stroke="currentColor"
@@ -1027,8 +1031,8 @@ export default {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
-      width={25}
-      height={25}
+      width={"1em"}
+      height={"1em"}
       viewBox="0 0 24 24"
       strokeWidth={1.5}
       stroke="currentColor"
@@ -1540,19 +1544,16 @@ export default {
   ),
   verticalAdjustment: (
     <svg
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      height={"1em"}
-      width={"1em"}
+      width="1em"
+      height="1em"
       viewBox="0 0 24 24"
-      strokeWidth={1.5}
+      fill="none"
       stroke="currentColor"
-      className="size-6"
+      xmlns="http://www.w3.org/2000/svg"
     >
       <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M6 13.5V3.75m0 9.75a1.5 1.5 0 0 1 0 3m0-3a1.5 1.5 0 0 0 0 3m0 3.75V16.5m12-3V3.75m0 9.75a1.5 1.5 0 0 1 0 3m0-3a1.5 1.5 0 0 0 0 3m0 3.75V16.5m-6-9V3.75m0 3.75a1.5 1.5 0 0 1 0 3m0-3a1.5 1.5 0 0 0 0 3m0 9.75V10.5"
+        d="M16 17C17.1046 17 18 17.8954 18 19C18 20.1046 17.1046 21 16 21C14.8954 21 14 20.1046 14 19C14 17.8954 14.8954 17 16 17ZM8 17C9.10457 17 10 17.8954 10 19C10 20.1046 9.10457 21 8 21C6.89543 21 6 20.1046 6 19C6 17.8954 6.89543 17 8 17ZM16 10C17.1046 10 18 10.8954 18 12C18 13.1046 17.1046 14 16 14C14.8954 14 14 13.1046 14 12C14 10.8954 14.8954 10 16 10ZM8 10C9.10457 10 10 10.8954 10 12C10 13.1046 9.10457 14 8 14C6.89543 14 6 13.1046 6 12C6 10.8954 6.89543 10 8 10ZM16 3C17.1046 3 18 3.89543 18 5C18 6.10457 17.1046 7 16 7C14.8954 7 14 6.10457 14 5C14 3.89543 14.8954 3 16 3ZM8 3C9.10457 3 10 3.89543 10 5C10 6.10457 9.10457 7 8 7C6.89543 7 6 6.10457 6 5C6 3.89543 6.89543 3 8 3Z"
+        fill="currentColor"
       />
     </svg>
   ),
@@ -1678,7 +1679,7 @@ export default {
     </svg>
   ),
   lock: (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" height={20} width={20}>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" height={"1em"} width={"1em"}>
       <path
         fillRule="evenodd"
         d="M12 1.5a5.25 5.25 0 0 0-5.25 5.25v3a3 3 0 0 0-3 3v6.75a3 3 0 0 0 3 3h10.5a3 3 0 0 0 3-3v-6.75a3 3 0 0 0-3-3v-3c0-2.9-2.35-5.25-5.25-5.25Zm3.75 8.25v-3a3.75 3.75 0 1 0-7.5 0v3h7.5Z"

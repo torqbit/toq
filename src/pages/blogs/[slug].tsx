@@ -42,7 +42,9 @@ const BlogPage: FC<IProps> = ({ user, htmlData, blogData, description, currentUr
 
   return (
     <MarketingLayout
+      mobileHeroMinHeight={60}
       siteConfig={siteConfig}
+      showFooter={!isMobile}
       user={user}
       heroSection={
         <section className={styles.blogPageWrapper}>
