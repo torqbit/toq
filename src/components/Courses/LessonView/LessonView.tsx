@@ -608,6 +608,7 @@ const LessonView: FC<{ siteConfig: PageSiteConfig; courseId: number; marketingLa
                         assignmentFiles={[] as string[]}
                         updateAssignmentWatchedStatus={updateAssignmentWatchedStatus}
                         chapterSeqId={Number(currentLesson.chapterSeq)}
+                        onMarkAsCompleted={onMarkAsCompleted}
                       />
                     </div>
                   ) : (

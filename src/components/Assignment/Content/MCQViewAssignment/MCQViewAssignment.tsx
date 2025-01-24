@@ -13,7 +13,7 @@ const MCQViewAssignment: FC<{
       <div style={{ marginBottom: 25 }} key={question?.id}>
         <QuestionViewCard
           question={question}
-          selectedAnswer={selectedAnswers[Number(question?.id)] || null}
+          selectedAnswer={(selectedAnswers && selectedAnswers[Number(question?.id)]) || null}
           onAnswerSelect={handleSelectAnswer}
           isEvaluated={isEvaluated}
         />
