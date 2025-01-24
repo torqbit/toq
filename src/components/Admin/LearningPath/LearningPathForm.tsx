@@ -82,7 +82,6 @@ const LearningPathForm: FC<{
     LearningPathSerivices.delete(
       pathId,
       (result) => {
-        console.log(result);
         messageApi.success(result.message);
         router.push("/academy");
       },

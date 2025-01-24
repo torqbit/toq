@@ -38,7 +38,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       return res.status(404).json(new APIResponse(false, 404, "Learning path has been already deleted or not found."));
     }
   } catch (error) {
-    console.log(error);
     return errorHandler(error, res);
   }
 };
