@@ -31,11 +31,10 @@ class LearningPathServices {
     });
   };
   listPath = (
-    state: StateType,
     onSuccess: (response: APIResponse<ILearningPathDetail[]>) => void,
     onFailure: (message: string) => void
   ) => {
-    getFetch(`/api/v1/learningPath/list?state=${state}`).then((result) => {
+    getFetch(`/api/v1/learningPath/list`).then((result) => {
       result.json().then((r) => {
         const apiResponse = r as APIResponse<ILearningPathDetail[]>;
         apiResponse.body ? onSuccess(apiResponse) : onFailure(`${apiResponse.error}`);

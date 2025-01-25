@@ -24,4 +24,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default withMethods(["GET"], withAuthentication(handler));
+export default withMethods(["GET"], handler);

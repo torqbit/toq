@@ -15,6 +15,7 @@ import {
   IEventAccessMailConfig,
   IEventEmailConfig,
   IFeedBackConfig,
+  ILearningEnrollmentEmailConfig,
   INewLessonConfig,
   ITestEmailConfig,
   IWelcomeEmailConfig,
@@ -32,6 +33,7 @@ import { emailConstantsVariable } from "./cms/email/EmailManagementService";
 import SecretsManager from "./secrets/SecretsManager";
 import { getSiteConfig } from "./getSiteConfig";
 import { PageSiteConfig } from "./siteConstant";
+import LearningEnrolmentEmail from "@/components/Email/LearningEnrollmentEmail";
 
 export const getEmailErrorMessage = (response: string, message?: string) => {
   let errResponse;
@@ -86,6 +88,8 @@ class MailerService {
         return this.sendWelcomeMail(config as IWelcomeEmailConfig);
       case "COURSE_ENROLMENT":
         return this.sendEnrolmentMail(config as IEnrolmentEmailConfig);
+      case "LEARNING_ENROLMENT":
+        return this.sendLearningEnrolmentMail(config as ILearningEnrollmentEmailConfig);
       case "COURSE_COMPLETION":
         return this.sendCompletionMail(config as ICompletionEmailConfig);
       case "FEEDBACK":
@@ -140,6 +144,35 @@ class MailerService {
       });
       return { success: true, message: "Email sent successfully" };
     } catch (error: any) {
+      return { success: false, error: `Error sending email:${getEmailErrorMessage(error.command)}` };
+    }
+  }
+
+  async sendLearningEnrolmentMail(config: ILearningEnrollmentEmailConfig) {
+    try {
+      const htmlString = render(LearningEnrolmentEmail({ configData: config }));
+      const mailConfig = {
+        to: config.email,
+        from: `${this.siteConfig.brand?.name} <${this.SMTP_FROM_EMAIL}>`,
+        subject: `Get Started: ${config.learning.name}`,
+        html: htmlString,
+      };
+      if (config.pdfPath) {
+        Object.assign(mailConfig, {
+          attachments: [
+            {
+              filename: "invoice.pdf",
+              path: config.pdfPath,
+              contentType: "application/pdf",
+            },
+          ],
+        });
+      }
+      const sendMail = await this.transporter.sendMail(mailConfig);
+
+      return { success: true, message: "Email sent successfully" };
+    } catch (error: any) {
+      console.error(error, "enrolment email sending error");
       return { success: false, error: `Error sending email:${getEmailErrorMessage(error.command)}` };
     }
   }

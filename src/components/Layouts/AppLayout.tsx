@@ -211,7 +211,11 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
       }
     }
 
-    if (router.pathname.startsWith("/academy") || router.pathname.startsWith("/path")) {
+    if (
+      router.pathname.startsWith("/academy") ||
+      router.pathname.startsWith("/path") ||
+      router.pathname.startsWith("/courses")
+    ) {
       selectedMenu = "academy";
     }
     dispatch({ type: "SET_SELECTED_SIDER_MENU", payload: selectedMenu as ISiderMenu });
@@ -225,6 +229,13 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
       } else {
         selectedMenu = router.pathname.split("/")[2];
       }
+    }
+    if (
+      router.pathname.startsWith("/academy") ||
+      router.pathname.startsWith("/path") ||
+      router.pathname.startsWith("/courses")
+    ) {
+      selectedMenu = "academy";
     }
 
     dispatch({ type: "SET_NAVBAR_MENU", payload: selectedMenu as IResponsiveNavMenu });

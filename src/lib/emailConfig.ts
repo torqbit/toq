@@ -14,6 +14,14 @@ export interface IEnrolmentEmailConfig {
   course: { name: string; thumbnail: string };
 }
 
+export interface ILearningEnrollmentEmailConfig {
+  name: string;
+  url: string;
+  email: string;
+  pdfPath?: string;
+  learning: { name: string; thumbnail: string };
+}
+
 export interface IEventEmailConfig {
   name: string;
   email: string;

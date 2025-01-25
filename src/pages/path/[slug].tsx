@@ -72,46 +72,47 @@ const LearnCoursesPage: NextPage<{
     );
   };
 
-  const handlePurchase = async (courseId: number) => {
-    // setLoading(true);
-    // try {
-    //   const res = await postFetch(
-    //     {
-    //       courseId: courseId,
-    //     },
-    //     "/api/v1/course/enroll"
-    //   );
-    //   const result = (await res.json()) as IResponse;
-    //   if (res.ok && result.success) {
-    //     if (detail?.price === 0) {
-    //       setLoading(false);
-    //       setRefresh(!refresh);
-    //       modal.success({
-    //         title: result.message,
-    //         onOk: () => {
-    //           handleLessonRedirection(courseId);
-    //         },
-    //       });
-    //     } else if (courseDetail?.course.courseType === $Enums.CourseType.PAID) {
-    //       handleCheckout(result.gatewayResponse.sessionId, result.gatewayName);
-    //     }
-    //   } else {
-    //     if (result.alreadyEnrolled) {
-    //       router.replace(`/courses/${router.query.slug}/lesson/${nextLessonId}`);
-    //       setLoading(false);
-    //     } else {
-    //       if (result.phoneNotFound && result.error) {
-    //         setModal({ active: true, message: result.error });
-    //       } else {
-    //         messageApi.error(result.error);
-    //       }
-    //       setLoading(false);
-    //     }
-    //   }
-    // } catch (err: any) {
-    //   messageApi.error("Error while enrolling course ", err?.message);
-    //   setLoading(false);
-    // }
+  const handlePurchase = async (pathId: number) => {
+    setLoading(true);
+    try {
+      const res = await postFetch(
+        {
+          pathId: pathId,
+        },
+        "/api/v1/learningPath/enroll"
+      );
+      const result = (await res.json()) as IResponse;
+      if (res.ok && result.success) {
+        if (detail?.price === 0) {
+          setLoading(false);
+          setRefresh(!refresh);
+          // modal.success({
+          //   title: result.message,
+          //   onOk: () => {
+          //     handleLessonRedirection(courseId);
+          //   },
+          // });
+        } else if (detail?.price > 0) {
+          // handleCheckout(result.gatewayResponse.sessionId, result.gatewayName);
+        }
+      } else {
+        // if (result.alreadyEnrolled) {
+        //   router.replace(`/courses/${router.query.slug}/lesson/${nextLessonId}`);
+        //   setLoading(false);
+        // } else {
+        //   if (result.phoneNotFound && result.error) {
+        //     setModal({ active: true, message: result.error });
+        //   } else {
+        //     messageApi.error(result.error);
+        //   }
+        //   setLoading(false);
+        // }
+      }
+      setLoading(false);
+    } catch (err: any) {
+      messageApi.error("Error while enrolling course ", err?.message);
+      setLoading(false);
+    }
   };
 
   const onCloseAlert = () => {
