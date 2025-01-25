@@ -50,7 +50,7 @@ const CourseList: FC<{ courses: ILearningCourseDetail[] }> = ({ courses }) => {
 const LearningPathDetail: FC<{
   detail: ILearningPreviewDetail;
   previewMode: boolean;
-  handlePurchase: (courseId: number) => void;
+  handlePurchase: (pathId: number) => void;
   handleLessonRedirection: (courseId: number) => void;
   paymentCallback?: boolean;
   extraStyle?: CSSProperties;
@@ -109,7 +109,7 @@ const LearningPathDetail: FC<{
                 {detail.price == 0 && (
                   <>
                     <h2>FREE</h2>
-                    <Button type="primary" style={{ width: 200 }}>
+                    <Button onClick={() => handlePurchase(detail.id)} type="primary" style={{ width: 200 }}>
                       Enroll for free
                     </Button>
                   </>
@@ -131,7 +131,7 @@ const LearningPathDetail: FC<{
             {/* Display the price and button for the non-preview mode */}
             {!previewMode && (
               <>
-                {detail.role === Role.NOT_ENROLLED && (
+                {detail.role === Role.STUDENT && (
                   <>
                     <Flex gap={10} align="center" justify="center">
                       {detail.price > 0 && <div className={styles.pricing__currency}>{detail.price}</div>}
@@ -163,7 +163,7 @@ const LearningPathDetail: FC<{
                     </Button>
                   </>
                 )}
-                {detail.role === Role.STUDENT && (
+                {/* {detail.role === Role.STUDENT && (
                   <>
                     <Flex gap={10} align="center" vertical justify="center">
                       {paymentCallback && paymentCallback && (
@@ -192,10 +192,10 @@ const LearningPathDetail: FC<{
                       style={{ width: 200 }}
                       onClick={(e) => handleLessonRedirection(detail.id)}
                     >
-                      Go to Course
+                      Go to Learning
                     </Button>
                   </>
-                )}
+                )} */}
               </>
             )}
           </div>

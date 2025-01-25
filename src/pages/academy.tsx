@@ -40,10 +40,9 @@ const AcademyPage: NextPage<{ siteConfig: PageSiteConfig; userRole: Role; pathLi
   const { data: user } = useSession();
   const { globalState } = useAppContext();
 
-  const getPathList = (state: StateType) => {
+  const getPathList = () => {
     setLoading(true);
     LearningPathSerivices.listPath(
-      "ACTIVE",
       (response) => {
         if (response.success && response.body) {
           setPathListData(response.body);
@@ -70,7 +69,7 @@ const AcademyPage: NextPage<{ siteConfig: PageSiteConfig; userRole: Role; pathLi
               siteConfig={siteConfig}
               heroSection={
                 <>
-                  {!isMobile && !loading && pathListData && (
+                  {!isMobile && pathListData && (
                     <DefaulttHero
                       title="Learning Paths"
                       description="Expand Your Knowledge with Comprehensive Learning path"
@@ -81,22 +80,21 @@ const AcademyPage: NextPage<{ siteConfig: PageSiteConfig; userRole: Role; pathLi
               user={{ ...user?.user, role: Role.STUDENT } as User}
             >
               {contextMessageHolder}
-              <Spin spinning={loading || !pathListData} indicator={<LoadingOutlined spin />} size="large">
-                <section>
-                  <div className="page__wrapper">
-                    <LearnListView
-                      pathList={pathListData || []}
-                      loading={loading || !pathListData}
-                      siteConfig={siteConfig}
-                      currentTheme={globalState.theme || "light"}
-                      role={userRole}
-                      emptyView={
-                        <EmptyCourses size="300px" {...getIconTheme(globalState.theme || "light", siteConfig.brand)} />
-                      }
-                    />
-                  </div>
-                </section>
-              </Spin>
+              <section>
+                <div className="page__wrapper">
+                  <LearnListView
+                    pathList={pathListData || []}
+                    loading={loading || !pathListData}
+                    siteConfig={siteConfig}
+                    currentTheme={globalState.theme || "light"}
+                    role={userRole}
+                    getPathList={getPathList}
+                    emptyView={
+                      <EmptyCourses size="300px" {...getIconTheme(globalState.theme || "light", siteConfig.brand)} />
+                    }
+                  />
+                </div>
+              </section>
             </MarketingLayout>
           ) : (
             <AppLayout siteConfig={siteConfig}>
@@ -108,6 +106,7 @@ const AcademyPage: NextPage<{ siteConfig: PageSiteConfig; userRole: Role; pathLi
                   siteConfig={siteConfig}
                   currentTheme={globalState.theme || "light"}
                   role={userRole}
+                  getPathList={getPathList}
                   emptyView={
                     <EmptyCourses size="300px" {...getIconTheme(globalState.theme || "light", siteConfig.brand)} />
                   }
@@ -128,22 +127,21 @@ const AcademyPage: NextPage<{ siteConfig: PageSiteConfig; userRole: Role; pathLi
             }
           >
             {contextMessageHolder}
-            <Spin spinning={loading || !pathListData} indicator={<LoadingOutlined spin />} size="large">
-              <section>
-                <div className="page__wrapper">
-                  <LearnListView
-                    pathList={pathListData || []}
-                    loading={loading || !pathListData}
-                    siteConfig={siteConfig}
-                    currentTheme={globalState.theme || "light"}
-                    role={userRole}
-                    emptyView={
-                      <EmptyCourses size="300px" {...getIconTheme(globalState.theme || "light", siteConfig.brand)} />
-                    }
-                  />
-                </div>
-              </section>
-            </Spin>
+            <section>
+              <div className="page__wrapper">
+                <LearnListView
+                  pathList={pathListData || []}
+                  loading={loading || !pathListData}
+                  siteConfig={siteConfig}
+                  currentTheme={globalState.theme || "light"}
+                  role={userRole}
+                  getPathList={getPathList}
+                  emptyView={
+                    <EmptyCourses size="300px" {...getIconTheme(globalState.theme || "light", siteConfig.brand)} />
+                  }
+                />
+              </div>
+            </section>
           </MarketingLayout>
         </>
       )}

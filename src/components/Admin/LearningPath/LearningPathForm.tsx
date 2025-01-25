@@ -125,7 +125,7 @@ const LearningPathForm: FC<{
               <Popconfirm
                 title={`${pathId ? "Delete" : "Discard"} the learningPath`}
                 description={`Are you sure to ${pathId ? "Delete" : "Discard"} this entire learningPath?`}
-                onConfirm={() => (pathId ? onDiscard(pathId) : router.push("/dashboard"))}
+                onConfirm={() => (pathId ? onDiscard(pathId) : router.push("/academy"))}
                 okText="Yes"
                 cancelText="No"
               >
