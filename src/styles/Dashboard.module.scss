@@ -238,9 +238,10 @@
       }
 
       .upload__thumbnail {
-        & > div {
-          height: 178px;
-          width: 318px;
+        width: 250px;
+        & > span {
+          height: auto;
+          width: 350px;
           position: relative;
         }
         right: 50%;

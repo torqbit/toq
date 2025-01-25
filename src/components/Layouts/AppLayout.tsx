@@ -62,14 +62,14 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
       key: "dashboard",
     },
     {
-      title: "Course",
+      title: "Academy",
       icon: (
         <i className={styles.events_icon} style={{ fontSize: 18 }}>
           {SvgIcons.courses}
         </i>
       ),
-      link: "/courses",
-      key: "courses",
+      link: "/academy",
+      key: "academy",
     },
     {
       title: "Events",
@@ -108,8 +108,8 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
     },
 
     {
-      label: <Link href="/courses">Courses</Link>,
-      key: "courses",
+      label: <Link href="/courses">Academy</Link>,
+      key: "academy",
       icon: (
         <i style={{ fontSize: 18 }} className={styles.events_icon}>
           {SvgIcons.courses}
@@ -157,8 +157,8 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
       icon: <i style={{ fontSize: 18 }}>{SvgIcons.site}</i>,
     },
     {
-      label: <Link href="/courses">Academy</Link>,
-      key: "courses",
+      label: <Link href="/academy">Academy</Link>,
+      key: "academy",
       className: sidebar.menu__item,
       icon: (
         <i className={styles.events_icon} style={{ fontSize: 18 }}>
@@ -200,10 +200,19 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
       ),
     },
   ];
+
   const onChangeSelectedBar = () => {
     let selectedMenu = router.pathname.split("/")[1];
     if (selectedMenu == "admin") {
-      selectedMenu = router.pathname.split("/")[2];
+      if (router.pathname.split("/")[3] === "path") {
+        selectedMenu = "academy";
+      } else {
+        selectedMenu = router.pathname.split("/")[2];
+      }
+    }
+
+    if (router.pathname.startsWith("/academy")) {
+      selectedMenu = "academy";
     }
     dispatch({ type: "SET_SELECTED_SIDER_MENU", payload: selectedMenu as ISiderMenu });
   };

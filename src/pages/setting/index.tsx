@@ -219,10 +219,8 @@ const Setting: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   ];
 
   useEffect(() => {
-
     onChange(router.query.tab as string);
   }, []);
-
 
   return (
     <>
@@ -247,9 +245,11 @@ const Setting: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
 
           <section
             className={styleLayout.setting_content}
-
-            style={{ maxWidth: isMobile ? "100vw" : "var(--marketing-container-width)",  margin: "0 auto", padding: "20px 0" }}
-
+            style={{
+              maxWidth: isMobile ? "80vw" : "var(--marketing-container-width)",
+              margin: "0 auto",
+              padding: "20px 0",
+            }}
           >
             <h3>Setting</h3>
             <Tabs activeKey={activeKey} className="content_tab" items={items} onChange={onChange} />

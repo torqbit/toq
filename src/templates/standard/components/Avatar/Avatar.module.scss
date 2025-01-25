@@ -29,3 +29,22 @@
     }
   }
 }
+@media only screen and (max-width: 435px) {
+  .avatar__container {
+    .avatar__profile {
+      height: 32px;
+      width: 32px;
+      padding: 4px;
+    }
+    .avatar__name {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      color: var(--font-secondary);
+      span {
+        color: #cdcdcd;
+        font-size: 12px;
+      }
+    }
+  }
+}

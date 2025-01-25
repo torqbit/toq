@@ -780,16 +780,6 @@
   color: #000;
 }
 
-.assignment_footer {
-  position: absolute;
-  bottom: -10px;
-  padding: 0 20px;
-  left: -50px;
-  height: 58px;
-  width: calc(100vw - 650px);
-  background-color: var(--bg-primary);
-}
-
 @media only screen and (max-width: 435px) {
   .learn_resource_page {
     .resource_wrapper {

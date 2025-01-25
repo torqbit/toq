@@ -155,6 +155,26 @@ const LessonView: FC<{ siteConfig: PageSiteConfig; courseId: number; marketingLa
     });
   };
 
+  const onNextLesson = (chapterSeq: number) => {
+    const foundIndex = courseLessons.findIndex((c) => c.chapterSeq === chapterSeq);
+    const currentLessonIndex = courseLessons[foundIndex].lessons.findIndex(
+      (l) => l.lessonId === currentLesson?.lesson?.lessonId
+    );
+
+    if (currentLessonIndex) {
+      if (courseLessons[foundIndex].lessons[currentLessonIndex + 1])
+        router.push(
+          `/courses/${router.query.slug}/lesson/${courseLessons[foundIndex].lessons[currentLessonIndex + 1].lessonId}`
+        );
+      setCurrentLesson({
+        chapterName: courseLessons[foundIndex]?.chapterName,
+        chapterSeq: courseLessons[foundIndex]?.chapterSeq,
+        lesson: courseLessons[foundIndex].lessons[currentLessonIndex + 1] as any,
+      });
+    } else if (courseLessons[foundIndex + 1]) {
+    }
+  };
+
   const updateChapterLesson = (chapterSeq: number, lessonId: number) => {
     let copyChapterLessons = [...courseLessons];
     const updatedChapters = copyChapterLessons.map((stateCh) => {
@@ -608,6 +628,7 @@ const LessonView: FC<{ siteConfig: PageSiteConfig; courseId: number; marketingLa
                         assignmentFiles={[] as string[]}
                         updateAssignmentWatchedStatus={updateAssignmentWatchedStatus}
                         chapterSeqId={Number(currentLesson.chapterSeq)}
+                        onNextLesson={onNextLesson}
                       />
                     </div>
                   ) : (

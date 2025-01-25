@@ -19,6 +19,7 @@
     p {
       color: var(--font-secondary);
       line-height: 1.5;
+      font-size: 1.3rem;
       margin-left: 0px;
     }
     h1 {
@@ -33,6 +34,7 @@
       gap: 20px;
       li {
         color: var(--font-secondary);
+
         line-height: 1.5;
       }
     }
@@ -64,7 +66,7 @@
       margin-bottom: 10px;
     }
     p {
-      font-size: 14px;
+      font-size: 1.2rem;
     }
     .titleWrapper {
       font-size: 20px;

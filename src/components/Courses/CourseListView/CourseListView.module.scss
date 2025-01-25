@@ -11,6 +11,7 @@
   width: 300px;
 
   .meta {
+    min-height: 130px;
     & > div > div:last-child {
       -webkit-line-clamp: 2;
       display: -webkit-box;
@@ -48,10 +49,12 @@
 @media only screen and (max-width: 435px) {
   .course__grid {
     grid-template-columns: 1fr;
-    margin-bottom: 60px;
+    width: 80vw;
+    margin: 0 auto 60px auto;
   }
   .course__card {
-    width: calc(100vw - 40px);
+    width: 80vw;
+    margin: 0 auto;
 
     .card__footer {
       margin: 15px -20px -20px;

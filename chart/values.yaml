@@ -1,6 +1,6 @@
 image:
   repository: torqbit/torqbit
-  tag: 0.1.2-rc3
+  tag: 0.1.5-rc1
   pullPolicy: IfNotPresent
 
 service:
@@ -23,7 +23,7 @@ ingress:
   enabled: false
   annotations: {}
   hosts:
-    - host: "example.local"
+    - host: "torqbit.local"
       paths:
         - path: /
           pathType: ImplementationSpecific

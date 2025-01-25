@@ -217,7 +217,6 @@ h6 {
 }
 
 a {
-  color: inherit;
   text-decoration: none;
 }
 
@@ -404,6 +403,11 @@ a {
     padding: 0px !important;
   }
 }
+.children__wrapper p,
+.hero__wrapper p {
+  font-size: 1.5rem;
+  line-height: 1.5;
+}
 
 .tabBarContainer {
   .ant-tabs-ink-bar {
@@ -546,6 +550,11 @@ a {
 }
 
 @media only screen and (max-width: 435px) {
+  .children__wrapper p,
+  .hero__wrapper p {
+    font-size: 1.2rem;
+    line-height: 1.5;
+  }
   .page__wrapper {
     width: 100vw;
     margin: 0 auto;
@@ -846,6 +855,7 @@ a {
   .ql-editor {
     font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans,
       Helvetica Neue, sans-serif !important;
+    background: #fff;
   }
   .ql-snow .ql-tooltip {
     transform: translateY(10px) translateX(141px);

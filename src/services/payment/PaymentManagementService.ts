@@ -409,7 +409,6 @@ export class PaymentManagemetService {
   ): Promise<APIResponse<PaymentApiResponse>> => {
     const currentTime = new Date();
     const latestOrder = await this.getLatestOrder(userConfig.studentId, courseConfig.courseId);
-
     /**
      * if payment is in success state
      */

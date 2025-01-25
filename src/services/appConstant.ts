@@ -8,7 +8,7 @@ export default {
   assignmentFiles: ["index.html", "global.css", "index.js", , "index.ts", "index.tsx", "index.jsx"],
   documentExtensions: [
     { value: "pdf", label: "PDF" },
-    { value: "doc", label: "Word" },
+    { value: "docx", label: "Word" },
     { value: "xls", label: "Excel" },
     { value: "zip", label: "Archive" },
   ],

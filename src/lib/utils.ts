@@ -455,3 +455,11 @@ export function getFormattedDate(date: Date) {
 
   return `${year}-${month}-${day}`;
 }
+
+export function setLocalStorage(name: string, data: any) {
+  localStorage.setItem(name, JSON.stringify(data));
+}
+
+export function getLocalStorage(name: string) {
+  JSON.parse(localStorage.getItem(name) as any);
+}

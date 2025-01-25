@@ -255,7 +255,10 @@ const MarketingLayout: FC<{
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
         <link rel="icon" href={siteConfig.brand?.favicon} />
       </Head>
-      <section className={styles.heroWrapper} style={{ minHeight: isMobile ? mobileHeroMinHeight : "60px" }}>
+      <section
+        className={`${styles.heroWrapper} hero__wrapper`}
+        style={{ minHeight: isMobile ? mobileHeroMinHeight : "60px" }}
+      >
         {isMobile && user?.role == Role.STUDENT ? (
           <Flex
             style={{ width: "90vw", padding: "10px 0px" }}
@@ -331,7 +334,7 @@ const MarketingLayout: FC<{
       </section>
       <Spin spinning={globalState.pageLoading} indicator={<LoadingOutlined spin />} size="large">
         <div
-          className={landingPage.children_wrapper}
+          className={`${landingPage.children_wrapper} children__wrapper`}
           style={{ minHeight: isMobile && heroSection ? `calc(50vh - 250px)` : `calc(100vh - 250px)` }}
         >
           {children}

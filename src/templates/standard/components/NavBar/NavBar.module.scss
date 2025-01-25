@@ -13,6 +13,9 @@
   backdrop-filter: blur(10px);
   background: var(--bg-header);
   padding: 5px 35px;
+  a {
+    color: var(--font-secondary);
+  }
 
   nav {
     margin: 0 auto;
@@ -182,7 +185,7 @@
   .platformNameLogo {
     display: unset;
     position: absolute;
-    top: 10px;
+    top: 13px;
     left: 10px;
     z-index: 2;
     color: var(--font-primary);

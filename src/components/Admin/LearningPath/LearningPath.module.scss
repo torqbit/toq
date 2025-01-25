@@ -1,0 +1,40 @@
+.add__learing__path__wrapper {
+  max-width: var(--container-width);
+  margin: 0 auto;
+  padding-bottom: 10px;
+  .setting_header {
+    margin: 20px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .upload__learning__banner {
+    cursor: pointer;
+    position: relative;
+    .camera_btn_img {
+      position: absolute;
+      height: 40px;
+      width: 40px;
+      border-radius: 4px;
+
+      background-color: var(--bg-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      top: -10px;
+      right: calc(50% - 20px);
+      transition: background-color 0.3s;
+
+      &:hover {
+        background-color: var(--font-label);
+      }
+
+      i {
+        font-size: 24px;
+        line-height: 0;
+        color: var(-font-secondary);
+      }
+    }
+  }
+}

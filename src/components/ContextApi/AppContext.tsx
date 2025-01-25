@@ -12,11 +12,12 @@ export type ISiderMenu =
   | "quiz"
   | "setting"
   | "notification"
+  | "academy"
   | "users"
   | "content"
   | "addCourseForm"
   | "configuration";
-export type IResponsiveNavMenu = "dashboard" | "courses" | "events" | "blogs" | "setting" | "notification";
+export type IResponsiveNavMenu = "dashboard" | "courses" | "academy" | "events" | "blogs" | "setting" | "notification";
 
 // Define your state type
 type AppState = {
