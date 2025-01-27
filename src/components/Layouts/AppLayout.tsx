@@ -108,7 +108,7 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
     },
 
     {
-      label: <Link href="/courses">Academy</Link>,
+      label: <Link href="/academy">Academy</Link>,
       key: "academy",
       icon: (
         <i style={{ fontSize: 18 }} className={styles.events_icon}>

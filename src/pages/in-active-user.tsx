@@ -8,26 +8,27 @@ const InActiveErrorPage = (props: any) => {
   const router = useRouter();
   React.useEffect(() => {
     if (session && session?.isActive) {
-      router.push("/courses");
+      router.push("/academy");
     }
   }, [session]);
 
   return (
-    <div className='in-active-user-page'>
+    <div className="in-active-user-page">
       <Result
-        status='warning'
-        title='Sorry you are no longer active user'
+        status="warning"
+        title="Sorry you are no longer active user"
         extra={
           <Space>
             <Button
-              type='primary'
+              type="primary"
               onClick={() => {
                 signOut({ callbackUrl: "/" });
-              }}>
+              }}
+            >
               Go Back
             </Button>
 
-            <Button type='default' onClick={() => signOut({ callbackUrl: "/" })}>
+            <Button type="default" onClick={() => signOut({ callbackUrl: "/" })}>
               SignOut
             </Button>
           </Space>

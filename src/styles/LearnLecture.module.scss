@@ -451,9 +451,8 @@
   background-color: var(--bg-asignment-tab);
 }
 
-.assignmen_view_tab {
+.assignment_view_tab {
   padding: 20px;
-  background-color: var(--bg-asignment-tab);
   // position: relative;
   height: calc(100vh - 100px);
 
@@ -835,7 +834,7 @@
 }
 
 @media only screen and (max-width: 933px) and (orientation: landscape) {
-  .assignmen_view_tab,
+  .assignment_view_tab,
   .editorWrapper,
   .assignment_tab_container {
     width: calc(100vw - 120px) !important;

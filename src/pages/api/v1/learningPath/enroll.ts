@@ -6,11 +6,9 @@ import { withMethods } from "@/lib/api-middlewares/with-method";
 import * as z from "zod";
 import { errorHandler } from "@/lib/api-middlewares/errorHandler";
 import { getToken } from "next-auth/jwt";
-import { addDays, getCookieName } from "@/lib/utils";
+import { getCookieName } from "@/lib/utils";
 import MailerService from "@/services/MailerService";
-import { CourseState, CourseType, orderStatus, ProductType } from "@prisma/client";
-import { PaymentManagemetService } from "@/services/payment/PaymentManagementService";
-import { CashFreeConfig, CoursePaymentConfig, UserConfig } from "@/types/payment";
+import { CourseState, orderStatus } from "@prisma/client";
 import { APIResponse } from "@/types/apis";
 
 export const validateReqBody = z.object({
@@ -29,7 +27,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const body = await req.body;
     const reqBody = validateReqBody.parse(body);
-    console.log(reqBody, "req");
     // check is user Active
 
     if (!token || !token.isActive) {
@@ -54,7 +51,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       return res.status(400).json({
         success: false,
         alreadyEnrolled: true,
-        error: "You have already enrolled in this course",
+        error: "You have already enrolled in this learning path",
       });
     }
 
@@ -76,65 +73,39 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     });
 
     if (learningPath && learningPath?.price === 0) {
-      //   const expiryDate = addDays(Number(course.expiryInDays));
-      // IF COURSE IS FREE
-      const alreadyRegisteredCourses = await prisma.courseRegistration.findMany({
-        where: {
-          order: {
-            product: {
-              productId: {
-                in: learningPath.learningPathCourses.map((C) => C.courseId),
-              },
-            },
+      await prisma.$transaction(async (tx) => {
+        const createOrder = await tx.order.create({
+          data: {
             studentId: token.id,
+            orderStatus: orderStatus.SUCCESS,
+            productId: reqBody.pathId,
+            amount: 0,
           },
-        },
+        });
+
+        await prisma.courseRegistration.create({
+          data: {
+            studentId: token.id,
+            orderId: createOrder.id,
+            courseState: CourseState.ENROLLED,
+          },
+        });
       });
-      console.log(alreadyRegisteredCourses, "already");
-      //   await prisma.$transaction(async (tx) => {
-      //     const createOrder = await tx.order.create({
-      //       data: {
-      //         studentId: token.id,
-      //         orderStatus: orderStatus.SUCCESS,
-      //         productId: reqBody.pathId,
-      //         amount: 0,
-      //       },
-      //     });
 
-      //     const createRegistration = learningPath.learningPathCourses
-      //       .map((c) => c.courseId)
-      //       .map((cId) => {
-      //         return {
-      //           studentId: token.id,
-      //           orderId: createOrder.id,
-      //           courseState: CourseState.ENROLLED,
-      //         };
-      //       });
+      const configData = {
+        name: token.name,
+        email: token.email,
 
-      //     await prisma.courseRegistration.create({
-      //       data: {
-      //         studentId: token.id,
+        url: `${process.env.NEXTAUTH_URL}/academy/${learningPath.slug}`,
+        course: {
+          name: learningPath.title,
+          thumbnail: learningPath.banner,
+        },
+      };
 
-      //         orderId: createOrder.id,
-      //         courseState: CourseState.ENROLLED,
-      //       },
-      //     });
-      //   });
-
-      //   const configData = {
-      //     name: token.name,
-      //     email: token.email,
-
-      //     url: `${process.env.NEXTAUTH_URL}/academy/${learningPath.slug}`,
-      //     course: {
-      //       name: learningPath.title,
-      //       thumbnail: learningPath.banner,
-      //     },
-      //   };
-
-      //   MailerService.sendMail("COURSE_ENROLMENT", configData).then((result) => {
-      //     console.log(result.error);
-      //   });
+      MailerService.sendMail("LEARNING_ENROLMENT", configData).then((result) => {
+        console.log(result.error);
+      });
 
       return res.status(200).json({
         success: true,

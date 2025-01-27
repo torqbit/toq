@@ -90,6 +90,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
           courseState: true,
         },
       });
+      console.log(isCompleted);
 
       if (isCompleted?.courseState !== "COMPLETED") {
         return {

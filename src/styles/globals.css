@@ -403,11 +403,11 @@ a {
     padding: 0px !important;
   }
 }
-.children__wrapper p,
+/* .children__wrapper p,
 .hero__wrapper p {
   font-size: 1.5rem;
   line-height: 1.5;
-}
+} */
 
 .tabBarContainer {
   .ant-tabs-ink-bar {
@@ -855,6 +855,7 @@ a {
   .ql-editor {
     font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans,
       Helvetica Neue, sans-serif !important;
+    background: var(--bg-primary);
   }
   .ql-snow .ql-tooltip {
     transform: translateY(10px) translateX(141px);

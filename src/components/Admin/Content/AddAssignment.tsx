@@ -134,7 +134,7 @@ const AddAssignment: FC<{
       {
         lessonId: Number(currResId),
         title: assignmentForm.getFieldsValue().title,
-        estimatedDurationInMins: assignmentForm.getFieldsValue().estimatedDurationInMins,
+        estimatedDurationInMins: assignmentForm.getFieldsValue().estimatedDurationInMins || 30,
         maximumScore: Number(assignmentForm.getFieldsValue().maximumScore),
         passingScore: Number(assignmentForm.getFieldsValue().passingScore) || 0,
         isEdit,

@@ -6,11 +6,17 @@ import prisma from "@/lib/prisma";
 import { IAssignmentDetail } from "@/types/courses/Course";
 import { AssignmentType, IAssignmentDetails, MCQAssignment } from "@/types/courses/assignment";
 import { APIResponse } from "@/types/apis";
+import { submissionStatus } from "@prisma/client";
+import { getCookieName } from "@/lib/utils";
+import { getToken } from "next-auth/jwt";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const query = req.query;
     const { lessonId, isNoAnswer } = query;
+    let cookieName = getCookieName();
+
+    const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
 
     const assignmentDetail = await prisma?.assignment.findUnique({
       where: {
@@ -23,6 +29,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         maximumPoints: true,
         passingScore: true,
         id: true,
+        submission: {
+          where: {
+            studentId: user?.id,
+          },
+          select: {
+            status: true,
+          },
+        },
         lesson: {
           select: {
             name: true,
@@ -37,6 +51,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         content: assignmentDetail.content as any,
         name: assignmentDetail.lesson.name,
         estimatedDurationInMins: Number(assignmentDetail.estimatedDuration),
+        status: assignmentDetail?.submission[0]?.status,
         maximumScore: assignmentDetail.maximumPoints,
         passingScore: assignmentDetail.passingScore,
       };

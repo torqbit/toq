@@ -121,7 +121,7 @@ export const CourseViewItem: FC<{ course: ICourseListItem; previewMode?: boolean
           )}
         {!showDummyPurchase && course.userRole && course.userRole === Role.NOT_ENROLLED && (
           <Button type="default" onClick={(e) => handlePurchase(course.slug)}>
-            Buy Now
+            {course.price > 0 ? "Buy Now" : "Enroll Now"}
           </Button>
         )}
         {!showDummyPurchase && course.userRole && course.userRole === Role.STUDENT && (

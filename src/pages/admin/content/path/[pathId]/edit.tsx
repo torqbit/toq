@@ -1,6 +1,7 @@
 import learningPath from "@/actions/learningPath";
 import LearningPathForm from "@/components/Admin/LearningPath/LearningPathForm";
 import AppLayout from "@/components/Layouts/AppLayout";
+import { getCookieName } from "@/lib/utils";
 import { getSiteConfig } from "@/services/getSiteConfig";
 import learningPathSerivices from "@/services/learningPath/LearningPathSerivices";
 import { PageSiteConfig } from "@/services/siteConstant";
@@ -9,6 +10,7 @@ import { StateType } from "@prisma/client";
 import { Form, message } from "antd";
 
 import { GetServerSidePropsContext, NextPage } from "next";
+import { getToken } from "next-auth/jwt";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
@@ -92,11 +94,14 @@ const UpdateLearningPath: NextPage<{
 export default UpdateLearningPath;
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const { query } = ctx;
+  const { query, req } = ctx;
   const siteConfig = getSiteConfig();
+  let cookieName = getCookieName();
+
+  const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
   const { site } = siteConfig;
   const getCoursesList = await learningPath.getCoursesList();
-  const getDetailResponse = await learningPath.getLearningDetail(Number(query.pathId));
+  const getDetailResponse = await learningPath.getLearningDetail(Number(query.pathId), user?.role, user?.id);
   if (getDetailResponse && getDetailResponse.success && getDetailResponse.body) {
     return {
       props: {

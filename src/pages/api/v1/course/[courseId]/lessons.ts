@@ -5,6 +5,7 @@ import { withAuthentication } from "@/lib/api-middlewares/with-authentication";
 import { getCookieName } from "@/lib/utils";
 import { getToken } from "next-auth/jwt";
 import getLessonDetail from "@/actions/getLessonDetail";
+import { getCourseAccessRole } from "@/actions/getCourseAccessRole";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
@@ -24,7 +25,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     let previewMode;
     let estimatedDuration;
 
-    const detail = await getLessonDetail(Number(courseId), token?.role, token?.id);
+    const hasAccess = await getCourseAccessRole(token?.role, token?.id, Number(courseId));
+
+    const detail = await getLessonDetail(Number(courseId), hasAccess?.role, token?.id);
 
     if (detail?.lessonDetail && detail.lessonDetail.length > 0) {
       courseName = detail?.lessonDetail[0].courseName;
@@ -75,7 +78,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         name: courseName,
         description: description,
         previewMode: previewMode === 1 ? true : false,
-        userRole: detail?.userRole,
+        userRole: hasAccess?.role,
       },
       lessons: chapterLessons,
     });

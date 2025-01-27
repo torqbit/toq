@@ -160,8 +160,8 @@ const MarketingLayout: FC<{
           <>
             <ul>
               <li>
-                <Link href={"/courses"} aria-label={`link to course page`}>
-                  Courses
+                <Link href={"/academy"} aria-label={`link to course page`}>
+                  Academy
                 </Link>
               </li>
               <li>

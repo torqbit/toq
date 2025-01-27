@@ -92,7 +92,6 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const siteConfig = getSiteConfig();
   const { site } = siteConfig;
   const courseList = await learningPath.getCoursesList();
-
   return {
     props: {
       siteConfig: site,
