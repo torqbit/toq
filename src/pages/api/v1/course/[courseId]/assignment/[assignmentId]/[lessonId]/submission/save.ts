@@ -22,7 +22,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         assignmentId: Number(assignmentId),
         lessonId: Number(lessonId),
         studentId: String(token?.id),
-        status: submissionStatus.NOT_SUBMITTED,
+        status: submissionStatus.PENDING,
       },
       select: {
         content: true,
@@ -62,6 +62,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           lessonId,
           content,
           updatedAt: new Date(),
+          status: submissionStatus.PENDING,
         },
         select: {
           id: true,

@@ -2,7 +2,6 @@ import React, { FC, useEffect, useState } from "react";
 import style from "@/styles/LearnLecture.module.scss";
 import { Role, submissionStatus } from "@prisma/client";
 import { useMediaQuery } from "react-responsive";
-import AssignmentSubmissionTab from "./Submissions/AssignmentSubmissionTab";
 import AssignmentContentTab from "./Content/AssignmentContentTab";
 import { useAppContext } from "../ContextApi/AppContext";
 
@@ -15,10 +14,10 @@ const ViewAssignment: FC<{
   userRole: Role;
   ResponsiveLessonItemsList: JSX.Element;
   assignmentFiles: string[];
-  onMarkAsCompleted: () => void;
+  onNextLesson: (chapterSeqId: number) => void;
   updateAssignmentWatchedStatus: (chapterSeqId: number, lessonId: number) => void;
   chapterSeqId: number;
-}> = ({ lessonId, onMarkAsCompleted }) => {
+}> = ({ lessonId, onNextLesson, chapterSeqId }) => {
   const isMax933Width = useMediaQuery({ query: "(max-width: 933px)" });
   const { globalState } = useAppContext();
 
@@ -37,7 +36,7 @@ const ViewAssignment: FC<{
   return (
     <section className={style.view_submit_assignment}>
       <div style={{ width: isMax933Width ? "auto" : getTabWidth(), transition: "all .4s ease" }}>
-        <AssignmentContentTab lessonId={lessonId} onMarkAsCompleted={onMarkAsCompleted} />
+        <AssignmentContentTab lessonId={lessonId} onNextLesson={() => onNextLesson(chapterSeqId)} />
       </div>
     </section>
   );

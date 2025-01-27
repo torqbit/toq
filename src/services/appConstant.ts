@@ -8,8 +8,8 @@ export default {
   assignmentFiles: ["index.html", "global.css", "index.js", , "index.ts", "index.tsx", "index.jsx"],
   documentExtensions: [
     { value: "pdf", label: "PDF" },
-    { value: "doc", label: "Word" },
-    { value: "xls", label: "Excel" },
+    { value: "docx", label: "Word" },
+    { value: "xlsx", label: "Excel" },
     { value: "zip", label: "Archive" },
   ],
   projectFramework: [
@@ -166,4 +166,15 @@ export default {
     white: "#fff",
     grey: "#eee",
   },
+
+  mimeType: {
+    xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    xls: "application/vnd.ms-excel",
+    csv: "text/csv",
+    pdf: "application/pdf",
+    txt: "text/plain",
+    jpg: "image/jpeg",
+    png: "image/png",
+    gif: "image/gif",
+  } as any,
 };
