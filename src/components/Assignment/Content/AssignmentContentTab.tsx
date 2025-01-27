@@ -239,16 +239,19 @@ const AssignmentContentTab: FC<{
   };
 
   useEffect(() => {
+    if (lessonId && typeof window !== "undefined") {
+      const data = localStorage.getItem(`assignment-${lessonId}`);
+      setSelectedAnswers(JSON.parse(data as any));
+    }
+  }, [refresh, assignmentDetail?.assignmentId]);
+
+  useEffect(() => {
     resetState();
     lessonId && getAssignmentDetail(lessonId, true);
     if (assignmentDetail && assignmentDetail.status) {
       getAssignmentSubmission(assignmentDetail.assignmentId);
     }
-    if (lessonId && typeof window !== "undefined") {
-      const data = localStorage.getItem(`assignment-${lessonId}`);
-      setSelectedAnswers(JSON.parse(data as any));
-    }
-  }, [refresh, lessonId, assignmentDetail?.assignmentId]);
+  }, [lessonId, refresh]);
 
   return (
     <>
