@@ -126,7 +126,7 @@ const LearningPathForm: FC<{
               {pathId ? (
                 <Popconfirm
                   title={`Delete the learning Path`}
-                  description={`Are you sure to  "delete" this entire learning path?`}
+                  description={`Are you sure you want to  delete this entire learning path?`}
                   onConfirm={() => (pathId ? onDiscard(pathId) : router.push("/academy"))}
                   okText="Yes"
                   cancelText="No"
@@ -184,7 +184,7 @@ const LearningPathForm: FC<{
                 }}
               >
                 <i style={{ fontSize: 18, lineHeight: 0, color: "inherit" }}>{SvgIcons.info}</i>
-                <div>This services is only available for free courses</div>
+                <div>Currently, only free courses can be added to the learning path.</div>
               </Tag>
             }
             isCollapsible={false}
