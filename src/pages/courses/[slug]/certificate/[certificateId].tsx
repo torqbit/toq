@@ -92,23 +92,23 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
       });
       console.log(isCompleted);
 
-      // if (isCompleted?.courseState !== "COMPLETED") {
-      //   return {
-      //     redirect: {
-      //       permanent: false,
-      //       message: "you are not enrolled in this course",
-      //       destination: "/unauthorized",
-      //     },
-      //   };
-      // } else {
-      return {
-        props: {
-          siteConfig: site,
-          courseName: findCourse?.name,
-          userName: user.name,
-        },
-      };
-      // }
+      if (isCompleted?.courseState !== "COMPLETED") {
+        return {
+          redirect: {
+            permanent: false,
+            message: "you are not enrolled in this course",
+            destination: "/unauthorized",
+          },
+        };
+      } else {
+        return {
+          props: {
+            siteConfig: site,
+            courseName: findCourse?.name,
+            userName: user.name,
+          },
+        };
+      }
     } else {
       return {
         props: {
