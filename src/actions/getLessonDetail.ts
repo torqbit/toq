@@ -104,7 +104,7 @@ const getLessonDetail = async (courseId: number, role?: Role, userId?: string) =
     case Role.MENTOR:
       return lessonDetail(courseId, String(userId), Role.MENTOR);
     case Role.STUDENT:
-      return lessonForStudent(courseId, String(userId));
+      return lessonDetail(courseId, String(userId), Role.MENTOR);
   }
 };
 

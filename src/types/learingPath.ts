@@ -31,6 +31,8 @@ export interface ILearningPathDetail {
   banner: string;
   price: number;
   slug: string;
+  product?: any;
+  role: Role;
   author: {
     name: string;
   };

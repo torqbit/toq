@@ -4,7 +4,7 @@ import { APIResponse } from "@/types/apis";
 import { FileObjectType } from "@/types/cms/common";
 
 import { ILearningCourseList, ILearningPathDetail, ILearningPreviewDetail } from "@/types/learingPath";
-import { ProductType, Role, StateType } from "@prisma/client";
+import { CourseType, orderStatus, ProductType, Role, StateType } from "@prisma/client";
 import { uploadThumbnail } from "./courses";
 import appConstant from "@/services/appConstant";
 import { convertSecToHourandMin } from "@/pages/admin/content";
@@ -163,6 +163,23 @@ class LearningPath {
     userRole?: Role,
     userId?: string
   ): Promise<APIResponse<ILearningPreviewDetail>> {
+    let role = userRole;
+
+    const findOrder = await prisma.order.findUnique({
+      where: {
+        studentId_productId: {
+          studentId: String(userId),
+          productId: pathId,
+        },
+        orderStatus: orderStatus.SUCCESS,
+      },
+    });
+    if (!findOrder && userRole) {
+      role = Role.NOT_ENROLLED;
+    } else if (!findOrder && !userRole) {
+      role = Role.NA;
+    }
+
     const detail = await prisma.learningPath.findUnique({
       where: {
         id: Number(pathId),
@@ -253,7 +270,7 @@ class LearningPath {
         banner: detail?.banner || "",
         price: detail?.price,
         slug: detail?.slug,
-        role: userRole,
+        role: role,
         currency: appConstant.currency,
         assignmentsCount: Number(totalAssignments),
         contentDurationInHrs: Math.floor(totalVideoDuration || 0 / 60),
@@ -278,7 +295,7 @@ class LearningPath {
     }
   }
 
-  async getLearningDetail(pathId: number): Promise<APIResponse<ILearningPathDetail>> {
+  async getLearningDetail(pathId: number, userRole?: Role, userId?: string): Promise<APIResponse<ILearningPathDetail>> {
     const detail = await prisma.learningPath.findUnique({
       where: {
         id: Number(pathId),
@@ -291,9 +308,23 @@ class LearningPath {
         slug: true,
         price: true,
         banner: true,
+        product: {
+          select: {
+            orders: {
+              where: {
+                orderStatus: orderStatus.SUCCESS,
+                studentId: userId,
+              },
+              select: {
+                productId: true,
+              },
+            },
+          },
+        },
         author: {
           select: {
             name: true,
+            id: true,
           },
         },
         learningPathCourses: {
@@ -313,8 +344,19 @@ class LearningPath {
     });
 
     if (detail) {
+      let role = userRole;
+      if (userRole === Role.ADMIN) {
+        role = Role.ADMIN;
+      } else if (userRole === Role.AUTHOR && userId && detail.author.id === userId) {
+        role = Role.AUTHOR;
+      } else if (detail.product.orders && detail.product.orders[0]) {
+        role = Role.STUDENT;
+      } else {
+        role = Role.NOT_ENROLLED;
+      }
       return new APIResponse(true, 200, "Learning path detail has been fetched", {
         ...detail,
+        role,
         learningPathCourses: detail.learningPathCourses.map((l) => {
           return { courseId: l.courseId, name: l.course.name };
         }),
@@ -328,6 +370,7 @@ class LearningPath {
     const courseList = await prisma.course.findMany({
       where: {
         state: StateType.ACTIVE,
+        courseType: CourseType.FREE,
       },
       select: {
         name: true,
@@ -360,6 +403,19 @@ class LearningPath {
               name: true,
             },
           },
+          product: {
+            select: {
+              orders: {
+                where: {
+                  orderStatus: orderStatus.SUCCESS,
+                  studentId: userId,
+                },
+                select: {
+                  productId: true,
+                },
+              },
+            },
+          },
           learningPathCourses: {
             select: {
               courseId: true,
@@ -367,8 +423,14 @@ class LearningPath {
           },
         },
       });
+      const result = r.map((r) => {
+        return {
+          ...r,
+          role: Role.ADMIN,
+        };
+      });
 
-      return new APIResponse(true, 200, "Learning path list has been fetched", r);
+      return new APIResponse(true, 200, "Learning path list has been fetched", result);
     } else if (userRole == Role.AUTHOR && userId) {
       const r = await prisma.learningPath.findMany({
         where: {
@@ -384,6 +446,19 @@ class LearningPath {
 
           id: true,
           banner: true,
+          product: {
+            select: {
+              orders: {
+                where: {
+                  orderStatus: orderStatus.SUCCESS,
+                  studentId: userId,
+                },
+                select: {
+                  productId: true,
+                },
+              },
+            },
+          },
           author: {
             select: {
               name: true,
@@ -396,8 +471,14 @@ class LearningPath {
           },
         },
       });
+      const result = r.map((r) => {
+        return {
+          ...r,
+          role: Role.AUTHOR,
+        };
+      });
 
-      return new APIResponse(true, 200, "Learning path list has been fetched", r);
+      return new APIResponse(true, 200, "Learning path list has been fetched", result);
     } else {
       const r = await prisma.learningPath.findMany({
         where: {
@@ -413,6 +494,19 @@ class LearningPath {
           id: true,
 
           banner: true,
+          product: {
+            select: {
+              orders: {
+                where: {
+                  orderStatus: orderStatus.SUCCESS,
+                  studentId: userId,
+                },
+                select: {
+                  productId: true,
+                },
+              },
+            },
+          },
           author: {
             select: {
               name: true,
@@ -425,7 +519,15 @@ class LearningPath {
           },
         },
       });
-      return new APIResponse(true, 200, "Learning path list has been fetched", r);
+
+      const result = r.map((r) => {
+        return {
+          ...r,
+          role:
+            r.product.orders && r.product.orders.length > 0 && r.product.orders[0] ? Role.STUDENT : Role.NOT_ENROLLED,
+        };
+      });
+      return new APIResponse(true, 200, "Learning path list has been fetched", result);
     }
   }
 }

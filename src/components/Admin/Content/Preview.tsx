@@ -44,7 +44,6 @@ const Preview: FC<{
   extraStyle?: CSSProperties;
 }> = ({ courseDetail, previewMode, handlePurchase, handleLessonRedirection, paymentCallback, extraStyle }) => {
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
-
   return (
     <section className={styles.preview_container} style={extraStyle}>
       <h4>{courseDetail.name}</h4>

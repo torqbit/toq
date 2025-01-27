@@ -48,13 +48,14 @@ const CourseList: FC<{ courses: ILearningCourseDetail[] }> = ({ courses }) => {
 };
 
 const LearningPathDetail: FC<{
+  loading: boolean;
   detail: ILearningPreviewDetail;
   previewMode: boolean;
   handlePurchase: (pathId: number) => void;
   handleLessonRedirection: (courseId: number) => void;
   paymentCallback?: boolean;
   extraStyle?: CSSProperties;
-}> = ({ detail, previewMode, handlePurchase, handleLessonRedirection, paymentCallback, extraStyle }) => {
+}> = ({ detail, previewMode, loading, handlePurchase, handleLessonRedirection, paymentCallback, extraStyle }) => {
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
 
   return (
@@ -131,13 +132,14 @@ const LearningPathDetail: FC<{
             {/* Display the price and button for the non-preview mode */}
             {!previewMode && (
               <>
-                {detail.role === Role.STUDENT && (
+                {detail.role === Role.NOT_ENROLLED && (
                   <>
                     <Flex gap={10} align="center" justify="center">
                       {detail.price > 0 && <div className={styles.pricing__currency}>{detail.price}</div>}
                       <h2>{detail.price == 0 ? "Free" : detail.price}</h2>
                     </Flex>
                     <Button
+                      loading={loading}
                       type="primary"
                       size="large"
                       style={{ width: 200 }}
@@ -154,6 +156,7 @@ const LearningPathDetail: FC<{
                       <h2>{detail.price == 0 ? "Free" : detail.price}</h2>
                     </Flex>
                     <Button
+                      loading={loading}
                       type="primary"
                       size="large"
                       style={{ width: 200 }}
@@ -163,7 +166,7 @@ const LearningPathDetail: FC<{
                     </Button>
                   </>
                 )}
-                {/* {detail.role === Role.STUDENT && (
+                {detail.role === Role.STUDENT && (
                   <>
                     <Flex gap={10} align="center" vertical justify="center">
                       {paymentCallback && paymentCallback && (
@@ -187,6 +190,7 @@ const LearningPathDetail: FC<{
                       )}
                     </Flex>
                     <Button
+                      loading={loading}
                       type="primary"
                       size="large"
                       style={{ width: 200 }}
@@ -195,7 +199,7 @@ const LearningPathDetail: FC<{
                       Go to Learning
                     </Button>
                   </>
-                )} */}
+                )}
               </>
             )}
           </div>
