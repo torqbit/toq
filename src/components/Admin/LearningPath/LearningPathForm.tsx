@@ -11,6 +11,7 @@ import {
   Popconfirm,
   Select,
   Space,
+  Tag,
   Tooltip,
   Upload,
 } from "antd";
@@ -122,16 +123,27 @@ const LearningPathForm: FC<{
           <Flex justify="space-between" align="center" className={styles.setting_header}>
             <h3>{title}</h3>
             <Flex gap={20}>
-              <Popconfirm
-                title={`${pathId ? "Delete" : "Discard"} the learningPath`}
-                description={`Are you sure to ${pathId ? "Delete" : "Discard"} this entire learningPath?`}
-                onConfirm={() => (pathId ? onDiscard(pathId) : router.push("/academy"))}
-                okText="Yes"
-                cancelText="No"
-              >
-                <Button>Discard</Button>
-              </Popconfirm>
+              {pathId ? (
+                <Popconfirm
+                  title={`Delete the learning Path`}
+                  description={`Are you sure you want to  delete this entire learning path?`}
+                  onConfirm={() => (pathId ? onDiscard(pathId) : router.push("/academy"))}
+                  okText="Yes"
+                  cancelText="No"
+                >
+                  <Button>Discard</Button>
+                </Popconfirm>
+              ) : (
+                <Button
+                  onClick={() => {
+                    router.push("/academy");
+                  }}
+                >
+                  Go Back
+                </Button>
+              )}
               <Dropdown.Button
+                disabled={courseList.length < 2}
                 loading={loading}
                 type="primary"
                 htmlType="submit"
@@ -157,7 +169,26 @@ const LearningPathForm: FC<{
               </Dropdown.Button>
             </Flex>
           </Flex>
-          <ConfigFormLayout formTitle={"Basic Information"} isCollapsible={false}>
+          <ConfigFormLayout
+            formTitle={"Basic Information"}
+            extraContent={
+              <Tag
+                color={courseList.length > 1 ? "warning" : "volcano"}
+                style={{
+                  height: 32,
+                  display: "flex",
+                  alignItems: "center",
+                  padding: "0px 15px",
+                  gap: 5,
+                  marginInlineEnd: 0,
+                }}
+              >
+                <i style={{ fontSize: 18, lineHeight: 0, color: "inherit" }}>{SvgIcons.info}</i>
+                <div>Currently, only free courses can be added to the learning path.</div>
+              </Tag>
+            }
+            isCollapsible={false}
+          >
             <ConfigFormItem
               input={
                 <Form.Item name={"title"} rules={[{ required: true, message: "Learning path title is required!" }]}>

@@ -16,7 +16,7 @@ interface ILearningList {
   brand: IBrandConfig;
   learningList: ILearningPathDetail[];
 }
-const LearningList: FC<ILearningList> = ({ title, description, learningList, previewMode }) => {
+const AcademyItemsList: FC<ILearningList> = ({ title, description, learningList, previewMode }) => {
   return (
     <>
       {learningList.length > 0 && (
@@ -46,4 +46,4 @@ const LearningList: FC<ILearningList> = ({ title, description, learningList, pre
   );
 };
 
-export default LearningList;
+export default AcademyItemsList;

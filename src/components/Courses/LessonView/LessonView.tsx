@@ -681,7 +681,7 @@ const LessonView: FC<{ siteConfig: PageSiteConfig; courseId: number; marketingLa
                     {courseDetail?.previewMode ? (
                       <div className={styles.certificateBtn}>
                         <h4>You have successfully completed this course</h4>
-                        <Link href={"/courses"} type="primary">
+                        <Link href={"/academy"} type="primary">
                           <Button type="primary">
                             Browse Courses
                             {SvgIcons.arrowRight}

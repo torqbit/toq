@@ -1,13 +1,12 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC } from "react";
 import { SortableContext, verticalListSortingStrategy, useSortable } from "@dnd-kit/sortable";
 import { DndContext, DragEndEvent } from "@dnd-kit/core";
-import { arrayMove } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Flex, Modal, Select } from "antd";
+import { Flex, Select } from "antd";
 import styles from "@/styles/Curriculum.module.scss";
-
 import { ILearningCourseList } from "@/types/learingPath";
 import SvgIcons from "@/components/SvgIcons";
+import Link from "next/link";
 
 const SortableItem: FC<{
   name: string;
@@ -76,6 +75,7 @@ const CourseSelectForm: FC<{
           );
         })}
       </Select>
+      {courseList.length < 2 && <Link href={"/academy"}>Add Course</Link>}
     </Flex>
   );
 };
