@@ -235,13 +235,13 @@ export const getCourseDetailedView = async (
         userRole = Role.AUTHOR;
       } else {
         //get the registration details for this course and userId
-        const isAccess = await getCourseAccessRole(user.role, user.id, courseId, isSlug);
+        const hasAccess = await getCourseAccessRole(user.role, user.id, courseId, isSlug);
 
-        if (isAccess && isAccess.role == Role.STUDENT) {
+        if (hasAccess && hasAccess.role == Role.STUDENT) {
           userRole = Role.STUDENT;
-          const endDate = new Date(isAccess.dateJoined);
+          const endDate = new Date(hasAccess.dateJoined);
 
-          endDate.setDate(isAccess.dateJoined.getDate() + courseDBDetails.expiryInDays);
+          endDate.setDate(hasAccess.dateJoined.getDate() + courseDBDetails.expiryInDays);
 
           // Get today's date
           const today = new Date();
@@ -250,7 +250,7 @@ export const getCourseDetailedView = async (
           const timeDifference = endDate.getTime() - today.getTime();
 
           remainingDays = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
-          enrolmentDate = isAccess.dateJoined.toLocaleDateString("en-US", {
+          enrolmentDate = hasAccess.dateJoined.toLocaleDateString("en-US", {
             month: "short",
             day: "2-digit",
             year: "numeric",

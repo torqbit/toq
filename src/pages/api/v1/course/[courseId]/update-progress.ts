@@ -28,22 +28,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const userId = token?.id;
     const body = await req.body;
     const { resourceId, courseId } = body;
-    // const isEnrolled = await prisma.courseRegistration.findFirst({
-    //   where: {
-    //     studentId: userId,
-    //     order: {
-    //       productId: Number(courseId),
-    //     },
-    //   },
-    //   select: {
-    //     certificate: true,
-    //     registrationId: true,
-    //   },
-    // });
 
-    const isAccess = await getCourseAccessRole(token?.role, token?.id, Number(courseId));
+    const hasAccess = await getCourseAccessRole(token?.role, userId, Number(courseId));
 
-    if (isAccess.role === Role.STUDENT) {
+    if (hasAccess.role === Role.STUDENT) {
       const courseProgress = await updateCourseProgress(
         Number(courseId),
         Number(resourceId),

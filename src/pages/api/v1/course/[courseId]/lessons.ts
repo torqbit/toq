@@ -25,9 +25,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     let previewMode;
     let estimatedDuration;
 
-    const isAccess = await getCourseAccessRole(token?.role, token?.id, Number(courseId));
+    const hasAccess = await getCourseAccessRole(token?.role, token?.id, Number(courseId));
 
-    const detail = await getLessonDetail(Number(courseId), isAccess?.role, token?.id);
+    const detail = await getLessonDetail(Number(courseId), hasAccess?.role, token?.id);
 
     if (detail?.lessonDetail && detail.lessonDetail.length > 0) {
       courseName = detail?.lessonDetail[0].courseName;
@@ -78,7 +78,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         name: courseName,
         description: description,
         previewMode: previewMode === 1 ? true : false,
-        userRole: isAccess?.role,
+        userRole: hasAccess?.role,
       },
       lessons: chapterLessons,
     });

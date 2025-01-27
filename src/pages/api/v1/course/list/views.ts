@@ -52,8 +52,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           } else if (token.role == Role.AUTHOR && c.user.id == token.id) {
             userRole = Role.AUTHOR;
           } else {
-            const isAccess = await getCourseAccessRole(token?.role, token?.id, Number(c.courseId));
-            userRole = isAccess.role;
+            const hasAccess = await getCourseAccessRole(token?.role, token?.id, Number(c.courseId));
+            userRole = hasAccess.role;
           }
         }
         return {

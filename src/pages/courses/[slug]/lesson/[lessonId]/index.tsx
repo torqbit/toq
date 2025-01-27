@@ -80,9 +80,9 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
         authorId: true,
       },
     });
-    const isAccess = await getCourseAccessRole(user?.role, user?.id, Number(courseInfo.courseId));
+    const hasAccess = await getCourseAccessRole(user?.role, user?.id, Number(courseInfo.courseId));
     const isEnrolled = await getUserEnrolledCoursesId(courseInfo?.courseId, user?.id);
-    if (!isEnrolled && user.id !== courseAuthor?.authorId && isAccess.role === Role.NOT_ENROLLED) {
+    if (!isEnrolled && user.id !== courseAuthor?.authorId && hasAccess.role === Role.NOT_ENROLLED) {
       return {
         redirect: {
           permanent: false,
