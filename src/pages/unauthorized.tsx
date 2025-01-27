@@ -55,7 +55,7 @@ const UnAuthorized: NextPage<{ siteConfig: PageSiteConfig; userRole: Role }> = (
               </Flex>
               <Flex align="center" justify="center" gap={20}>
                 {router.query.from === "lesson" && (
-                  <Button type="primary" onClick={() => router.push("/courses")}>
+                  <Button type="primary" onClick={() => router.push("/academy")}>
                     <Flex justify="space-between" gap={10}>
                       Browse Courses <i style={{ fontSize: 18, lineHeight: 0 }}> {SvgIcons.arrowRight}</i>
                     </Flex>{" "}
