@@ -160,18 +160,22 @@ const LessonView: FC<{ siteConfig: PageSiteConfig; courseId: number; marketingLa
     const currentLessonIndex = courseLessons[foundIndex].lessons.findIndex(
       (l) => l.lessonId === currentLesson?.lesson?.lessonId
     );
-
-    if (currentLessonIndex) {
-      if (courseLessons[foundIndex].lessons[currentLessonIndex + 1])
-        router.push(
-          `/courses/${router.query.slug}/lesson/${courseLessons[foundIndex].lessons[currentLessonIndex + 1].lessonId}`
-        );
+    if (courseLessons[foundIndex]?.lessons[currentLessonIndex + 1]?.lessonId) {
+      router.push(
+        `/courses/${router.query.slug}/lesson/${courseLessons[foundIndex].lessons[currentLessonIndex + 1].lessonId}`
+      );
       setCurrentLesson({
         chapterName: courseLessons[foundIndex]?.chapterName,
         chapterSeq: courseLessons[foundIndex]?.chapterSeq,
         lesson: courseLessons[foundIndex].lessons[currentLessonIndex + 1] as any,
       });
-    } else if (courseLessons[foundIndex + 1]) {
+    } else if (courseLessons[foundIndex + 1].chapterName) {
+      router.push(`/courses/${router.query.slug}/lesson/${courseLessons[foundIndex + 1].lessons[0].lessonId}`);
+      setCurrentLesson({
+        chapterName: courseLessons[foundIndex + 1]?.chapterName,
+        chapterSeq: courseLessons[foundIndex + 1]?.chapterSeq,
+        lesson: courseLessons[foundIndex + 1].lessons[0] as any,
+      });
     }
   };
 

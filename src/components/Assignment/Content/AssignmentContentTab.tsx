@@ -40,13 +40,12 @@ const AssignmentContentTab: FC<{
     answerContent: "",
     _type: AssignmentType.SUBJECTIVE,
   });
-  const [savedAsnwers, setsavedAnswer] = useState<SelectedAnswersType>({});
   const [loading, setLoading] = useState<boolean>(false);
   const [saveLoading, setSaveLoading] = useState<boolean>(false);
   const [refresh, setRefresh] = useState<boolean>(false);
-  const [isResultView, setResultView] = useState<boolean>(false);
+  const [isResultView, setResultView] = useState<boolean>(true);
   const [messageApi, contextHolder] = message.useMessage();
-  const [isCompleteBtnDisabled, setCompleteBtnDisabled] = useState<boolean>(false);
+  const [isCompleteBtnDisabled, setCompleteBtnDisabled] = useState<boolean>(true);
 
   const getAssignmentDetail = (lessonId: number, isNoAnswer: boolean) => {
     setLoading(true);
@@ -54,13 +53,19 @@ const AssignmentContentTab: FC<{
       lessonId,
       isNoAnswer,
       (assignmentDetail) => {
+        if (!assignmentDetail.status) {
+          setCompleteBtnDisabled(false);
+          setResultView(false);
+        }
+        if (assignmentDetail.content._type === AssignmentType.SUBJECTIVE) {
+          setResultView(false);
+        }
         setAssignmentDetail(assignmentDetail);
         if (assignmentDetail.content._type === AssignmentType.MCQ) {
           setQuestions((assignmentDetail.content as unknown as MCQAssignment).questions);
         } else if (assignmentDetail.content._type === AssignmentType.SUBJECTIVE) {
           setSubjectiveQuestion(assignmentDetail.content as unknown as SubjectiveAssignment);
         }
-
         setLoading(false);
       },
       (error) => {
@@ -69,27 +74,21 @@ const AssignmentContentTab: FC<{
       }
     );
   };
-  useEffect(() => {
-    resetState();
-    lessonId && getAssignmentDetail(lessonId, true);
-  }, [lessonId]);
 
   const resetState = () => {
     setCurrentQuestionIndex(0);
     setQuestions([]);
-    setsavedAnswer({});
     setSelectedAnswers({});
     setSubmissionDetail(null);
     setEvaluationResult(null);
     setSubjectiveAnswer({ answerArchiveUrl: "", answerContent: "", _type: AssignmentType.MCQ });
-    setResultView(false);
     setCompleteBtnDisabled(false);
   };
 
   const handleSelectAnswer = (answer: string | number, id: string) => {
     if (submissionDetail && submissionDetail?.status !== submissionStatus.NOT_SUBMITTED) return;
     setSelectedAnswers((prev: Record<number, (string | number)[]>) => {
-      const currentAnswers = prev[Number(id)] || [];
+      const currentAnswers = prev ? prev[Number(id)] : [];
       const isSelected = currentAnswers.includes(answer);
 
       const ans = {
@@ -100,7 +99,6 @@ const AssignmentContentTab: FC<{
       if (typeof window !== "undefined") {
         setLocalStorage(`assignment-${lessonId}`, ans);
       }
-      setsavedAnswer(ans);
       return ans;
     });
   };
@@ -168,17 +166,15 @@ const AssignmentContentTab: FC<{
     }
   };
 
-  const getAssignmentSubmission = async () => {
+  const getAssignmentSubmission = async (assId: number) => {
     setLoading(true);
     AssignmentService.getSubmissionContent(
       router.query.slug as string,
       lessonId as number,
-      assignmentDetail?.assignmentId as number,
-      (submissionContent) => {
-        console.log(submissionContent, "dd");
+      assId as number,
+      async (submissionContent) => {
         if (submissionContent && submissionContent?.status !== submissionStatus.NOT_SUBMITTED) {
-          getEvaluationResult(submissionContent?.id);
-          setResultView(true);
+          await getEvaluationResult(submissionContent?.id);
           lessonId && getAssignmentDetail(lessonId, false);
         }
         if (submissionContent) {
@@ -187,7 +183,6 @@ const AssignmentContentTab: FC<{
         if (submissionContent?.content._type === AssignmentType.MCQ) {
           const content = submissionContent.content as MCQASubmissionContent;
           setSelectedAnswers(content.selectedAnswers);
-          setsavedAnswer(content.selectedAnswers);
         } else if (submissionContent?.content._type === AssignmentType.SUBJECTIVE) {
           const content = submissionContent.content as SubjectiveSubmissionContent;
           setSubjectiveAnswer(content);
@@ -232,8 +227,8 @@ const AssignmentContentTab: FC<{
       subId as number,
       (result) => {
         setSaveLoading(false);
-        setResultView(true);
         setCurrentQuestionIndex(0);
+        setRefresh(!refresh);
         message.success("Assignment evaluated successfully");
       },
       (error) => {
@@ -244,18 +239,16 @@ const AssignmentContentTab: FC<{
   };
 
   useEffect(() => {
-    getAssignmentSubmission();
+    resetState();
+    lessonId && getAssignmentDetail(lessonId, true);
+    if (assignmentDetail && assignmentDetail.status) {
+      getAssignmentSubmission(assignmentDetail.assignmentId);
+    }
     if (lessonId && typeof window !== "undefined") {
       const data = localStorage.getItem(`assignment-${lessonId}`);
       setSelectedAnswers(JSON.parse(data as any));
-      setsavedAnswer(JSON.parse(data as any));
     }
   }, [refresh, lessonId]);
-
-  useEffect(() => {
-    resetState();
-    lessonId && getAssignmentDetail(lessonId, true);
-  }, [lessonId]);
 
   return (
     <>
@@ -264,20 +257,20 @@ const AssignmentContentTab: FC<{
       <Spin spinning={loading} indicator={<LoadingOutlined spin />} size="large">
         <div className={style.assignment_view_tab}>
           <div className={style.assignment_header}>
-            <Flex justify="space-between" align="center" style={{ marginBottom: 20 }}>
-              <>
-                {assignmentDetail?.content._type === AssignmentType.SUBJECTIVE && <div></div>}
-                {/* for just UI adjustment */}
-                {!isResultView && assignmentDetail?.content._type === AssignmentType.MCQ && (
-                  <h5>
-                    Question {currentQuestionIndex + 1}/{questions.length}
-                  </h5>
-                )}
-
-                <Space>
+            {!isResultView && (
+              <Flex justify="space-between" align="center" style={{ marginBottom: 20 }}>
+                <>
+                  {assignmentDetail?.content._type === AssignmentType.SUBJECTIVE && <div></div>}
+                  {/* for just UI adjustment */}
                   {assignmentDetail?.content._type === AssignmentType.MCQ && (
-                    <>
-                      {!isResultView && (
+                    <h5>
+                      Question {currentQuestionIndex + 1}/{questions.length}
+                    </h5>
+                  )}
+
+                  <Space>
+                    {assignmentDetail?.content._type === AssignmentType.MCQ && (
+                      <>
                         <>
                           <Button
                             icon={<LeftOutlined />}
@@ -290,48 +283,48 @@ const AssignmentContentTab: FC<{
                             disabled={currentQuestionIndex === questions.length - 1}
                           />
                         </>
-                      )}
 
-                      {!isResultView && isCompleteBtnDisabled && (
-                        <Button type="primary" onClick={() => setResultView(true)}>
-                          View final score
-                        </Button>
-                      )}
-                    </>
-                  )}
+                        {!isResultView && isCompleteBtnDisabled && (
+                          <Button type="primary" onClick={() => setResultView(true)}>
+                            View final score
+                          </Button>
+                        )}
+                      </>
+                    )}
 
-                  {!isResultView && !isCompleteBtnDisabled && (
-                    <Popconfirm
-                      title="Finish & complete"
-                      description="Are you sure want to submit! It can't be undo"
-                      onConfirm={onSubmitQuestion}
-                      onCancel={() => {}}
-                      okText="Yes"
-                      cancelText="No"
-                    >
-                      <Button
-                        type="primary"
-                        loading={saveLoading}
-                        style={{
-                          background: !!evaluationResult || isCompleteBtnDisabled ? "" : themeColors.commons.success,
-                        }}
-                        disabled={!!evaluationResult || isCompleteBtnDisabled}
+                    {!isResultView && !isCompleteBtnDisabled && (
+                      <Popconfirm
+                        title="Finish & complete"
+                        description="Are you sure want to submit! It can't be undo"
+                        onConfirm={onSubmitQuestion}
+                        onCancel={() => {}}
+                        okText="Yes"
+                        cancelText="No"
                       >
-                        Finish & complete <ArrowRightOutlined />
-                      </Button>
-                    </Popconfirm>
-                  )}
-                </Space>
+                        <Button
+                          type="primary"
+                          loading={saveLoading}
+                          style={{
+                            background: !!evaluationResult || isCompleteBtnDisabled ? "" : themeColors.commons.success,
+                          }}
+                          disabled={!!evaluationResult || isCompleteBtnDisabled}
+                        >
+                          Finish & complete <ArrowRightOutlined />
+                        </Button>
+                      </Popconfirm>
+                    )}
+                  </Space>
 
-                {assignmentDetail?.content._type === AssignmentType.SUBJECTIVE && submissionDetail?.status && (
-                  <Tag color="orange">
-                    {submissionDetail?.status === submissionStatus.PENDING && "Evaluation Pending"}
-                  </Tag>
-                )}
-              </>
-            </Flex>
+                  {assignmentDetail?.content._type === AssignmentType.SUBJECTIVE && submissionDetail?.status && (
+                    <Tag color="orange">
+                      {submissionDetail?.status === submissionStatus.PENDING && "Evaluation Pending"}
+                    </Tag>
+                  )}
+                </>
+              </Flex>
+            )}
           </div>
-          {assignmentDetail?.content._type === AssignmentType.MCQ && isResultView && (
+          {!loading && assignmentDetail?.content._type === AssignmentType.MCQ && isResultView && evaluationResult && (
             <Result
               status={
                 evaluationResult?.scoreSummary?.eachQuestionScore[currentQuestionIndex]?.score ===
@@ -351,15 +344,18 @@ const AssignmentContentTab: FC<{
               ]}
             />
           )}
-          {!isResultView && assignmentDetail?.content._type === AssignmentType.MCQ && questions.length > 0 && (
-            <MCQViewAssignment
-              question={questions[currentQuestionIndex]}
-              selectedAnswers={selectedAnswers}
-              handleSelectAnswer={handleSelectAnswer}
-              isEvaluated={!!evaluationResult}
-            />
-          )}
-          {assignmentDetail?.content._type === AssignmentType.SUBJECTIVE && subjectiveQuestion && (
+          {!loading &&
+            !isResultView &&
+            assignmentDetail?.content._type === AssignmentType.MCQ &&
+            questions.length > 0 && (
+              <MCQViewAssignment
+                question={questions[currentQuestionIndex]}
+                selectedAnswers={selectedAnswers}
+                handleSelectAnswer={handleSelectAnswer}
+                isEvaluated={!!evaluationResult}
+              />
+            )}
+          {!loading && assignmentDetail?.content._type === AssignmentType.SUBJECTIVE && subjectiveQuestion && (
             <>
               <SubjectiveAssignmentView
                 subjectiveQuestion={subjectiveQuestion}

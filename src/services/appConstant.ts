@@ -9,7 +9,7 @@ export default {
   documentExtensions: [
     { value: "pdf", label: "PDF" },
     { value: "docx", label: "Word" },
-    { value: "xls", label: "Excel" },
+    { value: "xlsx", label: "Excel" },
     { value: "zip", label: "Archive" },
   ],
   projectFramework: [

@@ -855,7 +855,7 @@ a {
   .ql-editor {
     font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans,
       Helvetica Neue, sans-serif !important;
-    background: #fff;
+    background: var(--bg-primary);
   }
   .ql-snow .ql-tooltip {
     transform: translateY(10px) translateX(141px);

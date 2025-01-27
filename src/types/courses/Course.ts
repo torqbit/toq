@@ -11,6 +11,7 @@ import {
   Video,
   VideoState,
   courseDifficultyType,
+  submissionStatus,
 } from "@prisma/client";
 import { APIResponse } from "../apis";
 import { JsonObject } from "@prisma/client/runtime/library";
@@ -56,6 +57,7 @@ export interface IAssignmentDetail {
   passingScore: number;
   maximumScore: number;
   name?: string;
+  status?: submissionStatus;
   estimatedDurationInMins: number;
 }
 export interface VideoLesson {

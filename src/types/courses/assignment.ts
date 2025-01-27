@@ -32,7 +32,7 @@ export enum ProjectFramework {
   NEXT_APP = "NEXT_APP",
 }
 
-export type DocumentExtension = "pdf" | "doc" | "docx" | "xls" | "zip";
+export type DocumentExtension = "pdf" | "doc" | "docx" | "xlsx" | "zip";
 
 export interface IAssignmentDetails {
   _type: AssignmentType;
