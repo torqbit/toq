@@ -94,6 +94,7 @@ const SubjectiveAssignmentView: FC<{
           style={{ marginTop: 50 }}
           name="archiveUrl"
           valuePropName="archiveUrl"
+          extra={`File type to upload .${subjectiveQuestion.file_for_candidate} `}
           getValueFromEvent={FormFile}
           rules={[{ required: false }]}
         >
