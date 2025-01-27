@@ -12,6 +12,7 @@ import { PageSiteConfig } from "@/services/siteConstant";
 import { getSiteConfig } from "@/services/getSiteConfig";
 import LessonView from "@/components/Courses/LessonView/LessonView";
 import MarketingLayout from "@/components/Layouts/MarketingLayout";
+import { getCourseAccessRole } from "@/actions/getCourseAccessRole";
 
 const LessonPage: NextPage<{ siteConfig: PageSiteConfig; courseId: number; userRole?: Role }> = ({
   siteConfig,
@@ -79,8 +80,9 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
         authorId: true,
       },
     });
+    const isAccess = await getCourseAccessRole(user?.role, user?.id, Number(courseInfo.courseId));
     const isEnrolled = await getUserEnrolledCoursesId(courseInfo?.courseId, user?.id);
-    if (!isEnrolled && user.id !== courseAuthor?.authorId && user.role === Role.STUDENT) {
+    if (!isEnrolled && user.id !== courseAuthor?.authorId && isAccess.role === Role.NOT_ENROLLED) {
       return {
         redirect: {
           permanent: false,

@@ -8,6 +8,7 @@ import { CourseState, Role, StateType } from "@prisma/client";
 import { ICourseListItem } from "@/types/courses/Course";
 import { APIResponse } from "@/types/apis";
 import appConstant from "@/services/appConstant";
+import { getCourseAccessRole } from "@/actions/getCourseAccessRole";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
@@ -51,18 +52,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           } else if (token.role == Role.AUTHOR && c.user.id == token.id) {
             userRole = Role.AUTHOR;
           } else {
-            //get the registration details for this course and userId
-            const registrationDetails = await prisma.courseRegistration.count({
-              where: {
-                studentId: token.id,
-                order: {
-                  productId: c.courseId,
-                },
-              },
-            });
-            if (registrationDetails > 0) {
-              userRole = Role.STUDENT;
-            }
+            const isAccess = await getCourseAccessRole(token?.role, token?.id, Number(c.courseId));
+            userRole = isAccess.role;
           }
         }
         return {

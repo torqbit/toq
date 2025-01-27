@@ -7,6 +7,7 @@ import { getToken } from "next-auth/jwt";
 import { getCookieName } from "@/lib/utils";
 import getRoleByLessonId from "@/actions/getRoleByLessonId";
 import { Role } from "@prisma/client";
+import { getCourseAccessRole } from "@/actions/getCourseAccessRole";
 
 /**
  * Post a query
@@ -51,9 +52,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       },
     });
 
-    const userRole = await getRoleByLessonId(lessonId, token?.role, token?.id);
+    const userRole = await getCourseAccessRole(token?.role, token?.id, slug, true);
 
-    if (isEnrolled || userRole === Role.AUTHOR) {
+    if (userRole.role !== Role.NOT_ENROLLED) {
       const addDiscussion = await prisma.discussion.create({
         data: {
           userId: String(token?.id),

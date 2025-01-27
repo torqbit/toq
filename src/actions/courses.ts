@@ -17,6 +17,7 @@ import {
 import { mergeChunks, saveToLocal } from "@/lib/upload/utils";
 import { courseDifficultyType, Prisma, ResourceContentType, Role, StateType } from "@prisma/client";
 import { JWT } from "next-auth/jwt";
+import { getCourseAccessRole } from "./getCourseAccessRole";
 
 export const uploadThumbnail = async (
   file: any,
@@ -234,26 +235,13 @@ export const getCourseDetailedView = async (
         userRole = Role.AUTHOR;
       } else {
         //get the registration details for this course and userId
+        const isAccess = await getCourseAccessRole(user.role, user.id, courseId, isSlug);
 
-        const registrationDetails = await prisma.courseRegistration.findMany({
-          select: {
-            registrationId: true,
-            dateJoined: true,
-          },
-          where: {
-            studentId: user.id,
-            order: {
-              productId: courseDBDetails.courseId,
-            },
-          },
-          orderBy: {
-            dateJoined: "desc",
-          },
-        });
-        if (registrationDetails && registrationDetails.length > 0) {
+        if (isAccess && isAccess.role == Role.STUDENT) {
           userRole = Role.STUDENT;
-          const endDate = new Date(registrationDetails[0].dateJoined);
-          endDate.setDate(registrationDetails[0].dateJoined.getDate() + 180);
+          const endDate = new Date(isAccess.dateJoined);
+
+          endDate.setDate(isAccess.dateJoined.getDate() + courseDBDetails.expiryInDays);
 
           // Get today's date
           const today = new Date();
@@ -262,7 +250,7 @@ export const getCourseDetailedView = async (
           const timeDifference = endDate.getTime() - today.getTime();
 
           remainingDays = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
-          enrolmentDate = registrationDetails[0].dateJoined.toLocaleDateString("en-US", {
+          enrolmentDate = isAccess.dateJoined.toLocaleDateString("en-US", {
             month: "short",
             day: "2-digit",
             year: "numeric",

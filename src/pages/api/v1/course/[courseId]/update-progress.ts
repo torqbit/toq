@@ -7,8 +7,9 @@ import * as z from "zod";
 import { errorHandler } from "@/lib/api-middlewares/errorHandler";
 import { getToken } from "next-auth/jwt";
 import { getCookieName } from "@/lib/utils";
-import { ResourceContentType } from "@prisma/client";
+import { ResourceContentType, Role } from "@prisma/client";
 import updateCourseProgress from "@/actions/updateCourseProgress";
+import { getCourseAccessRole } from "@/actions/getCourseAccessRole";
 
 export const validateReqBody = z.object({
   resourceId: z.number(),
@@ -27,27 +28,27 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const userId = token?.id;
     const body = await req.body;
     const { resourceId, courseId } = body;
-    const isEnrolled = await prisma.courseRegistration.findFirst({
-      where: {
-        studentId: userId,
-        order: {
-          productId: Number(courseId),
-        },
-      },
-      select: {
-        certificate: true,
-        registrationId: true,
-      },
-    });
+    // const isEnrolled = await prisma.courseRegistration.findFirst({
+    //   where: {
+    //     studentId: userId,
+    //     order: {
+    //       productId: Number(courseId),
+    //     },
+    //   },
+    //   select: {
+    //     certificate: true,
+    //     registrationId: true,
+    //   },
+    // });
 
-    if (isEnrolled) {
+    const isAccess = await getCourseAccessRole(token?.role, token?.id, Number(courseId));
+
+    if (isAccess.role === Role.STUDENT) {
       const courseProgress = await updateCourseProgress(
         Number(courseId),
         Number(resourceId),
         String(token?.id),
-        ResourceContentType.Video,
-        isEnrolled.registrationId,
-        isEnrolled.certificate ? true : false
+        ResourceContentType.Video
       );
 
       if (courseProgress) {

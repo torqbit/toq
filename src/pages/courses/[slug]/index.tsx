@@ -23,6 +23,7 @@ import { getCourseDetailedView } from "@/actions/courses";
 import Preview from "@/components/Admin/Content/Preview";
 import { useSession } from "next-auth/react";
 import { useMediaQuery } from "react-responsive";
+import { getCourseAccessRole } from "@/actions/getCourseAccessRole";
 
 const LearnCoursesPage: NextPage<{
   siteConfig: PageSiteConfig;
@@ -203,6 +204,7 @@ const LearnCoursesPage: NextPage<{
 
   return (
     <>
+      {contextMessageHolder}
       {typeof userRole === "undefined" || userRole === Role.STUDENT ? (
         <>
           <MarketingLayout
@@ -282,7 +284,6 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
         role: user.role,
       })
     : await getCourseDetailedView(String(query.slug), true);
-
   const courseInfo = await prisma?.course.findUnique({
     where: {
       slug: String(query.slug),

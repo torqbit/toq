@@ -8,6 +8,7 @@ import { errorHandler } from "@/lib/api-middlewares/errorHandler";
 
 import { getCookieName } from "@/lib/utils";
 import { Role, StateType } from "@prisma/client";
+import { getCourseAccessRole } from "@/actions/getCourseAccessRole";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   let cookieName = getCookieName();
@@ -20,19 +21,21 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const userId = token?.id;
   const { courseId } = req.query;
   try {
-    const alreadyRegistered = await prisma.courseRegistration.findFirst({
-      where: {
-        studentId: userId,
-        order: {
-          productId: Number(courseId),
-        },
-      },
-      select: {
-        courseState: true,
-      },
-    });
+    const isAccess = await getCourseAccessRole(token?.role, token?.id, Number(courseId));
 
-    if (alreadyRegistered) {
+    // const alreadyRegistered = await prisma.courseRegistration.findFirst({
+    //   where: {
+    //     studentId: userId,
+    //     order: {
+    //       productId: Number(courseId),
+    //     },
+    //   },
+    //   select: {
+    //     courseState: true,
+    //   },
+    // });
+
+    if (isAccess.role == Role.STUDENT) {
       const latestLesson = await prisma.courseProgress.findFirst({
         orderBy: {
           createdAt: "desc",

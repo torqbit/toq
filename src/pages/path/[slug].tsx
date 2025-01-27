@@ -34,13 +34,12 @@ const LearnCoursesPage: NextPage<{
   pathId: number;
 }> = ({ siteConfig, userRole, pathId, detail }) => {
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
-
   const router = useRouter();
   const [form] = Form.useForm();
   const { data: user } = useSession();
   const [learningDetail, setLearningDetail] = useState<ILearningPreviewDetail>(detail);
   const [messageApi, contextMessageHolder] = message.useMessage();
-  const [loading, setLoading] = useState<boolean>();
+  const [loading, setLoading] = useState<boolean>(false);
   const [nextLessonId, setNextLessonId] = useState<number>();
   const [refresh, setRefresh] = useState<boolean>(false);
 
@@ -61,15 +60,7 @@ const LearnCoursesPage: NextPage<{
   };
 
   const handleLessonRedirection = async (courseId: number) => {
-    ProgramService.getNextLessonId(
-      courseId,
-      (result) => {
-        router.replace(`/courses/${router.query.slug}/lesson/${result.nextLessonId}`);
-      },
-      (error) => {
-        messageApi.error(error);
-      }
-    );
+    router.push(`/courses/${detail.learningPathCourses[0].slug}`);
   };
 
   const handlePurchase = async (pathId: number) => {
@@ -86,27 +77,25 @@ const LearnCoursesPage: NextPage<{
         if (detail?.price === 0) {
           setLoading(false);
           setRefresh(!refresh);
-          // modal.success({
-          //   title: result.message,
-          //   onOk: () => {
-          //     handleLessonRedirection(courseId);
-          //   },
-          // });
-        } else if (detail?.price > 0) {
-          // handleCheckout(result.gatewayResponse.sessionId, result.gatewayName);
+          setLearningDetail({ ...learningDetail, role: Role.STUDENT });
+          modal.success({
+            title: result.message,
+            onOk: () => {
+              handleLessonRedirection(detail.id);
+            },
+          });
         }
       } else {
-        // if (result.alreadyEnrolled) {
-        //   router.replace(`/courses/${router.query.slug}/lesson/${nextLessonId}`);
-        //   setLoading(false);
-        // } else {
-        //   if (result.phoneNotFound && result.error) {
-        //     setModal({ active: true, message: result.error });
-        //   } else {
-        //     messageApi.error(result.error);
-        //   }
-        //   setLoading(false);
-        // }
+        if (result.alreadyEnrolled) {
+          setLoading(false);
+        } else {
+          if (result.phoneNotFound && result.error) {
+            setModal({ active: true, message: result.error });
+          } else {
+            messageApi.error(result.error);
+          }
+          setLoading(false);
+        }
       }
       setLoading(false);
     } catch (err: any) {
@@ -126,6 +115,8 @@ const LearnCoursesPage: NextPage<{
 
   return (
     <>
+      {contextMessageHolder}
+      {contextModalHolder}
       {typeof userRole === "undefined" || userRole === Role.STUDENT ? (
         <>
           <MarketingLayout
@@ -146,6 +137,7 @@ const LearnCoursesPage: NextPage<{
           >
             {detail && (
               <LearningPathDetail
+                loading={loading}
                 detail={learningDetail}
                 previewMode={false}
                 handlePurchase={() => {
@@ -170,6 +162,7 @@ const LearnCoursesPage: NextPage<{
           <div style={{ padding: "20px 0" }}>
             {detail && (
               <LearningPathDetail
+                loading={loading}
                 detail={learningDetail}
                 previewMode={false}
                 handlePurchase={handlePurchase}

@@ -210,7 +210,7 @@ export const LearnListView: FC<{
                 {role && role !== Role.STUDENT && segmentValue === "all" ? (
                   <div className={styles.course__grid}>
                     {pathList.map((path, index) => (
-                      <LearnViewItem userRole={role} learning={path} key={index} />
+                      <LearnViewItem userRole={path.role} learning={path} key={index} />
                     ))}
                   </div>
                 ) : (
@@ -218,7 +218,7 @@ export const LearnListView: FC<{
                     {pathList
                       .filter((p) => p.state === StateType.ACTIVE)
                       .map((path, index) => (
-                        <LearnViewItem userRole={role} learning={path} key={index} />
+                        <LearnViewItem userRole={path.role} learning={path} key={index} />
                       ))}
                   </div>
                 )}
@@ -335,6 +335,19 @@ export const LearnListView: FC<{
       }
     });
   };
+
+  const addCourse = () => {
+    ProgramService.createDraftCourses(
+      undefined,
+      (result) => {
+        messageApi.success(result.message);
+        router.push(`/admin/content/course/${result.getCourse.courseId}/edit`);
+      },
+      (error) => {
+        messageApi.error(error);
+      }
+    );
+  };
   return (
     <div className={styles.courses__list}>
       {contextMessageHolder}
@@ -358,7 +371,7 @@ export const LearnListView: FC<{
                   )}
 
                   {tab === "2" && (
-                    <Button type="primary" onClick={() => {}}>
+                    <Button type="primary" onClick={addCourse}>
                       Add Courses
                     </Button>
                   )}

@@ -403,11 +403,11 @@ a {
     padding: 0px !important;
   }
 }
-.children__wrapper p,
+/* .children__wrapper p,
 .hero__wrapper p {
   font-size: 1.5rem;
   line-height: 1.5;
-}
+} */
 
 .tabBarContainer {
   .ant-tabs-ink-bar {
