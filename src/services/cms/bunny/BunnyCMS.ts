@@ -32,7 +32,7 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
         state: result.state,
       });
     } else {
-      return new APIResponse(false, 400, "Failed to fetch the CMS config");
+      return new APIResponse(false, 404, "No configuration found for the content management system");
     }
   }
   provider: string = "bunny.net";

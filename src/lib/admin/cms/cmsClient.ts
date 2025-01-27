@@ -90,7 +90,7 @@ class cmsClient {
   getConfigDetail = (
     provider: string,
     onSuccess: (response: ApiResponse) => void,
-    onFailure: (message: string) => void
+    onFailure: (message: APIResponse<void>) => void
   ) => {
     postFetch({ provider }, `/api/v1/admin/config/cms/get`).then((result) => {
       if (result.status == 200 || result.status == 201) {
@@ -100,8 +100,8 @@ class cmsClient {
         });
       } else {
         result.json().then((r) => {
-          const failedResponse = r as FailedApiResponse;
-          onFailure(failedResponse.error);
+          const failedResponse = r as APIResponse<void>;
+          onFailure(failedResponse);
         });
       }
     });

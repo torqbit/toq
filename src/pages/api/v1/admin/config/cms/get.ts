@@ -9,9 +9,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const body = await req.body;
     const cms = new ContentManagementService().getCMS(body.provider);
     const response = await cms.getCMSConfig();
-    return res
-      .status(response.status)
-      .json({ success: response.success, message: response.message, config: response.body });
+    if (response.success) {
+      return res
+        .status(response.status)
+        .json({ success: response.success, message: response.message, config: response.body });
+    } else {
+      return res.status(response.status).json(response);
+    }
   } catch (error) {
     console.log(error);
     return errorHandler(error, res);
