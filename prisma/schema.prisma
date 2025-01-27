@@ -269,7 +269,7 @@ model CourseRegistration {
   expireIn       DateTime?
   order          Order               @relation(fields: [orderId], references: [id], onDelete: Cascade)
   user           User                @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  certificate    CourseCertificates?
+  certificate    CourseCertificates[]
 
   @@unique([studentId, orderId])
   @@index([studentId])
@@ -408,11 +408,16 @@ model ServiceProvider {
 
 model CourseCertificates {
   id               String             @id @default(cuid())
-  registrationId   Int                @unique
+  registrationId   Int    
+  productId        Int            
   imagePath        String?
   pdfPath          String?
   issueDate        DateTime           @default(now())
   RegisteredCourse CourseRegistration @relation(fields: [registrationId], references: [registrationId], onDelete: Cascade)
+  product           Product @relation(fields: [productId], references: [productId], onDelete: Cascade)
+
+ @@unique([registrationId, productId])
+  @@index([productId])
 }
 
 model CourseNotification {
@@ -481,6 +486,7 @@ model Product {
   orders       Order[]
   course       Course?       @relation(name: "course_product")
   learningPath LearningPath? @relation(name: "learning_path_product")
+  CourseCertificates CourseCertificates[]
 }
 
 model LearningPath {
