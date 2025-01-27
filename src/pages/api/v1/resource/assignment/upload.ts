@@ -7,6 +7,7 @@ import { APIResponse } from "@/types/apis";
 import { readFieldWithFile } from "@/lib/upload/utils";
 import { FileObjectType } from "@/types/cms/common";
 import { removeExtension } from "@/lib/utils";
+import { withAuthentication } from "@/lib/api-middlewares/with-authentication";
 
 export const config = {
   api: {
@@ -37,4 +38,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default withMethods(["POST"], withUserAuthorized(handler));
+export default withMethods(["POST"], withAuthentication(handler));
