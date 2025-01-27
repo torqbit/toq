@@ -248,7 +248,7 @@ const AssignmentContentTab: FC<{
       const data = localStorage.getItem(`assignment-${lessonId}`);
       setSelectedAnswers(JSON.parse(data as any));
     }
-  }, [refresh, lessonId]);
+  }, [refresh, lessonId, assignmentDetail?.assignmentId]);
 
   return (
     <>
