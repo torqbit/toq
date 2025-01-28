@@ -201,7 +201,7 @@ export const AcademyItemsListView: FC<{
           )}
 
           {role && courses && courses.length > 0 && (
-            <Flex vertical gap={10}>
+            <Flex align={isMobile ? "center" : "flex-start"} vertical gap={10}>
               {role && role !== Role.STUDENT && (
                 <Segmented
                   style={{ width: "fit-content" }}
@@ -272,7 +272,7 @@ export const AcademyItemsListView: FC<{
             </div>
           )}
           {role && pathList.length > 0 && (
-            <Flex vertical gap={10}>
+            <Flex align={isMobile ? "center" : "flex-start"} vertical gap={10}>
               {role && role !== Role.STUDENT && (
                 <Segmented
                   style={{ width: "fit-content" }}
@@ -346,36 +346,34 @@ export const AcademyItemsListView: FC<{
     <div className={styles.courses__list}>
       {contextMessageHolder}
 
-      <>
-        <h4>Academy</h4>
+      <h4>Academy</h4>
 
-        <Tabs
-          tabBarGutter={40}
-          items={items}
-          activeKey={tab}
-          onChange={onChangeTab}
-          tabBarExtraContent={
-            <>
-              {role && role !== Role.STUDENT && (
-                <>
-                  {tab == "learning" &&
-                    courses.filter((c) => c.state == StateType.ACTIVE && c.price == 0).length > 2 && (
-                      <Button type="primary" onClick={handleLearningCreate}>
-                        Add Learning Path
-                      </Button>
-                    )}
+      <Tabs
+        tabBarGutter={40}
+        items={items}
+        activeKey={tab}
+        tabBarStyle={{ width: isMobile ? "calc(100vw - 40px)" : "inherit", margin: "0px auto 20px auto" }}
+        onChange={onChangeTab}
+        tabBarExtraContent={
+          <>
+            {role && role !== Role.STUDENT && (
+              <>
+                {tab == "learning" && (
+                  <Button type="primary" onClick={handleLearningCreate}>
+                    Add Learning Path
+                  </Button>
+                )}
 
-                  {tab === "courses" && (
-                    <Button type="primary" onClick={addCourse}>
-                      Add Courses
-                    </Button>
-                  )}
-                </>
-              )}
-            </>
-          }
-        />
-      </>
+                {tab === "courses" && (
+                  <Button type="primary" onClick={addCourse}>
+                    Add Courses
+                  </Button>
+                )}
+              </>
+            )}
+          </>
+        }
+      />
     </div>
   );
 };
