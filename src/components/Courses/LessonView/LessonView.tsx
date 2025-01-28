@@ -106,7 +106,8 @@ const LessonView: FC<{ siteConfig: PageSiteConfig; courseId: number; marketingLa
     name: string;
     description: string;
     previewMode: boolean;
-    userRole: string;
+    userRole: Role;
+    progress: number;
   }>();
   const [courseLessons, setCourseLessons] = useState<CourseLessons[]>([]);
   const [currentLesson, setCurrentLesson] = useState<{
@@ -270,6 +271,7 @@ const LessonView: FC<{ siteConfig: PageSiteConfig; courseId: number; marketingLa
           description: result.course.description,
           previewMode: result.course.previewMode,
           userRole: result.course.userRole,
+          progress: result.course.progress,
         });
         findAndSetCurrentLesson(result.lessons, false);
       },
@@ -760,6 +762,8 @@ const LessonView: FC<{ siteConfig: PageSiteConfig; courseId: number; marketingLa
               menu={lessonMenuList}
               defaulSelectedKey={`${currentLesson?.lesson?.lessonId}`}
               marketingLayout={marketingLayout || false}
+              progress={Number(courseDetail?.progress)}
+              userRole={courseDetail?.userRole}
             />
           </>
         )}

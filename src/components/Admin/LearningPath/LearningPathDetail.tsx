@@ -35,7 +35,7 @@ const CourseList: FC<{ courses: ILearningCourseDetail[] }> = ({ courses }) => {
             <div>
               <Link href={`/courses/${c.slug}`}>
                 {" "}
-                <h4>{c.title}</h4>
+                <h4 style={{ cursor: "pointer" }}>{c.title}</h4>
               </Link>
 
               <p>{c.description}</p>
@@ -66,7 +66,7 @@ const LearningPathDetail: FC<{
           A learning path by <strong>{detail.author.name} </strong>, a course instructor at OpenAI
         </p>
       </div>
-      <Flex align="flex-start" justify="flex-start" vertical={isMobile} gap={20}>
+      <Flex align="flex-start" justify="space-between" vertical={isMobile} gap={20}>
         <div>
           <div className={styles.video_container}>
             <object

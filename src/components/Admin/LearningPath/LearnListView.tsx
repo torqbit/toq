@@ -31,6 +31,8 @@ import { CourseViewItem } from "@/components/Courses/CourseListView/CourseListVi
 import ProgramService from "@/services/ProgramService";
 import { LoadingOutlined } from "@ant-design/icons";
 import FallBackImage from "@/templates/standard/components/FallBackImage/FallBackImage";
+import { EnrolledCourseProgressList } from "@/components/Dashboard/StudentDashboard";
+import LearningPathSerivices from "@/services/learningPath/LearningPathSerivices";
 const { Meta } = Card;
 export const LearnViewItem: FC<{ learning: ILearningPathDetail; previewMode?: boolean; userRole?: Role }> = ({
   learning,
@@ -164,6 +166,11 @@ export const AcademyItemsListView: FC<{
   const [tab, setTab] = useState("courses");
   const [segmentValue, setSegmentValue] = useState<string>("all");
 
+  const [pageLoading, setPageLoading] = useState<boolean>(false);
+
+  const [allRegisterCourse, setAllRegisterCourse] =
+    useState<{ courseName: string; progress: string; courseId: number; slug: string }[]>();
+
   const router = useRouter();
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
   const handleLearningCreate = () => {
@@ -184,6 +191,36 @@ export const AcademyItemsListView: FC<{
         return handleItemsList(k);
     }
   };
+
+  const getEnrolledLearning = () => {
+    LearningPathSerivices.getEnrolledList(
+      (result) => {},
+      (error) => {}
+    );
+  };
+  useEffect(() => {
+    getEnrolledLearning();
+  }, []);
+
+  const studentTabItems: TabsProps["items"] = [
+    {
+      key: "1",
+      label: "My Learnings",
+      className: "some-class",
+      icon: <i style={{ fontSize: 18, color: "var(--font-primary)" }}>{SvgIcons.courses}</i>,
+      children:
+        !pageLoading && allRegisterCourse ? (
+          <EnrolledCourseProgressList courseData={allRegisterCourse} />
+        ) : (
+          <Flex gap={5} vertical>
+            {getDummyArray(5).map((t) => {
+              return <Skeleton.Input style={{ width: "100%" }} />;
+            })}
+          </Flex>
+        ),
+    },
+  ];
+
   const items: TabsProps["items"] = [
     {
       key: "courses",
@@ -351,7 +388,7 @@ export const AcademyItemsListView: FC<{
 
         <Tabs
           tabBarGutter={40}
-          items={items}
+          items={role === Role.STUDENT ? studentTabItems.concat(items) : items}
           activeKey={tab}
           onChange={onChangeTab}
           tabBarExtraContent={

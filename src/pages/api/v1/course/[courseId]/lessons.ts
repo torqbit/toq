@@ -6,6 +6,7 @@ import { getCookieName } from "@/lib/utils";
 import { getToken } from "next-auth/jwt";
 import getLessonDetail from "@/actions/getLessonDetail";
 import { getCourseAccessRole } from "@/actions/getCourseAccessRole";
+import { getPercentage } from "@/services/helper";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
@@ -70,6 +71,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           });
         }
       });
+
+    let totalLessons =
+      chapterLessons.map((l) => l.lessons).length > 0 ? chapterLessons.map((l) => l.lessons)[0].length : 0;
+    let watchedLessons =
+      chapterLessons.map((l) => l.lessons).length > 0
+        ? chapterLessons.map((l) => l.lessons.filter((f: any) => f.isWatched == true))[0].length
+        : 0;
+    const progress = getPercentage(watchedLessons, totalLessons);
+
     return res.status(200).json({
       success: true,
       statusCode: 200,
@@ -79,6 +89,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         description: description,
         previewMode: previewMode === 1 ? true : false,
         userRole: hasAccess?.role,
+        progress,
       },
       lessons: chapterLessons,
     });
