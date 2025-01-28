@@ -80,11 +80,11 @@ site:
       description: Description on blogs
     faq:
       enabled: true
-      items:
+      items: null
       title: FAQ
       description: Frequently asked questions by the students
     testimonials:
       enabled: true
       title: "Teachers love our product "
       description: "Find out what excites our users, when using our product "
-      items:
+      items: null
