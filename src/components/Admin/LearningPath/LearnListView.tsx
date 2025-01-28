@@ -30,12 +30,15 @@ import { ICourseListItem } from "@/types/courses/Course";
 import { CourseViewItem } from "@/components/Courses/CourseListView/CourseListView";
 import ProgramService from "@/services/ProgramService";
 import { LoadingOutlined } from "@ant-design/icons";
+import FallBackImage from "@/templates/standard/components/FallBackImage/FallBackImage";
 const { Meta } = Card;
 export const LearnViewItem: FC<{ learning: ILearningPathDetail; previewMode?: boolean; userRole?: Role }> = ({
   learning,
   previewMode,
   userRole,
 }) => {
+  const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
+
   const router = useRouter();
   const [showDummyPurchase, setDummyBtn] = useState(typeof previewMode !== "undefined" && previewMode);
 
@@ -58,22 +61,12 @@ export const LearnViewItem: FC<{ learning: ILearningPathDetail; previewMode?: bo
     <Card
       className={styles.course__card}
       cover={
-        learning.banner != null ? (
-          <object
-            type="image/png"
-            data={learning.banner}
-            className={styles.card__img}
-            aria-label={`thumbnail of ${learning.title}`}
-          >
-            <div className={styles.invalid__img}>
-              <i>{SvgIcons.academicCap}</i>
-            </div>
-          </object>
-        ) : (
-          <div className={styles.invalid__img}>
-            <i>{SvgIcons.academicCap}</i>
-          </div>
-        )
+        <FallBackImage
+          width={isMobile ? "80vw" : "300px"}
+          height={168}
+          imageSrc={learning.banner}
+          ariaLabel={`thumbnail of ${learning.title}`}
+        />
       }
     >
       <Meta

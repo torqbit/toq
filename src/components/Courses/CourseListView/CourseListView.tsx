@@ -11,10 +11,12 @@ import Link from "next/link";
 import SvgIcons from "@/components/SvgIcons";
 import { getDummyArray } from "@/lib/dummyData";
 import { useMediaQuery } from "react-responsive";
+import FallBackImage from "@/templates/standard/components/FallBackImage/FallBackImage";
 const { Meta } = Card;
 export const CourseViewItem: FC<{ course: ICourseListItem; previewMode?: boolean }> = ({ course, previewMode }) => {
   const router = useRouter();
   const [showDummyPurchase, setDummyBtn] = useState(typeof previewMode !== "undefined" && previewMode);
+  const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
 
   const handleEdit = (id: number) => {
     router.push(`admin/content/course/${id}/edit`);
@@ -43,22 +45,12 @@ export const CourseViewItem: FC<{ course: ICourseListItem; previewMode?: boolean
     <Card
       className={styles.course__card}
       cover={
-        course.trailerThumbnail != null ? (
-          <object
-            type="image/png"
-            data={course.trailerThumbnail}
-            className={styles.card__img}
-            aria-label={`thumbnail of ${course.title}`}
-          >
-            <div className={styles.invalid__img}>
-              <i>{SvgIcons.academicCap}</i>
-            </div>
-          </object>
-        ) : (
-          <div className={styles.invalid__img}>
-            <i>{SvgIcons.academicCap}</i>
-          </div>
-        )
+        <FallBackImage
+          width={isMobile ? "80vw" : "300px"}
+          height={168}
+          imageSrc={course.trailerThumbnail}
+          ariaLabel={`thumbnail of ${course.title}`}
+        />
       }
     >
       <Meta

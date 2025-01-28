@@ -3,8 +3,8 @@ site:
   updated: true
   navBar:
     links:
-      - title: Courses
-        link: /#courses
+      - title: Academy
+        link: /academy
       - title: Events
         link: /events
       - title: Blog

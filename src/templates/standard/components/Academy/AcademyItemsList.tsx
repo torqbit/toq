@@ -23,7 +23,9 @@ const AcademyItemsList: FC<ILearningList> = ({ title, description, learningList,
         <section className={styles.courses__container}>
           <div>
             <h2>{title}</h2>
-            <p style={{ marginBottom: 30 }}>{description}</p>
+            <p className="landingPagePara" style={{ marginBottom: 30 }}>
+              {description}
+            </p>
 
             {previewMode && learningList.length == 0 && (
               <>

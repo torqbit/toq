@@ -16,7 +16,9 @@ const SetupPlatform = () => (
   <section className={styles.setup__container}>
     <div>
       <h2>Setup the platform</h2>
-      <p style={{ marginBottom: 30 }}>Set up the authentication, and other configuration for the learning platform</p>
+      <p className="landingPagePara" style={{ marginBottom: 30 }}>
+        Set up the authentication, and other configuration for the learning platform
+      </p>
       <div className={`${styles.steps} ${styles.steps__triple}`}>
         <StepCard
           img="/img/landing/auth.png"

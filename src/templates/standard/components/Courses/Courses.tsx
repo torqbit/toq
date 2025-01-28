@@ -50,7 +50,9 @@ const CourseList: FC<ICourseInfo> = ({ title, description, courseList, previewMo
         <section className={styles.courses__container}>
           <div>
             <h2>{title}</h2>
-            <p style={{ marginBottom: 30 }}>{description}</p>
+            <p className="landingPagePara" style={{ marginBottom: 30 }}>
+              {description}
+            </p>
 
             {previewMode && courseList.length === 0 && (
               <>
