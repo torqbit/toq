@@ -1,8 +1,6 @@
 import { FC } from "react";
 import styles from "./FallBack.module.scss";
-import SvgIcons from "@/components/SvgIcons";
 import { Skeleton } from "antd";
-import { useMediaQuery } from "react-responsive";
 
 const FallBackImage: FC<{
   imageSrc?: string | null;
