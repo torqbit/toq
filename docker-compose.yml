@@ -1,7 +1,6 @@
 services:
   web:
-    image: torqbit/torqbit:0.1.5-rc1
-    platform: linux/x86_64
+    image: torqbit/torqbit:0.1.5-rc2
     ports:
       - "3000:80"
     build: .
@@ -15,7 +14,7 @@ services:
       interval: 30s
       timeout: 2s
       retries: 5
-      start_period: 10s
+      start_period: 15s
 
     env_file:
       - "./docker.env"
@@ -34,7 +33,7 @@ services:
       retries: 5
       start_period: 5s
     ports:
-      - "3306:3306"
+      - "3360:3306"
     environment:
       MYSQL_USER: admin
       MYSQL_ROOT_PASSWORD: root123
