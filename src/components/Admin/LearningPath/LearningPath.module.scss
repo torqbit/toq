@@ -41,7 +41,7 @@
 
 .preview_container,
 .add_preview_container {
-  width: var(--marketing-container-width);
+  max-width: var(--marketing-container-width);
   margin: 0 auto;
 
   .course__offerings {
@@ -183,13 +183,18 @@
     background-color: var(--bg-primary);
     padding: 10px;
     border-radius: 8px;
+    h4 {
+      &:hover {
+        color: var(--btn-primary);
+      }
+    }
     p,
     h4 {
       margin: 0;
     }
     .invalid__img {
       height: 80px;
-      width: 120px;
+      width: 140px;
       display: flex;
       align-items: center;
       justify-content: center;

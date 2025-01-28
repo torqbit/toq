@@ -31,6 +31,8 @@ import { CourseViewItem } from "@/components/Courses/CourseListView/CourseListVi
 import ProgramService from "@/services/ProgramService";
 import { LoadingOutlined } from "@ant-design/icons";
 import FallBackImage from "@/templates/standard/components/FallBackImage/FallBackImage";
+import { EnrolledCourseProgressList } from "@/components/Dashboard/StudentDashboard";
+import LearningPathSerivices from "@/services/learningPath/LearningPathSerivices";
 const { Meta } = Card;
 export const LearnViewItem: FC<{ learning: ILearningPathDetail; previewMode?: boolean; userRole?: Role }> = ({
   learning,
@@ -164,6 +166,10 @@ export const AcademyItemsListView: FC<{
   const [tab, setTab] = useState("courses");
   const [segmentValue, setSegmentValue] = useState<string>("all");
 
+ 
+
+
+
   const router = useRouter();
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
   const handleLearningCreate = () => {
@@ -184,6 +190,11 @@ export const AcademyItemsListView: FC<{
         return handleItemsList(k);
     }
   };
+
+
+
+ 
+
   const items: TabsProps["items"] = [
     {
       key: "courses",
@@ -348,6 +359,7 @@ export const AcademyItemsListView: FC<{
 
       <h4>Academy</h4>
 
+
       <Tabs
         tabBarGutter={40}
         items={items}
@@ -363,6 +375,7 @@ export const AcademyItemsListView: FC<{
                     Add Learning Path
                   </Button>
                 )}
+
 
                 {tab === "courses" && (
                   <Button type="primary" onClick={addCourse}>

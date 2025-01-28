@@ -1,9 +1,10 @@
 import React, { FC } from "react";
 import styles from "../../styles/Sidebar.module.scss";
-import { Layout, Menu, MenuProps } from "antd";
+import { Flex, Layout, Menu, MenuProps, Progress } from "antd";
 import SvgIcons from "../SvgIcons";
 import { ISiderMenu, useAppContext } from "../ContextApi/AppContext";
 import { CloseOutlined } from "@ant-design/icons";
+import { Role } from "@prisma/client";
 
 const { Sider } = Layout;
 
@@ -11,10 +12,12 @@ const LessonListSideBar: FC<{
   menu: MenuProps["items"];
   defaulSelectedKey: string;
   marketingLayout: boolean;
-}> = ({ menu, defaulSelectedKey, marketingLayout }) => {
+  progress: number;
+  userRole?: Role;
+}> = ({ menu, defaulSelectedKey, progress, marketingLayout, userRole }) => {
   const { globalState, dispatch } = useAppContext();
   return (
-    <>
+    <div style={{ position: "relative" }}>
       {!marketingLayout && (
         <div
           className={`${styles.lesson_collapsed_btn} ${
@@ -39,7 +42,7 @@ const LessonListSideBar: FC<{
           position: "fixed",
           bottom: 0,
           right: !marketingLayout && globalState.lessonCollapsed ? -10 : 0,
-          top: marketingLayout ? 75 : 0,
+          top: marketingLayout ? 75 : userRole == Role.STUDENT ? 0 : 22,
         }}
         className={`${styles.lesson_sider} ${
           !marketingLayout && globalState.lessonCollapsed ? "collapsed_lesson_sider" : "lesson_sider"
@@ -47,8 +50,17 @@ const LessonListSideBar: FC<{
         trigger={null}
         collapsible={marketingLayout ? false : globalState.lessonCollapsed}
       >
-        <div className={styles.course_title}>
-          <h3>Course Content</h3>
+        <div
+          className={styles.course_title}
+          style={{ marginBottom: userRole === Role.STUDENT ? 20 : 0, paddingRight: userRole === Role.STUDENT ? 10 : 0 }}
+        >
+          <Flex align="center" justify="space-between">
+            <h3>Course Content</h3>
+            <p>{progress}% Completed</p>
+          </Flex>
+          {userRole === Role.STUDENT && (
+            <Progress size="small" percent={progress} showInfo={false} strokeColor="var(--btn-primary)" />
+          )}
         </div>
 
         <Menu
@@ -61,7 +73,7 @@ const LessonListSideBar: FC<{
           items={menu}
         />
       </Sider>
-    </>
+    </div>
   );
 };
 
