@@ -110,6 +110,7 @@ const MarketingHero: FC<{ isMobile: boolean; user: User; siteConfig: PageSiteCon
           <Image
             alt="Website builder screenshot"
             height={625}
+            style={{ height: "auto" }}
             width={getBannerWidth(bannerAlign as bannerAlignment)}
             loading="lazy"
             src={`${
