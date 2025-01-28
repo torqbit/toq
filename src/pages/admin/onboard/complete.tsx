@@ -18,7 +18,7 @@ const SiteSetupPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig })
       title: "Site Design",
       description:
         "Customize your site to suit your brand's color theme, add content to your landing page and much more",
-      link: "/admin/site",
+      link: "/admin/site/design",
     },
     {
       icon: "/img/landing/video-stream.png",
@@ -31,7 +31,7 @@ const SiteSetupPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig })
       icon: "/img/landing/payment.png",
       title: "Payments System",
       description: "Configure your payment gateway through which you can earn instantly from all the course sales",
-      link: "/admin/settings?tab=payments",
+      link: "/admin/settings?tab=pms",
     },
   ];
 

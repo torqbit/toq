@@ -313,7 +313,9 @@ const ContentManagementSystem: FC<{ siteConfig: PageSiteConfig; active: boolean 
         setConfigState(result.config.state);
       },
       (error) => {
-        messageApi.error(error);
+        if (error.status != 404) {
+          messageApi.error(error.message);
+        }
         setPageLoading(false);
       }
     );
