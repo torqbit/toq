@@ -31,12 +31,39 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const hasAccess = await getCourseAccessRole(token?.role, userId, Number(courseId));
 
+    let pId = hasAccess.pathId ? hasAccess.pathId : Number(courseId);
+    const cr = await prisma.courseRegistration.findFirst({
+      where: {
+        studentId: token?.id,
+        order: {
+          productId: pId,
+        },
+      },
+      select: {
+        registrationId: true,
+        user: {
+          select: {
+            name: true,
+          },
+        },
+        certificate: {
+          select: {
+            productId: true,
+            id: true,
+          },
+        },
+      },
+    });
+    const isExist = cr?.certificate.find((c) => c.productId === Number(courseId));
+
     if (hasAccess.role === Role.STUDENT) {
       const courseProgress = await updateCourseProgress(
         Number(courseId),
         Number(resourceId),
         String(token?.id),
-        ResourceContentType.Video
+        ResourceContentType.Video,
+        cr?.registrationId,
+        typeof isExist !== "undefined"
       );
 
       if (courseProgress) {

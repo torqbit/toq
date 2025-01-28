@@ -26,7 +26,7 @@
     background-color: var(--bg-primary);
     display: flex;
     flex-direction: column;
-    justify-content: end;
+    justify-content: flex-end;
     min-height: 550px;
     width: 800px;
     img {
@@ -96,9 +96,6 @@
   .certificate_page {
     padding: 20px;
     margin-left: 80px;
-    h4 {
-      margin-left: 40px;
-    }
 
     .certificate_image {
       padding: 20px;

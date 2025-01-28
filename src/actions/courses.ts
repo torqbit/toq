@@ -236,7 +236,6 @@ export const getCourseDetailedView = async (
       } else {
         //get the registration details for this course and userId
         const hasAccess = await getCourseAccessRole(user.role, user.id, courseId, isSlug);
-        console.log(hasAccess, "access");
         if (hasAccess && hasAccess.role == Role.STUDENT) {
           userRole = Role.STUDENT;
           const endDate = new Date(hasAccess.dateJoined);
