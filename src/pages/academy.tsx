@@ -96,8 +96,8 @@ const AcademyPage: NextPage<{
                 <>
                   {!isMobile && pathListData && (
                     <DefaulttHero
-                      title="Learning Paths"
-                      description="Expand Your Knowledge with Comprehensive Learning path"
+                      title="Academy"
+                      description="Offers online  learning  paths and courses designed to enhance your skills and knowledge "
                     />
                   )}
                 </>
@@ -150,8 +150,8 @@ const AcademyPage: NextPage<{
             siteConfig={siteConfig}
             heroSection={
               <DefaulttHero
-                title="Learning Paths"
-                description="Expand Your Knowledge with Comprehensive Learning path"
+                title="Academy"
+                description="Offers online  learning  paths and courses designed to enhance your skills and knowledge "
               />
             }
           >
