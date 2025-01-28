@@ -22,7 +22,7 @@ import { AcademyItemsListView } from "@/components/Admin/LearningPath/LearnListV
 import { ICourseListItem } from "@/types/courses/Course";
 import ProgramService from "@/services/ProgramService";
 import { getCouseListItems } from "@/actions/getCourseListItems";
-
+import styles from "@/components/Admin/LearningPath/LearningPath.module.scss";
 const AcademyPage: NextPage<{
   siteConfig: PageSiteConfig;
   userRole: Role;
@@ -82,8 +82,9 @@ const AcademyPage: NextPage<{
   };
 
   return (
-    <>
+    <section className={styles.academy__page__wraper}>
       {contextMessageHolder}
+
       {userRole ? (
         <>
           {userRole === Role.STUDENT ? (
@@ -103,7 +104,6 @@ const AcademyPage: NextPage<{
               }
               user={{ ...user?.user, role: Role.STUDENT } as User}
             >
-              {contextMessageHolder}
               <section>
                 <div className="page__wrapper">
                   <AcademyItemsListView
@@ -125,7 +125,6 @@ const AcademyPage: NextPage<{
             </MarketingLayout>
           ) : (
             <AppLayout siteConfig={siteConfig}>
-              {contextMessageHolder}
               <section>
                 <AcademyItemsListView
                   loadingCourses={loadingCourses}
@@ -178,7 +177,7 @@ const AcademyPage: NextPage<{
           </MarketingLayout>
         </>
       )}
-    </>
+    </section>
   );
 };
 

@@ -93,7 +93,9 @@ const MarketingHero: FC<{ isMobile: boolean; user: User; siteConfig: PageSiteCon
           justify={bannerAlign === "bottom" || bannerAlign === "background" ? "center" : "flex-start"}
         >
           <h1 style={{ textAlign: getTextAlign(bannerAlign) }}>{heroSection && heroSection.title}</h1>
-          <p style={{ textAlign: getTextAlign(bannerAlign) }}>{heroSection && heroSection.description}</p>
+          <p className="landingPagePara" style={{ textAlign: getTextAlign(bannerAlign) }}>
+            {heroSection && heroSection.description}
+          </p>
 
           <Space size={"large"} style={{ marginBottom: 50, padding: "0px 20px" }}>
             <Link href={user ? `${heroSection?.actionButtons?.primary?.link}` : `/login`}>

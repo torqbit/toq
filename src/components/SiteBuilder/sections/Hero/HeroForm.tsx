@@ -123,25 +123,23 @@ const HeroForm: FC<{
   );
 
   const darkHeroImage = (
-    <ImgCrop rotationSlider aspect={2 / 1} fillColor={"transparent"}>
-      <Upload maxCount={1} showUploadList={false} beforeUpload={(file) => beforeUpload(file, "darkModePath")}>
-        {heroImages.darkModePath === "" ? (
-          <Button icon={<UploadOutlined />} style={{ width: 240, height: 120 }}>
-            Dark Hero banner
-          </Button>
-        ) : (
-          <Tooltip title="Upload dark mode banner">
-            <Image
-              src={`${heroConfig?.banner?.darkModePath}`}
-              height={120}
-              width={240}
-              alt="image"
-              style={{ cursor: "pointer" }}
-            />
-          </Tooltip>
-        )}
-      </Upload>
-    </ImgCrop>
+    <Upload maxCount={1} showUploadList={false} beforeUpload={(file) => beforeUpload(file, "darkModePath")}>
+      {heroImages.darkModePath === "" ? (
+        <Button icon={<UploadOutlined />} style={{ width: 240, height: 120 }}>
+          Dark Hero banner
+        </Button>
+      ) : (
+        <Tooltip title="Upload dark mode banner">
+          <Image
+            src={`${heroConfig?.banner?.darkModePath}`}
+            height={120}
+            width={240}
+            alt="image"
+            style={{ cursor: "pointer" }}
+          />
+        </Tooltip>
+      )}
+    </Upload>
   );
   const heroItems: IConfigForm[] = [
     {

@@ -9,9 +9,15 @@
 }
 .course__card {
   width: 300px;
+  > div:first-child {
+    height: 168px;
+  }
 
   .meta {
     min-height: 130px;
+    & > div {
+      height: 135px;
+    }
     & > div > div:last-child {
       -webkit-line-clamp: 2;
       display: -webkit-box;

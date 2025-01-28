@@ -36,7 +36,7 @@ const Testimonial: FC<{ siteConfig: PageSiteConfig; testimonialList: ITestimonia
         <div className={styles.testimonial__preview}>
           <div>
             <h1>{siteConfig.sections?.testimonials?.title}</h1>
-            <p>{siteConfig.sections?.testimonials?.description}</p>
+            <p className="landingPagePara">{siteConfig.sections?.testimonials?.description}</p>
           </div>
           <Carousel dots={{ className: styles.caroursel__dots }} className={styles.carousel__wrapper} autoplay>
             {testimonialList.length > 0

@@ -64,7 +64,13 @@ ul {
   color: var(--font-secondary);
 }
 
+.landingPagePara {
+  font-size: 1.2rem;
+}
+
 p {
+  font-size: 1rem;
+  line-height: 1.5;
   color: var(--font-secondary);
 }
 :root[data-theme="light"] {

@@ -31,7 +31,7 @@ const Blogs: FC<IBlogInfo> = ({ blogList, title, description, previewMode }) => 
             </Button>
           )}
         </div>
-        <p>{description}</p>
+        <p className="landingPagePara">{description}</p>
 
         <div className={`${styles.blogs} ${blogList.length <= 2 ? styles.blogs__double : styles.blogs__triple}`}>
           {previewMode && blogList.length === 0 ? (

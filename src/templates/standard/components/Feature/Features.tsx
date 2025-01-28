@@ -15,7 +15,9 @@ const Features: FC<IFeatureInfo> = ({ title, description, items }) => (
   <section className={styles.features__container}>
     <div>
       <h2>{title}</h2>
-      <p style={{ marginBottom: 30 }}>{description}</p>
+      <p className="landingPagePara" style={{ marginBottom: 30 }}>
+        {description}
+      </p>
       <div className={`${styles.features} ${styles.features__triple}`}>
         {items.map((feature, i) => {
           return (

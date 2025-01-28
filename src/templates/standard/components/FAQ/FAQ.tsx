@@ -36,7 +36,7 @@ const FAQ: FC<{
       {((faqList && faqList.length > 0) || previewMode) && (
         <section className={styles.faq__container}>
           <h1>{siteConfig.sections?.faq?.title}</h1>
-          <p>{siteConfig.sections?.faq?.description}</p>
+          <p className="landingPagePara">{siteConfig.sections?.faq?.description}</p>
 
           <FAQList listItems={items} isEditable={false} expandIcon />
         </section>
