@@ -108,6 +108,7 @@ export class CeritificateService {
   };
 
   generateCertificate = async (
+    productId: number,
     registrationId: number,
     descripition1: string,
     descripition2: string,
@@ -115,14 +116,22 @@ export class CeritificateService {
     authorName: string,
     dateOfCompletion: string,
     certificateTemplateId: string,
-    onComplete: (registrationId: number, certificateIssueId: string, pdfTempPath: string, imgPath: string) => Promise<APIResponse<string>>,
-    onReject: (error: string) => void
+    onComplete: (
+      registrationId: number,
+      certificateIssueId: string,
+      pdfTempPath: string,
+      imgPath: string,
+      updateRegistration?: boolean
+    ) => Promise<APIResponse<string>>,
+    onReject: (error: string) => void,
+    updateRegistration?: boolean
   ): Promise<APIResponse<string>> => {
     const issueCertificate = await prisma.courseCertificates.create({
       data: {
-        registrationId: registrationId
-      }
-    })
+        registrationId: registrationId,
+        productId: productId,
+      },
+    });
 
     if (issueCertificate) {
       const imgUploadPath = await this.onCreateImg(
@@ -157,7 +166,15 @@ export class CeritificateService {
       return new Promise<APIResponse<string>>((resolve, reject) => {
         outputStream.on("finish", async () => {
           try {
-            const response = imgUploadPath.body && (await onComplete(registrationId, issueCertificate.id, uploadPdfPath, imgUploadPath.body));
+            const response =
+              imgUploadPath.body &&
+              (await onComplete(
+                registrationId,
+                issueCertificate.id,
+                uploadPdfPath,
+                imgUploadPath.body,
+                updateRegistration
+              ));
             response && resolve(new APIResponse(response.success, response.status, response.message, response.body));
           } catch (error) {
             reject(new APIResponse(false, 500, "Error in onComplete callback", error));
@@ -169,10 +186,8 @@ export class CeritificateService {
         });
       });
     } else {
-      return new APIResponse(false, 500, "Failed to issue the certificate. Contact support.")
+      return new APIResponse(false, 500, "Failed to issue the certificate. Contact support.");
     }
-
-
   };
 
   getCertificateDescripiton1 = (objectType: $Enums.ProductType, objectTitle: string) => {
@@ -201,12 +216,17 @@ export class CeritificateService {
     }
   };
 
-
   handleCertificateFailure = (error: string) => {
     return new APIResponse(false, 400, error);
   };
 
-  handleCertficateGenSuccess = async (registrationId: number, certificateIssueId: string, pdfTempPath: string, imgPath: string): Promise<APIResponse<string>> => {
+  handleCertficateGenSuccess = async (
+    registrationId: number,
+    certificateIssueId: string,
+    pdfTempPath: string,
+    imgPath: string,
+    updateRegistration?: boolean
+  ): Promise<APIResponse<string>> => {
     let response: APIResponse<any>;
 
     const cms = new ContentManagementService().getCMS(appConstant.defaultCMSProvider);
@@ -246,11 +266,11 @@ export class CeritificateService {
         let data =
           file.name === "img"
             ? {
-              imagePath: response.body,
-            }
+                imagePath: response.body,
+              }
             : {
-              pdfPath: response.body,
-            };
+                pdfPath: response.body,
+              };
 
         await prisma.courseCertificates.update({
           where: {
@@ -264,38 +284,49 @@ export class CeritificateService {
         fs.unlinkSync(pdfTempPath);
       }
 
-      await prisma.courseRegistration.update({
-        where: {
-          registrationId: registrationId,
-        },
-        data: {
-          courseState: "COMPLETED",
-        },
-      });
+      updateRegistration &&
+        (await prisma.courseRegistration.update({
+          where: {
+            registrationId: registrationId,
+          },
+          data: {
+            courseState: "COMPLETED",
+          },
+        }));
       return new APIResponse(true, 200, "Certificate has been created ", certificateIssueId);
     } else {
       throw new Error("No Media Provder has been configured");
     }
   };
 
-  generateCourseCertificate = async (registrationId: number, courseId: number, studentName: string): Promise<APIResponse<string>> => {
+  generateCourseCertificate = async (
+    registrationId: number,
+    courseId: number,
+    studentName: string,
+    updateRegistration?: boolean
+  ): Promise<APIResponse<string>> => {
     const { site }: { site: PageSiteConfig } = getSiteConfig();
     const courseDetails = await prisma.course.findUnique({
       select: {
         name: true,
         certificateTemplate: true,
-        user: true
+        user: true,
       },
       where: {
-        courseId: courseId
-      }
-    })
+        courseId: courseId,
+      },
+    });
 
     if (courseDetails && courseDetails.user) {
       let description1 = this.getCertificateDescripiton1("COURSE", courseDetails.name);
-      let description2 = this.getCertificateDescripiton2("COURSE", courseDetails.user.name, site.brand?.name || appConstant.platformName);
+      let description2 = this.getCertificateDescripiton2(
+        "COURSE",
+        courseDetails.user.name,
+        site.brand?.name || appConstant.platformName
+      );
 
       const certificateResponse = await this.generateCertificate(
+        courseId,
         registrationId,
         description1,
         description2,
@@ -304,14 +335,14 @@ export class CeritificateService {
         getDateAndYear(),
         courseDetails.certificateTemplate || appConstant.certificateTemplate,
         this.handleCertficateGenSuccess,
-        this.handleCertificateFailure
+        this.handleCertificateFailure,
+        updateRegistration
       );
       return certificateResponse;
     } else {
-      return new APIResponse(false, 400, "Unable to find the course details, for which certificate is being issued")
+      return new APIResponse(false, 400, "Unable to find the course details, for which certificate is being issued");
     }
-  }
-
+  };
 
   eventCertificate = async (certificatInfo: IEventCertificateInfo): Promise<APIResponse<string>> => {
     const { site }: { site: PageSiteConfig } = getSiteConfig();
@@ -390,11 +421,11 @@ export class CeritificateService {
             let data =
               file.name === "img"
                 ? {
-                  certificate: response.body,
-                }
+                    certificate: response.body,
+                  }
                 : {
-                  certificatePdfPath: response.body,
-                };
+                    certificatePdfPath: response.body,
+                  };
 
             await prisma.eventRegistration
               .update({
@@ -423,10 +454,15 @@ export class CeritificateService {
       };
 
       let description1 = this.getCertificateDescripiton1("EVENT", String(certificatInfo?.eventName));
-      let description2 = this.getCertificateDescripiton2("EVENT", String(certificatInfo.authorName), site.brand?.name || appConstant.platformName);
+      let description2 = this.getCertificateDescripiton2(
+        "EVENT",
+        String(certificatInfo.authorName),
+        site.brand?.name || appConstant.platformName
+      );
 
       //TODO: Need to use the event registration id while generating the certificate
       const certificateResponse = await this.generateCertificate(
+        1,
         Number(`${certificatInfo.registrationId}`),
         description1,
         description2,
@@ -434,8 +470,10 @@ export class CeritificateService {
         certificatInfo.authorName as string,
         getDateAndYear(),
         String(certificatInfo?.certificateTemplate),
-        (n: number, s1: string, s2: string, s3: string) => new Promise((res) => res(new APIResponse(true, 200, "Dummy response"))),
-        onReject
+        (n: number, s1: string, s2: string, s3: string) =>
+          new Promise((res) => res(new APIResponse(true, 200, "Dummy response"))),
+        onReject,
+        true
       );
       return certificateResponse;
     }

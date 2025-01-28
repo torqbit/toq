@@ -205,6 +205,7 @@ const LearnCoursesPage: NextPage<{
   return (
     <>
       {contextMessageHolder}
+      {contextModalHolder}
       {typeof userRole === "undefined" || userRole === Role.STUDENT ? (
         <>
           <MarketingLayout
@@ -257,10 +258,9 @@ const LearnCoursesPage: NextPage<{
               />
             )}
           </div>
-
-          <AddPhone title={enableModal.message} open={enableModal.active} onCloseModal={onCloseModal} />
         </AppLayout>
       )}
+      <AddPhone title={enableModal.message} open={enableModal.active} onCloseModal={onCloseModal} />
     </>
   );
 };
