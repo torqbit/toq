@@ -257,8 +257,6 @@ const AssignmentContentTab: FC<{
     }
   }, [lessonId, assignmentDetail?.assignmentId, refresh]);
 
-  console.log("result ", !isResultView, submissionDetail);
-
   return (
     <>
       {contextHolder}
