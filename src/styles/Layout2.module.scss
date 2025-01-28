@@ -176,6 +176,8 @@
 @media only screen and (max-width: 435px) {
   .layout2_wrapper {
     .sider_content {
+      width: 100vw;
+      margin: 0 auto;
       .mobileUserMenu {
         display: flex;
       }

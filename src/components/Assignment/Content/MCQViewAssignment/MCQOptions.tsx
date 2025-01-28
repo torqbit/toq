@@ -36,7 +36,7 @@ const MCQOption: React.FC<MCQOptionProps> = ({
         <Button size="small" style={{ border: "none" }}>
           {value}
         </Button>
-        <span>{label}</span>
+        <p style={{ marginBottom: 0 }}>{label}</p>
       </Space>
     </div>
   );
