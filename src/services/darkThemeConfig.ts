@@ -11,6 +11,7 @@ export const themeColors = {
     bgSecondary: "#242424",
     fontPrimary: "#fff",
     fontSecondary: "#b9b9b9",
+    fontPlaceholder: "#686868",
     colorSplit: "#454545",
     bgTertiary: "#131313",
   },
@@ -49,7 +50,7 @@ const darkThemeConfig = (siteConfig: PageSiteConfig) => {
       colorText: themeColors.dark.fontSecondary,
       colorBgContainer: themeColors.dark.bgPrimary,
       colorBorder: themeColors.dark.colorSplit,
-      colorTextPlaceholder: "#666",
+      colorTextPlaceholder: themeColors.dark.fontPlaceholder,
       colorPrimary: `${siteConfig.brand?.brandColor}`,
       colorSplit: themeColors.dark.colorSplit,
       hoverBorderColor: `${siteConfig.brand?.brandColor}`,
@@ -126,8 +127,7 @@ const darkThemeConfig = (siteConfig: PageSiteConfig) => {
         activeBg: themeColors.dark.bgTertiary,
         hoverBg: themeColors.dark.bgSecondary,
         addonBg: "#383e4b",
-
-        colorTextPlaceholder: themeColors.dark.fontSecondary,
+        colorTextPlaceholder: themeColors.dark.fontPlaceholder,
         activeBorderColor: themeColors.dark.fontSecondary,
       },
 
