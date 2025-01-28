@@ -57,7 +57,7 @@ const AssignmentContentTab: FC<{
           setCompleteBtnDisabled(false);
           setResultView(false);
         }
-        if (assignmentDetail.content._type === AssignmentType.SUBJECTIVE) {
+        if (assignmentDetail.content._type === AssignmentType.SUBJECTIVE && assignmentDetail.status) {
           setResultView(false);
         }
         setAssignmentDetail(assignmentDetail);
@@ -86,10 +86,10 @@ const AssignmentContentTab: FC<{
   };
 
   const handleSelectAnswer = (answer: string | number, id: string) => {
-    if (submissionDetail && submissionDetail?.status !== submissionStatus.NOT_SUBMITTED) return;
+    if (evaluationResult) return;
     setSelectedAnswers((prev: Record<number, (string | number)[]>) => {
-      const currentAnswers = prev ? prev[Number(id)] : [];
-      const isSelected = currentAnswers.includes(answer);
+      const currentAnswers = prev[Number(id)] || [];
+      const isSelected = currentAnswers?.includes(answer);
 
       const ans = {
         ...prev,
@@ -225,10 +225,14 @@ const AssignmentContentTab: FC<{
       assignmentDetail?.assignmentId as number,
       lessonId as number,
       subId as number,
-      (result) => {
+      async (result) => {
+        if (assignmentDetail?.content._type === AssignmentType.MCQ) {
+          await getEvaluationResult(subId);
+        }
         setSaveLoading(false);
         setCurrentQuestionIndex(0);
         setRefresh(!refresh);
+
         message.success("Assignment evaluated successfully");
       },
       (error) => {
@@ -239,19 +243,21 @@ const AssignmentContentTab: FC<{
   };
 
   useEffect(() => {
-    if (lessonId && typeof window !== "undefined") {
+    if (lessonId && typeof window !== "undefined" && assignmentDetail?.content._type === AssignmentType.MCQ) {
       const data = localStorage.getItem(`assignment-${lessonId}`);
       setSelectedAnswers(JSON.parse(data as any));
     }
-  }, [refresh, assignmentDetail?.assignmentId]);
+  }, [refresh, lessonId]);
 
   useEffect(() => {
     resetState();
     lessonId && getAssignmentDetail(lessonId, true);
-    if (assignmentDetail && assignmentDetail.status) {
+    if (assignmentDetail) {
       getAssignmentSubmission(assignmentDetail.assignmentId);
     }
-  }, [lessonId, refresh]);
+  }, [lessonId, assignmentDetail?.assignmentId, refresh]);
+
+  console.log("result ", !isResultView, submissionDetail);
 
   return (
     <>
@@ -327,7 +333,7 @@ const AssignmentContentTab: FC<{
               </Flex>
             )}
           </div>
-          {!loading && assignmentDetail?.content._type === AssignmentType.MCQ && isResultView && evaluationResult && (
+          {assignmentDetail?.content._type === AssignmentType.MCQ && isResultView && evaluationResult && (
             <Result
               status={
                 evaluationResult?.scoreSummary?.eachQuestionScore[currentQuestionIndex]?.score ===
@@ -347,18 +353,15 @@ const AssignmentContentTab: FC<{
               ]}
             />
           )}
-          {!loading &&
-            !isResultView &&
-            assignmentDetail?.content._type === AssignmentType.MCQ &&
-            questions.length > 0 && (
-              <MCQViewAssignment
-                question={questions[currentQuestionIndex]}
-                selectedAnswers={selectedAnswers}
-                handleSelectAnswer={handleSelectAnswer}
-                isEvaluated={!!evaluationResult}
-              />
-            )}
-          {!loading && assignmentDetail?.content._type === AssignmentType.SUBJECTIVE && subjectiveQuestion && (
+          {!isResultView && assignmentDetail?.content._type === AssignmentType.MCQ && questions.length > 0 && (
+            <MCQViewAssignment
+              question={questions[currentQuestionIndex]}
+              selectedAnswers={selectedAnswers}
+              handleSelectAnswer={handleSelectAnswer}
+              isEvaluated={!!evaluationResult}
+            />
+          )}
+          {assignmentDetail?.content._type === AssignmentType.SUBJECTIVE && subjectiveQuestion && (
             <>
               <SubjectiveAssignmentView
                 subjectiveQuestion={subjectiveQuestion}
