@@ -9,8 +9,9 @@ export const getCourseAccessRole = async (
 ) => {
   let cId = courseId;
   let role: Role = Role.NOT_ENROLLED;
-
+  let isLearningPath = false;
   let dateJoined: Date = new Date();
+  let pathId: number | undefined;
 
   if (courseSlug && typeof courseId == "string") {
     const findCourse = await prisma.course.findUnique({
@@ -54,6 +55,8 @@ export const getCourseAccessRole = async (
     }));
 
   if (isLearningRegistered) {
+    isLearningPath = true;
+    pathId = findLearningPathCourse.learningPathId;
     if (userRole === Role.ADMIN) {
       role = Role.ADMIN;
     } else if (userRole === Role.AUTHOR && findLearningPathCourse.course.authorId === userId) {
@@ -92,6 +95,7 @@ export const getCourseAccessRole = async (
           },
         },
       }));
+
     if (registrationDetails) {
       if (userRole === Role.ADMIN) {
         role = Role.ADMIN;
@@ -110,5 +114,5 @@ export const getCourseAccessRole = async (
     }
   }
 
-  return { role, dateJoined };
+  return { role, dateJoined, isLearningPath, pathId };
 };

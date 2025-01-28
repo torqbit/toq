@@ -899,12 +899,12 @@ class ProgramService {
   };
 
   createCertificate = (
-    courseId: number,
+    productId: number,
 
     onSuccess: (response: ApiResponse) => void,
     onFailure: (message: string) => void
   ) => {
-    fetch(`/api/v1/course/certificate/generate-certificate/?courseId=${courseId}`, {
+    fetch(`/api/v1/course/certificate/generate-certificate/?productId=${productId}`, {
       method: "GET",
       headers: {
         Accept: "application/json",

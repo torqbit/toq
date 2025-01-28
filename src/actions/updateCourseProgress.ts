@@ -64,9 +64,9 @@ const updateCourseProgress = async (
             if (
               lessonsDetail.lessonsCompleted === lessonsDetail.totalLessons &&
               !updateProgress.course.previewMode &&
-              contentType === ResourceContentType.Assignment
-              //  &&
-              // !certificateExist
+              contentType === ResourceContentType.Assignment &&
+              !certificateExist &&
+              registrationId
             ) {
               const studentDetail = await prisma.user.findUnique({
                 where: {
@@ -78,11 +78,11 @@ const updateCourseProgress = async (
                 },
               });
 
-              // await new CeritificateService().generateCourseCertificate(
-              //   registrationId,
-              //   Number(courseId),
-              //   String(studentDetail?.name)
-              // );
+              await new CeritificateService().generateCourseCertificate(
+                registrationId,
+                Number(courseId),
+                String(studentDetail?.name)
+              );
 
               resolve({ lessonsCompleted: courseProgress[0].watched_lessons, totalLessons: courseProgress[0].lessons });
             } else {
