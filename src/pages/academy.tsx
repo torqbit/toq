@@ -1,9 +1,7 @@
 import type { GetServerSidePropsContext, NextPage } from "next";
-import styles from "@/styles/Dashboard.module.scss";
-import React, { FC, useEffect, useState } from "react";
-import { Course, Role, StateType, User } from "@prisma/client";
-import { Spin, message } from "antd";
-
+import React, { useState } from "react";
+import { Role, User } from "@prisma/client";
+import { message } from "antd";
 import AppLayout from "@/components/Layouts/AppLayout";
 import { getSiteConfig } from "@/services/getSiteConfig";
 import { PageSiteConfig } from "@/services/siteConstant";
@@ -15,25 +13,28 @@ import { EmptyCourses } from "@/components/SvgIcons";
 import { useRouter } from "next/router";
 import { getIconTheme } from "@/services/darkThemeConfig";
 import { useAppContext } from "@/components/ContextApi/AppContext";
-
 import { useSession } from "next-auth/react";
-import { LoadingOutlined } from "@ant-design/icons";
 import { useMediaQuery } from "react-responsive";
 import learningPath from "@/actions/learningPath";
 import { ILearningPathDetail } from "@/types/learingPath";
 import LearningPathSerivices from "@/services/learningPath/LearningPathSerivices";
-import { LearnListView } from "@/components/Admin/LearningPath/LearnListView";
+import { AcademyItemsListView } from "@/components/Admin/LearningPath/LearnListView";
 import { ICourseListItem } from "@/types/courses/Course";
 import ProgramService from "@/services/ProgramService";
+import { getCouseListItems } from "@/actions/getCourseListItems";
 
-const AcademyPage: NextPage<{ siteConfig: PageSiteConfig; userRole: Role; pathList: ILearningPathDetail[] }> = ({
-  siteConfig,
-  userRole,
-  pathList,
-}) => {
+const AcademyPage: NextPage<{
+  siteConfig: PageSiteConfig;
+  userRole: Role;
+  pathList: ILearningPathDetail[];
+  coursesList: ICourseListItem[];
+}> = ({ siteConfig, userRole, pathList, coursesList }) => {
   const [pathListData, setPathListData] = useState<ILearningPathDetail[]>(pathList);
   const [messageApi, contextMessageHolder] = message.useMessage();
   const [loading, setLoading] = useState<boolean>(false);
+  const [courses, setCourses] = useState<ICourseListItem[]>(coursesList);
+  const [loadingCourses, setLoadingCourses] = useState<boolean>(false);
+
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
 
   const router = useRouter();
@@ -57,9 +58,32 @@ const AcademyPage: NextPage<{ siteConfig: PageSiteConfig; userRole: Role; pathLi
       }
     );
   };
+  const getCourses = () => {
+    ProgramService.listCoursesViews((response) => {
+      if (response.success && response.body) {
+        setCourses(response.body);
+        setLoadingCourses(false);
+      } else {
+        messageApi.error(response.message);
+        setLoadingCourses(false);
+      }
+    });
+  };
+
+  const handleItemsList = (key: string) => {
+    switch (key) {
+      case "courses":
+        return getCourses();
+      case "learning":
+        return getPathList();
+      default:
+        return getCourses();
+    }
+  };
 
   return (
     <>
+      {contextMessageHolder}
       {userRole ? (
         <>
           {userRole === Role.STUDENT ? (
@@ -82,8 +106,11 @@ const AcademyPage: NextPage<{ siteConfig: PageSiteConfig; userRole: Role; pathLi
               {contextMessageHolder}
               <section>
                 <div className="page__wrapper">
-                  <LearnListView
+                  <AcademyItemsListView
+                    loadingCourses={loadingCourses}
                     pathList={pathListData || []}
+                    courses={courses}
+                    handleItemsList={() => {}}
                     loading={loading || !pathListData}
                     siteConfig={siteConfig}
                     currentTheme={globalState.theme || "light"}
@@ -100,7 +127,10 @@ const AcademyPage: NextPage<{ siteConfig: PageSiteConfig; userRole: Role; pathLi
             <AppLayout siteConfig={siteConfig}>
               {contextMessageHolder}
               <section>
-                <LearnListView
+                <AcademyItemsListView
+                  loadingCourses={loadingCourses}
+                  courses={courses}
+                  handleItemsList={handleItemsList}
                   pathList={pathListData || []}
                   loading={loading || !pathListData}
                   siteConfig={siteConfig}
@@ -129,7 +159,10 @@ const AcademyPage: NextPage<{ siteConfig: PageSiteConfig; userRole: Role; pathLi
             {contextMessageHolder}
             <section>
               <div className="page__wrapper">
-                <LearnListView
+                <AcademyItemsListView
+                  loadingCourses={loadingCourses}
+                  courses={courses}
+                  handleItemsList={() => {}}
                   pathList={pathListData || []}
                   loading={loading || !pathListData}
                   siteConfig={siteConfig}
@@ -158,6 +191,8 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
 
   const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
   const pathListResponse = await learningPath.listLearningPath(user?.role, user?.id);
+  const courseResponse = await getCouseListItems({ role: user?.role, id: user?.id });
+
   const siteConfig = getSiteConfig();
   const { site } = siteConfig;
   if (user) {
@@ -166,6 +201,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
         siteConfig: site,
         userRole: user?.role,
         pathList: pathListResponse && pathListResponse.success ? pathListResponse.body : [],
+        coursesList: courseResponse && courseResponse.success ? courseResponse.body : [],
       },
     };
   } else {
@@ -173,6 +209,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
       props: {
         siteConfig: site,
         pathList: pathListResponse.success ? pathListResponse.body : [],
+        coursesList: courseResponse && courseResponse.success ? courseResponse.body : [],
       },
     };
   }

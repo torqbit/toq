@@ -144,19 +144,31 @@ export const LearnViewItem: FC<{ learning: ILearningPathDetail; previewMode?: bo
   );
 };
 
-export const LearnListView: FC<{
+export const AcademyItemsListView: FC<{
   pathList: ILearningPathDetail[];
+  loadingCourses: boolean;
+  courses: ICourseListItem[];
   getPathList: () => void;
   siteConfig: PageSiteConfig;
+  handleItemsList: (key: string) => void;
   currentTheme: Theme;
   emptyView: ReactNode;
   role?: Role;
   loading: boolean;
-}> = ({ pathList, currentTheme, siteConfig, getPathList, emptyView, role, loading }) => {
+}> = ({
+  pathList,
+  currentTheme,
+  siteConfig,
+  loadingCourses,
+  handleItemsList,
+  getPathList,
+  emptyView,
+  role,
+  loading,
+  courses,
+}) => {
   const [messageApi, contextMessageHolder] = message.useMessage();
-  const [courses, setCourses] = useState<ICourseListItem[]>();
-  const [loadingCourses, setLoading] = useState<boolean>(false);
-  const [tab, setTab] = useState("1");
+  const [tab, setTab] = useState("courses");
   const [segmentValue, setSegmentValue] = useState<string>("all");
 
   const router = useRouter();
@@ -166,93 +178,22 @@ export const LearnListView: FC<{
   };
   const onChangeTab = (k: string) => {
     switch (k) {
-      case "1":
+      case "courses":
         setTab(k);
         setSegmentValue("all");
-        return getPathList();
-      case "2":
-        setLoading(true);
+        return handleItemsList(k);
+      case "learning":
         setTab(k);
         setSegmentValue("all");
-        return getCourses();
+        return handleItemsList(k);
+
       default:
-        return getPathList();
+        return handleItemsList(k);
     }
   };
   const items: TabsProps["items"] = [
     {
-      key: "1",
-      label: "Learning Paths",
-      children: (
-        <Spin spinning={loading} indicator={<LoadingOutlined spin />} size="large">
-          {typeof role == "undefined" && pathList.length > 0 && (
-            <div className={styles.course__grid}>
-              {pathList
-                .filter((p) => p.state === StateType.ACTIVE)
-                .map((path, index) => (
-                  <LearnViewItem userRole={role} learning={path} key={index} />
-                ))}
-            </div>
-          )}
-          {role && pathList.length > 0 && (
-            <Flex vertical gap={10}>
-              {role && role !== Role.STUDENT && (
-                <Segmented
-                  style={{ width: "fit-content" }}
-                  onChange={setSegmentValue}
-                  options={[
-                    { value: "all", label: "All" },
-                    { value: StateType.ACTIVE, label: "Published" },
-                  ]}
-                />
-              )}
-              <>
-                {role && role !== Role.STUDENT && segmentValue === "all" ? (
-                  <div className={styles.course__grid}>
-                    {pathList.map((path, index) => (
-                      <LearnViewItem userRole={path.role} learning={path} key={index} />
-                    ))}
-                  </div>
-                ) : (
-                  <div className={styles.course__grid}>
-                    {pathList
-                      .filter((p) => p.state === StateType.ACTIVE)
-                      .map((path, index) => (
-                        <LearnViewItem userRole={path.role} learning={path} key={index} />
-                      ))}
-                  </div>
-                )}
-              </>
-            </Flex>
-          )}
-
-          {loading && (
-            <div className={styles.course__grid}>
-              {getDummyArray(3).map((t, i) => {
-                return (
-                  <Card
-                    key={i}
-                    className={styles.course__card}
-                    cover={
-                      <Skeleton.Image style={{ width: isMobile ? "Calc(100vw - 40px)" : "300px", height: "168px" }} />
-                    }
-                  >
-                    <Skeleton />
-                  </Card>
-                );
-              })}
-            </div>
-          )}
-          {(!pathList || pathList.length == 0) && !loading && (
-            <Flex justify="center" align="center">
-              {emptyView}
-            </Flex>
-          )}
-        </Spin>
-      ),
-    },
-    {
-      key: "2",
+      key: "courses",
       label: "Courses",
       children: (
         <Spin spinning={loadingCourses || !courses} indicator={<LoadingOutlined spin />} size="large">
@@ -298,7 +239,7 @@ export const LearnListView: FC<{
             </Flex>
           )}
 
-          {loadingCourses && (
+          {loadingCourses && courses.length == 0 && (
             <div className={styles.course__grid}>
               {getDummyArray(3).map((t, i) => {
                 return (
@@ -323,18 +264,78 @@ export const LearnListView: FC<{
         </Spin>
       ),
     },
+    {
+      key: "learning",
+      label: "Learning Paths",
+      children: (
+        <Spin spinning={loading} indicator={<LoadingOutlined spin />} size="large">
+          {typeof role == "undefined" && pathList.length > 0 && (
+            <div className={styles.course__grid}>
+              {pathList
+                .filter((p) => p.state === StateType.ACTIVE)
+                .map((path, index) => (
+                  <LearnViewItem userRole={role} learning={path} key={index} />
+                ))}
+            </div>
+          )}
+          {role && pathList.length > 0 && (
+            <Flex vertical gap={10}>
+              {role && role !== Role.STUDENT && (
+                <Segmented
+                  style={{ width: "fit-content" }}
+                  onChange={setSegmentValue}
+                  options={[
+                    { value: "all", label: "All" },
+                    { value: StateType.ACTIVE, label: "Published" },
+                  ]}
+                />
+              )}
+              <>
+                {role && role !== Role.STUDENT && segmentValue === "all" ? (
+                  <div className={styles.course__grid}>
+                    {pathList.map((path, index) => (
+                      <LearnViewItem userRole={path.role} learning={path} key={index} />
+                    ))}
+                  </div>
+                ) : (
+                  <div className={styles.course__grid}>
+                    {pathList
+                      .filter((p) => p.state === StateType.ACTIVE)
+                      .map((path, index) => (
+                        <LearnViewItem userRole={path.role} learning={path} key={index} />
+                      ))}
+                  </div>
+                )}
+              </>
+            </Flex>
+          )}
+
+          {loading && pathList.length == 0 && (
+            <div className={styles.course__grid}>
+              {getDummyArray(3).map((t, i) => {
+                return (
+                  <Card
+                    key={i}
+                    className={styles.course__card}
+                    cover={
+                      <Skeleton.Image style={{ width: isMobile ? "Calc(100vw - 40px)" : "300px", height: "168px" }} />
+                    }
+                  >
+                    <Skeleton />
+                  </Card>
+                );
+              })}
+            </div>
+          )}
+          {(!pathList || pathList.length == 0) && !loading && (
+            <Flex justify="center" align="center">
+              {emptyView}
+            </Flex>
+          )}
+        </Spin>
+      ),
+    },
   ];
-  const getCourses = () => {
-    ProgramService.listCoursesViews((response) => {
-      if (response.success && response.body) {
-        setCourses(response.body);
-        setLoading(false);
-      } else {
-        messageApi.error(response.message);
-        setLoading(false);
-      }
-    });
-  };
 
   const addCourse = () => {
     ProgramService.createDraftCourses(
@@ -364,13 +365,14 @@ export const LearnListView: FC<{
             <>
               {role && role !== Role.STUDENT && (
                 <>
-                  {tab == "1" && (
-                    <Button type="primary" onClick={handleLearningCreate}>
-                      Add Learning Path
-                    </Button>
-                  )}
+                  {tab == "learning" &&
+                    courses.filter((c) => c.state == StateType.ACTIVE && c.price == 0).length > 2 && (
+                      <Button type="primary" onClick={handleLearningCreate}>
+                        Add Learning Path
+                      </Button>
+                    )}
 
-                  {tab === "2" && (
+                  {tab === "courses" && (
                     <Button type="primary" onClick={addCourse}>
                       Add Courses
                     </Button>

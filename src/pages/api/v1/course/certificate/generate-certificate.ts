@@ -9,55 +9,70 @@ import { ContentManagementService } from "@/services/cms/ContentManagementServic
 import { ICertificateInfo } from "@/types/courses/Course";
 import { CeritificateService } from "@/services/certificate/CertificateService";
 import { APIResponse } from "@/types/apis";
+import { getCourseAccessRole } from "@/actions/getCourseAccessRole";
+import { Role } from "@prisma/client";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const cms = new ContentManagementService();
     let cookieName = getCookieName();
 
-    const { courseId } = req.query;
+    const { productId } = req.query;
     const token = await getToken({
       req,
       secret: process.env.NEXT_PUBLIC_SECRET,
       cookieName,
     });
 
+    const hasAccess = await getCourseAccessRole(token?.role, token?.id, Number(productId));
+    let pId = hasAccess.pathId ? hasAccess.pathId : Number(productId);
     const cr = await prisma.courseRegistration.findFirst({
       where: {
         studentId: token?.id,
         order: {
-          productId: Number(courseId)
-        }
+          productId: pId,
+        },
       },
       select: {
         registrationId: true,
-        orderId: true,
-        certificate: true,
-        user: true
-      }
+        user: {
+          select: {
+            name: true,
+          },
+        },
+        certificate: {
+          select: {
+            productId: true,
+            id: true,
+          },
+        },
+      },
     });
 
-    if (cr) {
-      if (cr.certificate != null) {
-        return res.status(200).json(new APIResponse(true, 200, "Certificate already exists", { certificateIssueId: cr.certificate.id }));
+    if (hasAccess.role === Role.STUDENT) {
+      const isExist = cr?.certificate.find((c) => c.productId === Number(productId));
+      if (isExist) {
+        return res
+          .status(200)
+          .json(new APIResponse(true, 200, "Certificate already exists", { certificateIssueId: isExist.id }));
       } else {
-        await new CeritificateService().generateCourseCertificate(cr.registrationId, Number(courseId), cr.user.name).then((r) => {
-          if (r.success) {
-            return res.status(200).json({ ...r, certificateIssueId: r.body });
-          } else {
-            return res.status(400).json(r);
-          }
-        });
+        cr?.registrationId &&
+          (await new CeritificateService()
+            .generateCourseCertificate(cr.registrationId, Number(productId), cr.user.name, !hasAccess.isLearningPath)
+            .then((r) => {
+              if (r.success) {
+                return res.status(200).json({ ...r, certificateIssueId: r.body });
+              } else {
+                return res.status(400).json(r);
+              }
+            }));
       }
     } else {
       return res.status(400).json(new APIResponse(false, 400, "No enrolment found for this course"));
     }
-
-
-
   } catch (error) {
     return errorHandler(error, res);
   }
-}
+};
 
 export default withMethods(["GET"], withAuthentication(handler));

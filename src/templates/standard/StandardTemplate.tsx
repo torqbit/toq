@@ -13,7 +13,7 @@ import FAQ from "./components/FAQ/FAQ";
 import Testimonial from "./components/Testimonials/Testimonials";
 import styles from "./StandardTemplate.module.scss";
 import { ICourseListItem } from "@/types/courses/Course";
-import LearningList from "./components/Learning/LearningList";
+import LearningList from "./components/Academy/AcademyItemsList";
 import { ILearningPathDetail } from "@/types/learingPath";
 
 interface IStandardTemplateProps {
