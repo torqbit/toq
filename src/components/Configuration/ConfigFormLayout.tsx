@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useEffect } from "react";
 
 import styles from "./CMS/CMS.module.scss";
 import { Collapse } from "antd";
@@ -23,14 +23,13 @@ const ConfigFormLayout: FC<{
   showArrow = true,
 }) => {
   return (
-    <section className={styles.cms__container} style={{ width, marginBottom }}>
+    <section className={`${styles.cms__container} ${styles.question_card}`} style={{ width, marginBottom }}>
       <Collapse
         style={{ borderRadius: 4 }}
-        defaultActiveKey={[formTitle]}
+        defaultActiveKey={[isCollapsible ? "" : formTitle]}
         collapsible={isCollapsible ? "header" : "icon"}
         items={[
           {
-
             key: formTitle,
             label: <h4 style={{ margin: 0 }}>{formTitle}</h4>,
 
@@ -38,7 +37,6 @@ const ConfigFormLayout: FC<{
             children: children,
             extra: extraContent,
             showArrow: isCollapsible,
-
           },
         ]}
       />
