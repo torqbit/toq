@@ -1,10 +1,10 @@
 services:
   web:
-    image: torqbit/torqbit:0.1.5-rc2
+    image: torqbit/torqbit:0.1.5-rc4
     ports:
-      - "3000:80"
+      - "8080:80"
     build: .
-    command: ["sh", "-c", "nginx ; npx prisma db push --accept-data-loss; yarn start"]
+    command: ["sh", "-c", "nginx ; npx prisma db push --accept-data-loss; PORT=8080 yarn start"]
 
     depends_on:
       db:

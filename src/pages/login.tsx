@@ -103,10 +103,10 @@ const LoginPage: NextPage<{
         <div className={styles.social_login_container}>
           {siteConfig.brand?.icon && typeof siteConfig.brand.icon === "string" ? (
             <object type="image/png" data={siteConfig.brand.icon} height={60} width={60} aria-label={`Brand icon`}>
-              <Image src={"/icon/torqbit.png"} height={60} width={60} alt={"logo"} />
+              <Image src={"/img/brand/torqbit-icon.png"} height={60} width={60} alt={"logo"} />
             </object>
           ) : (
-            <Image src={"/icon/torqbit.png"} height={60} width={60} alt={"logo"} />
+            <Image src={"/img/brand/torqbit-icon.png"} height={60} width={60} alt={"logo"} />
           )}
 
           <h3>Welcome back to {brand?.name}</h3>
@@ -209,7 +209,7 @@ const LoginPage: NextPage<{
               })}
               <Flex gap={5}>
                 <p>Don&apos;t have an account?</p>
-                <Link href={"/signup"}>Sign up.</Link>
+                <Link href={"/signup"}>Sign up</Link>
               </Flex>
             </>
           )}

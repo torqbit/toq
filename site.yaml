@@ -25,13 +25,12 @@ site:
     name: Torqbit
     brandColor: "#8980fd"
     title: Making online fun and easy
-    icon: /icon/torqbit.png
+    icon: /img/brand/torqbit-icon.png
   darkMode: true
   heroSection:
-    title: Making online education fun and easy
+    title: Welcome to Torqbit Academy
     description: >
-      Torqbit, an open-source platform, serves as a learning management software
-      that works for single person to largest educational institutions
+      Torqbit, is an open source learning platform to help businesses simplify the onboarding and training of their customers
     actionButtons:
       primary:
         label: Get Started
