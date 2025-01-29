@@ -160,8 +160,8 @@ const MarketingLayout: FC<{
           <>
             <ul>
               <li>
-                <Link href={"/academy"} aria-label={`link to course page`}>
-                  Academy
+                <Link href={"/courses"} aria-label={`link to course page`}>
+                  Courses
                 </Link>
               </li>
               <li>
@@ -200,7 +200,7 @@ const MarketingLayout: FC<{
                 arrow={{ pointAtCenter: true }}
               >
                 <Flex align="center" gap={5} style={{ cursor: "pointer" }}>
-                  <Avatar src={user?.image} icon={<UserOutlined />} />
+                  <Avatar src={session?.user?.image} icon={<UserOutlined />} />
                   <i style={{ lineHeight: 0, color: "var(--font-secondary)", fontSize: 20 }}>{SvgIcons.chevronDown}</i>
                 </Flex>
               </Dropdown>

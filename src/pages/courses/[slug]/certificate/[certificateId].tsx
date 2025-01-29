@@ -12,19 +12,20 @@ import AppLayout from "@/components/Layouts/AppLayout";
 import { PageSiteConfig } from "@/services/siteConstant";
 import { getSiteConfig } from "@/services/getSiteConfig";
 import { getCourseAccessRole } from "@/actions/getCourseAccessRole";
-import { LoadingOutlined } from "@ant-design/icons";
+import { Role, User } from "@prisma/client";
+import MarketingLayout from "@/components/Layouts/MarketingLayout";
+import { useSession } from "next-auth/react";
 
-const ShowCertificate: FC<{ siteConfig: PageSiteConfig; courseName: string; userName: string }> = ({
-  siteConfig,
-  courseName,
+const PreviewCertificate: FC<{ courseName: string; userName: string; userRole: Role }> = ({
   userName,
+  courseName,
+  userRole,
 }) => {
   const router = useRouter();
-
   return (
-    <AppLayout siteConfig={siteConfig}>
-      <Space direction="vertical" size={"middle"} className={styles.certificate_page}>
-        <div>
+    <Flex vertical align={userRole == Role.STUDENT ? "center" : undefined} className={styles.certificate_page}>
+      <Flex vertical gap={20}>
+        <div style={{ justifySelf: "flex-start" }}>
           <Breadcrumb
             items={[
               {
@@ -43,13 +44,13 @@ const ShowCertificate: FC<{ siteConfig: PageSiteConfig; courseName: string; user
           Torqbit certifies the successful completion of <span>{courseName}</span> by <span>{userName} </span>
         </p>
         <div className={styles.certificate_image}>
-          <Spin
+          <img src={`/static/course/certificate/${router.query.certificateId}`} alt={userName ?? "Certificate"} />
+          {/* <Spin
             spinning={true}
             indicator={<LoadingOutlined spin />}
             style={{ position: "absolute", top: "calc(50% - 40px)", left: "50%" }}
             size="large"
-          />
-          <img src={`/static/course/certificate/${router.query.certificateId}`} alt={userName ?? "Certificate"} />{" "}
+          /> */}
           <Button
             onClick={() => {
               router.push(`/courses/${router.query.slug}/certificate/download/${String(router.query.certificateId)}`);
@@ -61,8 +62,45 @@ const ShowCertificate: FC<{ siteConfig: PageSiteConfig; courseName: string; user
             <i style={{ fontSize: 18, lineHeight: 0 }}> {SvgIcons.arrowRight}</i>
           </Button>
         </div>
-      </Space>
-    </AppLayout>
+      </Flex>
+    </Flex>
+  );
+};
+
+const ShowCertificate: FC<{ siteConfig: PageSiteConfig; courseName: string; userName: string; userRole: Role }> = ({
+  siteConfig,
+  courseName,
+  userName,
+  userRole,
+}) => {
+  const { data: user } = useSession();
+
+  return (
+    <>
+      {userRole == Role.STUDENT ? (
+        <MarketingLayout
+          mobileHeroMinHeight={60}
+          user={
+            userRole
+              ? ({
+                  id: user?.id,
+                  name: user?.user?.name || "",
+                  email: user?.user?.email || "",
+                  phone: user?.phone || "",
+                  role: userRole,
+                } as User)
+              : undefined
+          }
+          siteConfig={siteConfig}
+        >
+          <PreviewCertificate userRole={userRole} courseName={courseName} userName={userName} />
+        </MarketingLayout>
+      ) : (
+        <AppLayout siteConfig={siteConfig}>
+          <PreviewCertificate userRole={userRole} courseName={courseName} userName={userName} />
+        </AppLayout>
+      )}
+    </>
   );
 };
 
@@ -121,6 +159,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
             siteConfig: site,
             courseName: findCourse?.name,
             userName: user.name,
+            userRole: user.role,
           },
         };
       }

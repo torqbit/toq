@@ -202,6 +202,7 @@ export interface ICourseDetailView {
     designation?: string;
   };
   trailerEmbedUrl?: string;
+  certificateId?: string;
 }
 
 export interface CourseLessonAPIResponse {

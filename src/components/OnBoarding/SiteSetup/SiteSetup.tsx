@@ -49,7 +49,7 @@ const SiteSetup: FC<{ siteConfig: PageSiteConfig; setupOptions: ISiteSetupCard[]
           id="myIframe"
           ref={undefined}
           siteConfig={siteConfig}
-          src={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/admin/site/preview/${siteConfig.template}}`}
+          src={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/admin/site/preview/${siteConfig.template}`}
         />
       </div>
     </section>

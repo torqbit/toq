@@ -13,8 +13,14 @@
 }
 
 .certificate_page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+
   padding: 40px;
   .certificate_header {
+    align-self: flex-start;
     color: var(--font-secondary);
     :hover {
       color: var(--font-primary);
@@ -31,7 +37,6 @@
     width: 800px;
     img {
       position: relative;
-      z-index: 5;
       height: auto;
       width: 100%;
     }
@@ -47,7 +52,7 @@
     }
   }
   .about_description {
-    font-size: 18px;
+    font-size: 1.2rem;
     color: var(--font-secondary);
 
     span {
@@ -58,6 +63,8 @@
 
 @media only screen and (max-width: 435px) {
   .certificate_page {
+    width: 80vw;
+
     padding: 20px;
 
     .certificate_image {
