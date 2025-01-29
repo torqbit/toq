@@ -56,7 +56,7 @@ const LessonListSideBar: FC<{
         >
           <Flex align="center" justify="space-between">
             <h3>Course Content</h3>
-            <p>{Math.trunc(progress)}% Completed</p>
+            {userRole === Role.STUDENT && <p>{Math.trunc(progress)}% Completed</p>}
           </Flex>
           {userRole === Role.STUDENT && (
             <Progress

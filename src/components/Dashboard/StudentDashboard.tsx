@@ -13,8 +13,11 @@ import ProgramService from "@/services/ProgramService";
 import { LoadingOutlined } from "@ant-design/icons";
 import { getDummyArray } from "@/lib/dummyData";
 import { useMediaQuery } from "react-responsive";
+import Academy from "../Academy/Academy";
+import { ILearningPathDetail } from "@/types/learingPath";
+import { ICourseListItem } from "@/types/courses/Course";
 
-const EnrolledCourseList: FC<{
+export const EnrolledCourseProgressList: FC<{
   courseData: { courseName: string; progress: string; courseId: number; slug: string }[];
 }> = ({ courseData }) => {
   return (
@@ -43,8 +46,10 @@ const EnrolledCourseList: FC<{
 
 const StudentDashboard: FC<{
   siteConfig: PageSiteConfig;
+  pathList: ILearningPathDetail[];
+  coursesList: ICourseListItem[];
   userRole: Role;
-}> = ({ siteConfig, userRole }) => {
+}> = ({ siteConfig, userRole, pathList, coursesList }) => {
   const { globalState } = useAppContext();
 
   const router = useRouter();
@@ -54,20 +59,23 @@ const StudentDashboard: FC<{
   const [allRegisterCourse, setAllRegisterCourse] =
     useState<{ courseName: string; progress: string; courseId: number; slug: string }[]>();
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
+  const getProgress = () => {
+    setPageLoading(true);
+    ProgramService.getRegisterCourses(
+      (result) => {
+        setAllRegisterCourse(result.progress);
+        setPageLoading(false);
+      },
+      (error) => {
+        messageApi.error(error);
+        setPageLoading(false);
+      }
+    );
+  };
 
   useEffect(() => {
     if (userRole == Role.STUDENT) {
-      setPageLoading(true);
-      ProgramService.getRegisterCourses(
-        (result) => {
-          setAllRegisterCourse(result.progress);
-          setPageLoading(false);
-        },
-        (error) => {
-          messageApi.error(error);
-          setPageLoading(false);
-        }
-      );
+      getProgress();
     }
   }, [userRole]);
 
@@ -75,13 +83,40 @@ const StudentDashboard: FC<{
 
   const items: TabsProps["items"] = [
     {
-      key: "1",
+      key: "student",
       label: "My Learnings",
       className: "some-class",
-      icon: <i style={{ fontSize: 18, color: "var(--font-primary)" }}>{SvgIcons.courses}</i>,
+
       children:
         !pageLoading && allRegisterCourse ? (
-          <EnrolledCourseList courseData={allRegisterCourse} />
+          <>
+            {allRegisterCourse && allRegisterCourse.length === 0 ? (
+              <>
+                <div className={styles.no_course_found}>
+                  <EmptyCourses
+                    size={isMobile ? "200px" : "300px"}
+                    {...getIconTheme(globalState.theme || "light", siteConfig.brand)}
+                  />
+                  <h4 style={{ marginBottom: 20 }}>You have not enrolled in any courses</h4>
+                  {allRegisterCourse.length === 0 && (
+                    <Button
+                      onClick={() => {
+                        router.push(`/courses`);
+                      }}
+                      type="primary"
+                    >
+                      <Flex align="center" gap={10}>
+                        <span>Browse Courses</span>
+                        <i style={{ fontSize: 18, lineHeight: 0 }}> {SvgIcons.arrowRight}</i>
+                      </Flex>
+                    </Button>
+                  )}
+                </div>
+              </>
+            ) : (
+              <EnrolledCourseProgressList courseData={allRegisterCourse} />
+            )}
+          </>
         ) : (
           <Flex gap={5} vertical>
             {getDummyArray(5).map((t) => {
@@ -96,42 +131,15 @@ const StudentDashboard: FC<{
     <section>
       <Spin spinning={pageLoading} indicator={<LoadingOutlined spin />} size="large">
         {contextHolder}
-        <>
-          {allRegisterCourse && allRegisterCourse.length === 0 ? (
-            <>
-              <div className={styles.no_course_found}>
-                <EmptyCourses
-                  size={isMobile ? "200px" : "300px"}
-                  {...getIconTheme(globalState.theme || "light", siteConfig.brand)}
-                />
-                <h4 style={{ marginBottom: 20 }}>You have not enrolled in any courses</h4>
-                {allRegisterCourse.length === 0 && (
-                  <Button
-                    onClick={() => {
-                      router.push(`/courses`);
-                    }}
-                    type="primary"
-                  >
-                    <Flex align="center" gap={10}>
-                      <span>Browse Courses</span>
-                      <i style={{ fontSize: 18, lineHeight: 0 }}> {SvgIcons.arrowRight}</i>
-                    </Flex>
-                  </Button>
-                )}
-              </div>
-            </>
-          ) : (
-            <>
-              <Tabs
-                defaultActiveKey="1"
-                className="content_tab"
-                items={items}
-                onChange={onChange}
-                style={{ padding: isMobile ? "0 20px" : "inherit" }}
-              />
-            </>
-          )}
-        </>
+        <Academy
+          studentView
+          studentItems={items}
+          siteConfig={siteConfig}
+          userRole={userRole}
+          pathList={pathList}
+          coursesList={coursesList}
+          getProgress={getProgress}
+        />
       </Spin>
     </section>
   );

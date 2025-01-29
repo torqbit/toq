@@ -160,12 +160,12 @@ const MarketingLayout: FC<{
           <>
             <ul>
               <li>
-                <Link href={"/courses"} aria-label={`link to course page`}>
+                <Link href={"/courses"} style={{ color: "var(--font-secnodary)" }} aria-label={`link to course page`}>
                   Courses
                 </Link>
               </li>
               <li>
-                <Link href={"/blogs"} aria-label={`link to blogs page`}>
+                <Link href={"/blogs"} style={{ color: "var(--font-secnodary)" }} aria-label={`link to blogs page`}>
                   Blogs
                 </Link>
               </li>

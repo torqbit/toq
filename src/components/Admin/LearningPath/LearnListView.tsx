@@ -31,6 +31,7 @@ import { CourseViewItem } from "@/components/Courses/CourseListView/CourseListVi
 import ProgramService from "@/services/ProgramService";
 import { LoadingOutlined } from "@ant-design/icons";
 import FallBackImage from "@/templates/standard/components/FallBackImage/FallBackImage";
+import { EnrolledCourseProgressList } from "@/components/Dashboard/StudentDashboard";
 const { Meta } = Card;
 export const LearnViewItem: FC<{ learning: ILearningPathDetail; previewMode?: boolean; userRole?: Role }> = ({
   learning,
@@ -148,6 +149,7 @@ export const AcademyItemsListView: FC<{
   emptyView: ReactNode;
   role?: Role;
   loading: boolean;
+  studentItems?: TabsProps["items"];
 }> = ({
   pathList,
   currentTheme,
@@ -157,11 +159,12 @@ export const AcademyItemsListView: FC<{
   getPathList,
   emptyView,
   role,
+  studentItems,
   loading,
   courses,
 }) => {
   const [messageApi, contextMessageHolder] = message.useMessage();
-  const [tab, setTab] = useState("courses");
+  const [tab, setTab] = useState(studentItems ? "student" : "courses");
   const [segmentValue, setSegmentValue] = useState<string>("all");
 
   const router = useRouter();
@@ -176,6 +179,10 @@ export const AcademyItemsListView: FC<{
         setSegmentValue("all");
         return handleItemsList(k);
       case "learning":
+        setTab(k);
+        setSegmentValue("all");
+        return handleItemsList(k);
+      case "student":
         setTab(k);
         setSegmentValue("all");
         return handleItemsList(k);
@@ -347,11 +354,11 @@ export const AcademyItemsListView: FC<{
     <div className={styles.courses__list}>
       {contextMessageHolder}
 
-      <h4>Academy</h4>
+      {router.pathname !== "/" && <h4>Academy</h4>}
 
       <Tabs
-        tabBarGutter={40}
-        items={items}
+        tabBarGutter={isMobile ? 30 : 40}
+        items={studentItems ? studentItems.concat(items) : items}
         activeKey={tab}
         onChange={onChangeTab}
         tabBarExtraContent={
