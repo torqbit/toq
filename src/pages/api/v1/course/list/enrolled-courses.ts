@@ -5,7 +5,7 @@ import { withMethods } from "@/lib/api-middlewares/with-method";
 import { withAuthentication } from "@/lib/api-middlewares/with-authentication";
 import { getToken } from "next-auth/jwt";
 import { getCookieName } from "@/lib/utils";
-import { CourseState } from "@prisma/client";
+import { CourseState, StateType } from "@prisma/client";
 
 /**
  * API to list all the courses enrolled by the logged in user
@@ -36,7 +36,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   INNER JOIN CourseRegistration as cr ON ord.id = cr.orderId
   INNER JOIN Resource as re ON ch.chapterId = re.chapterId
   LEFT OUTER JOIN CourseProgress as cp ON re.resourceId = cp.resourceId AND cr.studentId = cp.studentId
-  WHERE  re.state = 'ACTIVE' AND cr.studentId = ${token?.id} AND cr.courseState != ${CourseState.COMPLETED}
+  WHERE  re.state = ${StateType.ACTIVE} AND cr.studentId = ${token?.id} AND cr.courseState != ${CourseState.COMPLETED}
   GROUP BY co.courseId, co.name
   UNION
   select co.courseId, co.name,co.slug, COUNT(re.resourceId) as lessons, COUNT(cp.resourceId) as watched_lessons FROM Course as co
@@ -45,7 +45,28 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   INNER JOIN CourseRegistration as cr ON ord.id = cr.orderId
   INNER JOIN Resource as re ON ch.chapterId = re.chapterId
   INNER JOIN CourseProgress as cp ON re.resourceId = cp.resourceId AND cr.studentId = cp.studentId
-  WHERE  re.state = 'ACTIVE' AND cr.studentId = ${token?.id} AND cr.courseState = ${CourseState.COMPLETED}
+  WHERE  re.state = ${StateType.ACTIVE} AND cr.studentId = ${token?.id} AND cr.courseState = ${CourseState.COMPLETED}
+  GROUP BY co.courseId, co.name
+
+  UNION
+  
+  SELECT 
+    co.courseId, 
+    co.name, 
+    co.slug, 
+    COUNT(re.resourceId) AS lessons, 
+    COUNT(cp.resourceId) AS watched_lessons 
+  FROM Course AS co
+  INNER JOIN LearningPathCourses AS lpc ON co.courseId = lpc.courseId
+  INNER JOIN LearningPath AS lp ON lpc.learningPathId = lp.id
+  INNER JOIN \`Order\` AS ord ON ord.productId = lp.id
+  INNER JOIN CourseRegistration AS cr ON ord.id = cr.orderId
+  INNER JOIN Chapter AS ch ON co.courseId = ch.courseId
+  INNER JOIN Resource AS re ON ch.chapterId = re.chapterId
+  LEFT OUTER JOIN CourseProgress AS cp ON re.resourceId = cp.resourceId AND cr.studentId = cp.studentId
+  WHERE re.state = ${StateType.ACTIVE} 
+    AND cr.studentId = ${token?.id} 
+    AND cr.courseState != ${CourseState.COMPLETED}
   GROUP BY co.courseId, co.name
   `;
 

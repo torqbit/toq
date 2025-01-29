@@ -336,7 +336,7 @@ export const getCourseDetailedView = async (
       role: userRole,
       remainingDays: remainingDays,
       enrolmentDate: enrolmentDate || null,
-      certificateId,
+      certificateId: certificateId || null,
       author: {
         name: courseDBDetails.user.name,
         imageUrl: courseDBDetails.user.image || null,
@@ -388,11 +388,13 @@ export const listCourseListItems = async (token: JWT | null): Promise<ICourseLis
           userRole = Role.AUTHOR;
         } else {
           //get the registration details for this course and userId
+          const hasAccess = await getCourseAccessRole(token.role, token.id, c.courseId);
+
           const registrationDetails = await prisma.courseRegistration.count({
             where: {
               studentId: token.id,
               order: {
-                productId: c.courseId,
+                productId: hasAccess.isLearningPath ? hasAccess.pathId : c.courseId,
               },
             },
           });

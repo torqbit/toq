@@ -63,10 +63,10 @@ const ResponsiveAppNavBar: FC<{
                   className={globalState.selectedResponsiveMenu === nav.link ? styles.selectedNavBar : styles.navBar}
                   onClick={() => dispatch({ type: "SET_NAVBAR_MENU", payload: nav.link as IResponsiveNavMenu })}
                 >
-                  <Link style={{ color: "var(--font-secondary)" }} key={i} href={`/${nav.link}`}>
+                  <Link key={i} href={`/${nav.link}`}>
                     <span></span>
                     <Flex vertical align="center" gap={5} justify="space-between">
-                      <i>{nav.icon}</i>
+                      <i style={{ fontSize: 18, lineHeight: 0, color: "var(--font-secondary)" }}>{nav.icon}</i>
                       <div className={styles.navTitle}>{nav.title}</div>
                     </Flex>
                   </Link>
@@ -81,7 +81,7 @@ const ResponsiveAppNavBar: FC<{
                 <Link key={i} href={`/${nav.link}`}>
                   <span></span>
                   <Flex vertical align="center" gap={5} justify="space-between">
-                    <i>{nav.icon}</i>
+                    <i style={{ fontSize: 18, lineHeight: 0, color: "var(--font-secondary)" }}>{nav.icon}</i>
                     <div className={styles.navTitle}>{nav.title}</div>
                   </Flex>
                 </Link>
