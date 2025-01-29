@@ -42,6 +42,7 @@ import LessonListSideBar from "@/components/Lessons/LessonListSideBar";
 import AppLayout from "@/components/Layouts/AppLayout";
 import { PageSiteConfig } from "@/services/siteConstant";
 import { LoadingOutlined } from "@ant-design/icons";
+import { getPercentage } from "@/services/helper";
 
 export interface ICertficateData {
   loading: boolean;
@@ -498,6 +499,10 @@ const LessonView: FC<{ siteConfig: PageSiteConfig; courseId: number; marketingLa
       const result = (await res.json()) as ICourseProgressUpdateResponse;
       if (res.ok && result.success) {
         messageApi.success(result.message);
+        setCourseDetails({
+          ...courseDetail,
+          progress: getPercentage(result?.progress?.lessonsCompleted, result.progress.totalLessons),
+        } as any);
         moveToNextLesson(Number(router.query.lessonId), result.progress.lessonsCompleted, result.progress.totalLessons);
         setMarkAsLoading(false);
       } else {
