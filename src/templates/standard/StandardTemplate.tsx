@@ -67,7 +67,7 @@ const StandardTemplate: FC<IStandardTemplateProps> = ({
         </section>
       )}
 
-      {siteConfig.sections?.courses?.enable && siteConfig.brand && (
+      {siteConfig.sections?.courses?.enable && siteConfig.brand && (previewMode || courseList.length > 0) && (
         <section className={styles.section__wrapper} id="courses">
           <CourseList
             title={
@@ -87,7 +87,7 @@ const StandardTemplate: FC<IStandardTemplateProps> = ({
         </section>
       )}
 
-      {siteConfig.sections?.learning?.enabled && siteConfig.brand && (
+      {siteConfig.sections?.learning?.enabled && siteConfig.brand && (previewMode || learningList.length > 0) && (
         <section className={styles.section__wrapper} id="learning">
           <LearningList
             title={
@@ -106,7 +106,7 @@ const StandardTemplate: FC<IStandardTemplateProps> = ({
           />
         </section>
       )}
-      {siteConfig.sections?.blog?.enable && (
+      {siteConfig.sections?.blog?.enable && (previewMode || blogList.length > 0) && (
         <section className={styles.section__wrapper} id="blogs">
           <Blogs
             title={siteConfig.sections.blog.title ? siteConfig.sections.blog.title : DEFAULT_THEME.sections.blog.title}

@@ -3,6 +3,7 @@ import styles from "./SiteSetup.module.scss";
 import { PageSiteConfig } from "@/services/siteConstant";
 import Link from "next/link";
 import { ISiteSetupCard } from "@/types/setup/siteSetup";
+import PreviewSite from "@/components/PreviewCode/PreviewSite";
 const SetupOptionCard: FC<ISiteSetupCard> = ({ icon, title, description, link, iconBgColor }) => (
   <Link href={link} className={`${styles.setup__card} `}>
     <div style={{ backgroundColor: iconBgColor ? iconBgColor : "transparent" }}>
@@ -43,17 +44,13 @@ const SiteSetup: FC<{ siteConfig: PageSiteConfig; setupOptions: ISiteSetupCard[]
           })}
         </div>
       </div>
-      <div className={styles.site__preview__container}>
-        <div className={styles.site__preview__titlebar}>
-          <div></div>
-          <div></div>
-          <div></div>
-        </div>
-        <iframe
-          loading="lazy"
-          className={styles.site__preview__iframe}
-          src={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}`}
-        ></iframe>
+      <div>
+        <PreviewSite
+          id="myIframe"
+          ref={undefined}
+          siteConfig={siteConfig}
+          src={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/admin/site/preview/${siteConfig.template}}`}
+        />
       </div>
     </section>
   );

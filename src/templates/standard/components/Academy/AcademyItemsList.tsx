@@ -19,7 +19,7 @@ interface ILearningList {
 const AcademyItemsList: FC<ILearningList> = ({ title, description, learningList, previewMode }) => {
   return (
     <>
-      {learningList.length > 0 && (
+      {
         <section className={styles.courses__container}>
           <div>
             <h2>{title}</h2>
@@ -43,7 +43,7 @@ const AcademyItemsList: FC<ILearningList> = ({ title, description, learningList,
             )}
           </div>
         </section>
-      )}
+      }
     </>
   );
 };
