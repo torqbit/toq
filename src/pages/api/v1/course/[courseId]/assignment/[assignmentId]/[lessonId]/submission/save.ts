@@ -13,8 +13,8 @@ import { APIResponse } from "@/types/apis";
 import withValidation from "@/lib/api-middlewares/with-validation";
 
 export const validateReqBody = z.object({
-  assignmentId: z.number(),
-  lessonId: z.number(),
+  assignmentId: z.coerce.number(),
+  lessonId: z.coerce.number(),
   content: z.unknown(),
 });
 
@@ -24,12 +24,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const token = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
     const body = req.body;
-    const { assignmentId, lessonId, content } = body;
+    const { assignmentId, lessonId, content } = validateReqBody.parse(body);
     const savedSubmission = await prisma.assignmentSubmission.findFirst({
       where: {
-        assignmentId: Number(assignmentId),
-        lessonId: Number(lessonId),
-        studentId: String(token?.id),
+        assignmentId: assignmentId,
+        lessonId: lessonId,
+        studentId: token?.id,
         status: submissionStatus.PENDING,
       },
       select: {
@@ -47,7 +47,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           id: savedSubmission.id,
         },
         data: {
-          content: content,
+          content: content as any,
           updatedAt: new Date(),
         },
         select: {
@@ -68,7 +68,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           studentId: String(token?.id),
           assignmentId,
           lessonId,
-          content,
+          content: content as any,
           updatedAt: new Date(),
           status: submissionStatus.PENDING,
         },

@@ -31,11 +31,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     let cookieName = getCookieName();
     const token = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
-    const { submissionId, lessonId, assignmentId } = req.query;
+    const { submissionId, lessonId, assignmentId } = validateReqQuery.parse(req.query);
     const { comment, score } = req.body;
     const savedSubmission = await prisma.assignmentSubmission.update({
       where: {
-        id: Number(submissionId),
+        id: submissionId,
       },
       select: {
         content: true,
@@ -66,7 +66,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const assignmentDetail = await prisma?.assignment.findUnique({
       where: {
-        lessonId: Number(lessonId),
+        lessonId: lessonId,
       },
       select: {
         content: true,
@@ -80,9 +80,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     let evaluatedData: EvaluationResult;
 
-    const hasAccess = await getCourseAccessRole(savedSubmission.user.role, savedSubmission.user.id, Number(courseId));
+    const hasAccess = await getCourseAccessRole(savedSubmission.user.role, savedSubmission.user.id, courseId);
 
-    let pId = hasAccess.pathId ? hasAccess.pathId : Number(courseId);
+    let pId = hasAccess.pathId ? hasAccess.pathId : courseId;
     const cr = await prisma.courseRegistration.findFirst({
       where: {
         studentId: token?.id,
@@ -105,7 +105,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         },
       },
     });
-    const isExist = cr?.certificate.find((c) => c.productId === Number(courseId));
+    const isExist = cr?.certificate.find((c) => c.productId === courseId);
 
     if (assignmentData._type === AssignmentType.MCQ) {
       const savedSubmissionData = savedSubmission?.content as unknown as MCQASubmissionContent;
@@ -130,7 +130,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       await prisma.$transaction([
         prisma.assignmentSubmission.update({
           where: {
-            id: Number(submissionId),
+            id: submissionId,
           },
           data: {
             status: evaluatedData.isPassed ? submissionStatus.PASSED : submissionStatus.FAILED,
@@ -138,8 +138,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         }),
         prisma.assignmentEvaluation.create({
           data: {
-            assignmentId: Number(assignmentId),
-            submissionId: Number(submissionId),
+            assignmentId: assignmentId,
+            submissionId: submissionId,
             authorId: String(token?.id),
             score: evaluatedData.score,
             passingScore: evaluatedData.passingScore,
@@ -154,8 +154,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       ]);
 
       await updateCourseProgress(
-        Number(courseId),
-        Number(lessonId),
+        courseId,
+        lessonId,
         String(token?.id),
         ResourceContentType.Assignment,
         cr?.registrationId,
