@@ -24,7 +24,6 @@
 
 Torqbit is an open-source learning management system tailored for software companies to effectively train their customers. It offers unparalleled customization of your academy page, allowing you to align it with your brand identity. With self-hosting capabilities, you maintain complete control over your data and users, ensuring privacy and security. This flexibility empowers organizations to adapt the platform to their unique requirements, integrate seamlessly with existing tools, and enhance the overall user experience.
 
-Quick 
 
 ⚠️ Torqbit is currently under active development. Expect a series of updates in the coming weeks.
 
