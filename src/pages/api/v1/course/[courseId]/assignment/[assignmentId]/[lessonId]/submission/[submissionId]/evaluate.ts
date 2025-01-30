@@ -7,15 +7,22 @@ import { getToken } from "next-auth/jwt";
 import { getCookieName } from "@/lib/utils";
 
 import { submissionStatus } from "@prisma/client";
-import { AssignmentType, IAssignmentDetails, MCQAssignment, MCQASubmissionContent } from "@/types/courses/assignment";
-import AssignmentEvaluationService from "@/services/lesson/AssignmentEvaluateService";
+import {
+  AssignmentType,
+  IAssignmentDetails,
+  MCQAssignment,
+  MCQASubmissionContent,
+  SubjectiveAssignment,
+} from "@/types/courses/assignment";
+import AssignmentEvaluationService, { EvaluationResult } from "@/services/lesson/AssignmentEvaluateService";
 import { APIResponse } from "@/types/apis";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     let cookieName = getCookieName();
     const token = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
-    const { submissionId, lessonId, assignmentId, comment } = req.query;
+    const { submissionId, lessonId, assignmentId } = req.query;
+    const { comment, score } = req.body;
     const savedSubmission = await prisma.assignmentSubmission.update({
       where: {
         id: Number(submissionId),
@@ -41,23 +48,35 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const assignmentData = assignmentDetail?.content as unknown as IAssignmentDetails;
 
+    let evaluatedData: EvaluationResult;
+
     if (assignmentData._type === AssignmentType.MCQ) {
       const savedSubmissionData = savedSubmission?.content as unknown as MCQASubmissionContent;
-      const { score, isPassed, passingScore, maximumScore, eachQuestionScore } =
-        AssignmentEvaluationService.evaluateMCQAssignment(
-          savedSubmissionData?.selectedAnswers as any,
-          assignmentDetail?.maximumPoints as number,
-          assignmentDetail?.passingScore as number,
-          assignmentDetail?.content as unknown as MCQAssignment
-        );
+      evaluatedData = AssignmentEvaluationService.evaluateMCQAssignment(
+        savedSubmissionData?.selectedAnswers as any,
+        assignmentDetail?.maximumPoints as number,
+        assignmentDetail?.passingScore as number,
+        assignmentDetail?.content as unknown as MCQAssignment
+      );
+    } else if (assignmentData._type === AssignmentType.SUBJECTIVE) {
+      evaluatedData = AssignmentEvaluationService.evaluateSubjectiveAssignment(
+        Number(score),
+        assignmentDetail?.maximumPoints as number,
+        assignmentDetail?.passingScore as number,
+        comment as string
+      );
+    } else {
+      return res.status(404).json(new APIResponse(false, 404, "Evaluation not submitted"));
+    }
 
+    if (evaluatedData.maximumScore) {
       await prisma.$transaction([
         prisma.assignmentSubmission.update({
           where: {
             id: Number(submissionId),
           },
           data: {
-            status: isPassed ? submissionStatus.PASSED : submissionStatus.FAILED,
+            status: evaluatedData.isPassed ? submissionStatus.PASSED : submissionStatus.FAILED,
           },
         }),
         prisma.assignmentEvaluation.create({
@@ -65,26 +84,25 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             assignmentId: Number(assignmentId),
             submissionId: Number(submissionId),
             authorId: String(token?.id),
-            score: score,
-            passingScore: passingScore,
-            maximumScore: maximumScore,
+            score: evaluatedData.score,
+            passingScore: evaluatedData.passingScore,
+            maximumScore: evaluatedData.maximumScore,
             scoreSummary: {
               _type: assignmentData._type,
-              eachQuestionScore: eachQuestionScore,
+              eachQuestionScore: evaluatedData.eachQuestionScore,
             },
-            comment: {},
+            comment: evaluatedData.comment,
           },
         }),
       ]);
-
-      return res.status(200).json(new APIResponse(true, 200, "Evaluation has been completed"));
     } else {
       return res.status(404).json(new APIResponse(false, 404, "Evaluation not submitted"));
     }
+    return res.status(200).json(new APIResponse(true, 200, "Evaluation has been completed"));
   } catch (error) {
     console.log(error);
     errorHandler(error, res);
   }
 };
 
-export default withMethods(["GET"], withAuthentication(handler));
+export default withMethods(["POST"], withAuthentication(handler));

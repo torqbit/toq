@@ -84,7 +84,7 @@ export interface SubjectiveAssignment extends IAssignmentDetails {
   description: string;
   file_for_candidate: DocumentExtension;
   projectArchiveUrl: string;
-  gradingParameters: QuestionScore;
+  gradingParameters: QuestionScore[];
 }
 
 export interface AssignmentCreateRequest {
