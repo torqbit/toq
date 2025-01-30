@@ -6,10 +6,12 @@ import prisma from "@/lib/prisma";
 import { getToken } from "next-auth/jwt";
 import { getCookieName } from "@/lib/utils";
 
-import { submissionStatus } from "@prisma/client";
+import { ResourceContentType, submissionStatus } from "@prisma/client";
 import { AssignmentType, IAssignmentDetails, MCQAssignment, MCQASubmissionContent } from "@/types/courses/assignment";
 import AssignmentEvaluationService from "@/services/lesson/AssignmentEvaluateService";
 import { APIResponse } from "@/types/apis";
+import { getCourseAccessRole } from "@/actions/getCourseAccessRole";
+import updateCourseProgress from "@/actions/updateCourseProgress";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
@@ -22,6 +24,25 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       },
       select: {
         content: true,
+        user: {
+          select: {
+            id: true,
+            role: true,
+          },
+        },
+        assignment: {
+          select: {
+            lesson: {
+              select: {
+                chapter: {
+                  select: {
+                    courseId: true,
+                  },
+                },
+              },
+            },
+          },
+        },
       },
       data: {
         status: submissionStatus.COMPLETED,
@@ -40,6 +61,34 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     });
 
     const assignmentData = assignmentDetail?.content as unknown as IAssignmentDetails;
+    let courseId = savedSubmission.assignment.lesson.chapter.courseId;
+    // getcourseaccess
+    const hasAccess = await getCourseAccessRole(savedSubmission.user.role, savedSubmission.user.id, Number(courseId));
+
+    let pId = hasAccess.pathId ? hasAccess.pathId : Number(courseId);
+    const cr = await prisma.courseRegistration.findFirst({
+      where: {
+        studentId: token?.id,
+        order: {
+          productId: pId,
+        },
+      },
+      select: {
+        registrationId: true,
+        user: {
+          select: {
+            name: true,
+          },
+        },
+        certificate: {
+          select: {
+            productId: true,
+            id: true,
+          },
+        },
+      },
+    });
+    const isExist = cr?.certificate.find((c) => c.productId === Number(courseId));
 
     if (assignmentData._type === AssignmentType.MCQ) {
       const savedSubmissionData = savedSubmission?.content as unknown as MCQASubmissionContent;
@@ -76,6 +125,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           },
         }),
       ]);
+
+      await updateCourseProgress(
+        Number(courseId),
+        Number(lessonId),
+        String(token?.id),
+        ResourceContentType.Assignment,
+        cr?.registrationId,
+        typeof isExist !== "undefined"
+      );
 
       return res.status(200).json(new APIResponse(true, 200, "Evaluation has been completed"));
     } else {

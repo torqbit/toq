@@ -55,7 +55,7 @@ const LessonListSideBar: FC<{
           style={{ marginBottom: userRole === Role.STUDENT ? 20 : 0, paddingRight: userRole === Role.STUDENT ? 10 : 0 }}
         >
           <Flex align="center" justify="space-between">
-            <h3>Course Content</h3>
+            <h4>Course Content</h4>
             {userRole === Role.STUDENT && <p>{Math.trunc(progress)}% Completed</p>}
           </Flex>
           {userRole === Role.STUDENT && (
