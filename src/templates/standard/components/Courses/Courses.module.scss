@@ -7,7 +7,6 @@
 
   .courses {
     display: grid;
-
     gap: 30px;
 
     .courses__card {
@@ -78,6 +77,11 @@
     grid-template-columns: 1fr 1fr 1fr;
   }
 }
+.list__preview__wrapper {
+  max-width: var(--container-width);
+
+  margin: 0 auto;
+}
 
 @media only screen and (max-width: 435px) {
   .courses__container {
@@ -104,5 +108,8 @@
     .courses__triple {
       grid-template-columns: 1fr;
     }
+  }
+  .course__list__preview__wrapper {
+    max-width: 80vw;
   }
 }

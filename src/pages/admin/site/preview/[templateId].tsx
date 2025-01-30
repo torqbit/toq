@@ -1,7 +1,7 @@
 import { getCookieName } from "@/lib/utils";
 import { PageSiteConfig } from "@/services/siteConstant";
 import StandardTemplate from "@/templates/standard/StandardTemplate";
-import { User } from "@prisma/client";
+import { StateType, User } from "@prisma/client";
 import { GetServerSidePropsContext } from "next";
 import { getToken } from "next-auth/jwt";
 import { FC, useEffect, useState } from "react";
@@ -47,7 +47,8 @@ const PreviewPage: FC<{
   return (
     <StandardTemplate
       user={user}
-      learningList={learningList}
+      learningList={learningList.length > 0 ? learningList.filter((l) => l.state == StateType.ACTIVE) : []}
+      courseList={courseList.length > 0 ? courseList.filter((c) => c.state == StateType.ACTIVE) : []}
       siteConfig={{
         ...config,
         navBar: {
@@ -74,7 +75,6 @@ const PreviewPage: FC<{
           socialLinks: socialLinks,
         },
       }}
-      courseList={courseList}
       blogList={blogList}
       previewMode={true}
     />
