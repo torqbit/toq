@@ -46,7 +46,7 @@ const CourseCard: FC<ICourseCard> = ({
 const CourseList: FC<ICourseInfo> = ({ title, description, courseList, previewMode }) => {
   return (
     <>
-      {courseList.length > 0 && (
+      {
         <section className={styles.courses__container}>
           <div>
             <h2>{title}</h2>
@@ -70,7 +70,7 @@ const CourseList: FC<ICourseInfo> = ({ title, description, courseList, previewMo
             )}
           </div>
         </section>
-      )}
+      }
     </>
   );
 };

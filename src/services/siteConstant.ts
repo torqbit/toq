@@ -9,8 +9,8 @@ export const DEFAULT_THEME = {
   navBar: {
     links: [
       {
-        title: "Academy",
-        link: "/academy",
+        title: "Courses",
+        link: "/courses",
       },
       {
         title: "Events",

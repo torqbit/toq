@@ -1,12 +1,9 @@
-import type { GetServerSidePropsContext, NextPage } from "next";
 import React, { FC, useState } from "react";
 import { Role, User } from "@prisma/client";
-import { message } from "antd";
+import { message, TabsProps } from "antd";
 import AppLayout from "@/components/Layouts/AppLayout";
-import { getSiteConfig } from "@/services/getSiteConfig";
 import { PageSiteConfig } from "@/services/siteConstant";
-import { getCookieName } from "@/lib/utils";
-import { getToken } from "next-auth/jwt";
+
 import MarketingLayout from "@/components/Layouts/MarketingLayout";
 import DefaulttHero from "@/components/Marketing/DefaultHero/DefaultHero";
 import { EmptyCourses } from "@/components/SvgIcons";
@@ -15,20 +12,21 @@ import { getIconTheme } from "@/services/darkThemeConfig";
 import { useAppContext } from "@/components/ContextApi/AppContext";
 import { useSession } from "next-auth/react";
 import { useMediaQuery } from "react-responsive";
-import learningPath from "@/actions/learningPath";
 import { ILearningPathDetail } from "@/types/learingPath";
 import LearningPathSerivices from "@/services/learningPath/LearningPathSerivices";
 import { AcademyItemsListView } from "@/components/Admin/LearningPath/LearnListView";
 import { ICourseListItem } from "@/types/courses/Course";
 import ProgramService from "@/services/ProgramService";
-import { getCouseListItems } from "@/actions/getCourseListItems";
 import styles from "@/components/Admin/LearningPath/LearningPath.module.scss";
 const Academy: FC<{
+  studentView?: boolean;
   siteConfig: PageSiteConfig;
   userRole: Role;
   pathList: ILearningPathDetail[];
   coursesList: ICourseListItem[];
-}> = ({ siteConfig, userRole, pathList, coursesList }) => {
+  studentItems?: TabsProps["items"];
+  getProgress: () => void;
+}> = ({ siteConfig, studentView, userRole, pathList, coursesList, studentItems, getProgress }) => {
   const [pathListData, setPathListData] = useState<ILearningPathDetail[]>(pathList);
   const [messageApi, contextMessageHolder] = message.useMessage();
   const [loading, setLoading] = useState<boolean>(false);
@@ -76,6 +74,9 @@ const Academy: FC<{
         return getCourses();
       case "learning":
         return getPathList();
+
+      case "student":
+        return getProgress();
       default:
         return getCourses();
     }
@@ -94,7 +95,7 @@ const Academy: FC<{
               siteConfig={siteConfig}
               heroSection={
                 <>
-                  {!isMobile && pathListData && (
+                  {!isMobile && pathListData && !studentView && (
                     <DefaulttHero
                       title="Academy"
                       description="Offers online  learning  paths and courses designed to enhance your skills and knowledge "
@@ -107,10 +108,11 @@ const Academy: FC<{
               <section>
                 <div className="page__wrapper">
                   <AcademyItemsListView
+                    studentItems={studentItems}
                     loadingCourses={loadingCourses}
                     pathList={pathListData || []}
                     courses={courses}
-                    handleItemsList={() => {}}
+                    handleItemsList={handleItemsList}
                     loading={loading || !pathListData}
                     siteConfig={siteConfig}
                     currentTheme={globalState.theme || "light"}

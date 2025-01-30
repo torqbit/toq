@@ -16,7 +16,16 @@ const AcademyPage: NextPage<{
   pathList: ILearningPathDetail[];
   coursesList: ICourseListItem[];
 }> = ({ siteConfig, userRole, pathList, coursesList }) => {
-  return <Academy siteConfig={siteConfig} userRole={userRole} pathList={pathList} coursesList={coursesList} />;
+  return (
+    <Academy
+      siteConfig={siteConfig}
+      userRole={userRole}
+      pathList={pathList}
+      coursesList={coursesList}
+      getProgress={() => {}}
+      studentItems={undefined}
+    />
+  );
 };
 
 export default AcademyPage;

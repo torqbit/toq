@@ -100,6 +100,8 @@ const PaymentHistory: FC<{ activeTab: string }> = ({ activeTab }) => {
     }
   };
 
+  console.log(paymentData?.data);
+
   useEffect(() => {
     activeTab === "payment" && getPaymentData();
   }, [activeTab]);

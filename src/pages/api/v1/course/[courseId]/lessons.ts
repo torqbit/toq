@@ -50,6 +50,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             isWatched: r.watchedRes != null,
             contentType: r.contentType,
             estimatedDuration: r.estimatedDuration,
+            assignmentStatus: r.assignmentStatus,
           });
         } else {
           chapterLessons.push({
@@ -66,6 +67,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                 isWatched: r.watchedRes != null,
                 contentType: r.contentType,
                 estimatedDuration: r.estimatedDuration,
+                assignmentStatus: r.assignmentStatus,
               },
             ],
           });

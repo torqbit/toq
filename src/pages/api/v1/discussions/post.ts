@@ -36,22 +36,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const body = await req.body;
     const { lessonId, slug, comment } = body;
 
-    const isEnrolled = await prisma.courseRegistration.findFirst({
-      where: {
-        studentId: String(token?.id),
-        order: {
-          product: {
-            course: {
-              slug: slug,
-            },
-          },
-        },
-      },
-      select: {
-        user: true,
-      },
-    });
-
     const userRole = await getCourseAccessRole(token?.role, token?.id, slug, true);
 
     if (userRole.role !== Role.NOT_ENROLLED) {
@@ -71,17 +55,22 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           },
         },
       });
-      if (isEnrolled && isEnrolled.user.id != token?.id) {
-        await prisma.notification.create({
-          data: {
-            notificationType: "COMMENT",
-            toUserId: isEnrolled.user.id,
-            commentId: addDiscussion.id,
-            fromUserId: String(token?.id) || "",
-            resourceId: lessonId,
-          },
-        });
-      }
+
+      /**
+       *  NOTIFICATION LOGIC
+       */
+
+      // if (isEnrolled && isEnrolled.user.id != token?.id) {
+      //   await prisma.notification.create({
+      //     data: {
+      //       notificationType: "COMMENT",
+      //       toUserId: isEnrolled.user.id,
+      //       commentId: addDiscussion.id,
+      //       fromUserId: String(token?.id) || "",
+      //       resourceId: lessonId,
+      //     },
+      //   });
+      // }
 
       return res.status(200).json({ success: true, comment: addDiscussion, message: "Query has been posted" });
     } else {

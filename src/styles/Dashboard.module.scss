@@ -2,27 +2,27 @@
 .course_content,
 .dashboard_content {
   padding: 20px 40px;
+}
 
-  .enrolled_course_list {
-    width: 100%;
-    background-color: var(--bg-primary);
-    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+.enrolled_course_list {
+  width: 100%;
+  background-color: var(--bg-primary);
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
 
-    .enroll_course_item {
-      font-size: 13px;
-      padding: 10px 15px;
-      cursor: pointer;
-      transition: all 0.3s ease-in;
-      > div {
-        color: var(--font-primary);
-      }
-      .completed_course {
-        color: var(--font-secondary);
-      }
+  .enroll_course_item {
+    font-size: 13px;
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: all 0.3s ease-in;
+    > div {
+      color: var(--font-primary);
+    }
+    .completed_course {
+      color: var(--font-secondary);
+    }
 
-      &:hover {
-        box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 10px;
-      }
+    &:hover {
+      box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 10px;
     }
   }
 }

@@ -171,6 +171,7 @@ const LoginPage: NextPage<{
                         }}
                         type="primary"
                         className={styles.google_btn}
+                        style={{ width: 250, height: 40, display: "block" }}
                       >
                         Signup with Email
                       </Button>
@@ -207,7 +208,7 @@ const LoginPage: NextPage<{
               })}
               <Flex gap={5}>
                 <p>Already have an account?</p>
-                <Link href={"/login"}>Sign in.</Link>
+                <Link href={"/login"}>Sign in</Link>
               </Flex>
             </>
           )}
