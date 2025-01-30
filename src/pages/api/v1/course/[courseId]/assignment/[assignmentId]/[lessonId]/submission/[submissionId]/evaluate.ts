@@ -24,6 +24,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       },
       select: {
         content: true,
+        user: {
+          select: {
+            id: true,
+            role: true,
+          },
+        },
         assignment: {
           select: {
             lesson: {
@@ -57,7 +63,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const assignmentData = assignmentDetail?.content as unknown as IAssignmentDetails;
     let courseId = savedSubmission.assignment.lesson.chapter.courseId;
     // getcourseaccess
-    const hasAccess = await getCourseAccessRole(token?.role, token?.id, Number(courseId));
+    const hasAccess = await getCourseAccessRole(savedSubmission.user.role, savedSubmission.user.id, Number(courseId));
 
     let pId = hasAccess.pathId ? hasAccess.pathId : Number(courseId);
     const cr = await prisma.courseRegistration.findFirst({
