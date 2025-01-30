@@ -5,8 +5,9 @@ import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "@/lib/prisma";
 import { getToken } from "next-auth/jwt";
 import { getCookieName } from "@/lib/utils";
+import * as z from "zod";
 
-import { submissionStatus } from "@prisma/client";
+import { ResourceContentType, submissionStatus } from "@prisma/client";
 import {
   AssignmentType,
   IAssignmentDetails,
@@ -16,6 +17,15 @@ import {
 } from "@/types/courses/assignment";
 import AssignmentEvaluationService, { EvaluationResult } from "@/services/lesson/AssignmentEvaluateService";
 import { APIResponse } from "@/types/apis";
+import { getCourseAccessRole } from "@/actions/getCourseAccessRole";
+import updateCourseProgress from "@/actions/updateCourseProgress";
+import withValidation from "@/lib/api-middlewares/with-validation";
+
+export const validateReqQuery = z.object({
+  assignmentId: z.coerce.number(),
+  lessonId: z.coerce.number(),
+  submissionId: z.coerce.number(),
+});
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
@@ -29,6 +39,25 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       },
       select: {
         content: true,
+        user: {
+          select: {
+            id: true,
+            role: true,
+          },
+        },
+        assignment: {
+          select: {
+            lesson: {
+              select: {
+                chapter: {
+                  select: {
+                    courseId: true,
+                  },
+                },
+              },
+            },
+          },
+        },
       },
       data: {
         status: submissionStatus.COMPLETED,
@@ -47,8 +76,36 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     });
 
     const assignmentData = assignmentDetail?.content as unknown as IAssignmentDetails;
+    const courseId = savedSubmission.assignment.lesson.chapter.courseId;
 
     let evaluatedData: EvaluationResult;
+
+    const hasAccess = await getCourseAccessRole(savedSubmission.user.role, savedSubmission.user.id, Number(courseId));
+
+    let pId = hasAccess.pathId ? hasAccess.pathId : Number(courseId);
+    const cr = await prisma.courseRegistration.findFirst({
+      where: {
+        studentId: token?.id,
+        order: {
+          productId: pId,
+        },
+      },
+      select: {
+        registrationId: true,
+        user: {
+          select: {
+            name: true,
+          },
+        },
+        certificate: {
+          select: {
+            productId: true,
+            id: true,
+          },
+        },
+      },
+    });
+    const isExist = cr?.certificate.find((c) => c.productId === Number(courseId));
 
     if (assignmentData._type === AssignmentType.MCQ) {
       const savedSubmissionData = savedSubmission?.content as unknown as MCQASubmissionContent;
@@ -95,6 +152,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           },
         }),
       ]);
+
+      await updateCourseProgress(
+        Number(courseId),
+        Number(lessonId),
+        String(token?.id),
+        ResourceContentType.Assignment,
+        cr?.registrationId,
+        typeof isExist !== "undefined"
+      );
     } else {
       return res.status(404).json(new APIResponse(false, 404, "Evaluation not submitted"));
     }
@@ -105,4 +171,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default withMethods(["POST"], withAuthentication(handler));
+export default withMethods(["POST"], withAuthentication(withValidation(validateReqQuery, handler, true)));

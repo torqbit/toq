@@ -5,10 +5,18 @@ import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "@/lib/prisma";
 import { getToken } from "next-auth/jwt";
 import { compareByHash, getCookieName, mapToArray } from "@/lib/utils";
+import * as z from "zod";
 
 import { Role, submissionStatus } from "@prisma/client";
 import getUserRole from "@/actions/getRole";
 import { APIResponse } from "@/types/apis";
+import withValidation from "@/lib/api-middlewares/with-validation";
+
+export const validateReqBody = z.object({
+  assignmentId: z.number(),
+  lessonId: z.number(),
+  content: z.unknown(),
+});
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
@@ -83,4 +91,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default withMethods(["POST"], withAuthentication(handler));
+export default withMethods(["POST"], withAuthentication(withValidation(validateReqBody, handler)));
