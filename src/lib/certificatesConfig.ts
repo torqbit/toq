@@ -59,28 +59,4 @@ export const certificateConfig = [
       },
     },
   },
-  {
-    id: "modern-blue",
-    name: "Modern Blue",
-    path: "/certificates/templates/modern-blue.png",
-    previewPath: "/certificates/preview/modern-blue.png",
-    coordinates: {
-      student: {
-        x: 468,
-        y: 699,
-      },
-      description: {
-        x: 844,
-        y: 889,
-      },
-      dateOfCompletion: {
-        x: 1279,
-        y: 137,
-      },
-      authorSignature: {
-        x: 246,
-        y: 1167,
-      },
-    },
-  },
 ];
