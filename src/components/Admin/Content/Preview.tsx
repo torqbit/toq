@@ -5,6 +5,7 @@ import { IChapterView, ICourseDetailView } from "@/types/courses/Course";
 import { LoadingOutlined, UserOutlined } from "@ant-design/icons";
 import { ResourceContentType, Role } from "@prisma/client";
 import { Avatar, Button, Collapse, CollapseProps, Flex, Spin, Tabs } from "antd";
+import { useRouter } from "next/router";
 
 import { CSSProperties, FC } from "react";
 import { useMediaQuery } from "react-responsive";
@@ -44,6 +45,7 @@ const Preview: FC<{
   extraStyle?: CSSProperties;
 }> = ({ courseDetail, previewMode, handlePurchase, handleLessonRedirection, paymentCallback, extraStyle }) => {
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
+  const router = useRouter();
   return (
     <section className={styles.preview_container} style={extraStyle}>
       <h4>{courseDetail.name}</h4>
@@ -75,6 +77,20 @@ const Preview: FC<{
             <Tabs
               className={styles.course__details}
               tabBarGutter={40}
+              tabBarExtraContent={
+                <>
+                  {courseDetail.certificateId && (
+                    <Button
+                      onClick={() =>
+                        router.push(`/courses/${router.query.slug}/certificate/${courseDetail?.certificateId}`)
+                      }
+                      type="primary"
+                    >
+                      View Certitificate
+                    </Button>
+                  )}
+                </>
+              }
               items={[
                 {
                   key: "1",

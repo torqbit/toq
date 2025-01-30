@@ -2,27 +2,27 @@
 .course_content,
 .dashboard_content {
   padding: 20px 40px;
+}
 
-  .enrolled_course_list {
-    width: 100%;
-    background-color: var(--bg-primary);
-    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+.enrolled_course_list {
+  width: 100%;
+  background-color: var(--bg-primary);
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
 
-    .enroll_course_item {
-      font-size: 13px;
-      padding: 10px 15px;
-      cursor: pointer;
-      transition: all 0.3s ease-in;
-      > div {
-        color: var(--font-primary);
-      }
-      .completed_course {
-        color: var(--font-secondary);
-      }
+  .enroll_course_item {
+    font-size: 13px;
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: all 0.3s ease-in;
+    > div {
+      color: var(--font-primary);
+    }
+    .completed_course {
+      color: var(--font-secondary);
+    }
 
-      &:hover {
-        box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 10px;
-      }
+    &:hover {
+      box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 10px;
     }
   }
 }
@@ -164,13 +164,16 @@
   font-size: 12px;
   gap: 0 10px;
 }
-.setting__video__segment {
-  margin: 0 auto 10px auto;
-}
+
 .video_container {
-  height: 178px;
-  width: 318px;
+  height: 180px;
+  width: 320px;
   border-radius: 4px;
+  object-fit: cover;
+  background-color: var(--bg-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .add_course_page {
@@ -208,7 +211,11 @@
     padding: 10px 40px;
 
     .add_course_setting {
-      max-width: 1000px;
+      max-width: var(--container-width);
+
+      .setting__video__segment {
+        margin: 0 auto 10px auto;
+      }
 
       .setting_header {
         margin-bottom: 20px;
@@ -304,6 +311,7 @@
 
         .video_status_loading {
           color: var(--font-secondary);
+          background-color: var(--bg-secondary);
         }
 
         .camera_btn_img,

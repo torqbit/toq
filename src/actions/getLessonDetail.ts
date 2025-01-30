@@ -64,13 +64,14 @@ const lessonDetail = async (
   return new Promise(async (resolve, reject) => {
     let resultRows = await prisma.$queryRaw<
       ILessonPreviewDetail[]
-    >`SELECT  ch.sequenceId as chapterSeq, re.sequenceId as resourceSeq, re.resourceId, re.name as lessonName, co.name as courseName, co.description,co.previewMode,
+    >`SELECT  ch.sequenceId as chapterSeq, re.sequenceId as resourceSeq,sub.status as assignmentStatus , re.resourceId, re.name as lessonName, co.name as courseName, co.description,co.previewMode,
 re.description as lessonDescription, vi.id as videoId, vi.videoUrl, vi.videoDuration, ch.chapterId,re.contentType as contentType ,assign.estimatedDuration,
 ch.name as chapterName, cp.resourceId as watchedRes FROM Course as co 
 INNER JOIN Chapter as ch ON co.courseId = ch.courseId
 INNER JOIN Resource as re ON ch.chapterId = re.chapterId
 LEFT OUTER JOIN Assignment as assign ON re.resourceId = assign.lessonId
 LEFT OUTER JOIN Video as vi ON re.resourceId = vi.resourceId
+LEFT OUTER JOIN AssignmentSubmission as sub ON re.resourceId = sub.lessonId AND sub.studentId = ${userId}
 LEFT OUTER JOIN CourseProgress as cp ON cp.studentId = ${userId}  AND cp.resourceId = re.resourceId
 WHERE  re.state = ${$Enums.StateType.ACTIVE} 
 AND co.courseId = ${courseId}

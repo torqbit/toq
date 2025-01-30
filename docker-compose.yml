@@ -1,11 +1,10 @@
 services:
   web:
-    image: torqbit/torqbit:0.1.5-rc1
-    platform: linux/x86_64
+    image: torqbit/torqbit:0.1.6
     ports:
-      - "3000:80"
+      - "8080:80"
     build: .
-    command: ["sh", "-c", "nginx ; npx prisma db push --accept-data-loss; yarn start"]
+    command: ["sh", "-c", "nginx ; npx prisma db push --accept-data-loss; PORT=8080 yarn start"]
 
     depends_on:
       db:
@@ -15,7 +14,7 @@ services:
       interval: 30s
       timeout: 2s
       retries: 5
-      start_period: 10s
+      start_period: 15s
 
     env_file:
       - "./docker.env"
@@ -34,7 +33,7 @@ services:
       retries: 5
       start_period: 5s
     ports:
-      - "3306:3306"
+      - "3360:3306"
     environment:
       MYSQL_USER: admin
       MYSQL_ROOT_PASSWORD: root123

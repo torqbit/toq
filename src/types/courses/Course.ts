@@ -70,6 +70,7 @@ export interface VideoLesson {
   title: string;
   contentType?: ResourceContentType;
   estimatedDuration?: number;
+  assignmentStatus?: submissionStatus;
 }
 export interface CourseLessons {
   chapterSeq: number;
@@ -202,6 +203,7 @@ export interface ICourseDetailView {
     designation?: string;
   };
   trailerEmbedUrl?: string;
+  certificateId?: string | null;
 }
 
 export interface CourseLessonAPIResponse {
@@ -360,6 +362,8 @@ export interface ILessonPreviewDetail {
   description?: string;
   previewMode?: number;
   lessonDescription?: string;
+  assignmentStatus?: submissionStatus;
+
   videoId?: string;
   videoUrl?: string;
   videoDuration?: number;

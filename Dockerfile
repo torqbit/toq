@@ -18,7 +18,7 @@ RUN yarn install
 
 # Copy the rest of the application code
 COPY . .
-
+COPY docker.env /opt/torqbit/.env
 # Generate the schema & build the Next.js application
 RUN npx prisma generate && yarn build 
 
@@ -35,6 +35,7 @@ COPY --from=builder /opt/torqbit /opt/torqbit
 # Copy custom Nginx configuration if needed (optional)
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY academy.com /etc/nginx/sites-available/default
+
 
 # Expose the port Nginx will run on
 EXPOSE 80

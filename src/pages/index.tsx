@@ -11,8 +11,6 @@ import { IBlogCard } from "@/types/landing/blog";
 import { ICourseListItem } from "@/types/courses/Course";
 import { listCourseListItems } from "@/actions/courses";
 import StudentDashboard from "@/components/Dashboard/StudentDashboard";
-import MarketingLayout from "@/components/Layouts/MarketingLayout";
-import dashboardStyles from "@/styles/Dashboard.module.scss";
 import { useMediaQuery } from "react-responsive";
 import learningPath from "@/actions/learningPath";
 import { ILearningPathDetail } from "@/types/learingPath";
@@ -31,20 +29,12 @@ const LandingPage: FC<IProps> = ({ user, siteConfig, courseList, blogList, learn
   return (
     <>
       {user && user.role == Role.STUDENT ? (
-        <MarketingLayout
-          mobileHeroMinHeight={60}
-          user={user}
+        <StudentDashboard
+          coursesList={courseList}
+          pathList={learningList}
           siteConfig={siteConfig}
-          homeLink={"/"}
-          showFooter={!isMobile}
-        >
-          <section
-            className={dashboardStyles.dashboard_content}
-            style={{ maxWidth: "var(--marketing-container-width)", margin: "0 auto", padding: "10px  0" }}
-          >
-            <StudentDashboard siteConfig={siteConfig} userRole={user.role} />
-          </section>
-        </MarketingLayout>
+          userRole={user.role}
+        />
       ) : (
         <StandardTemplate
           user={user}
@@ -68,7 +58,6 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
     siteConfig.sections?.courses?.enable && (await listCourseListItems(user));
   const blogList = siteConfig.sections?.blog?.enable && (await getBlogList());
   const pathListResponse = await learningPath.listLearningPath(user?.role, user?.id);
-
   return {
     props: {
       user,

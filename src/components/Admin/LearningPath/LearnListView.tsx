@@ -32,7 +32,6 @@ import ProgramService from "@/services/ProgramService";
 import { LoadingOutlined } from "@ant-design/icons";
 import FallBackImage from "@/templates/standard/components/FallBackImage/FallBackImage";
 import { EnrolledCourseProgressList } from "@/components/Dashboard/StudentDashboard";
-import LearningPathSerivices from "@/services/learningPath/LearningPathSerivices";
 const { Meta } = Card;
 export const LearnViewItem: FC<{ learning: ILearningPathDetail; previewMode?: boolean; userRole?: Role }> = ({
   learning,
@@ -150,6 +149,7 @@ export const AcademyItemsListView: FC<{
   emptyView: ReactNode;
   role?: Role;
   loading: boolean;
+  studentItems?: TabsProps["items"];
 }> = ({
   pathList,
   currentTheme,
@@ -159,16 +159,13 @@ export const AcademyItemsListView: FC<{
   getPathList,
   emptyView,
   role,
+  studentItems,
   loading,
   courses,
 }) => {
   const [messageApi, contextMessageHolder] = message.useMessage();
-  const [tab, setTab] = useState("courses");
+  const [tab, setTab] = useState(studentItems ? "student" : "courses");
   const [segmentValue, setSegmentValue] = useState<string>("all");
-
- 
-
-
 
   const router = useRouter();
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
@@ -185,15 +182,15 @@ export const AcademyItemsListView: FC<{
         setTab(k);
         setSegmentValue("all");
         return handleItemsList(k);
+      case "student":
+        setTab(k);
+        setSegmentValue("all");
+        return handleItemsList(k);
 
       default:
         return handleItemsList(k);
     }
   };
-
-
-
- 
 
   const items: TabsProps["items"] = [
     {
@@ -212,7 +209,7 @@ export const AcademyItemsListView: FC<{
           )}
 
           {role && courses && courses.length > 0 && (
-            <Flex align={isMobile ? "center" : "flex-start"} vertical gap={10}>
+            <Flex vertical gap={10}>
               {role && role !== Role.STUDENT && (
                 <Segmented
                   style={{ width: "fit-content" }}
@@ -283,7 +280,7 @@ export const AcademyItemsListView: FC<{
             </div>
           )}
           {role && pathList.length > 0 && (
-            <Flex align={isMobile ? "center" : "flex-start"} vertical gap={10}>
+            <Flex vertical gap={10}>
               {role && role !== Role.STUDENT && (
                 <Segmented
                   style={{ width: "fit-content" }}
@@ -357,14 +354,12 @@ export const AcademyItemsListView: FC<{
     <div className={styles.courses__list}>
       {contextMessageHolder}
 
-      <h4>Academy</h4>
-
+      {router.pathname !== "/" && <h4>Academy</h4>}
 
       <Tabs
-        tabBarGutter={40}
-        items={items}
+        tabBarGutter={isMobile ? 30 : 40}
+        items={studentItems ? studentItems.concat(items) : items}
         activeKey={tab}
-        tabBarStyle={{ width: isMobile ? "calc(100vw - 40px)" : "inherit", margin: "0px auto 20px auto" }}
         onChange={onChangeTab}
         tabBarExtraContent={
           <>
@@ -375,7 +370,6 @@ export const AcademyItemsListView: FC<{
                     Add Learning Path
                   </Button>
                 )}
-
 
                 {tab === "courses" && (
                   <Button type="primary" onClick={addCourse}>

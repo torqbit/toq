@@ -7,6 +7,7 @@ import { getToken } from "next-auth/jwt";
 import { getCookieName } from "@/lib/utils";
 import getRoleByLessonId from "@/actions/getRoleByLessonId";
 import { Role } from "@prisma/client";
+import { getCourseAccessRole } from "@/actions/getCourseAccessRole";
 
 /**
  * Post reply on a query
@@ -34,47 +35,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const body = await req.body;
     const { lessonId, slug, comment, parentCommentId } = body;
 
-    const isEnrolled = await prisma.courseRegistration.findFirst({
-      where: {
-        studentId: String(token?.id),
-        order: {
-          product: {
-            course: {
-              slug,
-            },
-          },
-        },
-      },
-      select: {
-        order: {
-          select: {
-            product: {
-              select: {
-                course: {
-                  select: {
-                    authorId: true,
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-    });
+    const userRole = await getCourseAccessRole(token?.role, token?.id, slug, true);
 
-    const userRole = await getRoleByLessonId(lessonId, token?.role, token?.id);
-
-    if (isEnrolled || userRole === Role.AUTHOR) {
-      const queryAuthor = await prisma.discussion.findUnique({
-        where: {
-          id: parentCommentId,
-        },
-        select: {
-          userId: true,
-          resourceId: true,
-        },
-      });
-
+    if (userRole.role !== Role.NOT_ENROLLED) {
       const addDiscussion = await prisma.discussion.create({
         data: {
           userId: String(token?.id),
@@ -92,45 +55,60 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           },
         },
       });
-      const repliesAuthors = await prisma.discussion.findMany({
-        distinct: ["userId"],
-        where: {
-          parentCommentId: parentCommentId,
-          userId: {
-            notIn: [String(token?.id), String(queryAuthor?.userId)],
-          },
-        },
-        select: {
-          userId: true,
-          resourceId: true,
-        },
-      });
 
-      let courseAuthor = {
-        userId: String(isEnrolled?.order.product.course?.authorId),
-        resourceId: lessonId,
-      };
+      /**
+       *  NOTIFICATION LOGIC
+       */
 
-      queryAuthor &&
-        repliesAuthors
-          .concat(
-            queryAuthor.userId === isEnrolled?.order.product.course?.authorId
-              ? [queryAuthor]
-              : [queryAuthor, courseAuthor]
-          )
-          .filter((u) => u.userId !== token?.id)
-          .map(async (user) => {
-            return prisma.notification.create({
-              data: {
-                notificationType: "COMMENT",
-                toUserId: user.userId,
-                commentId: addDiscussion.id,
-                fromUserId: String(token?.id) || "",
-                tagCommentId: parentCommentId,
-                resourceId: user.resourceId,
-              },
-            });
-          });
+      // const queryAuthor = await prisma.discussion.findUnique({
+      //   where: {
+      //     id: parentCommentId,
+      //   },
+      //   select: {
+      //     userId: true,
+      //     resourceId: true,
+      //   },
+      // });
+
+      // const repliesAuthors = await prisma.discussion.findMany({
+      //   distinct: ["userId"],
+      //   where: {
+      //     parentCommentId: parentCommentId,
+      //     userId: {
+      //       notIn: [String(token?.id), String(queryAuthor?.userId)],
+      //     },
+      //   },
+      //   select: {
+      //     userId: true,
+      //     resourceId: true,
+      //   },
+      // });
+
+      // let courseAuthor = {
+      //   userId: String(isEnrolled?.order.product.course?.authorId),
+      //   resourceId: lessonId,
+      // };
+
+      // queryAuthor &&
+      //   repliesAuthors
+      //     .concat(
+      //       queryAuthor.userId === isEnrolled?.order.product.course?.authorId
+      //         ? [queryAuthor]
+      //         : [queryAuthor, courseAuthor]
+      //     )
+      //     .filter((u) => u.userId !== token?.id)
+      //     .map(async (user) => {
+      //       return prisma.notification.create({
+      //         data: {
+      //           notificationType: "COMMENT",
+      //           toUserId: user.userId,
+      //           commentId: addDiscussion.id,
+      //           fromUserId: String(token?.id) || "",
+      //           tagCommentId: parentCommentId,
+      //           resourceId: user.resourceId,
+      //         },
+      //       });
+      //     });
 
       return res.status(200).json({ success: true, comment: addDiscussion, message: "Reply has been posted" });
     } else {

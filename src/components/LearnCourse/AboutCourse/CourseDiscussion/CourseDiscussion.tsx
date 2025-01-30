@@ -145,7 +145,7 @@ const QADiscssionTab: FC<{ resourceId?: number; loading: boolean }> = ({
       DiscussionsService.postQuery(
         Number(resourceId),
         String(router.query.slug),
-        comment,
+        comment.replace(/(<p><br><\/p>)+$/, ""),
         (result) => {
           message.success(result.message);
           let data = result.comment;

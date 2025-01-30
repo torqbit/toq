@@ -1,5 +1,4 @@
 .navBarContainer {
-  z-index: 10;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -22,6 +21,9 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    position: relative;
+    z-index: 10;
+
     img {
       width: auto;
       height: 30px;
@@ -204,6 +206,8 @@
     align-items: center;
     justify-content: space-between;
     .navTitle {
+      color: var(--font-secondary);
+
       font-size: 12px;
     }
 

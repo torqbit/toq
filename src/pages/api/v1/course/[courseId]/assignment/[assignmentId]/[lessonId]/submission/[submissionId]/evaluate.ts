@@ -79,7 +79,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const courseId = savedSubmission.assignment.lesson.chapter.courseId;
 
     let evaluatedData: EvaluationResult;
-
     const hasAccess = await getCourseAccessRole(savedSubmission.user.role, savedSubmission.user.id, Number(courseId));
 
     let pId = hasAccess.pathId ? hasAccess.pathId : Number(courseId);
@@ -161,6 +160,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         cr?.registrationId,
         typeof isExist !== "undefined"
       );
+
     } else {
       return res.status(404).json(new APIResponse(false, 404, "Evaluation not submitted"));
     }
