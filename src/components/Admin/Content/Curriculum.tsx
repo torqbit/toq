@@ -157,7 +157,9 @@ const Curriculum: FC<{
       <div>
         {chapters.length > 0 && (
           <Flex justify="space-between" align="center">
-            <h4>{chapters.length ? chapters.length : 0} Chapters</h4>
+            <h4>
+              {chapters.length ? `${chapters.length} ${chapters.length > 1 ? "Chapters" : "Chapter"}` : "0 Chapter"}{" "}
+            </h4>
             <Space>
               <Button
                 className={styles.add_btn}

@@ -84,7 +84,7 @@ const CoursesPage: NextPage<{ siteConfig: PageSiteConfig; userRole: Role }> = ({
       undefined,
       (result) => {
         messageApi.success(result.message);
-        router.push(`/admin/content/course/${result.getCourse.courseId}/edit`);
+        router.push(`/academy/course//${result.getCourse.courseId}/edit`);
       },
       (error) => {
         messageApi.error(error);
@@ -191,6 +191,14 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const siteConfig = getSiteConfig();
   const { site } = siteConfig;
   if (user) {
+    if (user.role == Role.ADMIN || user.role == Role.AUTHOR) {
+      return {
+        redirect: {
+          permanent: false,
+          destination: "/academy",
+        },
+      };
+    }
     return {
       props: {
         siteConfig: site,
