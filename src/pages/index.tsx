@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { Role, User } from "@prisma/client";
+import { Role, StateType, User } from "@prisma/client";
 import { GetServerSidePropsContext } from "next";
 import { getCookieName } from "@/lib/utils";
 import { getToken } from "next-auth/jwt";
@@ -30,17 +30,17 @@ const LandingPage: FC<IProps> = ({ user, siteConfig, courseList, blogList, learn
     <>
       {user && user.role == Role.STUDENT ? (
         <StudentDashboard
-          coursesList={courseList}
-          pathList={learningList}
+          coursesList={courseList.length > 0 ? courseList.filter((c) => c.state == StateType.ACTIVE) : []}
+          pathList={learningList.length > 0 ? learningList.filter((l) => l.state == StateType.ACTIVE) : []}
           siteConfig={siteConfig}
           userRole={user.role}
         />
       ) : (
         <StandardTemplate
           user={user}
-          learningList={learningList}
+          learningList={learningList.length > 0 ? learningList.filter((l) => l.state == StateType.ACTIVE) : []}
+          courseList={courseList.length > 0 ? courseList.filter((c) => c.state == StateType.ACTIVE) : []}
           siteConfig={siteConfig}
-          courseList={courseList}
           blogList={blogList}
         />
       )}

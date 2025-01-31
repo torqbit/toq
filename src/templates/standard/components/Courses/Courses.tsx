@@ -3,11 +3,12 @@ import styles from "./Courses.module.scss";
 import courseGrid from "@/components/Courses/CourseListView/CourseListView.module.scss";
 import Link from "next/link";
 import { CourseCardSize, ICourseCard, ICourseInfo } from "@/types/landing/courses";
-import { Flex, Tag } from "antd";
+import { Button, Flex, Tag } from "antd";
 
 import { CourseType, StateType } from "@prisma/client";
 import CourseSkeleton from "./CourseSkeleton";
 import { CourseViewItem } from "@/components/Courses/CourseListView/CourseListView";
+import SvgIcons from "@/components/SvgIcons";
 
 const CourseCard: FC<ICourseCard> = ({
   tvThumbnail,
@@ -49,7 +50,17 @@ const CourseList: FC<ICourseInfo> = ({ title, description, courseList, previewMo
       {
         <section className={styles.courses__container}>
           <div>
-            <h2>{title}</h2>
+            <Flex justify="space-between">
+              <h2>{title}</h2>
+              {courseList.length > 3 && (
+                <Button href="/courses" type="link">
+                  <Flex align="center" gap={10}>
+                    <span>View more</span>
+                    <i style={{ fontSize: 18, lineHeight: 0 }}>{SvgIcons.arrowRight}</i>
+                  </Flex>
+                </Button>
+              )}
+            </Flex>
             <p className="landingPagePara" style={{ marginBottom: 30 }}>
               {description}
             </p>
@@ -61,11 +72,9 @@ const CourseList: FC<ICourseInfo> = ({ title, description, courseList, previewMo
             )}
             {courseList.length > 0 && (
               <div className={courseGrid.course__grid}>
-                {courseList
-                  .filter((c) => c.state === StateType.ACTIVE)
-                  .map((c, index) => (
-                    <CourseViewItem course={c} key={index} previewMode={previewMode} />
-                  ))}
+                {courseList.slice(0, 3).map((c, index) => (
+                  <CourseViewItem course={c} key={index} previewMode={previewMode} />
+                ))}
               </div>
             )}
           </div>

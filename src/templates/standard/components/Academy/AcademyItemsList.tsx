@@ -1,13 +1,12 @@
 import { FC } from "react";
 import styles from "../Courses/Courses.module.scss";
 import courseGrid from "@/components/Courses/CourseListView/CourseListView.module.scss";
-
-import { StateType } from "@prisma/client";
-
 import CourseSkeleton from "../Courses/CourseSkeleton";
 import { LearnViewItem } from "@/components/Admin/LearningPath/LearnListView";
 import { ILearningPathDetail } from "@/types/learingPath";
 import { IBrandConfig } from "@/types/schema";
+import { Button, Flex } from "antd";
+import SvgIcons from "@/components/SvgIcons";
 
 interface ILearningList {
   previewMode?: boolean;
@@ -22,7 +21,17 @@ const AcademyItemsList: FC<ILearningList> = ({ title, description, learningList,
       {
         <section className={styles.courses__container}>
           <div>
-            <h2>{title}</h2>
+            <Flex justify="space-between">
+              <h2>{title}</h2>
+              {learningList.length > 3 && (
+                <Button href="/academy" type="link">
+                  <Flex align="center" gap={10}>
+                    <span>View more</span>
+                    <i style={{ fontSize: 18, lineHeight: 0 }}>{SvgIcons.arrowRight}</i>
+                  </Flex>
+                </Button>
+              )}
+            </Flex>
             <p className="landingPagePara" style={{ marginBottom: 30 }}>
               {description}
             </p>
@@ -32,13 +41,12 @@ const AcademyItemsList: FC<ILearningList> = ({ title, description, learningList,
                 <CourseSkeleton size={3} />
               </>
             )}
+
             {learningList.length > 0 && (
               <div className={courseGrid.course__grid}>
-                {learningList
-                  .filter((c) => c.state === StateType.ACTIVE)
-                  .map((c, index) => (
-                    <LearnViewItem learning={c} key={index} previewMode={previewMode} />
-                  ))}
+                {learningList.slice(0, 3).map((c, index) => (
+                  <LearnViewItem learning={c} key={index} previewMode={previewMode} />
+                ))}
               </div>
             )}
           </div>
