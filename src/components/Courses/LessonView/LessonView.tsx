@@ -34,7 +34,7 @@ import appConstant from "@/services/appConstant";
 import { ICourseProgressUpdateResponse } from "@/lib/types/program";
 
 import { useMediaQuery } from "react-responsive";
-import { $Enums, ResourceContentType, Role } from "@prisma/client";
+import { $Enums, ResourceContentType, Role, submissionStatus } from "@prisma/client";
 import ViewAssignment from "@/components/Assignment/ViewAssignment";
 import AssignmentService from "@/services/course/AssignmentService";
 import { useAppContext } from "@/components/ContextApi/AppContext";
@@ -317,14 +317,15 @@ const LessonView: FC<{ siteConfig: PageSiteConfig; courseId: number; marketingLa
           >
             <Link href={`/courses/${router.query.slug}/lesson/${item.lessonId}`} className={styles.lesson__item}>
               <div style={{ display: "flex" }}>
-                <i style={{ height: 20 }}>
-                  {item.isWatched ? (
-                    <i style={{ lineHeight: 0, fontSize: 18, color: "var(--font-secondary)" }}>{SvgIcons.check}</i>
-                  ) : (
-                    <i style={{ lineHeight: 0, fontSize: 18, color: "var(--font-secondary)" }}>
-                      {item.contentType === $Enums.ResourceContentType.Video ? SvgIcons.playBtn : SvgIcons.file}
-                    </i>
-                  )}
+                <i
+                  style={{
+                    lineHeight: 0,
+                    fontSize: 18,
+                    marginTop: 3,
+                    color: "var(--font-secondary)",
+                  }}
+                >
+                  {getLessonItems(item.contentType as ResourceContentType, item.isWatched, item.assignmentStatus)}
                 </i>
                 <p style={{ marginBottom: 0, marginLeft: 5 }}>{item.title}</p>
               </div>
@@ -363,10 +364,25 @@ const LessonView: FC<{ siteConfig: PageSiteConfig; courseId: number; marketingLa
     };
   });
 
-  const getLessonItems = (contentType: ResourceContentType, isWatched: boolean) => {
+  const getLessonItems = (
+    contentType: ResourceContentType,
+    isWatched: boolean,
+    assignmentStatus?: submissionStatus
+  ) => {
     switch (contentType) {
       case ResourceContentType.Assignment:
-        return isWatched ? SvgIcons.check : SvgIcons.file;
+        switch (assignmentStatus) {
+          case submissionStatus.FAILED:
+            return SvgIcons.cross;
+          case submissionStatus.PASSED:
+            return SvgIcons.check;
+
+          case submissionStatus.PENDING:
+            return SvgIcons.clock;
+
+          default:
+            return SvgIcons.file;
+        }
 
       case ResourceContentType.Video:
         return isWatched ? SvgIcons.check : SvgIcons.playBtn;
@@ -407,7 +423,7 @@ const LessonView: FC<{ siteConfig: PageSiteConfig; courseId: number; marketingLa
                 color: "var(--font-secondary)",
               }}
             >
-              {getLessonItems(l.contentType as ResourceContentType, l.isWatched)}
+              {getLessonItems(l.contentType as ResourceContentType, l.isWatched, l.assignmentStatus)}
             </i>
           ),
         };

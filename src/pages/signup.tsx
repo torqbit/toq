@@ -142,7 +142,6 @@ const LoginPage: NextPage<{
                 }}
                 loading={signupLoading}
                 type="primary"
-                style={{ width: 250, height: 40, display: "block" }}
                 className={styles.google_btn}
               >
                 Signup with Email

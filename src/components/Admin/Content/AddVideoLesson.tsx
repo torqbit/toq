@@ -11,7 +11,6 @@ import { postWithFile } from "@/services/request";
 import { getChunkPercentage } from "@/lib/utils";
 import ImgCrop from "antd-img-crop";
 import appConstant from "@/services/appConstant";
-import ConfigFormItem from "@/components/Configuration/ConfigForm";
 
 const AddVideoLesson: FC<{
   isEdit: boolean;
@@ -283,39 +282,32 @@ const AddVideoLesson: FC<{
             }}
           >
             <div className={styles.formCourseName}>
-              <ConfigFormItem
-                layout="vertical"
-                input={
-                  <Form.Item name="name" rules={[{ required: true, message: "Video title is required" }]}>
-                    <Input
+              <Form.Item label="Title" name="name" rules={[{ required: true, message: "Please Enter Title" }]}>
+                <Input
+                  onChange={(e) => {
+                    setVideoLesson({ ...videoLesson, title: e.currentTarget.value });
+                  }}
+                  value={form.getFieldsValue().name}
+                  placeholder="Set the title of the resource"
+                />
+              </Form.Item>
+              <div>
+                <div>
+                  <Form.Item
+                    name="description"
+                    label="Description"
+                    rules={[{ required: true, message: "Please Enter Description" }]}
+                  >
+                    <Input.TextArea
                       onChange={(e) => {
-                        setVideoLesson({ ...videoLesson, title: e.currentTarget.value });
+                        setVideoLesson({ ...videoLesson, description: e.currentTarget.value });
                       }}
-                      value={form.getFieldsValue().name}
-                      placeholder="Set the title of the video"
+                      rows={4}
+                      placeholder="Brief description about the resource"
                     />
                   </Form.Item>
-                }
-                title={"Title"}
-                description={"Provide the title of the video"}
-                divider={true}
-              />
-
-              <ConfigFormItem
-                layout="vertical"
-                input={
-                  <Input.TextArea
-                    onChange={(e) => {
-                      setVideoLesson({ ...videoLesson, description: e.currentTarget.value });
-                    }}
-                    rows={4}
-                    placeholder="Brief description about the video"
-                  />
-                }
-                title={"Description"}
-                description={"Provide a brief description about the video"}
-                divider={true}
-              />
+                </div>
+              </div>
 
               <div>
                 <div style={{ position: "relative" }}>
