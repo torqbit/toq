@@ -16,11 +16,8 @@ import { PageSiteConfig } from "@/services/siteConstant";
 import { getToken } from "next-auth/jwt";
 import { getCookieName } from "@/lib/utils";
 import MarketingLayout from "@/components/Layouts/MarketingLayout";
-import getCourseDetail, { extractLessonAndChapterDetail } from "@/actions/getCourseDetail";
 import prisma from "@/lib/prisma";
 import { PaymentManagemetService } from "@/services/payment/PaymentManagementService";
-import { getCourseDetailedView } from "@/actions/courses";
-import Preview from "@/components/Admin/Content/Preview";
 import { useSession } from "next-auth/react";
 import { useMediaQuery } from "react-responsive";
 import learningPath from "@/actions/learningPath";
@@ -203,6 +200,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   });
   const detail =
     learningInfo?.id && (await learningPath.getLearningPreviewDetail(learningInfo.id, user?.role, user?.id));
+  console.log(detail, "detial");
 
   if (detail && detail?.success && detail?.body) {
     if (user) {
