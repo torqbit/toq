@@ -607,15 +607,12 @@ const LessonView: FC<{ siteConfig: PageSiteConfig; courseId: number; marketingLa
                   {currentLesson?.lesson ? (
                     <>
                       {currentLesson?.lesson?.isWatched && (
-                        <Button>
-                          <Flex gap={5}>
-                            {" "}
-                            <i style={{ lineHeight: 0, fontSize: 18, color: "var(--font-secondary)" }}>
-                              {SvgIcons.check}
-                            </i>
-                            Completed{" "}
+                        <Tag style={{ padding: "5px 10px" }}>
+                          <Flex align="center" gap={5}>
+                            <i style={{ lineHeight: 0, fontSize: 15 }}>{SvgIcons.checkFilled}</i>
+                            <span>Completed</span>
                           </Flex>
-                        </Button>
+                        </Tag>
                       )}
                       {!currentLesson?.lesson?.isWatched && (
                         <Button loading={markAsLoading} type="primary" onClick={onMarkAsCompleted}>
@@ -745,14 +742,12 @@ const LessonView: FC<{ siteConfig: PageSiteConfig; courseId: number; marketingLa
                       {currentLesson?.lesson ? (
                         <>
                           {currentLesson?.lesson?.isWatched && (
-                            <Button>
-                              <Flex gap={5}>
-                                <i style={{ lineHeight: 0, fontSize: 18, color: "var(--font-secondary)" }}>
-                                  {SvgIcons.check}
-                                </i>
-                                Completed{" "}
+                            <Tag style={{ padding: "5px 10px" }}>
+                              <Flex align="center" gap={5}>
+                                <i style={{ lineHeight: 0, fontSize: 15 }}>{SvgIcons.checkFilled}</i>
+                                <span>Completed</span>
                               </Flex>
-                            </Button>
+                            </Tag>
                           )}
                           {!currentLesson?.lesson?.isWatched && (
                             <Button loading={markAsLoading} type="primary" onClick={onMarkAsCompleted}>

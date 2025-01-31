@@ -44,7 +44,7 @@ export const LearnViewItem: FC<{ learning: ILearningPathDetail; previewMode?: bo
   const [showDummyPurchase, setDummyBtn] = useState(typeof previewMode !== "undefined" && previewMode);
 
   const handleEdit = (id: number) => {
-    router.push(`admin/content/path/${id}/edit`);
+    router.push(`academy/path/${id}/edit`);
   };
 
   const handlePurchase = (slug: string) => {
@@ -170,7 +170,7 @@ export const AcademyItemsListView: FC<{
   const router = useRouter();
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
   const handleLearningCreate = () => {
-    return router.push("/admin/content/path/add");
+    return router.push("academy/path/add");
   };
   const onChangeTab = (k: string) => {
     switch (k) {
@@ -192,21 +192,141 @@ export const AcademyItemsListView: FC<{
     }
   };
 
+  const showCourses = (segementvalue: string) => {
+    switch (segementvalue) {
+      case StateType.DRAFT:
+        return (
+          <>
+            {courses.filter((p) => p.state === StateType.DRAFT).length == 0 && (
+              <Flex vertical gap={0} justify="center" align="center">
+                {emptyView}
+                <p>No courses are available in the draft state</p>
+              </Flex>
+            )}
+            {courses.length > 0 && (
+              <div className={styles.course__grid}>
+                {courses
+                  .filter((c) => c.state === StateType.DRAFT)
+                  .map((c, index) => (
+                    <CourseViewItem course={c} key={index} />
+                  ))}
+              </div>
+            )}
+          </>
+        );
+      case StateType.ACTIVE:
+        return (
+          <>
+            {courses.filter((p) => p.state === StateType.ACTIVE).length == 0 && (
+              <Flex vertical gap={0} justify="center" align="center">
+                {emptyView}
+                <p>No courses are available in the active state</p>
+              </Flex>
+            )}
+            {courses.length > 0 && (
+              <div className={styles.course__grid}>
+                {courses
+                  .filter((c) => c.state === StateType.ACTIVE)
+                  .map((c, index) => (
+                    <CourseViewItem course={c} key={index} />
+                  ))}
+              </div>
+            )}
+          </>
+        );
+
+      default:
+        return (
+          <>
+            {courses.length == 0 && (
+              <Flex vertical gap={0} justify="center" align="center">
+                {emptyView}
+                <p>No courses are available </p>
+              </Flex>
+            )}
+            {courses.length > 0 && (
+              <div className={styles.course__grid}>
+                {courses.map((c, index) => (
+                  <CourseViewItem course={c} key={index} />
+                ))}
+              </div>
+            )}
+          </>
+        );
+    }
+  };
+
+  const showLearningPath = (segementvalue: string) => {
+    switch (segementvalue) {
+      case StateType.DRAFT:
+        return (
+          <>
+            {pathList.filter((p) => p.state === StateType.DRAFT).length == 0 && (
+              <Flex vertical gap={0} justify="center" align="center">
+                {emptyView}
+                <p>No learning paths are available in the draft state</p>
+              </Flex>
+            )}
+            {pathList.filter((p) => p.state === StateType.DRAFT).length > 0 && (
+              <div className={styles.course__grid}>
+                {pathList
+                  .filter((p) => p.state === StateType.DRAFT)
+                  .map((path, index) => (
+                    <LearnViewItem userRole={role} learning={path} key={index} />
+                  ))}
+              </div>
+            )}
+          </>
+        );
+      case StateType.ACTIVE:
+        return (
+          <>
+            {pathList.filter((p) => p.state === StateType.ACTIVE).length == 0 && (
+              <Flex vertical gap={0} justify="center" align="center">
+                {emptyView}
+                <p>No learning paths are available in the active state</p>
+              </Flex>
+            )}
+            {pathList.length > 0 && (
+              <div className={styles.course__grid}>
+                {pathList
+                  .filter((path) => path.state === StateType.ACTIVE)
+                  .map((path, index) => (
+                    <LearnViewItem userRole={role} learning={path} key={index} />
+                  ))}
+              </div>
+            )}
+          </>
+        );
+
+      default:
+        return (
+          <>
+            {pathList.length == 0 && (
+              <Flex vertical gap={0} justify="center" align="center">
+                {emptyView}
+                <p>No learning paths are available</p>
+              </Flex>
+            )}
+            {pathList.length > 0 && (
+              <div className={styles.course__grid}>
+                {pathList.map((path, index) => (
+                  <LearnViewItem userRole={role} learning={path} key={index} />
+                ))}
+              </div>
+            )}
+          </>
+        );
+    }
+  };
+
   const items: TabsProps["items"] = [
     {
       key: "courses",
       label: "Courses",
       children: (
         <Spin spinning={loadingCourses || !courses} indicator={<LoadingOutlined spin />} size="large">
-          {typeof role == "undefined" && courses && courses.length > 0 && (
-            <div className={styles.course__grid}>
-              {courses
-                .filter((c) => c.state === StateType.ACTIVE)
-                .map((c, index) => (
-                  <CourseViewItem course={c} key={index} />
-                ))}
-            </div>
-          )}
+          {typeof role == "undefined" && courses && courses.length > 0 && showCourses(StateType.ACTIVE)}
 
           {role && courses && courses.length > 0 && (
             <Flex vertical gap={10}>
@@ -217,26 +337,11 @@ export const AcademyItemsListView: FC<{
                   options={[
                     { value: "all", label: "All" },
                     { value: StateType.ACTIVE, label: "Published" },
+                    { value: StateType.DRAFT, label: "Draft" },
                   ]}
                 />
               )}
-              <>
-                {role && role !== Role.STUDENT && segmentValue === "all" ? (
-                  <div className={styles.course__grid}>
-                    {courses.map((c, index) => (
-                      <CourseViewItem course={c} key={index} />
-                    ))}
-                  </div>
-                ) : (
-                  <div className={styles.course__grid}>
-                    {courses
-                      .filter((c) => c.state === StateType.ACTIVE)
-                      .map((c, index) => (
-                        <CourseViewItem course={c} key={index} />
-                      ))}
-                  </div>
-                )}
-              </>
+              <>{role && role !== Role.STUDENT && showCourses(segmentValue)}</>
             </Flex>
           )}
 
@@ -257,11 +362,6 @@ export const AcademyItemsListView: FC<{
               })}
             </div>
           )}
-          {courses && courses.length == 0 && !loadingCourses && (
-            <Flex justify="center" align="center">
-              {emptyView}
-            </Flex>
-          )}
         </Spin>
       ),
     },
@@ -270,15 +370,7 @@ export const AcademyItemsListView: FC<{
       label: "Learning Paths",
       children: (
         <Spin spinning={loading} indicator={<LoadingOutlined spin />} size="large">
-          {typeof role == "undefined" && pathList.length > 0 && (
-            <div className={styles.course__grid}>
-              {pathList
-                .filter((p) => p.state === StateType.ACTIVE)
-                .map((path, index) => (
-                  <LearnViewItem userRole={role} learning={path} key={index} />
-                ))}
-            </div>
-          )}
+          {typeof role == "undefined" && pathList.length > 0 && showLearningPath(StateType.ACTIVE)}
           {role && pathList.length > 0 && (
             <Flex vertical gap={10}>
               {role && role !== Role.STUDENT && (
@@ -288,26 +380,11 @@ export const AcademyItemsListView: FC<{
                   options={[
                     { value: "all", label: "All" },
                     { value: StateType.ACTIVE, label: "Published" },
+                    { value: StateType.DRAFT, label: "Draft" },
                   ]}
                 />
               )}
-              <>
-                {role && role !== Role.STUDENT && segmentValue === "all" ? (
-                  <div className={styles.course__grid}>
-                    {pathList.map((path, index) => (
-                      <LearnViewItem userRole={path.role} learning={path} key={index} />
-                    ))}
-                  </div>
-                ) : (
-                  <div className={styles.course__grid}>
-                    {pathList
-                      .filter((p) => p.state === StateType.ACTIVE)
-                      .map((path, index) => (
-                        <LearnViewItem userRole={path.role} learning={path} key={index} />
-                      ))}
-                  </div>
-                )}
-              </>
+              <>{role && role !== Role.STUDENT && showLearningPath(segmentValue)}</>
             </Flex>
           )}
 
@@ -328,11 +405,6 @@ export const AcademyItemsListView: FC<{
               })}
             </div>
           )}
-          {(!pathList || pathList.length == 0) && !loading && (
-            <Flex justify="center" align="center">
-              {emptyView}
-            </Flex>
-          )}
         </Spin>
       ),
     },
@@ -343,7 +415,7 @@ export const AcademyItemsListView: FC<{
       undefined,
       (result) => {
         messageApi.success(result.message);
-        router.push(`/admin/content/course/${result.getCourse.courseId}/edit`);
+        router.push(`/academy/course/${result.getCourse.courseId}/edit`);
       },
       (error) => {
         messageApi.error(error);

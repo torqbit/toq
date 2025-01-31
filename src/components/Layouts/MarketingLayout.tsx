@@ -264,7 +264,7 @@ const MarketingLayout: FC<{
             style={{ width: "90vw", padding: "10px 0px" }}
             align="center"
             justify="space-between"
-            className={router.pathname.startsWith("/admin/content/course") ? "" : appLayoutStyles.userNameWrapper}
+            className={router.pathname.startsWith("/academy/course/") ? "" : appLayoutStyles.userNameWrapper}
           >
             <Link href={"/setting"}>
               <Flex align="center" gap={10} style={{ cursor: "pointer" }}>

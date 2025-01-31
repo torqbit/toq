@@ -95,7 +95,7 @@ export const EnrolledCourseList: FC<{
                   key: "1",
                   label: "Edit",
                   onClick: () => {
-                    router.push(`/admin/content/course/${courseInfo?.key}/edit`);
+                    router.push(`/academy/course//${courseInfo?.key}/edit`);
                   },
                 },
                 {
@@ -309,7 +309,7 @@ const Content: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   ];
 
   const previousDraft = (id: number) => {
-    router.push(`/admin/content/course/${id}/edit`);
+    router.push(`/academy/course/${id}/edit`);
     setIsModalOpen(false);
   };
 
@@ -321,7 +321,7 @@ const Content: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
       (result) => {
         setAddLoading(false);
 
-        router.push(`/admin/content/course/${result.getCourse.courseId}/edit`);
+        router.push(`/academy/course//${result.getCourse.courseId}/edit`);
       },
       (error) => {
         setAddLoading(false);
@@ -342,7 +342,7 @@ const Content: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const onCreateDraftCourse = () => {
     showModal();
     if (router.query.id) {
-      router.push(`/admin/content/course/${router.query.id}/edit`);
+      router.push(`/academy/course//${router.query.id}/edit`);
     } else {
       ProgramService.getLatesDraftCourse(
         (result) => {

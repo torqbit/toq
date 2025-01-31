@@ -55,13 +55,14 @@ const LessonListSideBar: FC<{
           style={{ marginBottom: userRole === Role.STUDENT ? 20 : 0, paddingRight: userRole === Role.STUDENT ? 10 : 0 }}
         >
           <Flex align="center" justify="space-between">
-            <h4>Course Content</h4>
+            <h4>Course Progress</h4>
             {userRole === Role.STUDENT && <p>{Math.trunc(progress)}% Completed</p>}
           </Flex>
           {userRole === Role.STUDENT && (
             <Progress
-              size="small"
-              status={Math.trunc(progress) == 100 ? "success" : "active"}
+              size={{ height: 2, width: 400 }}
+              style={{ marginLeft: -15 }}
+              status={"active"}
               percent={Math.trunc(progress)}
               trailColor="var(--bg-secondary)"
               showInfo={false}

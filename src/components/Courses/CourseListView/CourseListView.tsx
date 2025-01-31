@@ -19,11 +19,11 @@ export const CourseViewItem: FC<{ course: ICourseListItem; previewMode?: boolean
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
 
   const handleEdit = (id: number) => {
-    router.push(`admin/content/course/${id}/edit`);
+    router.push(`academy/course/${id}/edit`);
   };
 
   const handleManage = (id: number) => {
-    router.push(`admin/content/course/${id}/manage`);
+    router.push(`academy/course/${id}/manage`);
   };
 
   const handlePurchase = (slug: string) => {
@@ -36,7 +36,7 @@ export const CourseViewItem: FC<{ course: ICourseListItem; previewMode?: boolean
       key: "1",
     },
     {
-      label: <Link href={`/admin/content/course/${course.id}/edit`}>Edit</Link>,
+      label: <Link href={`/academy/course//${course.id}/edit`}>Edit</Link>,
       key: "2",
     },
   ];

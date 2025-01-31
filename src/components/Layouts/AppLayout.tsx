@@ -462,7 +462,7 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
                 <Flex
                   align="center"
                   justify="space-between"
-                  className={router.pathname.startsWith("/admin/content/course") ? "" : styles.userNameWrapper}
+                  className={router.pathname.startsWith("/academy/course/") ? "" : styles.userNameWrapper}
                 >
                   {isMobile && <h4>Hello {user?.user?.name}</h4>}
                   <Dropdown

@@ -72,7 +72,7 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const onChange = (key: string) => {
     if (key === "3") {
       onRefresh();
-      router.replace(`/admin/content/course/${router.query.id}/edit`);
+      router.replace(`/academy/course//${router.query.id}/edit`);
       setActiveKey("3");
     }
     setActiveKey(key);
