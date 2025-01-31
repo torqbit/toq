@@ -42,7 +42,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         state,
         token.id || "",
         courses,
-        banner
+        banner,
+        token.role
       );
 
       return res.status(response.status).json(response);

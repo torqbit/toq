@@ -170,6 +170,7 @@ export interface ICoursePriviewInfo {
 export interface ILessonView {
   name: string;
   description: string;
+  sequenceId?: number;
   state: StateType;
   lessonType: ResourceContentType;
   durationInMins: number;

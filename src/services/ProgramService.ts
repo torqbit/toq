@@ -613,7 +613,6 @@ class ProgramService {
   updateResState = (
     resourceId: number,
     state: string,
-    notifyStudent: boolean,
     onSuccess: (response: ApiResponse) => void,
     onFailure: (message: string) => void
   ) => {
@@ -623,7 +622,7 @@ class ProgramService {
         Accept: "application/json",
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ resourceId, state, notifyStudent }),
+      body: JSON.stringify({ resourceId, state }),
     }).then((result) => {
       if (result.status == 400) {
         result.json().then((r) => {

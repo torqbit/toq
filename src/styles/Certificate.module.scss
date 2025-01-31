@@ -11,14 +11,17 @@
     }
   }
 }
+.student__view {
+  max-width: var(--marketing-container-width);
+  margin: 0 auto;
+  padding: 40px 0;
+}
 
-.certificate_page {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-
+.author__view {
+  max-width: var(--container-width);
   padding: 40px;
+}
+.certificate_page {
   .certificate_header {
     align-self: flex-start;
     color: var(--font-secondary);
@@ -62,6 +65,11 @@
 }
 
 @media only screen and (max-width: 435px) {
+  .student__view,
+  .author__view {
+    max-width: 80vw;
+    margin: 0 auto;
+  }
   .certificate_page {
     width: 80vw;
 

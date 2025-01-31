@@ -194,7 +194,11 @@ export const getCourseDetailedView = async (
           name: true,
           description: true,
           resource: {
+            orderBy: {
+              sequenceId: "asc",
+            },
             select: {
+              sequenceId: true,
               name: true,
               description: true,
               state: true,
@@ -303,6 +307,7 @@ export const getCourseDetailedView = async (
             name: l.name,
             description: l.description || "",
             state: l.state,
+            sequenceId: l.sequenceId,
             lessonType: ResourceContentType.Assignment,
             durationInMins: l.assignment.estimatedDuration,
           };
@@ -313,6 +318,8 @@ export const getCourseDetailedView = async (
             description: l.description || "",
             state: l.state,
             lessonType: ResourceContentType.Video,
+            sequenceId: l.sequenceId,
+
             durationInMins: Number((vidDuration / 60).toFixed(1)),
           };
         }
