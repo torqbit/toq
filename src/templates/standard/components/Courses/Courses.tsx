@@ -70,15 +70,13 @@ const CourseList: FC<ICourseInfo> = ({ title, description, courseList, previewMo
                 <CourseSkeleton size={3} />
               </>
             )}
-            <div className={styles.list__preview__wrapper}>
-              {courseList.length > 0 && (
-                <div className={courseGrid.course__grid}>
-                  {courseList.slice(0, 3).map((c, index) => (
-                    <CourseViewItem course={c} key={index} previewMode={previewMode} />
-                  ))}
-                </div>
-              )}
-            </div>
+            {courseList.length > 0 && (
+              <div className={courseGrid.course__grid}>
+                {courseList.slice(0, 3).map((c, index) => (
+                  <CourseViewItem course={c} key={index} previewMode={previewMode} />
+                ))}
+              </div>
+            )}
           </div>
         </section>
       }
