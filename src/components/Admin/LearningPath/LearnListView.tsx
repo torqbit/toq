@@ -426,32 +426,40 @@ export const AcademyItemsListView: FC<{
     <div className={styles.courses__list}>
       {contextMessageHolder}
 
-      {router.pathname !== "/" && <h4>Academy</h4>}
+      {router.pathname !== "/" && (
+        <Flex align="center" justify="space-between">
+          <h4>Academy</h4>
+          {role && role !== Role.STUDENT && (
+            <Dropdown.Button
+              style={{ width: "fit-content" }}
+              type="primary"
+              onClick={() => {
+                addCourse();
+              }}
+              icon={SvgIcons.chevronDown}
+              menu={{
+                items: [
+                  {
+                    key: 1,
+                    label: "Add Learning Path",
+                    onClick: () => {
+                      handleLearningCreate();
+                    },
+                  },
+                ],
+              }}
+            >
+              Add Course
+            </Dropdown.Button>
+          )}
+        </Flex>
+      )}
 
       <Tabs
         tabBarGutter={isMobile ? 30 : 40}
         items={studentItems ? studentItems.concat(items) : items}
         activeKey={tab}
         onChange={onChangeTab}
-        tabBarExtraContent={
-          <>
-            {role && role !== Role.STUDENT && (
-              <>
-                {tab == "learning" && (
-                  <Button type="primary" onClick={handleLearningCreate}>
-                    Add Learning Path
-                  </Button>
-                )}
-
-                {tab === "courses" && (
-                  <Button type="primary" onClick={addCourse}>
-                    Add Courses
-                  </Button>
-                )}
-              </>
-            )}
-          </>
-        }
       />
     </div>
   );

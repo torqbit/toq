@@ -4,7 +4,7 @@ import { DndContext, DragEndEvent } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { IResourceDetail } from "@/lib/types/learn";
-import { Dropdown, Flex, MenuProps, Modal, Popconfirm } from "antd";
+import { Dropdown, Flex, MenuProps, Modal, Popconfirm, Tag } from "antd";
 import styles from "@/styles/Curriculum.module.scss";
 import SvgIcons from "@/components/SvgIcons";
 import { ResourceContentType, StateType } from "@prisma/client";
@@ -16,7 +16,7 @@ const SortableItem: FC<{
   lesson: IResourceDetail;
   id: number;
   deleteRes: (id: number) => void;
-  updateResState: (id: number, state: string, notifyStudent: boolean) => void;
+  updateResState: (id: number, state: string) => void;
   onEditResource: (id: number, contetn: ResourceContentType) => void;
   chapterId: number;
   state: string;
@@ -38,9 +38,16 @@ const SortableItem: FC<{
         setTimeout(() => {}, 500);
       },
     },
-
     {
       key: "2",
+      label: state === "Published" ? "Draft" : "Published",
+      onClick: () => {
+        updateResState(lesson.resourceId, state === "Published" ? StateType.DRAFT : StateType.ACTIVE);
+      },
+    },
+
+    {
+      key: "3",
 
       label: (
         <Popconfirm
@@ -79,52 +86,12 @@ const SortableItem: FC<{
         </Flex>
         <div>
           <Flex align="center" gap={10}>
-            <Dropdown.Button
-              className={state === "Draft" ? styles.draft_btn : styles.publish_btn}
-              icon={SvgIcons.chevronDown}
-              menu={{
-                items: [
-                  {
-                    key: 1,
-                    label: state === "Published" ? "Draft" : "Published",
-                    onClick: () => {
-                      state === "Published" || lesson.contentType === ResourceContentType.Assignment
-                        ? updateResState(
-                            lesson.resourceId,
-                            state === "Published" ? StateType.DRAFT : StateType.ACTIVE,
-                            false
-                          )
-                        : modal[lesson.isStudentNotified ? "success" : "confirm"]({
-                            title: "Email Notification",
-                            content: lesson.isStudentNotified ? "Already notified" : "Do you want to Notify student",
-                            okText: lesson.isStudentNotified ? "OK" : "Yes",
-                            cancelText: "No",
-
-                            onOk: () => {
-                              updateResState(
-                                lesson.resourceId,
-                                state === "Published" ? StateType.DRAFT : StateType.ACTIVE,
-                                lesson.contentType === ResourceContentType.Video && !lesson.isStudentNotified
-                                  ? true
-                                  : false
-                              );
-                            },
-
-                            onCancel: () => {
-                              updateResState(
-                                lesson.resourceId,
-                                state === "Published" ? StateType.DRAFT : StateType.ACTIVE,
-                                lesson.isStudentNotified
-                              );
-                            },
-                          });
-                    },
-                  },
-                ],
-              }}
+            <Tag
+              color={state == "Published" ? "purple" : "yellow"}
+              style={{ padding: "5px 10px", backgroundColor: "var(--bg-secondary)" }}
             >
-              {state}
-            </Dropdown.Button>
+              {state === "Published" ? "Published" : "Draft"}
+            </Tag>
             <div>
               <Dropdown menu={{ items: dropdownMenu }} placement="bottomRight" arrow={{ pointAtCenter: true }}>
                 <div style={{ rotate: "90deg" }}>{SvgIcons.threeDots}</div>
@@ -141,7 +108,7 @@ const ChapterItem: FC<{
   lessons: IResourceDetail[];
 
   deleteRes: (id: number) => void;
-  updateResState: (id: number, state: string, notifyStudent: boolean) => void;
+  updateResState: (id: number, state: string) => void;
   onEditResource: (id: number, contetn: ResourceContentType) => void;
   chapterId: number;
 }> = ({ lessons, deleteRes, updateResState, onEditResource, chapterId }) => {

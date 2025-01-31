@@ -11,7 +11,6 @@ import prisma from "@/lib/prisma";
 import AppLayout from "@/components/Layouts/AppLayout";
 import { PageSiteConfig } from "@/services/siteConstant";
 import { getSiteConfig } from "@/services/getSiteConfig";
-import { getCourseAccessRole } from "@/actions/getCourseAccessRole";
 import { Role, User } from "@prisma/client";
 import MarketingLayout from "@/components/Layouts/MarketingLayout";
 import { useSession } from "next-auth/react";
@@ -23,7 +22,7 @@ const PreviewCertificate: FC<{ courseName: string; userName: string; userRole: R
 }) => {
   const router = useRouter();
   return (
-    <Flex vertical align={userRole == Role.STUDENT ? "center" : undefined} className={styles.certificate_page}>
+    <div className={styles.certificate_page}>
       <Flex vertical gap={20}>
         <div style={{ justifySelf: "flex-start" }}>
           <Breadcrumb
@@ -43,27 +42,29 @@ const PreviewCertificate: FC<{ courseName: string; userName: string; userRole: R
         <p className={styles.about_description}>
           Torqbit certifies the successful completion of <span>{courseName}</span> by <span>{userName} </span>
         </p>
-        <div className={styles.certificate_image}>
-          <img src={`/static/course/certificate/${router.query.certificateId}`} alt={userName ?? "Certificate"} />
-          {/* <Spin
+        <Flex justify={userRole == Role.STUDENT ? "center" : "flex-start"}>
+          <div className={styles.certificate_image}>
+            <img src={`/static/course/certificate/${router.query.certificateId}`} alt={userName ?? "Certificate"} />
+            {/* <Spin
             spinning={true}
             indicator={<LoadingOutlined spin />}
             style={{ position: "absolute", top: "calc(50% - 40px)", left: "50%" }}
             size="large"
           /> */}
-          <Button
-            onClick={() => {
-              router.push(`/courses/${router.query.slug}/certificate/download/${String(router.query.certificateId)}`);
-            }}
-            type="primary"
-            target="_blank"
-          >
-            <div> Download Certificate </div>
-            <i style={{ fontSize: 18, lineHeight: 0 }}> {SvgIcons.arrowRight}</i>
-          </Button>
-        </div>
+            <Button
+              onClick={() => {
+                router.push(`/courses/${router.query.slug}/certificate/download/${String(router.query.certificateId)}`);
+              }}
+              type="primary"
+              target="_blank"
+            >
+              <div> Download Certificate </div>
+              <i style={{ fontSize: 18, lineHeight: 0 }}> {SvgIcons.arrowRight}</i>
+            </Button>
+          </div>
+        </Flex>
       </Flex>
-    </Flex>
+    </div>
   );
 };
 
@@ -93,11 +94,15 @@ const ShowCertificate: FC<{ siteConfig: PageSiteConfig; courseName: string; user
           }
           siteConfig={siteConfig}
         >
-          <PreviewCertificate userRole={userRole} courseName={courseName} userName={userName} />
+          <div className={styles.student__view}>
+            <PreviewCertificate userRole={userRole} courseName={courseName} userName={userName} />
+          </div>
         </MarketingLayout>
       ) : (
         <AppLayout siteConfig={siteConfig}>
-          <PreviewCertificate userRole={userRole} courseName={courseName} userName={userName} />
+          <div className={styles.author__view}>
+            <PreviewCertificate userRole={userRole} courseName={courseName} userName={userName} />
+          </div>
         </AppLayout>
       )}
     </>
@@ -114,7 +119,6 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
 
   if (user && params?.slug && typeof params.slug === "string") {
-    const hasAccess = await getCourseAccessRole(user?.role, user?.id, params?.slug, true);
     const findCourse = await prisma.course.findUnique({
       where: {
         slug: params.slug,
@@ -125,44 +129,14 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
       },
     });
     if (findCourse) {
-      let pId = hasAccess.pathId ? hasAccess.pathId : Number(findCourse.courseId);
-
-      const isCompleted = await prisma?.courseRegistration.findFirst({
-        where: {
-          studentId: user.id,
-
-          order: {
-            productId: pId,
-          },
+      return {
+        props: {
+          siteConfig: site,
+          courseName: findCourse?.name,
+          userName: user.name,
+          userRole: user.role,
         },
-        select: {
-          courseState: true,
-          certificate: {
-            select: {
-              productId: true,
-            },
-          },
-        },
-      });
-
-      if (!isCompleted?.certificate.find((c) => c.productId === findCourse.courseId)) {
-        return {
-          redirect: {
-            permanent: false,
-            message: "you are not enrolled in this course",
-            destination: "/unauthorized",
-          },
-        };
-      } else {
-        return {
-          props: {
-            siteConfig: site,
-            courseName: findCourse?.name,
-            userName: user.name,
-            userRole: user.role,
-          },
-        };
-      }
+      };
     } else {
       return {
         props: {

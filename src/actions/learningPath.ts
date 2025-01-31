@@ -92,8 +92,16 @@ class LearningPath {
     state: StateType,
     authorId: string,
     courses: { learningPathId: number; courseId: number; sequenceId: number }[],
-    banner: string
+    banner: string,
+    userRole?: Role
   ): Promise<APIResponse<ILearningPathDetail>> {
+    let whereClause =
+      userRole == Role.ADMIN
+        ? { id: id }
+        : {
+            id: id,
+            authorId: authorId,
+          };
     let learningPathBanner = banner;
     if (file) {
       const response = await uploadThumbnail(file, slug, FileObjectType.LEARNING_PATH, "learning_path", banner);
@@ -107,10 +115,7 @@ class LearningPath {
     const response = await prisma
       .$transaction(async (tx) => {
         let response = await tx.learningPath.update({
-          where: {
-            id: id,
-            authorId: authorId,
-          },
+          where: whereClause,
           data: {
             title,
             description,

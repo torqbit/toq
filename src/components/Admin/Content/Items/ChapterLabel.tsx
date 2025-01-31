@@ -1,7 +1,7 @@
 import SvgIcons from "@/components/SvgIcons";
 import styles from "@/styles/Curriculum.module.scss";
 import { ResourceContentType } from "@prisma/client";
-import { Dropdown, Flex, MenuProps, Popconfirm } from "antd";
+import { Dropdown, Flex, MenuProps, Popconfirm, Tag } from "antd";
 import { FC, ReactNode } from "react";
 
 const ChapterLabel: FC<{
@@ -40,6 +40,14 @@ const ChapterLabel: FC<{
 
     {
       key: "2",
+      label: state === "Published" ? "Draft" : "Published",
+      onClick: () => {
+        updateState(id, state === "Published" ? "DRAFT" : "ACTIVE");
+      },
+    },
+
+    {
+      key: "3",
       label: (
         <Popconfirm
           title={`Delete the Chapter`}
@@ -91,7 +99,7 @@ const ChapterLabel: FC<{
                 Add Lesson
               </Dropdown.Button>
             </div>
-            <Dropdown.Button
+            {/* <Dropdown.Button
               className={state === "Draft" ? styles.draft_btn : styles.publish_btn}
               icon={SvgIcons.chevronDown}
               menu={{
@@ -107,7 +115,13 @@ const ChapterLabel: FC<{
               }}
             >
               {state}
-            </Dropdown.Button>
+            </Dropdown.Button> */}
+            <Tag
+              color={state == "Published" ? "purple" : "warning"}
+              style={{ padding: "5px 10px", backgroundColor: "var(--bg-secondary)" }}
+            >
+              {state === "Published" ? "Published" : "Draft"}
+            </Tag>
             <div>
               <Dropdown menu={{ items: dropdownMenu }} placement="bottomRight" arrow={{ pointAtCenter: true }}>
                 <div style={{ rotate: "90deg" }}>{SvgIcons.threeDots}</div>

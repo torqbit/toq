@@ -45,11 +45,10 @@ const Curriculum: FC<{
       (error) => {}
     );
   };
-  const updateResState = (id: number, state: string, notifyStudent: boolean) => {
+  const updateResState = (id: number, state: string) => {
     ProgramService.updateResState(
       id,
       state,
-      notifyStudent,
       (result) => {
         messageApi.success(result.message);
 
