@@ -16,7 +16,7 @@ const Curriculum: FC<{
   handleNewChapter: () => void;
   onAddResource: (id: number, content: ResourceContentType) => void;
   handleEditChapter: (chapterId: number) => void;
-  deleteRes: (id: number) => void;
+  deleteRes: (id: number, isCanceled: boolean) => void;
   onSave: (value: string) => void;
 }> = ({
   onSave,

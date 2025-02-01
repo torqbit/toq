@@ -169,12 +169,12 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
     setOpen(value);
   };
 
-  const onDeleteResource = (id: number) => {
+  const onDeleteResource = (id: number, isCanceled: boolean) => {
     ProgramService.deleteResource(
       id,
       Number(router.query.id),
       (result) => {
-        messageApi.success(result.message);
+        !isCanceled && messageApi.success(result.message);
         onRefresh();
       },
       (error) => {

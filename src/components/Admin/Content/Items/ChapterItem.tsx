@@ -15,7 +15,7 @@ const SortableItem: FC<{
   icon: ReactNode;
   lesson: IResourceDetail;
   id: number;
-  deleteRes: (id: number) => void;
+  deleteRes: (id: number, isCanceled: boolean) => void;
   updateResState: (id: number, state: string) => void;
   onEditResource: (id: number, contetn: ResourceContentType) => void;
   chapterId: number;
@@ -54,7 +54,7 @@ const SortableItem: FC<{
           title={`Delete the Lesson`}
           description={`Are you sure to delete this Lesson?`}
           onConfirm={() => {
-            deleteRes(lesson.resourceId);
+            deleteRes(lesson.resourceId, false);
           }}
           okText="Yes"
           cancelText="No"
@@ -86,12 +86,7 @@ const SortableItem: FC<{
         </Flex>
         <div>
           <Flex align="center" gap={10}>
-            <Tag
-              color={state == "Published" ? "purple" : "yellow"}
-              style={{ padding: "5px 10px", backgroundColor: "var(--bg-secondary)" }}
-            >
-              {state === "Published" ? "Published" : "Draft"}
-            </Tag>
+            {state !== "Published" && <Tag color={"warning"}>Draft</Tag>}
             <div>
               <Dropdown
                 menu={{ items: dropdownMenu }}
@@ -112,7 +107,7 @@ const SortableItem: FC<{
 const ChapterItem: FC<{
   lessons: IResourceDetail[];
 
-  deleteRes: (id: number) => void;
+  deleteRes: (id: number, isCanceled: boolean) => void;
   updateResState: (id: number, state: string) => void;
   onEditResource: (id: number, contetn: ResourceContentType) => void;
   chapterId: number;
