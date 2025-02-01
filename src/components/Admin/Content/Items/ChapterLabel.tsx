@@ -121,12 +121,11 @@ const ChapterLabel: FC<{
               </Dropdown>
             </div>
 
-            <Tag
-              color={state == "Published" ? "purple" : "warning"}
-              style={{ padding: "5px 10px", backgroundColor: "var(--bg-secondary)" }}
-            >
-              {state === "Published" ? "Published" : "Draft"}
-            </Tag>
+            {state !== "Published" && (
+              <Tag color={"warning"} style={{ padding: "5px 10px", backgroundColor: "var(--bg-secondary)" }}>
+                Draft
+              </Tag>
+            )}
             <div>
               <Dropdown
                 trigger={["click"]}

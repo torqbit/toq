@@ -70,7 +70,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       return res.status(200).json({
         info: false,
         success: true,
-        message: "Lesson was deleted",
+        message: "Lesson has been deleted",
       });
     } else {
       return res.status(404).json({

@@ -16,7 +16,7 @@ const AddLesson: FC<{
   contentType: ResourceContentType;
   setCheckVideoState: (value: boolean) => void;
   currResId: number;
-  onDeleteResource: (id: number) => void;
+  onDeleteResource: (id: number, isCanceled: boolean) => void;
   isEdit: boolean;
   setEdit: (value: boolean) => void;
   form: FormInstance;

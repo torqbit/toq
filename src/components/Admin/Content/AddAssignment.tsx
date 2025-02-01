@@ -52,7 +52,7 @@ const AddAssignment: FC<{
   contentType: ResourceContentType;
   showResourceDrawer: boolean;
   onRefresh: () => void;
-  onDeleteResource: (id: number) => void;
+  onDeleteResource: (id: number, isCanceled: boolean) => void;
   setEdit: (value: boolean) => void;
 }> = ({
   setResourceDrawer,
@@ -210,7 +210,7 @@ const AddAssignment: FC<{
 
   const onClose = (closeDrawer: boolean) => {
     if (closeDrawer) {
-      currResId && !isEdit && onDeleteResource(currResId);
+      currResId && !isEdit && onDeleteResource(currResId, true);
     }
     setResourceDrawer(false);
     assignmentForm.resetFields();
@@ -230,7 +230,7 @@ const AddAssignment: FC<{
       closeIcon={true}
       onClose={() => {
         setQuestions([createEmptyQuestion("1")]);
-        currResId && !isEdit && onDeleteResource(currResId);
+        currResId && !isEdit && onDeleteResource(currResId, true);
         setResourceDrawer(false);
         assignmentForm.resetFields();
         onRefresh();
