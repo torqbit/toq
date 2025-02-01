@@ -87,7 +87,6 @@ const AssignmentContentTab: FC<{
           }
         }
 
-        console.log(assignmentDetail, "result");
         if (assignmentDetail.content._type === AssignmentType.MCQ) {
           setQuestions((assignmentDetail.content as unknown as MCQAssignment).questions);
         } else if (assignmentDetail.content._type === AssignmentType.SUBJECTIVE) {
