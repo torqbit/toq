@@ -40,7 +40,7 @@ const ChapterLabel: FC<{
 
     {
       key: "2",
-      label: state === "Published" ? "Draft" : "Published",
+      label: state === "Published" ? "Move to Draft" : "Published",
       onClick: () => {
         updateState(id, state === "Published" ? "DRAFT" : "ACTIVE");
       },
@@ -128,7 +128,12 @@ const ChapterLabel: FC<{
               {state === "Published" ? "Published" : "Draft"}
             </Tag>
             <div>
-              <Dropdown menu={{ items: dropdownMenu }} placement="bottomRight" arrow={{ pointAtCenter: true }}>
+              <Dropdown
+                trigger={["click"]}
+                menu={{ items: dropdownMenu }}
+                placement="bottomRight"
+                arrow={{ pointAtCenter: true }}
+              >
                 <div style={{ rotate: "90deg" }}>{SvgIcons.threeDots}</div>
               </Dropdown>
             </div>

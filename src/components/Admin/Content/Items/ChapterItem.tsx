@@ -40,7 +40,7 @@ const SortableItem: FC<{
     },
     {
       key: "2",
-      label: state === "Published" ? "Draft" : "Published",
+      label: state === "Published" ? "Move to Draft" : "Published",
       onClick: () => {
         updateResState(lesson.resourceId, state === "Published" ? StateType.DRAFT : StateType.ACTIVE);
       },
@@ -93,7 +93,12 @@ const SortableItem: FC<{
               {state === "Published" ? "Published" : "Draft"}
             </Tag>
             <div>
-              <Dropdown menu={{ items: dropdownMenu }} placement="bottomRight" arrow={{ pointAtCenter: true }}>
+              <Dropdown
+                menu={{ items: dropdownMenu }}
+                trigger={["click"]}
+                placement="bottomRight"
+                arrow={{ pointAtCenter: true }}
+              >
                 <div style={{ rotate: "90deg" }}>{SvgIcons.threeDots}</div>
               </Dropdown>
             </div>
