@@ -99,23 +99,7 @@ const ChapterLabel: FC<{
                 Add Lesson
               </Dropdown.Button>
             </div>
-            {/* <Dropdown.Button
-              className={state === "Draft" ? styles.draft_btn : styles.publish_btn}
-              icon={SvgIcons.chevronDown}
-              menu={{
-                items: [
-                  {
-                    key: 1,
-                    label: state === "Published" ? "Draft" : "Published",
-                    onClick: () => {
-                      updateState(id, state === "Published" ? "DRAFT" : "ACTIVE");
-                    },
-                  },
-                ],
-              }}
-            >
-              {state}
-            </Dropdown.Button> */}
+
             <Tag
               color={state == "Published" ? "purple" : "warning"}
               style={{ padding: "5px 10px", backgroundColor: "var(--bg-secondary)" }}
