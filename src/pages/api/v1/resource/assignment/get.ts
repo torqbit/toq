@@ -4,23 +4,29 @@ import { withMethods } from "@/lib/api-middlewares/with-method";
 import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "@/lib/prisma";
 import { IAssignmentDetail } from "@/types/courses/Course";
-import { AssignmentType, IAssignmentDetails, MCQAssignment } from "@/types/courses/assignment";
+import { AssignmentType, IAssignmentDetails, IEvaluationResult, MCQAssignment } from "@/types/courses/assignment";
 import { APIResponse } from "@/types/apis";
 import { submissionStatus } from "@prisma/client";
 import { getCookieName } from "@/lib/utils";
 import { getToken } from "next-auth/jwt";
+import { z } from "zod";
+import withValidation from "@/lib/api-middlewares/with-validation";
+
+export const validateReqQuery = z.object({
+  lessonId: z.coerce.number(),
+});
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const query = req.query;
-    const { lessonId, isNoAnswer } = query;
+    const { lessonId } = validateReqQuery.parse(query);
     let cookieName = getCookieName();
 
     const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
 
     const assignmentDetail = await prisma?.assignment.findUnique({
       where: {
-        lessonId: Number(lessonId),
+        lessonId: lessonId,
       },
       select: {
         content: true,
@@ -34,7 +40,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             studentId: user?.id,
           },
           select: {
+            id: true,
             status: true,
+            content: true,
           },
         },
         lesson: {
@@ -45,17 +53,28 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       },
     });
 
+    let evaluationResult;
+    if (assignmentDetail?.submission[0]?.id) {
+      evaluationResult = await prisma.assignmentEvaluation.findUnique({
+        where: {
+          submissionId: assignmentDetail?.submission[0].id,
+        },
+      });
+    }
+
     if (assignmentDetail) {
       let detail: IAssignmentDetail = {
         assignmentId: assignmentDetail.id,
         content: assignmentDetail.content as any,
+        submission: assignmentDetail.submission[0] as any,
+        evaluatedData: evaluationResult as any,
         name: assignmentDetail.lesson.name,
         estimatedDurationInMins: Number(assignmentDetail.estimatedDuration),
         status: assignmentDetail?.submission[0]?.status,
         maximumScore: assignmentDetail.maximumPoints,
         passingScore: assignmentDetail.passingScore,
       };
-      if (detail.content._type === AssignmentType.MCQ && isNoAnswer === "true") {
+      if (detail.content._type === AssignmentType.MCQ && !assignmentDetail?.submission[0]?.status) {
         let assignmentContent = detail.content as MCQAssignment;
         let questions = assignmentContent.questions;
         let updateQuestion = questions.map((question) => {
@@ -81,4 +100,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default withMethods(["GET"], withAuthentication(handler));
+export default withMethods(["GET"], withAuthentication(withValidation(validateReqQuery, handler, true)));
