@@ -15,8 +15,6 @@ import { PageSiteConfig } from "@/services/siteConstant";
 import { getSiteConfig } from "@/services/getSiteConfig";
 import CourseStats from "@/components/Admin/Analytics/CourseStats/CourseStats";
 import { LoadingOutlined } from "@ant-design/icons";
-import { IContentTabType } from "@/types/courses/Course";
-import SubmissionList from "@/components/Assignment/Submissions/SubmissionList";
 
 const AnalyticsPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const { data: session } = useSession();
@@ -38,11 +36,6 @@ const AnalyticsPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig })
       key: "2",
       label: `Enrolments`,
       children: <></>,
-    },
-    {
-      key: "SUBMISSIONS" as IContentTabType,
-      label: "Submissions",
-      children: <SubmissionList />,
     },
   ];
 

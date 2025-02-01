@@ -14,7 +14,7 @@ services:
       interval: 30s
       timeout: 2s
       retries: 5
-      start_period: 10s
+      start_period: 15s
 
     env_file:
       - "./docker.env"
@@ -33,7 +33,7 @@ services:
       retries: 5
       start_period: 5s
     ports:
-      - "3306:3306"
+      - "3360:3306"
     environment:
       MYSQL_USER: admin
       MYSQL_ROOT_PASSWORD: root123

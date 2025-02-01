@@ -391,18 +391,18 @@ const AddAssignment: FC<{
                     description={"This is the max score for the assignment, that will be based on multiple parameters "}
                     divider={false}
                   />
-
-                  <ConfigForm
-                    input={
-                      <Form.Item name="passingScore">
-                        <Input addonAfter="%" type="number" defaultValue="80" />
-                      </Form.Item>
-                    }
-                    title={"Passing Scores"}
-                    description={"Setup the passing percentage for this assignment"}
-                    divider={false}
-                  />
-                  {submissionType === AssignmentType.SUBJECTIVE && (
+                  {submissionType === AssignmentType.MCQ ? (
+                    <ConfigForm
+                      input={
+                        <Form.Item name="passingScore">
+                          <Input addonAfter="%" type="number" defaultValue="80" />
+                        </Form.Item>
+                      }
+                      title={"Passing Scores"}
+                      description={"Setup the passing percentage for this assignment"}
+                      divider={false}
+                    />
+                  ) : (
                     <ConfigForm
                       input={
                         <Form.List name="gradingParameters">

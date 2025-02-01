@@ -1,19 +1,5 @@
 import AssignmentService, { ISubmissionDetail } from "@/services/course/AssignmentService";
-import {
-  Breadcrumb,
-  Button,
-  Descriptions,
-  Drawer,
-  Flex,
-  Form,
-  InputNumber,
-  message,
-  Modal,
-  Segmented,
-  Space,
-  Spin,
-  Tooltip,
-} from "antd";
+import { Breadcrumb, Button, Drawer, Flex, Form, InputNumber, message, Modal, Segmented, Space, Spin } from "antd";
 import { GetServerSidePropsContext, NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -33,9 +19,7 @@ import { submissionStatus } from "@prisma/client";
 import AppLayout from "@/components/Layouts/AppLayout";
 import { PageSiteConfig } from "@/services/siteConstant";
 import { getSiteConfig } from "@/services/getSiteConfig";
-import { DownloadOutlined, LoadingOutlined } from "@ant-design/icons";
-import { AssignmentType, SubjectiveAssignment, SubjectiveSubmissionContent } from "@/types/courses/assignment";
-import SubjectiveAssignmentView from "@/components/Assignment/Content/SubjectiveAssignment/SubjectiveAssignmentView";
+import { LoadingOutlined } from "@ant-design/icons";
 
 const EvaluatePage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -43,14 +27,15 @@ const EvaluatePage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) 
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
   const router = useRouter();
   const [submissionDetail, setSubmissionDetail] = useState<ISubmissionDetail>();
-  const [subjectiveSubmission, setSubjectiveSubmission] = useState<SubjectiveSubmissionContent | null>(null);
-  const [subjectiveQuestion, setSubjectiveQuestion] = useState<SubjectiveAssignment | null>(null);
-  const [maxScore, setMaxScore] = useState<number>(0);
   const [messageApi, contextHolder] = message.useMessage();
   const [editorValue, setEditorValue] = useState<string>("");
   const [form] = Form.useForm();
   const [open, setOpen] = useState<boolean>(false);
   const [refresh, SetRefresh] = useState<boolean>(false);
+  const [previewUrl, setPreviewUrl] = useState<string>("");
+  const [selectedsegment, setSelectedSegment] = useState<SegmentedValue>("Code");
+
+  const { globalState } = useAppContext();
 
   const getSubmissionDetail = () => {
     setLoading(true);
@@ -58,18 +43,18 @@ const EvaluatePage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) 
       AssignmentService.getSubmissionDetail(
         Number(router.query.id),
         (result) => {
-          setSubmissionDetail(result);
-          if (result.content._type === AssignmentType.SUBJECTIVE) {
-            const assignContent = result.assignContent as unknown as SubjectiveAssignment;
-            setSubjectiveSubmission(result.content as unknown as SubjectiveSubmissionContent);
-            setSubjectiveQuestion(assignContent);
+          let content = result.submissionDetail.content;
 
-            const totalScore = assignContent.gradingParameters.reduce(
-              (acc, currentValue) => Number(acc) + Number(currentValue.score),
-              0
-            );
-            setMaxScore(totalScore);
-          }
+          setSubmissionDetail({
+            assignmentFiles: result.submissionDetail.assignmentFiles,
+            content: new Map<string, string>(content),
+            assignmentId: result.submissionDetail.assignmentId,
+            isEvaluated: result.submissionDetail.isEvaluated,
+            score: result.submissionDetail.score,
+            comment: result.submissionDetail.comment,
+            lessonId: result.submissionDetail.lessonId,
+            assignmentName: result.submissionDetail.assignmentName,
+          });
           setLoading(false);
         },
         (error) => {
@@ -89,28 +74,48 @@ const EvaluatePage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) 
       messageApi.warning("Add a comment first");
       return;
     }
-    AssignmentService.completeSubmission(
-      router.query.slug as string,
-      Number(submissionDetail?.assignmentId),
-      submissionDetail?.lessonId as number,
-      Number(router.query.id),
-
-      async (result) => {
+    let detail = {
+      assignmentId: Number(submissionDetail?.assignmentId),
+      submissionId: Number(router.query.id),
+      score: Number(form.getFieldsValue().score),
+      comment: replaceEmptyParagraphs(editorValue),
+    };
+    AssignmentService.createEvaluation(
+      detail,
+      (result) => {
         messageApi.success(result.message);
         form.resetFields();
         setOpen(false);
         setEvaluationLoading(false);
         SetRefresh(!refresh);
-        message.success("Assignment evaluated successfully");
       },
       (error) => {
         console.log(error);
         messageApi.error(error);
         setEvaluationLoading(false);
-      },
-      replaceEmptyParagraphs(editorValue),
-      Number(form.getFieldsValue().score)
+      }
     );
+  };
+
+  const handleAssignmentFiles = (value: SegmentedValue) => {
+    if (value === "Preview") {
+      const arrayMap = mapToArray(submissionDetail?.content as Map<string, string>);
+
+      AssignmentService.previewAssignment(
+        arrayMap,
+        Number(router.query.courseId),
+        Number(submissionDetail?.lessonId),
+        (result) => {
+          setPreviewUrl(result.preview);
+          setSelectedSegment(value);
+        },
+        (error) => {
+          messageApi.error(error);
+        }
+      );
+    } else {
+      setSelectedSegment(value);
+    }
   };
 
   useEffect(() => {
@@ -143,20 +148,15 @@ const EvaluatePage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) 
               },
             ]}
           />
-          <Space direction="vertical" style={{ marginTop: 30 }}>
+          <Space direction="vertical">
             <Flex align="center" justify="space-between">
-              {submissionDetail?.content._type === AssignmentType.SUBJECTIVE && (
-                <Tooltip title="Download submitted file">
-                  <Button
-                    target="_blank"
-                    href={`/download/private-file?fileUrl=${subjectiveSubmission?.answerArchiveUrl}`}
-                    download
-                    icon={<DownloadOutlined />}
-                  >
-                    Submitted file
-                  </Button>
-                </Tooltip>
-              )}
+              <Segmented
+                className={style.Segmented_wrapper}
+                options={["Code", "Preview"]}
+                onChange={(value) => {
+                  handleAssignmentFiles(value);
+                }}
+              />
               <>
                 {submissionDetail?.isEvaluated ? (
                   <Button onClick={() => setDrawerOpen(true)} type="primary">
@@ -169,20 +169,29 @@ const EvaluatePage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) 
                 )}
               </>
             </Flex>
-            <section className={style.submission_view_content}>
-              {submissionDetail?.content._type === AssignmentType.SUBJECTIVE &&
-                subjectiveSubmission &&
-                subjectiveQuestion && (
-                  <SubjectiveAssignmentView
-                    subjectiveQuestion={subjectiveQuestion}
-                    isCompleteBtnDisabled={true}
-                    subjectiveAnswer={subjectiveSubmission}
-                    onUploadFileUrl={() => {}}
-                    onChangeEditor={(v) => {}}
-                    evaluate={true}
+            <>
+              {selectedsegment === "Code" ? (
+                <>
+                  {submissionDetail?.assignmentFiles &&
+                    submissionDetail.assignmentFiles.length > 0 &&
+                    submissionDetail.content && (
+                      <AssignmentCodeEditor
+                        assignmentFiles={submissionDetail?.assignmentFiles as string[]}
+                        fileMap={submissionDetail?.content as Map<string, string>}
+                        updateAssignmentMap={() => {}}
+                        readOnly={true}
+                      />
+                    )}
+                </>
+              ) : (
+                <div className={globalState.collapsed ? style.preview_collapsed_wrapper : style.preview_wrapper}>
+                  <PreviewAssignment
+                    previewUrl={previewUrl}
+                    width={globalState.collapsed ? "calc(100vw - 550px)" : "calc(100vw - 750px)"}
                   />
-                )}
-            </section>
+                </div>
+              )}
+            </>
           </Space>
           <Modal
             maskClosable={false}
@@ -194,15 +203,6 @@ const EvaluatePage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) 
             }}
             confirmLoading={evaluationLoading}
           >
-            {subjectiveQuestion && (
-              <Descriptions title="Grading Parameters" style={{ marginBottom: 20 }}>
-                {subjectiveQuestion.gradingParameters.map((grading, index) => (
-                  <Descriptions.Item key={index} label={<h5>{grading.questionIndex} : </h5>}>
-                    {grading.score} points
-                  </Descriptions.Item>
-                ))}
-              </Descriptions>
-            )}
             <Form layout="vertical" form={form} onFinish={evaluateSubmission}>
               <Form.Item
                 name="score"
@@ -211,8 +211,8 @@ const EvaluatePage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) 
                   { required: true, message: "Add a score" },
                   {
                     type: "number",
-                    min: 0,
-                    max: maxScore,
+                    min: appConstant.assignmentMinScore,
+                    max: appConstant.assignmentMaxScore,
                     message: "Invalid score",
                   },
                 ]}
@@ -231,8 +231,6 @@ const EvaluatePage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) 
           <ViewResult
             score={Number(submissionDetail?.score)}
             comment={String(submissionDetail?.comment)}
-            maximumScore={submissionDetail?.maximumScore as number}
-            passingScore={submissionDetail?.passingScore as number}
             drawerOpen={drawerOpen}
             setDrawerOpen={setDrawerOpen}
           />

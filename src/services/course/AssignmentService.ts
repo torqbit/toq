@@ -30,13 +30,11 @@ export interface ISubmissionList {
   isEvaluated: boolean;
 }
 export interface ISubmissionDetail {
-  content: IAssignmentDetails;
-  assignContent?: IAssignmentDetails;
+  content: Map<string, string> | [string, string][];
+  assignmentFiles: string[];
   assignmentId: number;
   isEvaluated: boolean;
   score?: number;
-  maximumScore: number;
-  passingScore: number;
   comment?: string;
   lessonId: number;
   assignmentName: string;
@@ -382,14 +380,14 @@ class AssignmentSerivce {
 
   getSubmissionDetail = (
     id: number,
-    onSuccess: (response: ISubmissionDetail) => void,
+    onSuccess: (response: ApiResponse) => void,
     onFailure: (message: string) => void
   ) => {
     getFetch(`/api/v1/admin/submission/get?submissionId=${id}`).then((result) => {
       if (result.status == 200) {
         result.json().then((r) => {
-          const apiResponse = r as APIResponse<ISubmissionDetail>;
-          apiResponse.body && onSuccess(apiResponse.body);
+          const apiResponse = r as ApiResponse;
+          onSuccess(apiResponse);
         });
       } else {
         result.json().then((r) => {
@@ -452,12 +450,9 @@ class AssignmentSerivce {
     lessonId: number,
     submissionId: number,
     onSuccess: (response: ApiResponse) => void,
-    onFailure: (message: string) => void,
-    comment?: string,
-    score?: number
+    onFailure: (message: string) => void
   ) => {
-    postFetch(
-      { comment, score },
+    getFetch(
       `/api/v1/course/${courseId}/assignment/${assignmentId}/${lessonId}/submission/${submissionId}/evaluate`
     ).then((result) => {
       if (result.status == 200) {

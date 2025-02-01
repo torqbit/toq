@@ -3,6 +3,7 @@ import { FC, useState } from "react";
 import { useRouter } from "next/router";
 import styles from "@/styles/AddChapterForm.module.scss";
 import ProgramService from "@/services/ProgramService";
+import ConfigFormItem from "@/components/Configuration/ConfigForm";
 
 const AddCourseChapter: FC<{
   showChapterDrawer: (value: boolean) => void;
@@ -126,22 +127,30 @@ const AddCourseChapter: FC<{
             edit && chapterId ? updateChapter(chapterId) : createChapter(courseId);
           }}
           layout="vertical"
+          requiredMark={false}
         >
           <div>
-            <Form.Item label="Title" name="name" rules={[{ required: true, message: "Please Enter Title" }]}>
-              <Input placeholder="Set the title of the chapter" />
-            </Form.Item>
-            <div>
-              <div>
-                <Form.Item
-                  name="description"
-                  label="Description"
-                  rules={[{ required: true, message: "Please Enter Description" }]}
-                >
+            <ConfigFormItem
+              layout="vertical"
+              input={
+                <Form.Item name="name" rules={[{ required: true, message: "Title is required" }]}>
+                  <Input placeholder="Introduction to ..." />
+                </Form.Item>
+              }
+              title={"Title"}
+              description={"Provide the title of the chapter"}
+              divider={true}
+            />
+            <ConfigFormItem
+              layout="vertical"
+              input={
+                <Form.Item name="description" rules={[{ required: true, message: "Description is required" }]}>
                   <Input.TextArea rows={4} placeholder="Brief description about the chapter" />
                 </Form.Item>
-              </div>
-            </div>
+              }
+              title={"Description"}
+              description={"Provide a brief description about the chapter"}
+            />
           </div>
         </Form>
       </Drawer>
