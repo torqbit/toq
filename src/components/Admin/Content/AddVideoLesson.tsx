@@ -20,7 +20,7 @@ const AddVideoLesson: FC<{
   onRefresh: () => void;
   setResourceDrawer: (value: boolean) => void;
   showResourceDrawer: boolean;
-  onDeleteResource: (id: number) => void;
+  onDeleteResource: (id: number, isCanceled: boolean) => void;
   contentType?: $Enums.ResourceContentType;
   currResId?: number;
   setEdit: (value: boolean) => void;
@@ -238,7 +238,7 @@ const AddVideoLesson: FC<{
         maskClosable={false}
         closeIcon={true}
         onClose={() => {
-          currResId && !isEdit && onDeleteResource(currResId);
+          currResId && !isEdit && onDeleteResource(currResId, true);
           setResourceDrawer(false);
           form.resetFields();
           onRefresh();
@@ -265,7 +265,7 @@ const AddVideoLesson: FC<{
               loading={loading}
               onClick={() => {
                 setResourceDrawer(false);
-                currResId && !isEdit && onDeleteResource(currResId);
+                currResId && !isEdit && onDeleteResource(currResId, true);
                 form.resetFields();
               }}
             >
