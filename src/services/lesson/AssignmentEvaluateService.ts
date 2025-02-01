@@ -10,7 +10,6 @@ type EvaluationResult = {
   passingScore: number;
   maximumScore: number;
   eachQuestionScore?: QuestionScore[];
-  comment: string;
 };
 
 class AssignmentEvaluationService {
@@ -55,24 +54,16 @@ class AssignmentEvaluationService {
       passingScore,
       maximumScore: this.maximumScore,
       eachQuestionScore,
-      comment: "",
     };
   }
 
-  evaluateSubjectiveAssignment(
-    score: number,
-    maximumPoints: number,
-    passingScorePercentage: number,
-    comment: string
-  ): EvaluationResult {
-    const passingScore = (maximumPoints * passingScorePercentage) / 100;
-    const isPass = score >= passingScore;
+  private evaluateSubjectiveAssignment(): EvaluationResult {
+    // TODO
     return {
-      score: score,
-      isPassed: isPass,
-      maximumScore: maximumPoints,
-      passingScore: passingScore,
-      comment: comment,
+      score: 0,
+      isPassed: false,
+      maximumScore: 0,
+      passingScore: 0,
     };
   }
 

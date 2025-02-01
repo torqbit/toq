@@ -10,17 +10,9 @@ const SubjectiveAssignmentView: FC<{
   subjectiveQuestion: SubjectiveAssignment;
   subjectiveAnswer: SubjectiveSubmissionContent;
   isCompleteBtnDisabled: boolean;
-  evaluate?: boolean;
   onChangeEditor: (v: string) => void;
   onUploadFileUrl: (url: string) => void;
-}> = ({
-  subjectiveQuestion,
-  subjectiveAnswer,
-  onChangeEditor,
-  onUploadFileUrl,
-  isCompleteBtnDisabled,
-  evaluate = false,
-}) => {
+}> = ({ subjectiveQuestion, subjectiveAnswer, onChangeEditor, onUploadFileUrl, isCompleteBtnDisabled }) => {
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const FormFile = (e: any) => {
     if (Array.isArray(e)) {
@@ -70,7 +62,6 @@ const SubjectiveAssignmentView: FC<{
   return (
     <section className={style.subjective_assignment_view}>
       <Space direction="vertical">
-        {evaluate && <h4>Question</h4>}
         {subjectiveQuestion.description && <PurifyContent content={subjectiveQuestion.description as string} />}
 
         {subjectiveQuestion?.projectArchiveUrl && (
@@ -87,38 +78,30 @@ const SubjectiveAssignmentView: FC<{
           </Tooltip>
         )}
 
-        {evaluate ? <h4>Answer</h4> : <h4>Write your Answer</h4>}
-        {evaluate ? (
-          <>
-            <PurifyContent content={subjectiveAnswer.answerContent as string} />
-          </>
-        ) : (
-          <TextEditor
-            defaultValue={subjectiveAnswer.answerContent as string}
-            handleDefaultValue={onChangeEditor}
-            readOnly={isCompleteBtnDisabled}
-            height={250}
-            width={700}
-            theme="snow"
-            className={style.subjective_assign_editor}
-            placeholder={`Start writing your`}
-          />
-        )}
+        <h4>Write your Answer</h4>
+        <TextEditor
+          defaultValue={subjectiveAnswer.answerContent as string}
+          handleDefaultValue={onChangeEditor}
+          readOnly={isCompleteBtnDisabled}
+          height={250}
+          width={700}
+          theme="snow"
+          className={style.subjective_assign_editor}
+          placeholder={`Start writing your`}
+        />
 
-        {!evaluate && (
-          <Form.Item
-            style={{ marginTop: 50 }}
-            name="archiveUrl"
-            valuePropName="archiveUrl"
-            extra={`File type to upload .${subjectiveQuestion.file_for_candidate} `}
-            getValueFromEvent={FormFile}
-            rules={[{ required: false }]}
-          >
-            <Upload {...props} maxCount={1}>
-              <Button icon={<PlusOutlined />}>Upload file</Button>
-            </Upload>
-          </Form.Item>
-        )}
+        <Form.Item
+          style={{ marginTop: 50 }}
+          name="archiveUrl"
+          valuePropName="archiveUrl"
+          extra={`File type to upload .${subjectiveQuestion.file_for_candidate} `}
+          getValueFromEvent={FormFile}
+          rules={[{ required: false }]}
+        >
+          <Upload {...props} maxCount={1}>
+            <Button icon={<PlusOutlined />}>Upload file</Button>
+          </Upload>
+        </Form.Item>
       </Space>
     </section>
   );

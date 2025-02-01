@@ -457,8 +457,9 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
           form.setFieldValue("course_difficulty", result.courseDetails.difficultyLevel);
           form.setFieldValue("certificate_template", result.courseDetails.certificateTemplate);
           form.setFieldValue("previewMode", result.courseDetails.previewMode);
-
-          if (result.courseDetails.chapters.length > 0 || result.courseDetails.videoUrl) {
+          form.setFieldValue("coursePrice", result.courseDetails.coursePrice);
+          console.log(result.courseDetails);
+          if (result.courseDetails.chapters.length > 0 || result.courseDetails.tvUrl) {
             setTabActive(true);
           }
           selectCourseType(result.courseDetails.courseType as $Enums.CourseType);
@@ -508,7 +509,7 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
                     key: 1,
                     label: courseData.state === StateType.DRAFT ? "Save and exit" : "Publish Course",
                     onClick: () => {
-                      router.push("/admin/content");
+                      router.push("/academy");
                     },
                   },
                 ],

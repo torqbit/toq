@@ -8,11 +8,9 @@ import SvgIcons from "../../SvgIcons";
 const ViewResult: FC<{
   score: number;
   comment: string;
-  maximumScore: number;
-  passingScore: number;
   setDrawerOpen: (value: boolean) => void;
   drawerOpen: boolean;
-}> = ({ score, comment, drawerOpen, setDrawerOpen, maximumScore, passingScore }) => {
+}> = ({ score, comment, drawerOpen, setDrawerOpen }) => {
   return (
     <Drawer
       width={"30vw"}
@@ -22,7 +20,7 @@ const ViewResult: FC<{
           <div>Details</div>
           <Flex align="center" gap={10} className={styles.scoreWrapper}>
             <div>
-              {score >= passingScore ? (
+              {score >= appConstant.assignmentPassingMarks ? (
                 <Flex gap={5} align="center">
                   <i>{SvgIcons.checkFilled}</i>
                   <span> Passed</span>
@@ -36,7 +34,7 @@ const ViewResult: FC<{
             </div>
             <div className={styles.dot}></div>
             <div>
-              {score}/{maximumScore} Points
+              {score}/{appConstant.assignmentMaxScore} Points
             </div>
           </Flex>
         </Flex>

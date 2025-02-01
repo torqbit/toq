@@ -5,6 +5,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "@/lib/prisma";
 import { APIResponse } from "@/types/apis";
 import { z } from "zod";
+import withValidation from "@/lib/api-middlewares/with-validation";
 
 export const validateReqQuery = z.object({
   submissionId: z.coerce.number(),
@@ -12,11 +13,11 @@ export const validateReqQuery = z.object({
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
-    const { submissionId } = validateReqQuery.parse(req.query);
+    const { submissionId } = req.query;
 
     const evaluationResult = await prisma.assignmentEvaluation.findUnique({
       where: {
-        submissionId: submissionId,
+        submissionId: Number(submissionId),
       },
     });
 
@@ -27,4 +28,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default withMethods(["GET"], withAuthentication(handler));
+export default withMethods(["GET"], withAuthentication(withValidation(validateReqQuery, handler, true)));

@@ -5,18 +5,10 @@ import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "@/lib/prisma";
 import { getToken } from "next-auth/jwt";
 import { compareByHash, getCookieName, mapToArray } from "@/lib/utils";
-import * as z from "zod";
 
 import { Role, submissionStatus } from "@prisma/client";
 import getUserRole from "@/actions/getRole";
 import { APIResponse } from "@/types/apis";
-import withValidation from "@/lib/api-middlewares/with-validation";
-
-export const validateReqBody = z.object({
-  assignmentId: z.coerce.number(),
-  lessonId: z.coerce.number(),
-  content: z.unknown(),
-});
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
@@ -24,12 +16,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const token = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
     const body = req.body;
-    const { assignmentId, lessonId, content } = validateReqBody.parse(body);
+    const { assignmentId, lessonId, content } = body;
     const savedSubmission = await prisma.assignmentSubmission.findFirst({
       where: {
-        assignmentId: assignmentId,
-        lessonId: lessonId,
-        studentId: token?.id,
+        assignmentId: Number(assignmentId),
+        lessonId: Number(lessonId),
+        studentId: String(token?.id),
         status: submissionStatus.PENDING,
       },
       select: {
@@ -47,7 +39,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           id: savedSubmission.id,
         },
         data: {
-          content: content as any,
+          content: content,
           updatedAt: new Date(),
         },
         select: {
@@ -68,7 +60,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           studentId: String(token?.id),
           assignmentId,
           lessonId,
-          content: content as any,
+          content,
           updatedAt: new Date(),
           status: submissionStatus.PENDING,
         },
@@ -91,4 +83,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default withMethods(["POST"], withAuthentication(withValidation(validateReqBody, handler)));
+export default withMethods(["POST"], withAuthentication(handler));

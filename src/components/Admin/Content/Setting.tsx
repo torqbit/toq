@@ -94,7 +94,6 @@ const CourseSetting: FC<{
   });
 
   const courseDifficulty = ["Beginner", "Intermediate", "Advance"];
-
   return (
     <>
       <Spin spinning={settingLoading} indicator={<LoadingOutlined spin />} size="large">
@@ -129,15 +128,13 @@ const CourseSetting: FC<{
                 <ConfigFormItem
                   input={
                     <Form.Item name={"course_name"} rules={[{ required: true, message: "Course title is required!" }]}>
-                      {
-                        <Input
-                          placeholder="Learn how to build"
-                          defaultValue={form.getFieldsValue().course_name}
-                          onChange={(e) => {
-                            onSetCourseData("name", e.currentTarget.value);
-                          }}
-                        />
-                      }
+                      <Input
+                        placeholder="Learn how to build"
+                        defaultValue={form.getFieldsValue().course_name}
+                        onChange={(e) => {
+                          onSetCourseData("name", e.currentTarget.value);
+                        }}
+                      />
                     </Form.Item>
                   }
                   title={"Course title"}
@@ -273,8 +270,9 @@ const CourseSetting: FC<{
                   input={
                     <Form.Item name="coursePrice" required>
                       <Input
-                        placeholder="25"
+                        placeholder="250"
                         width={100}
+                        value={2000}
                         onChange={(e) => {
                           onSetCourseData("coursePrice", e.currentTarget.value);
                         }}
@@ -300,49 +298,60 @@ const CourseSetting: FC<{
                         className={styles.setting__video__segment}
                       />
                       {teaser.selected == "Video" && (
-                        <div className={styles.video_container}>
-                          <Upload
-                            name="avatar"
-                            listType="picture-card"
-                            className={styles.upload__trailer}
-                            disabled={courseTrailerUploading || uploadVideo?.state == VideoState.PROCESSING}
-                            showUploadList={false}
-                            beforeUpload={(file) => {
-                              onUploadTrailer(file, `${form.getFieldsValue().course_name}`);
-                            }}
-                            onChange={handleChange}
-                          >
-                            {uploadVideo?.state == VideoState.READY && !courseTrailerUploading && (
-                              <Tooltip title="Upload new trailer video">
-                                <img
-                                  src={uploadVideo?.thumbnail}
-                                  alt=""
-                                  height={180}
-                                  className={styles.video_container}
-                                  width={320}
-                                />
-                              </Tooltip>
-                            )}
-                            {(uploadVideo?.state == VideoState.PROCESSING || courseTrailerUploading) && (
-                              <div
-                                style={{ height: 50, width: 80 }}
-                                className={`${styles.video_status} ${styles.video_status_loading}`}
-                              >
-                                <LoadingOutlined />
-                                <span>{courseTrailerUploading ? "Uploading" : "Processing"}</span>
-                              </div>
-                            )}
-                          </Upload>
-                        </div>
+                        <Upload
+                          name="avatar"
+                          className={styles.video_container}
+                          disabled={courseTrailerUploading || uploadVideo?.state == VideoState.PROCESSING}
+                          showUploadList={false}
+                          style={{ width: 300, height: 200 }}
+                          beforeUpload={(file) => {
+                            onUploadTrailer(file, `${form.getFieldsValue().course_name}`);
+                          }}
+                          onChange={handleChange}
+                        >
+                          {uploadVideo?.videoId == null && !courseTrailerUploading && (
+                            <Tooltip title="Upload trailer video">
+                              <Flex vertical gap={4} align="center">
+                                {<i style={{ cursor: "pointer" }}>{SvgIcons.video}</i>}
+                                <p>Upload course trailer</p>
+                              </Flex>
+                            </Tooltip>
+                          )}
+                          {uploadVideo?.state == VideoState.READY && !courseTrailerUploading && (
+                            <Tooltip title="Upload new trailer video">
+                              <img
+                                src={uploadVideo?.thumbnail}
+                                alt=""
+                                style={{ cursor: "pointer" }}
+                                height={180}
+                                className={styles.video_container}
+                                width={320}
+                              />
+                            </Tooltip>
+                          )}
+                          {(uploadVideo?.state == VideoState.PROCESSING || courseTrailerUploading) && (
+                            <div
+                              className={`${styles.video_status} ${styles.video_status_loading} ${styles.video_container}`}
+                            >
+                              <LoadingOutlined />
+                              <span style={{ marginLeft: 5 }}>
+                                {courseTrailerUploading ? "Uploading" : "Processing"}
+                              </span>
+                            </div>
+                          )}
+                        </Upload>
                       )}
 
                       {teaser.selected == "Thumbnail" && (
                         <Upload
                           name="avatar"
-                          listType="picture-card"
-                          className={styles.upload__thumbnail}
+                          className={styles.video_container}
                           accept=".png,.jpeg,.jpg"
-                          disabled={typeof uploadVideo === "undefined"}
+                          disabled={
+                            uploadVideo?.videoId == null ||
+                            uploadVideo?.state == VideoState.PROCESSING ||
+                            courseTrailerUploading
+                          }
                           showUploadList={false}
                           style={{ width: 118, height: 118 }}
                           beforeUpload={(file) => {
@@ -353,9 +362,11 @@ const CourseSetting: FC<{
                           <>
                             <Tooltip
                               title={
-                                typeof uploadVideo != "undefined"
-                                  ? "Update the video thumbnail"
-                                  : "Complete uploading the course trailer"
+                                uploadVideo?.videoId == null ||
+                                uploadVideo?.state == VideoState.PROCESSING ||
+                                courseTrailerUploading
+                                  ? "Complete uploading the course trailer"
+                                  : "Update the video thumbnail"
                               }
                             >
                               {trailerThumbnail && (
@@ -365,10 +376,10 @@ const CourseSetting: FC<{
                                 />
                               )}
                               {!trailerThumbnail && (
-                                <p>
-                                  + <br />
-                                  Upload thumbnail
-                                </p>
+                                <Flex vertical gap={4} align="center">
+                                  {<i style={{ cursor: "pointer" }}>{SvgIcons.camera}</i>}
+                                  <p>Upload thumbnail</p>
+                                </Flex>
                               )}
                             </Tooltip>
                           </>

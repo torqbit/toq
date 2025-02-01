@@ -302,6 +302,11 @@ const Content: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
       ),
     },
     {
+      key: "SUBMISSIONS" as IContentTabType,
+      label: "Submissions",
+      children: <SubmissionList />,
+    },
+    {
       key: "EVENTS" as IContentTabType,
       label: "Events",
       children: <EventList />,
