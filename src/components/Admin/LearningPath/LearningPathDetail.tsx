@@ -162,7 +162,7 @@ const LearningPathDetail: FC<{
                       style={{ width: 200 }}
                       onClick={(e) => handleLessonRedirection(detail.id)}
                     >
-                      Go to Learning
+                      Go to First Course
                     </Button>
                   </>
                 )}
@@ -196,7 +196,7 @@ const LearningPathDetail: FC<{
                       style={{ width: 200 }}
                       onClick={(e) => handleLessonRedirection(detail.id)}
                     >
-                      Go to Learning
+                      Go to First Course
                     </Button>
                   </>
                 )}
