@@ -485,7 +485,7 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
       );
   }, [router.query.id, refresh]);
   return (
-    <AppLayout siteConfig={siteConfig}>
+    <>
       {contextHolder}
       <section className={styles.add_course_page}>
         <div className={styles.add_course_header}>
@@ -519,13 +519,9 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
             </Dropdown.Button>
           </div>
         </div>
-        <Tabs
-          tabBarGutter={40}
-          activeKey={activeKey}
-          className={styles.add_course_tabs}
-          items={items}
-          onChange={onChange}
-        />
+        <div className={styles.add_course_tabs}>
+          <Tabs tabBarGutter={40} activeKey={activeKey} items={items} onChange={onChange} />
+        </div>
       </section>
       <AddCourseChapter
         courseId={Number(router.query.id)}
@@ -557,7 +553,7 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
           setEdit={setEdit}
         />
       )}
-    </AppLayout>
+    </>
   );
 };
 
