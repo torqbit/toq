@@ -13,9 +13,7 @@ import {
   courseDifficultyType,
   submissionStatus,
 } from "@prisma/client";
-import { APIResponse } from "../apis";
-import { JsonObject } from "@prisma/client/runtime/library";
-import { IAssignmentDetails } from "./assignment";
+import { IAssignmentDetails, IAssignmentSubmissionDetail, IEvaluationResult } from "./assignment";
 
 export interface IHeroCoursePreview {
   courseName: string;
@@ -52,6 +50,8 @@ export interface ICourseListItem {
 }
 
 export interface IAssignmentDetail {
+  submission: IAssignmentSubmissionDetail;
+  evaluatedData: IEvaluationResult;
   assignmentId: number;
   content: IAssignmentDetails;
   passingScore: number;
