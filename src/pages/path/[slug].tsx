@@ -200,7 +200,6 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   });
   const detail =
     learningInfo?.id && (await learningPath.getLearningPreviewDetail(learningInfo.id, user?.role, user?.id));
-  console.log(detail, "detial");
 
   if (detail && detail?.success && detail?.body) {
     if (user) {
