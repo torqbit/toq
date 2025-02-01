@@ -3,7 +3,7 @@ import styles from "@/styles/AddAssignment.module.scss";
 import { FC, useEffect, useState } from "react";
 import AssignmentService from "@/services/course/AssignmentService";
 import { ResourceContentType } from "@prisma/client";
-import { DeleteFilled, MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
+import { DeleteFilled, PlusOutlined } from "@ant-design/icons";
 import {
   IAssignmentDetails,
   AssignmentType,
