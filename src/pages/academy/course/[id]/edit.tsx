@@ -7,12 +7,13 @@ import { getToken } from "next-auth/jwt";
 import prisma from "@/lib/prisma";
 import { PageSiteConfig } from "@/services/siteConstant";
 import { getSiteConfig } from "@/services/getSiteConfig";
+import AppLayout from "@/components/Layouts/AppLayout";
 
 const SettingPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   return (
-    <>
+    <AppLayout siteConfig={siteConfig}>
       <AddCourseForm siteConfig={siteConfig} />
-    </>
+    </AppLayout>
   );
 };
 

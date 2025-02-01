@@ -208,7 +208,10 @@
   }
 
   .add_course_tabs {
-    padding: 10px 40px;
+    padding: 10px 20px;
+    input {
+      width: 250px;
+    }
 
     .add_course_setting {
       max-width: var(--container-width);
