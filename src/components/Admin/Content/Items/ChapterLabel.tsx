@@ -40,7 +40,7 @@ const ChapterLabel: FC<{
 
     {
       key: "2",
-      label: state === "Published" ? "Draft" : "Published",
+      label: state === "Published" ? "Move to Draft" : "Published",
       onClick: () => {
         updateState(id, state === "Published" ? "DRAFT" : "ACTIVE");
       },
@@ -63,6 +63,30 @@ const ChapterLabel: FC<{
       ),
     },
   ];
+
+  const lessonDropdownMenu: MenuProps["items"] = [
+    {
+      key: "1",
+      label: "Video",
+      onClick: () => {
+        onAddResource(id, "Video");
+      },
+    },
+
+    {
+      key: "2",
+      label: "Assignment",
+      onClick: () => {
+        onAddResource(id, ResourceContentType.Assignment);
+      },
+    },
+
+    {
+      key: "3",
+      label: "Quiz",
+      onClick: () => {},
+    },
+  ];
   return (
     <div className={styles.labelContainer}>
       <Flex justify="space-between" align="center">
@@ -75,47 +99,28 @@ const ChapterLabel: FC<{
         <div>
           <Flex align="center" gap={10}>
             <div>
-              <Dropdown.Button
-                icon={SvgIcons.chevronDown}
-                menu={{
-                  items: [
-                    {
-                      key: 1,
-                      label: "Video",
-                      onClick: () => {
-                        onAddResource(id, "Video");
-                      },
-                    },
-                    {
-                      key: 2,
-                      label: "Assignment",
-                      onClick: () => {
-                        onAddResource(id, ResourceContentType.Assignment);
-                      },
-                    },
-                  ],
-                }}
+              <Dropdown
+                trigger={["click"]}
+                menu={{ items: lessonDropdownMenu }}
+                placement="bottomRight"
+                arrow={{ pointAtCenter: true }}
               >
-                Add Lesson
-              </Dropdown.Button>
+                <Flex
+                  align="center"
+                  gap={10}
+                  style={{
+                    border: "1px solid var(--border-color)",
+                    padding: "5px 10px",
+                    borderRadius: 4,
+                    cursor: "pointer",
+                  }}
+                >
+                  Add Lesson
+                  <i style={{ fontSize: 18, lineHeight: 0 }}>{SvgIcons.chevronDownOutline}</i>
+                </Flex>
+              </Dropdown>
             </div>
-            {/* <Dropdown.Button
-              className={state === "Draft" ? styles.draft_btn : styles.publish_btn}
-              icon={SvgIcons.chevronDown}
-              menu={{
-                items: [
-                  {
-                    key: 1,
-                    label: state === "Published" ? "Draft" : "Published",
-                    onClick: () => {
-                      updateState(id, state === "Published" ? "DRAFT" : "ACTIVE");
-                    },
-                  },
-                ],
-              }}
-            >
-              {state}
-            </Dropdown.Button> */}
+
             <Tag
               color={state == "Published" ? "purple" : "warning"}
               style={{ padding: "5px 10px", backgroundColor: "var(--bg-secondary)" }}
@@ -123,7 +128,12 @@ const ChapterLabel: FC<{
               {state === "Published" ? "Published" : "Draft"}
             </Tag>
             <div>
-              <Dropdown menu={{ items: dropdownMenu }} placement="bottomRight" arrow={{ pointAtCenter: true }}>
+              <Dropdown
+                trigger={["click"]}
+                menu={{ items: dropdownMenu }}
+                placement="bottomRight"
+                arrow={{ pointAtCenter: true }}
+              >
                 <div style={{ rotate: "90deg" }}>{SvgIcons.threeDots}</div>
               </Dropdown>
             </div>

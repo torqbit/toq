@@ -457,8 +457,9 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
           form.setFieldValue("course_difficulty", result.courseDetails.difficultyLevel);
           form.setFieldValue("certificate_template", result.courseDetails.certificateTemplate);
           form.setFieldValue("previewMode", result.courseDetails.previewMode);
-
-          if (result.courseDetails.chapters.length > 0 || result.courseDetails.videoUrl) {
+          form.setFieldValue("coursePrice", result.courseDetails.coursePrice);
+          console.log(result.courseDetails);
+          if (result.courseDetails.chapters.length > 0 || result.courseDetails.tvUrl) {
             setTabActive(true);
           }
           selectCourseType(result.courseDetails.courseType as $Enums.CourseType);
@@ -484,7 +485,7 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
       );
   }, [router.query.id, refresh]);
   return (
-    <AppLayout siteConfig={siteConfig}>
+    <>
       {contextHolder}
       <section className={styles.add_course_page}>
         <div className={styles.add_course_header}>
@@ -508,7 +509,7 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
                     key: 1,
                     label: courseData.state === StateType.DRAFT ? "Save and exit" : "Publish Course",
                     onClick: () => {
-                      router.push("/admin/content");
+                      router.push("/academy");
                     },
                   },
                 ],
@@ -518,13 +519,9 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
             </Dropdown.Button>
           </div>
         </div>
-        <Tabs
-          tabBarGutter={40}
-          activeKey={activeKey}
-          className={styles.add_course_tabs}
-          items={items}
-          onChange={onChange}
-        />
+        <div className={styles.add_course_tabs}>
+          <Tabs tabBarGutter={40} activeKey={activeKey} items={items} onChange={onChange} />
+        </div>
       </section>
       <AddCourseChapter
         courseId={Number(router.query.id)}
@@ -556,7 +553,7 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
           setEdit={setEdit}
         />
       )}
-    </AppLayout>
+    </>
   );
 };
 

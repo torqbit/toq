@@ -8,6 +8,7 @@ import { CourseType, orderStatus, ProductType, Role, StateType } from "@prisma/c
 import { uploadThumbnail } from "./courses";
 import appConstant from "@/services/appConstant";
 import { convertSecToHourandMin } from "@/pages/admin/content";
+import { getCourseAccessRole } from "./getCourseAccessRole";
 class LearningPath {
   async createLearningPath(
     file: any,
@@ -176,13 +177,33 @@ class LearningPath {
           studentId: String(userId),
           productId: pathId,
         },
+
         orderStatus: orderStatus.SUCCESS,
       },
     });
-    if (!findOrder && userRole) {
+
+    if (findOrder && userRole === Role.STUDENT) {
+      role = Role.STUDENT;
+    } else if (userRole == Role.ADMIN) {
+      role = Role.ADMIN;
+    } else if (userRole == Role.AUTHOR) {
+      const findAuthor = await prisma.learningPath.findUnique({
+        where: {
+          id: pathId,
+        },
+        select: {
+          authorId: true,
+        },
+      });
+      if (findAuthor) {
+        role = Role.AUTHOR;
+      } else if (findOrder) {
+        role = Role.STUDENT;
+      } else {
+        role = Role.NOT_ENROLLED;
+      }
+    } else {
       role = Role.NOT_ENROLLED;
-    } else if (!findOrder && !userRole) {
-      role = Role.NA;
     }
 
     const detail = await prisma.learningPath.findUnique({

@@ -164,13 +164,16 @@
   font-size: 12px;
   gap: 0 10px;
 }
-.setting__video__segment {
-  margin: 0 auto 10px auto;
-}
+
 .video_container {
-  height: 178px;
-  width: 318px;
+  height: 180px;
+  width: 320px;
   border-radius: 4px;
+  object-fit: cover;
+  background-color: var(--bg-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .add_course_page {
@@ -205,10 +208,17 @@
   }
 
   .add_course_tabs {
-    padding: 10px 40px;
+    padding: 10px 20px;
+    input {
+      width: 250px;
+    }
 
     .add_course_setting {
-      max-width: 1000px;
+      max-width: var(--container-width);
+
+      .setting__video__segment {
+        margin: 0 auto 10px auto;
+      }
 
       .setting_header {
         margin-bottom: 20px;
@@ -304,6 +314,7 @@
 
         .video_status_loading {
           color: var(--font-secondary);
+          background-color: var(--bg-secondary);
         }
 
         .camera_btn_img,
