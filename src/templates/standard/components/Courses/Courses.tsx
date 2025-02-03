@@ -9,6 +9,7 @@ import { CourseType, StateType } from "@prisma/client";
 import CourseSkeleton from "./CourseSkeleton";
 import { CourseViewItem } from "@/components/Courses/CourseListView/CourseListView";
 import SvgIcons from "@/components/SvgIcons";
+import { useRouter } from "next/router";
 
 const CourseCard: FC<ICourseCard> = ({
   tvThumbnail,
@@ -45,6 +46,7 @@ const CourseCard: FC<ICourseCard> = ({
 };
 
 const CourseList: FC<ICourseInfo> = ({ title, description, courseList, previewMode }) => {
+  const router = useRouter();
   return (
     <>
       {
@@ -53,7 +55,7 @@ const CourseList: FC<ICourseInfo> = ({ title, description, courseList, previewMo
             <Flex justify="space-between">
               <h2>{title}</h2>
               {courseList.length > 3 && (
-                <Button href="/courses" type="link">
+                <Button onClick={() => !previewMode && router.push("/courses")} type="link">
                   <Flex align="center" gap={10}>
                     <span>View more</span>
                     <i style={{ fontSize: 18, lineHeight: 0 }}>{SvgIcons.arrowRight}</i>

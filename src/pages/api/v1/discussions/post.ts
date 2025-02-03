@@ -57,7 +57,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           },
           comment: true,
           createdAt: true,
-
         },
       });
 
