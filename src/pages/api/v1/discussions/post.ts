@@ -50,10 +50,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         },
       });
 
-      /**
-       *  NOTIFICATION LOGIC
-       */
-
       NotificationHandler.notificationForQuery(addDiscussion.id);
 
       return res.status(200).json({ success: true, comment: addDiscussion, message: "Query has been posted" });
