@@ -133,6 +133,7 @@ export const LearnViewItem: FC<{ learning: ILearningPathDetail; previewMode?: bo
             {learning.price > 0 ? "Buy Now" : "Enroll Now"}
           </Button>
         )}
+        {showDummyPurchase && <Button type="default">{learning.price > 0 ? "Buy Now" : "Enroll Now"}</Button>}
       </Flex>
     </Card>
   );

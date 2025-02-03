@@ -7,6 +7,7 @@ import { ILearningPathDetail } from "@/types/learingPath";
 import { IBrandConfig } from "@/types/schema";
 import { Button, Flex } from "antd";
 import SvgIcons from "@/components/SvgIcons";
+import { useRouter } from "next/router";
 
 interface ILearningList {
   previewMode?: boolean;
@@ -16,6 +17,7 @@ interface ILearningList {
   learningList: ILearningPathDetail[];
 }
 const AcademyItemsList: FC<ILearningList> = ({ title, description, learningList, previewMode }) => {
+  const router = useRouter();
   return (
     <>
       {
@@ -24,7 +26,7 @@ const AcademyItemsList: FC<ILearningList> = ({ title, description, learningList,
             <Flex justify="space-between">
               <h2>{title}</h2>
               {learningList.length > 3 && (
-                <Button href="/academy" type="link">
+                <Button onClick={() => !previewMode && router.push("/academy")} href="/academy" type="link">
                   <Flex align="center" gap={10}>
                     <span>View more</span>
                     <i style={{ fontSize: 18, lineHeight: 0 }}>{SvgIcons.arrowRight}</i>
