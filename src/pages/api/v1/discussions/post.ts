@@ -47,6 +47,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         },
         select: {
           id: true,
+
           user: {
             select: {
               id: true,
@@ -56,6 +57,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           },
           comment: true,
           createdAt: true,
+
         },
       });
 
