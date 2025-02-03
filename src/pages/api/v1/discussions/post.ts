@@ -47,12 +47,18 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         },
         select: {
           id: true,
+
+          user: {
+            select: {
+              id: true,
+              name: true,
+              image: true,
+            },
+          },
+          comment: true,
+          createdAt: true,
         },
       });
-
-      /**
-       *  NOTIFICATION LOGIC
-       */
 
       NotificationHandler.notificationForQuery(addDiscussion.id);
 
