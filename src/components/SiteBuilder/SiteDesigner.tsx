@@ -80,7 +80,7 @@ const SiteDesigner: FC<{
         </>
       ),
 
-      label: collapseHeader("Learning", SvgIcons.courseConfig),
+      label: collapseHeader("Learning", SvgIcons.rectangleStack),
     },
     {
       key: "blogs",

@@ -40,7 +40,7 @@ const ChapterLabel: FC<{
 
     {
       key: "2",
-      label: state === "Published" ? "Move to Draft" : "Published",
+      label: state === "Published" ? "Move to Draft" : "Publish",
       onClick: () => {
         updateState(id, state === "Published" ? "DRAFT" : "ACTIVE");
       },
