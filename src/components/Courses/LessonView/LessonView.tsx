@@ -123,7 +123,7 @@ const LessonView: FC<{ siteConfig: PageSiteConfig; courseId: number; marketingLa
   const [refresh, setRefresh] = useState<boolean>(false);
   const [certificateData, setCertificateData] = useState<ICertficateData>();
   const [assignmentDetail, setAssignmentDetail] = useState<IAssignmentDetail>();
-  const [tabKey, setTabKey] = useState<string>("");
+  const [tabKey, setTabKey] = useState<string>(typeof router.query.tab == "string" ? router.query.tab : "");
 
   const onCreateCertificate = () => {
     setCertificateData({ ...certificateData, loading: !courseDetail?.previewMode, completed: true } as ICertficateData);

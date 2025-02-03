@@ -174,7 +174,7 @@ const QADiscssionTab: FC<{ resourceId?: number; loading: boolean }> = ({
     <section className={styles.qa_discussion_tab}>
       <QAForm loadingPage={loading} editorBorderRadius={8} placeholder="Ask a Question" onPost={onQueryPost} />
 
-      <Spin spinning={listLoading} indicator={<LoadingOutlined spin />} size="large">
+      <Spin spinning={listLoading} indicator={<LoadingOutlined spin />} size="small">
         {comments.map((comment, i) => {
           return (
             <CommentBox

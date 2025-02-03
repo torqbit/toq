@@ -54,17 +54,16 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     // Function to send events
     const sendEvent = (data: any) => {
+      startTime = new Date();
       res.write(`data: ${JSON.stringify(data)}\n\n`);
     };
 
-
-    const startTime = new Date();
+    let startTime = new Date();
     const intervalId = setInterval(async () => {
       const notifications = token?.id && (await fetchPushNotification(token?.id, startTime));
       if (notifications && notifications.length > 0) {
         sendEvent(notifications[0]);
       }
-
     }, 3000);
 
     req.on("close", () => {
