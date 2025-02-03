@@ -95,13 +95,6 @@ const EvaluatinoList: FC<{ loading: boolean; allSubmission: IAllSubmmissionsDeta
               dataSource={data}
               loading={loading}
             />
-
-            <ViewResult
-              score={Number(selectedSubmission?.score)}
-              comment={String(selectedSubmission?.comment)}
-              drawerOpen={drawerOpen}
-              setDrawerOpen={setDrawerOpen}
-            />
           </>
         )}
       </Spin>

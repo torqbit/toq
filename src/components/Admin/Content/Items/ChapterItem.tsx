@@ -40,7 +40,7 @@ const SortableItem: FC<{
     },
     {
       key: "2",
-      label: state === "Published" ? "Move to Draft" : "Published",
+      label: state === "Published" ? "Move to Draft" : "Publish",
       onClick: () => {
         updateResState(lesson.resourceId, state === "Published" ? StateType.DRAFT : StateType.ACTIVE);
       },

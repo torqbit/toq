@@ -13,11 +13,11 @@ export const validateReqQuery = z.object({
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
-    const { submissionId } = req.query;
+    const { submissionId } = validateReqQuery.parse(req.query);
 
     const evaluationResult = await prisma.assignmentEvaluation.findUnique({
       where: {
-        submissionId: Number(submissionId),
+        submissionId: submissionId,
       },
     });
 

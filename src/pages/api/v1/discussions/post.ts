@@ -5,9 +5,9 @@ import { withAuthentication } from "@/lib/api-middlewares/with-authentication";
 import { errorHandler } from "@/lib/api-middlewares/errorHandler";
 import { getToken } from "next-auth/jwt";
 import { getCookieName } from "@/lib/utils";
-import getRoleByLessonId from "@/actions/getRoleByLessonId";
 import { Role } from "@prisma/client";
 import { getCourseAccessRole } from "@/actions/getCourseAccessRole";
+import NotificationHandler from "@/actions/notification";
 
 /**
  * Post a query
@@ -45,7 +45,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           resourceId: lessonId,
           comment: comment,
         },
-        include: {
+        select: {
+          id: true,
+
           user: {
             select: {
               id: true,
@@ -53,24 +55,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               image: true,
             },
           },
+          comment: true,
+          createdAt: true,
         },
       });
 
-      /**
-       *  NOTIFICATION LOGIC
-       */
-
-      // if (isEnrolled && isEnrolled.user.id != token?.id) {
-      //   await prisma.notification.create({
-      //     data: {
-      //       notificationType: "COMMENT",
-      //       toUserId: isEnrolled.user.id,
-      //       commentId: addDiscussion.id,
-      //       fromUserId: String(token?.id) || "",
-      //       resourceId: lessonId,
-      //     },
-      //   });
-      // }
+      NotificationHandler.notificationForQuery(addDiscussion.id);
 
       return res.status(200).json({ success: true, comment: addDiscussion, message: "Query has been posted" });
     } else {

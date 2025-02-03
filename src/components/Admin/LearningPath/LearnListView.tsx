@@ -133,6 +133,7 @@ export const LearnViewItem: FC<{ learning: ILearningPathDetail; previewMode?: bo
             {learning.price > 0 ? "Buy Now" : "Enroll Now"}
           </Button>
         )}
+        {showDummyPurchase && <Button type="default">{learning.price > 0 ? "Buy Now" : "Enroll Now"}</Button>}
       </Flex>
     </Card>
   );
@@ -341,7 +342,7 @@ export const AcademyItemsListView: FC<{
                   ]}
                 />
               )}
-              <>{role && role !== Role.STUDENT && showCourses(segmentValue)}</>
+              <>{role && showCourses(segmentValue)}</>
             </Flex>
           )}
 
@@ -384,7 +385,7 @@ export const AcademyItemsListView: FC<{
                   ]}
                 />
               )}
-              <>{role && role !== Role.STUDENT && showLearningPath(segmentValue)}</>
+              <>{role && showLearningPath(segmentValue)}</>
             </Flex>
           )}
 
