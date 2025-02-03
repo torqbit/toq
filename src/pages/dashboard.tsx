@@ -19,29 +19,9 @@ const Dashboard: NextPage<{ siteConfig: PageSiteConfig; userRole: Role }> = ({ s
       <section className={styles.dashboard_content}>
         <Flex justify="space-between">
           <h3>{viewMode === Role.ADMIN ? "Admin Dashboard" : "Dashboard"}</h3>
-          <>
-            {userRole === Role.ADMIN && (
-              <Flex gap={50} align="center">
-                <div>
-                  <h5>Student Mode</h5>
-                  <p style={{ margin: 0 }}>View the dashboard as student</p>
-                </div>
-                <Switch
-                  size="small"
-                  checked={viewMode !== Role.ADMIN}
-                  onChange={(value) => {
-                    setViewMode(value ? Role.STUDENT : Role.ADMIN);
-                  }}
-                />
-              </Flex>
-            )}
-          </>
         </Flex>
-        {viewMode === Role.ADMIN ? (
-          <AdminDashboard siteConfig={siteConfig} />
-        ) : (
-          <StudentDashboard siteConfig={siteConfig} userRole={viewMode} />
-        )}
+
+        <AdminDashboard siteConfig={siteConfig} />
       </section>
     </AppLayout>
   );

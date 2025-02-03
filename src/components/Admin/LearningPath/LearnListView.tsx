@@ -341,7 +341,7 @@ export const AcademyItemsListView: FC<{
                   ]}
                 />
               )}
-              <>{role && role !== Role.STUDENT && showCourses(segmentValue)}</>
+              <>{role && showCourses(segmentValue)}</>
             </Flex>
           )}
 
@@ -384,7 +384,7 @@ export const AcademyItemsListView: FC<{
                   ]}
                 />
               )}
-              <>{role && role !== Role.STUDENT && showLearningPath(segmentValue)}</>
+              <>{role && showLearningPath(segmentValue)}</>
             </Flex>
           )}
 
