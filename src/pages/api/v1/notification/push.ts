@@ -43,6 +43,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       secret: process.env.NEXT_PUBLIC_SECRET,
       cookieName,
     });
+
     res.writeHead(200, {
       "Content-Type": "text/event-stream",
       "Cache-Control": "no-cache, no-transform",
@@ -56,13 +57,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       res.write(`data: ${JSON.stringify(data)}\n\n`);
     };
 
+
     const startTime = new Date();
     const intervalId = setInterval(async () => {
       const notifications = token?.id && (await fetchPushNotification(token?.id, startTime));
-
       if (notifications && notifications.length > 0) {
         sendEvent(notifications[0]);
       }
+
     }, 3000);
 
     req.on("close", () => {
