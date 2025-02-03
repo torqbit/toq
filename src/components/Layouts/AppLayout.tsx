@@ -6,7 +6,7 @@ import Head from "next/head";
 import Sidebar from "../Sidebar/Sidebar";
 import { signOut, useSession } from "next-auth/react";
 import { IResponsiveNavMenu, ISiderMenu, useAppContext } from "../ContextApi/AppContext";
-import { Badge, ConfigProvider, Dropdown, Flex, Layout, MenuProps, message, Spin } from "antd";
+import { Badge, ConfigProvider, Dropdown, Flex, Layout, MenuProps, message, notification, Spin } from "antd";
 import SvgIcons from "../SvgIcons";
 import Link from "next/link";
 import { UserSession } from "@/lib/types/user";
@@ -26,6 +26,10 @@ import { Role } from "@prisma/client";
 
 const { Content } = Layout;
 
+import type { NotificationArgsProps } from "antd";
+type NotificationPlacement = NotificationArgsProps["placement"];
+const Context = React.createContext({ name: "Default" });
+
 const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig: PageSiteConfig }> = ({
   children,
   className,
@@ -37,7 +41,7 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
   const { globalState, dispatch } = useAppContext();
   const [conversationList, setConversationList] = useState<IConversationData[]>();
   const [comment, setComment] = useState<string>("");
-
+  const [api, contextHolder] = notification.useNotification();
   const { brand } = siteConfig;
 
   const [conversationLoading, setConversationLoading] = useState<{
@@ -351,7 +355,7 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
       eventSource.addEventListener("message", (event) => {
         try {
           const data = JSON.parse(event.data);
-          console.log(data);
+          openNotification("topRight", data.title, data.description);
         } catch (e) {
           console.error("Error parsing message:", e);
         }
@@ -368,6 +372,18 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
       }
     };
   });
+
+  const openNotification = (
+    placement: NotificationPlacement,
+    message: string = "this is test title",
+    description: string = "this is test description"
+  ) => {
+    api.info({
+      message: message,
+      description: description,
+      placement,
+    });
+  };
 
   useEffect(() => {
     window.addEventListener("online", () => {
@@ -473,6 +489,7 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
         <link rel="icon" href={siteConfig.brand?.favicon} />
       </Head>
       <Spin spinning={globalState.pageLoading} indicator={<LoadingOutlined spin />} size="large">
+        {contextHolder}
         {globalState.onlineStatus ? (
           <Layout hasSider className="default-container">
             <Sidebar menu={user?.role && user.role == Role.ADMIN ? adminMenu : userMenu} siteConfig={siteConfig} />
