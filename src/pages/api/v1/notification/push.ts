@@ -43,18 +43,28 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       secret: process.env.NEXT_PUBLIC_SECRET,
       cookieName,
     });
-    res.setHeader("Content-Type", "text/event-stream");
-    res.setHeader("Cache-Control", "no-cache");
-    res.setHeader("Connection", "keep-alive");
+
+    res.writeHead(200, {
+      "Content-Type": "text/event-stream",
+      "Cache-Control": "no-cache, no-transform",
+      Connection: "keep-alive",
+    });
+    // Send an initial event to trigger onopen
+    res.write("event: open\ndata: connected\n\n");
+
+    // Function to send events
+    const sendEvent = (data: any) => {
+      res.write(`data: ${JSON.stringify(data)}\n\n`);
+    };
+
+
     const startTime = new Date();
     const intervalId = setInterval(async () => {
       const notifications = token?.id && (await fetchPushNotification(token?.id, startTime));
-
-      if (notifications && notifications.length === 0) {
-        return; // No new notifications to send
-      } else if (notifications) {
-        res.write(JSON.stringify(notifications));
+      if (notifications && notifications.length > 0) {
+        sendEvent(notifications[0]);
       }
+
     }, 3000);
 
     req.on("close", () => {

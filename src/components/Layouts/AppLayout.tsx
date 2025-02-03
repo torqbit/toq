@@ -58,7 +58,7 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
           {SvgIcons.dashboard}
         </i>
       ),
-      link: "/dashboard",
+      link: "dashboard",
       key: "dashboard",
     },
     {
@@ -68,7 +68,7 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
           {SvgIcons.courses}
         </i>
       ),
-      link: "/academy",
+      link: "academy",
       key: "academy",
     },
     {
@@ -339,16 +339,35 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
   };
 
   //TODO: Disabled notifications for now
-  // useEffect(() => {
-  //   if (user) {
-  //     if (typeof intervalId === "undefined") {
-  //       intervalId = setInterval(() => {
-  //         getLatestNotificationCount();
-  //       }, 5000);
-  //     }
-  //   }
-  //   return () => intervalId && clearInterval(Number(intervalId));
-  // });
+  useEffect(() => {
+    let eventSource: EventSource;
+    if (user) {
+      eventSource = new EventSource("/api/v1/notification/push");
+
+      eventSource.addEventListener("open", (event) => {
+        console.log("Connection opened");
+      });
+
+      eventSource.addEventListener("message", (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          console.log(data);
+        } catch (e) {
+          console.error("Error parsing message:", e);
+        }
+      });
+
+      eventSource.addEventListener("error", (error) => {
+        console.error("EventSource error:", error);
+        eventSource.close();
+      });
+    }
+    return () => {
+      if (eventSource) {
+        eventSource.close();
+      }
+    };
+  });
 
   useEffect(() => {
     window.addEventListener("online", () => {
