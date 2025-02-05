@@ -16,15 +16,16 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       secret: process.env.NEXT_PUBLIC_SECRET,
       cookieName,
     });
-    const countUnreadNotifications = await prisma.notification.count({
-      where: {
-        toUserId: token?.id,
-        isView: false,
-        NOT: {
-          fromUserId: token?.id,
-        },
-      },
-    });
+    const countUnreadNotifications = 0;
+    //  await prisma.notification.count({
+    //   where: {
+    //     toUserId: token?.id,
+    //     isView: false,
+    //     NOT: {
+    //       fromUserId: token?.id,
+    //     },
+    //   },
+    // });
 
     if (countUnreadNotifications && countUnreadNotifications > 0) {
       return res.status(200).json({ success: true, countUnreadNotifications });

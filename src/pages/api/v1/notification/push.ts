@@ -5,29 +5,7 @@ import { withAuthentication } from "@/lib/api-middlewares/with-authentication";
 import { errorHandler } from "@/lib/api-middlewares/errorHandler";
 import { getToken } from "next-auth/jwt";
 import { getCookieName } from "@/lib/utils";
-
-export const fetchPushNotification = async (userId: string, createTime: Date) => {
-  return await prisma.notification.findMany({
-    orderBy: {
-      createdAt: "desc",
-    },
-    take: 1,
-    where: {
-      toUserId: userId,
-      isView: false,
-      createdAt: {
-        gt: createTime,
-      },
-    },
-    select: {
-      id: true,
-      title: true,
-      description: true,
-      notificationType: true,
-    },
-  });
-};
-
+import notificationHandler from "@/actions/notification";
 /**
  * Fetch the latest push notification after this request has been created
  * @param req
@@ -60,9 +38,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     let startTime = new Date();
     const intervalId = setInterval(async () => {
-      const notifications = token?.id && (await fetchPushNotification(token?.id, startTime));
-      if (notifications && notifications.length > 0) {
-        sendEvent(notifications[0]);
+      const notifications = token?.id && (await notificationHandler.fetchPushNotificaton(token?.id, startTime));
+      if (notifications && notifications.success) {
+        sendEvent(notifications.body);
       }
     }, 3000);
 

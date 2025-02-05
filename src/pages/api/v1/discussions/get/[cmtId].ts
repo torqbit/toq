@@ -9,7 +9,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const commentId = req.query?.cmtId;
 
     const rawData = await prisma.$queryRaw<any[]>`
-    select dis.id, dis.userId, name, image,  comment, dis.createdAt, 
+    select dis.id, dis.userId, name, image, User.email as email, comment, dis.createdAt, 
 COUNT(thread.reply_id) as replyCount FROM Discussion as dis
 INNER JOIN User ON dis.userId = User.id
 LEFT OUTER JOIN ( SELECT id as reply_id, parentCommentId FROM Discussion) as thread
@@ -29,6 +29,7 @@ GROUP BY dis.id, userId, comment, dis.createdAt
           id: data.userId,
           name: data.name,
           image: data.image,
+          email: data.email,
         },
         createdAt: data.createdAt,
         replyCount: Number(data.replyCount),
