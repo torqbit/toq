@@ -38,19 +38,17 @@ model User {
   isActive      Boolean   @default(true)
   role          Role      @default(STUDENT)
 
-  dateJoined           DateTime             @default(now())
-  createdAt            DateTime             @default(now())
-  CourseRegistration   CourseRegistration[]
-  account              Account[]
-  sessions             Session[]
-  course               Course[]             @relation("userCourse")
-  discussion           Discussion[]
-  fromUserNotification Notification[]       @relation("fromUser")
-  toUserNotification   Notification[]       @relation("toUser")
-  CourseProgress       CourseProgress[]
-  conversation         Conversation[]
-  blogs                Blog[]
-  learningPaths        LearningPath[]
+  dateJoined         DateTime             @default(now())
+  createdAt          DateTime             @default(now())
+  CourseRegistration CourseRegistration[]
+  account            Account[]
+  sessions           Session[]
+  course             Course[]             @relation("userCourse")
+  discussion         Discussion[]
+  CourseProgress     CourseProgress[]
+  conversation       Conversation[]
+  blogs              Blog[]
+  learningPaths      LearningPath[]
 
   orders           Order[]
   invoices         Invoice[]
@@ -58,6 +56,8 @@ model User {
   evaluations      AssignmentEvaluation[]
   events           Events[]
   eventsRegistered EventRegistration[]
+
+  notifications Notification[] @relation("recipient")
 }
 
 //****** User Schema End ******//
@@ -219,9 +219,8 @@ model Resource {
   courseProgress    CourseProgress[]
   discussions       Discussion[]
 
-  notifications Notification[]
-  video         Video?
-  assignment    Assignment?
+  video      Video?
+  assignment Assignment?
 
   @@unique([resourceId])
   @@index([chapterId])
@@ -256,19 +255,19 @@ enum CourseState {
 }
 
 model CourseRegistration {
-  registrationId Int                 @id @default(autoincrement())
-  orderId        String              @unique
+  registrationId Int                  @id @default(autoincrement())
+  orderId        String               @unique
   studentId      String
-  courseState    CourseState         @default(ENROLLED)
-  courseType     CourseType          @default(FREE)
+  courseState    CourseState          @default(ENROLLED)
+  courseType     CourseType           @default(FREE)
   image          String?
-  isActive       Boolean             @default(true)
-  dateJoined     DateTime            @default(now())
-  createdAt      DateTime            @default(now())
-  updatedAt      DateTime            @updatedAt
+  isActive       Boolean              @default(true)
+  dateJoined     DateTime             @default(now())
+  createdAt      DateTime             @default(now())
+  updatedAt      DateTime             @updatedAt
   expireIn       DateTime?
-  order          Order               @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  user           User                @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  order          Order                @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  user           User                 @relation(fields: [studentId], references: [id], onDelete: Cascade)
   certificate    CourseCertificates[]
 
   @@unique([studentId, orderId])
@@ -296,19 +295,17 @@ model CourseProgress {
 
 //****** Discussion Schema ******//
 model Discussion {
-  id                 Int            @unique @default(autoincrement()) @db.Int()
-  userId             String
-  resourceId         Int
-  tagCommentId       Int?
-  comment            String?        @db.MediumText
-  attachedFiles      Json?
-  parentCommentId    Int?
-  createdAt          DateTime       @default(now())
-  updatedAt          DateTime       @updatedAt
-  user               User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  resource           Resource       @relation(fields: [resourceId], references: [resourceId], onDelete: Cascade)
-  tagCmtNotification Notification[] @relation(name: "tagComment")
-  cmtNotification    Notification[] @relation(name: "comment")
+  id              Int      @unique @default(autoincrement()) @db.Int()
+  userId          String
+  resourceId      Int
+  tagCommentId    Int?
+  comment         String?  @db.MediumText
+  attachedFiles   Json?
+  parentCommentId Int?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  resource        Resource @relation(fields: [resourceId], references: [resourceId], onDelete: Cascade)
 
   @@index([userId])
   @@index([resourceId])
@@ -318,34 +315,36 @@ model Discussion {
 
 //****** Notification Schema ******//
 enum NotificationType {
-  COMMENT
-  EVALUATE_ASSIGNMENT
+  POST_QUERY
+  REPLY_QUERY
+  ENROLLED
+  VIDEO_UPLOAD
+}
+
+enum EntityType {
+  USER
+  COURSE
+  EVENT
+  VIDEO_LESSON
+  ASSIGNMENT_LESSON
+  VIDEO
+  ASSIGNMENT
 }
 
 model Notification {
   id               Int              @unique @default(autoincrement()) @db.Int()
   notificationType NotificationType
-  fromUserId       String
-  resourceId       Int?
-  toUserId         String
-  title            String?
-  description      String?
-  tagCommentId     Int?
-  commentId        Int?
-  isView           Boolean          @default(false)
-  tagComment       Discussion?      @relation(name: "tagComment", fields: [tagCommentId], references: [id], onDelete: Cascade)
-  comment          Discussion?      @relation(name: "comment", fields: [commentId], references: [id], onDelete: Cascade)
-  fromUser         User             @relation("fromUser", fields: [fromUserId], references: [id])
-  toUser           User             @relation("toUser", fields: [toUserId], references: [id])
+  recipientId      String
+  subjectId        String
+  subjectType      EntityType
+  objectId         String
+  objectType       EntityType
+  activity         String?
   createdAt        DateTime         @default(now())
-  updatedAt        DateTime         @updatedAt
-  resource         Resource?        @relation(fields: [resourceId], references: [resourceId])
+  hasViewed        Boolean          @default(false)
+  recipient        User             @relation("recipient", fields: [recipientId], references: [id])
 
-  @@index([fromUserId])
-  @@index([toUserId])
-  @@index([tagCommentId])
-  @@index([commentId])
-  @@index([resourceId])
+  @@index([recipientId])
 }
 
 //****   conversation table ****//
@@ -408,15 +407,15 @@ model ServiceProvider {
 
 model CourseCertificates {
   id               String             @id @default(cuid())
-  registrationId   Int    
-  productId        Int            
+  registrationId   Int
+  productId        Int
   imagePath        String?
   pdfPath          String?
   issueDate        DateTime           @default(now())
   RegisteredCourse CourseRegistration @relation(fields: [registrationId], references: [registrationId], onDelete: Cascade)
-  product           Product @relation(fields: [productId], references: [productId], onDelete: Cascade)
+  product          Product            @relation(fields: [productId], references: [productId], onDelete: Cascade)
 
- @@unique([registrationId, productId])
+  @@unique([registrationId, productId])
   @@index([productId])
 }
 
@@ -481,11 +480,11 @@ enum ProductType {
 }
 
 model Product {
-  productId    Int           @id @default(autoincrement())
-  ptype        ProductType
-  orders       Order[]
-  course       Course?       @relation(name: "course_product")
-  learningPath LearningPath? @relation(name: "learning_path_product")
+  productId          Int                  @id @default(autoincrement())
+  ptype              ProductType
+  orders             Order[]
+  course             Course?              @relation(name: "course_product")
+  learningPath       LearningPath?        @relation(name: "learning_path_product")
   CourseCertificates CourseCertificates[]
 }
 
