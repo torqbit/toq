@@ -93,6 +93,9 @@ const antThemeConfig = (siteConfig: PageSiteConfig) => {
         controlItemBgActive: "#EEE",
         controlItemBgActiveHover: "#dcdcdc",
       },
+      Notification: {
+        colorBgElevated: "#fff",
+      },
       Tag: {
         defaultBg: "#eee",
         defaultColor: "#888",

@@ -121,6 +121,9 @@ const darkThemeConfig = (siteConfig: PageSiteConfig) => {
         groupBorderColor: "#000",
         colorPrimaryActive: "#fff",
       },
+      Notification: {
+        colorBgElevated: themeColors.dark.bgPrimary,
+      },
       Input: {
         borderRadius: 4,
         activeShadow: "none",
