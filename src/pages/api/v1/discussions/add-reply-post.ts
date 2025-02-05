@@ -6,9 +6,10 @@ import { errorHandler } from "@/lib/api-middlewares/errorHandler";
 import { getToken } from "next-auth/jwt";
 import { getCookieName } from "@/lib/utils";
 import getRoleByLessonId from "@/actions/getRoleByLessonId";
-import { Role } from "@prisma/client";
+import { EntityType, NotificationType, ResourceContentType, Role } from "@prisma/client";
 import { getCourseAccessRole } from "@/actions/getCourseAccessRole";
-
+import NotificationHandler from "@/actions/notification";
+import { ISendNotificationProps } from "@/types/notification";
 /**
  * Post reply on a query
  * @param req
@@ -51,64 +52,51 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               id: true,
               name: true,
               image: true,
+              email: true,
+            },
+          },
+          resource: {
+            select: {
+              contentType: true,
+              chapter: {
+                select: {
+                  course: {
+                    select: {
+                      authorId: true,
+                    },
+                  },
+                },
+              },
             },
           },
         },
       });
 
-      /**
-       *  NOTIFICATION LOGIC
-       */
+      const queryAuthor = await prisma.discussion.findUnique({
+        where: {
+          id: parentCommentId,
+        },
+        select: {
+          userId: true,
+        },
+      });
+      const courseAuthorId = addDiscussion.resource.chapter.course.authorId;
 
-      // const queryAuthor = await prisma.discussion.findUnique({
-      //   where: {
-      //     id: parentCommentId,
-      //   },
-      //   select: {
-      //     userId: true,
-      //     resourceId: true,
-      //   },
-      // });
+      if (queryAuthor && queryAuthor.userId !== courseAuthorId && String(token?.id) == courseAuthorId) {
+        let notificationData: ISendNotificationProps = {
+          notificationType: NotificationType.REPLY_QUERY,
+          recipientId: queryAuthor?.userId,
+          subjectId: String(token?.id),
+          subjectType: EntityType.USER,
+          objectId: String(addDiscussion.id),
+          objectType:
+            addDiscussion.resource.contentType === ResourceContentType.Video
+              ? EntityType.VIDEO_LESSON
+              : EntityType.ASSIGNMENT_LESSON,
+        };
 
-      // const repliesAuthors = await prisma.discussion.findMany({
-      //   distinct: ["userId"],
-      //   where: {
-      //     parentCommentId: parentCommentId,
-      //     userId: {
-      //       notIn: [String(token?.id), String(queryAuthor?.userId)],
-      //     },
-      //   },
-      //   select: {
-      //     userId: true,
-      //     resourceId: true,
-      //   },
-      // });
-
-      // let courseAuthor = {
-      //   userId: String(isEnrolled?.order.product.course?.authorId),
-      //   resourceId: lessonId,
-      // };
-
-      // queryAuthor &&
-      //   repliesAuthors
-      //     .concat(
-      //       queryAuthor.userId === isEnrolled?.order.product.course?.authorId
-      //         ? [queryAuthor]
-      //         : [queryAuthor, courseAuthor]
-      //     )
-      //     .filter((u) => u.userId !== token?.id)
-      //     .map(async (user) => {
-      //       return prisma.notification.create({
-      //         data: {
-      //           notificationType: "COMMENT",
-      //           toUserId: user.userId,
-      //           commentId: addDiscussion.id,
-      //           fromUserId: String(token?.id) || "",
-      //           tagCommentId: parentCommentId,
-      //           resourceId: user.resourceId,
-      //         },
-      //       });
-      //     });
+        NotificationHandler.createNotification(notificationData);
+      }
 
       return res.status(200).json({ success: true, comment: addDiscussion, message: "Reply has been posted" });
     } else {

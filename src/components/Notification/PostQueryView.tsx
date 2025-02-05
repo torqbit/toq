@@ -2,6 +2,7 @@ import { DiscussionNotification } from "@/types/notification";
 import { UserOutlined } from "@ant-design/icons";
 import { Avatar, Flex } from "antd";
 import styles from "./Notification.module.scss";
+import { NotificationType } from "@prisma/client";
 
 const PostQueryView = (info: DiscussionNotification) => {
   return {
@@ -14,7 +15,8 @@ const PostQueryView = (info: DiscussionNotification) => {
           alt="Profile"
         />
         <div>
-          <span>{info.subject.name}</span> posted a query in
+          <span>{info.subject.name}</span>{" "}
+          {info.notificationType == NotificationType.POST_QUERY ? "posted a query" : "replied to a query"} in
           <span> {info.object.name}</span>
         </div>
       </div>

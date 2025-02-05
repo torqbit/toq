@@ -27,6 +27,7 @@ import { Role } from "@prisma/client";
 const { Content } = Layout;
 
 import type { NotificationArgsProps } from "antd";
+
 import pushNotificationView from "../Notification/PushNotificationView";
 type NotificationPlacement = NotificationArgsProps["placement"];
 const Context = React.createContext({ name: "Default" });
@@ -393,6 +394,7 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
       closeIcon: <i style={{ fontSize: 18, color: "var(--font-secondary)", lineHeight: 0 }}>{SvgIcons.xMark}</i>,
       description: description,
       placement,
+      style: { cursor: "pointer" },
       onClick: () => {
         targetLink && router.push(targetLink);
       },
