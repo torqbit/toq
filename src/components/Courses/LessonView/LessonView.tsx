@@ -171,12 +171,19 @@ const LessonView: FC<{ siteConfig: PageSiteConfig; courseId: number; marketingLa
         chapterSeq: courseLessons[foundIndex]?.chapterSeq,
         lesson: courseLessons[foundIndex].lessons[currentLessonIndex + 1] as any,
       });
-    } else if (courseLessons[foundIndex + 1].chapterName) {
-      router.push(`/courses/${router.query.slug}/lesson/${courseLessons[foundIndex + 1].lessons[0].lessonId}`);
+    } else if (courseLessons[foundIndex + 1] && courseLessons[foundIndex + 1]?.chapterName) {
+      router.push(`/courses/${router.query.slug}/lesson/${courseLessons[foundIndex + 1]?.lessons[0].lessonId}`);
       setCurrentLesson({
         chapterName: courseLessons[foundIndex + 1]?.chapterName,
         chapterSeq: courseLessons[foundIndex + 1]?.chapterSeq,
-        lesson: courseLessons[foundIndex + 1].lessons[0] as any,
+        lesson: courseLessons[foundIndex + 1]?.lessons[0] as any,
+      });
+    } else {
+      router.push(`/courses/${router.query.slug}/lesson/${courseLessons[0]?.lessons[0].lessonId}`);
+      setCurrentLesson({
+        chapterName: courseLessons[0]?.chapterName,
+        chapterSeq: courseLessons[0]?.chapterSeq,
+        lesson: courseLessons[0]?.lessons[0] as any,
       });
     }
   };
