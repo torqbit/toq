@@ -163,7 +163,7 @@ const CommentBox: FC<{
             className={isEdited ? `${replyList ? styles.reply_comment_wrapper : styles.editted_comment_wrapper}` : ""}
           >
             <div className={`${styles.comment_body} comment-card-body`}>
-              {session?.id === comment.user.id && (
+              {session?.user?.email === comment.user.email && (
                 <>
                   {isEdited ? (
                     <CloseOutlined

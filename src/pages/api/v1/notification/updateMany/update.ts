@@ -19,16 +19,16 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     });
 
     const userId = token?.id;
-    await prisma.notification.updateMany({
-      where: {
-        toUserId: userId,
-        tagCommentId: Number(tagCommentId),
-        isView: false,
-      },
-      data: {
-        isView: true,
-      },
-    });
+    // await prisma.notification.updateMany({
+    //   where: {
+    //     toUserId: userId,
+    //     tagCommentId: Number(tagCommentId),
+    //     isView: false,
+    //   },
+    //   data: {
+    //     isView: true,
+    //   },
+    // });
 
     return res.status(200).json({ success: true });
   } catch (error) {

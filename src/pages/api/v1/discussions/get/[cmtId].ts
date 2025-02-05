@@ -29,6 +29,7 @@ GROUP BY dis.id, userId, comment, dis.createdAt
           id: data.userId,
           name: data.name,
           image: data.image,
+          email: data.email,
         },
         createdAt: data.createdAt,
         replyCount: Number(data.replyCount),

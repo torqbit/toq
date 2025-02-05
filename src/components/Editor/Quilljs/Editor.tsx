@@ -72,7 +72,9 @@ const TextEditor: FC<{
       formats={theme === "bubble" ? bubbleFormatter : SnowForamatter}
       theme={`${theme === "bubble" ? "bubble" : "snow"}`}
       value={defaultValue}
-      onChange={handleDefaultValue}
+      onChange={(value) => {
+        handleDefaultValue(value);
+      }}
     />
   );
 };

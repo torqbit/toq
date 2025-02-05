@@ -7,15 +7,15 @@ import { getToken } from "next-auth/jwt";
 import { getCookieName } from "@/lib/utils";
 
 export const getCheckNewOne = async (userId: string) => {
-  return await prisma.notification.findMany({
-    where: {
-      toUserId: userId,
-      isView: false,
-    },
-    select: {
-      id: true,
-    },
-  });
+  // return await prisma.notification.findMany({
+  //   where: {
+  //     toUserId: userId,
+  //     isView: false,
+  //   },
+  //   select: {
+  //     id: true,
+  //   },
+  // });
 };
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -31,8 +31,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     return res.status(200).json({
       success: true,
-      isNew: notifications && notifications.length > 0 ? true : false,
-      length: notifications && notifications.length,
+      // isNew: notifications && notifications.length > 0 ? true : false,
+      // length: notifications && notifications.length,
     });
   } catch (err) {
     return errorHandler(err, res);
