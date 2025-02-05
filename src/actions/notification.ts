@@ -37,11 +37,67 @@ class NotificationsHandler {
           return this.discussionViewDetail(res);
         case NotificationType.REPLY_QUERY:
           return this.discussionViewDetail(res);
+
+        case NotificationType.ENROLLED:
+          return this.enrolledViewDetail(res);
         default:
           return this.discussionViewDetail(res);
       }
     } else {
       return new APIResponse(false, 404, "No notification found");
+    }
+  }
+
+  async enrolledViewDetail(detail: Notification): Promise<APIResponse<DiscussionNotification>> {
+    let rawData: any[];
+    let targetLink;
+
+    if (detail.objectType == EntityType.COURSE) {
+      rawData = await prisma.$queryRaw<any[]>`
+      SELECT 
+        co.name AS name,
+        usr.name AS subjectName,
+        usr.image AS subjectImage
+      FROM Course AS co
+      INNER JOIN User AS  usr ON  usr.id = ${detail.subjectId}
+      WHERE co.courseId = ${detail.objectId} 
+      LIMIT 1;
+    `;
+      targetLink = `academy/course/${detail.objectId}/manage`;
+    } else {
+      rawData = await prisma.$queryRaw<any[]>`
+      SELECT 
+      lPath.title AS name,
+        usr.name AS subjectName,
+        usr.image AS subjectImage
+      FROM LearningPath AS lPath
+      INNER JOIN User AS  usr ON  usr.id = ${detail.subjectId}
+      WHERE lPath.id = ${detail.objectId} 
+      LIMIT 1;
+    `;
+      targetLink = `academy/path/${detail.objectId}/manage`;
+    }
+
+    if (rawData.length > 0) {
+      let response: DiscussionNotification = {
+        object: {
+          _type: detail.objectType,
+          id: detail.objectId,
+          name: String(rawData[0].name),
+        },
+        subject: {
+          name: rawData[0].subjectName,
+          image: rawData[0].subjectImage,
+          _type: EntityType.USER,
+        },
+        notificationType: detail.notificationType,
+
+        createdAt: detail.createdAt,
+        targetLink,
+      };
+      return new APIResponse(true, 200, "Detail has been fetched", response);
+    } else {
+      return new APIResponse(false, 404, "No detail found");
     }
   }
 

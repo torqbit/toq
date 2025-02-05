@@ -324,6 +324,7 @@ enum NotificationType {
 enum EntityType {
   USER
   COURSE
+  LEARNING_PATH
   EVENT
   VIDEO_LESSON
   ASSIGNMENT_LESSON

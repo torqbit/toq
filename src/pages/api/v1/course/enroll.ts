@@ -8,9 +8,11 @@ import { errorHandler } from "@/lib/api-middlewares/errorHandler";
 import { getToken } from "next-auth/jwt";
 import { addDays, getCookieName } from "@/lib/utils";
 import MailerService from "@/services/MailerService";
-import { CourseState, CourseType, orderStatus } from "@prisma/client";
+import { CourseState, CourseType, EntityType, NotificationType, orderStatus } from "@prisma/client";
 import { PaymentManagemetService } from "@/services/payment/PaymentManagementService";
 import { CashFreeConfig, CoursePaymentConfig, UserConfig } from "@/types/payment";
+import { DiscussionNotification, ISendNotificationProps } from "@/types/notification";
+import NotificationHandler from "@/actions/notification";
 
 export const validateReqBody = z.object({
   courseId: z.number(),
@@ -70,6 +72,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         slug: true,
         expiryInDays: true,
         coursePrice: true,
+        authorId: true,
+        user: {
+          select: {
+            name: true,
+          },
+        },
       },
     });
     let courseType = course?.courseType;
@@ -98,6 +106,17 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             },
           });
         });
+
+        let notificationData: ISendNotificationProps = {
+          notificationType: NotificationType.ENROLLED,
+          recipientId: course?.authorId,
+          subjectId: String(token?.id),
+          subjectType: EntityType.USER,
+          objectId: String(reqBody.courseId),
+          objectType: EntityType.COURSE,
+        };
+
+        NotificationHandler.createNotification(notificationData);
 
         const configData = {
           name: token.name,

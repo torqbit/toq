@@ -4,7 +4,7 @@ import { Avatar, Flex } from "antd";
 import styles from "./Notification.module.scss";
 import { NotificationType } from "@prisma/client";
 
-const PostQueryView = (info: DiscussionNotification) => {
+const QueryView = (info: DiscussionNotification) => {
   return {
     message: (
       <div className={styles.message__wrapper} style={{ display: "flex", gap: 10 }}>
@@ -36,4 +36,4 @@ const PostQueryView = (info: DiscussionNotification) => {
   };
 };
 
-export default PostQueryView;
+export default QueryView;

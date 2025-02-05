@@ -394,6 +394,7 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
       closeIcon: <i style={{ fontSize: 18, color: "var(--font-secondary)", lineHeight: 0 }}>{SvgIcons.xMark}</i>,
       description: description,
       placement,
+      duration: 0,
       style: { cursor: "pointer" },
       onClick: () => {
         targetLink && router.push(targetLink);

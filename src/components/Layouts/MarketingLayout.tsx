@@ -170,6 +170,7 @@ const MarketingLayout: FC<{
       message: message,
       closeIcon: <i style={{ fontSize: 18, color: "var(--font-secondary)", lineHeight: 0 }}>{SvgIcons.xMark}</i>,
       description: description,
+
       style: { cursor: "pointer" },
       placement,
       onClick: () => {
