@@ -102,6 +102,7 @@ const LessonView: FC<{ siteConfig: PageSiteConfig; courseId: number; marketingLa
   const { globalState } = useAppContext();
   const [loading, setLoading] = useState<boolean>(false);
   const [markAsLoading, setMarkAsLoading] = useState<boolean>(false);
+  const [lessonRefresh, setLessonRefresh] = useState<boolean>(false);
 
   const [courseDetail, setCourseDetails] = useState<{
     name: string;
@@ -292,7 +293,7 @@ const LessonView: FC<{ siteConfig: PageSiteConfig; courseId: number; marketingLa
 
   useEffect(() => {
     courseId && getLessonsDetail(Number(courseId));
-  }, [courseId]);
+  }, [courseId, lessonRefresh]);
 
   useEffect(() => {
     if (router.query.lessonId && courseLessons.length > 0) {
@@ -660,6 +661,7 @@ const LessonView: FC<{ siteConfig: PageSiteConfig; courseId: number; marketingLa
                         updateAssignmentWatchedStatus={updateAssignmentWatchedStatus}
                         chapterSeqId={Number(currentLesson.chapterSeq)}
                         onNextLesson={onNextLesson}
+                        setLessonRefresh={() => setLessonRefresh(!lessonRefresh)}
                       />
                     </div>
                   ) : (
