@@ -4,7 +4,7 @@ import { DiscussionNotification, ISendNotificationProps } from "@/types/notifica
 import { EntityType, Notification, NotificationType } from "@prisma/client";
 
 class NotificationsHandler {
-  async postQuery(data: ISendNotificationProps): Promise<APIResponse<string>> {
+  async createNotification(data: ISendNotificationProps): Promise<APIResponse<string>> {
     const res = await prisma.notification.create({
       data: {
         ...data,
@@ -34,17 +34,74 @@ class NotificationsHandler {
     if (res) {
       switch (res?.notificationType) {
         case NotificationType.POST_QUERY:
-          return this.getPostQueryViewDetail(res);
+          return this.discussionViewDetail(res);
+        case NotificationType.REPLY_QUERY:
+          return this.discussionViewDetail(res);
 
+        case NotificationType.ENROLLED:
+          return this.enrolledViewDetail(res);
         default:
-          return this.getPostQueryViewDetail(res);
+          return this.discussionViewDetail(res);
       }
     } else {
       return new APIResponse(false, 404, "No notification found");
     }
   }
 
-  async getPostQueryViewDetail(detail: Notification): Promise<APIResponse<DiscussionNotification>> {
+  async enrolledViewDetail(detail: Notification): Promise<APIResponse<DiscussionNotification>> {
+    let rawData: any[];
+    let targetLink;
+
+    if (detail.objectType == EntityType.COURSE) {
+      rawData = await prisma.$queryRaw<any[]>`
+      SELECT 
+        co.name AS name,
+        usr.name AS subjectName,
+        usr.image AS subjectImage
+      FROM Course AS co
+      INNER JOIN User AS  usr ON  usr.id = ${detail.subjectId}
+      WHERE co.courseId = ${detail.objectId} 
+      LIMIT 1;
+    `;
+      targetLink = `academy/course/${detail.objectId}/manage`;
+    } else {
+      rawData = await prisma.$queryRaw<any[]>`
+      SELECT 
+      lPath.title AS name,
+        usr.name AS subjectName,
+        usr.image AS subjectImage
+      FROM LearningPath AS lPath
+      INNER JOIN User AS  usr ON  usr.id = ${detail.subjectId}
+      WHERE lPath.id = ${detail.objectId} 
+      LIMIT 1;
+    `;
+      targetLink = `academy/path/${detail.objectId}/manage`;
+    }
+
+    if (rawData.length > 0) {
+      let response: DiscussionNotification = {
+        object: {
+          _type: detail.objectType,
+          id: detail.objectId,
+          name: String(rawData[0].name),
+        },
+        subject: {
+          name: rawData[0].subjectName,
+          image: rawData[0].subjectImage,
+          _type: EntityType.USER,
+        },
+        notificationType: detail.notificationType,
+
+        createdAt: detail.createdAt,
+        targetLink,
+      };
+      return new APIResponse(true, 200, "Detail has been fetched", response);
+    } else {
+      return new APIResponse(false, 404, "No detail found");
+    }
+  }
+
+  async discussionViewDetail(detail: Notification): Promise<APIResponse<DiscussionNotification>> {
     const rawData = await prisma.$queryRaw<any[]>`
   SELECT 
     dis.id AS discussionId, 
@@ -52,6 +109,7 @@ class NotificationsHandler {
     usr.name AS subjectName, 
     usr.image AS subjectImage, 
     co.slug AS courseSlug,
+    dis.parentCommentId as pId,
     res.resourceId AS lessonId
   FROM Discussion AS dis
   INNER JOIN Resource AS res ON dis.resourceId = res.resourceId
@@ -62,8 +120,23 @@ class NotificationsHandler {
   AND dis.userId = ${detail.subjectId}
   LIMIT 1;
 `;
+    let targetLink;
 
     if (rawData.length > 0) {
+      switch (detail.notificationType) {
+        case NotificationType.POST_QUERY:
+          targetLink = `/courses/${rawData[0].courseSlug}/lesson/${rawData[0].lessonId}?tab=discussions&queryId=${rawData[0].discussionId}`;
+
+          break;
+
+        case NotificationType.REPLY_QUERY:
+          targetLink = `/courses/${rawData[0].courseSlug}/lesson/${rawData[0].lessonId}?tab=discussions&threadId=${rawData[0].pId}`;
+          break;
+
+        default:
+          targetLink = undefined;
+          break;
+      }
       let response: DiscussionNotification = {
         object: {
           _type: detail.objectType,
@@ -78,7 +151,7 @@ class NotificationsHandler {
         notificationType: detail.notificationType,
         activity: detail.activity || undefined,
         createdAt: detail.createdAt,
-        targetLink: `/courses/${rawData[0].courseSlug}/lesson/${rawData[0].lessonId}?tab=discussions&queryId=${rawData[0].discussionId}`,
+        targetLink,
       };
       return new APIResponse(true, 200, "Detail has been fetched", response);
     } else {

@@ -3,6 +3,8 @@ import {
   ConfigurationState,
   CourseRegistration,
   CourseType,
+  EntityType,
+  NotificationType,
   Order,
   orderStatus,
   paymentStatus,
@@ -31,6 +33,8 @@ import { businessConfig } from "../businessConfig";
 import { addDays, generateDayAndYear } from "@/lib/utils";
 import os from "os";
 import path from "path";
+import { ISendNotificationProps } from "@/types/notification";
+import NotificationHandler from "@/actions/notification";
 
 export const paymentsConstants = {
   CF_CLIENT_ID: "CLIENT_ID",
@@ -180,6 +184,7 @@ export class PaymentManagemetService {
           name: true,
           tvThumbnail: true,
           coursePrice: true,
+          authorId: true,
           courseId: true,
         },
       });
@@ -254,6 +259,17 @@ export class PaymentManagemetService {
         homeDir,
         `${appConstant.homeDirName}/${appConstant.staticFileDirName}/${invoiceData.id}_invoice.pdf`
       );
+
+      let notificationData: ISendNotificationProps = {
+        notificationType: NotificationType.ENROLLED,
+        recipientId: String(courseDetail?.authorId),
+        subjectId: String(customerDetail.id),
+        subjectType: EntityType.USER,
+        objectId: String(courseDetail?.courseId),
+        objectType: EntityType.COURSE,
+      };
+
+      NotificationHandler.createNotification(notificationData);
 
       await new BillingService().sendInvoice(invoiceConfig, savePath);
 

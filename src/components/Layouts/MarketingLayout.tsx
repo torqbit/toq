@@ -4,7 +4,7 @@ import styles from "@/templates/standard/components/Hero/Hero.module.scss";
 import landingPage from "@/styles/Marketing/LandingPage/LandingPage.module.scss";
 import Head from "next/head";
 import { useAppContext } from "../ContextApi/AppContext";
-import { Avatar, Badge, Button, ConfigProvider, Dropdown, Flex, Popover, PopoverProps, Spin } from "antd";
+import { Avatar, Badge, Button, ConfigProvider, Dropdown, Flex, notification, Popover, PopoverProps, Spin } from "antd";
 import darkThemeConfig from "@/services/darkThemeConfig";
 import antThemeConfig from "@/services/antThemeConfig";
 import { DEFAULT_THEME, PageSiteConfig } from "@/services/siteConstant";
@@ -23,6 +23,9 @@ import NotificationList from "../Notification/NotificationList";
 import { useRouter } from "next/router";
 import appLayoutStyles from "@/styles/Layout2.module.scss";
 import { TooltipPlacement } from "antd/es/tooltip";
+import pushNotificationView from "../Notification/PushNotificationView";
+import type { NotificationArgsProps } from "antd";
+type NotificationPlacement = NotificationArgsProps["placement"];
 
 const MarketingLayout: FC<{
   children?: React.ReactNode;
@@ -47,7 +50,9 @@ const MarketingLayout: FC<{
 }) => {
   const { globalState, dispatch } = useAppContext();
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
-  const [openNotification, setOpenNotification] = useState(false);
+  const [showNotification, setOpenNotification] = useState(false);
+  const [api, contextHolder] = notification.useNotification();
+
   const router = useRouter();
   const { data: session } = useSession();
 
@@ -118,6 +123,63 @@ const MarketingLayout: FC<{
   };
 
   useEffect(() => {
+    let eventSource: EventSource;
+    if (user) {
+      eventSource = new EventSource("/api/v1/notification/push");
+
+      eventSource.addEventListener("open", (event) => {
+        console.log("Connection opened");
+      });
+
+      eventSource.addEventListener("message", (event) => {
+        try {
+          const data = JSON.parse(event.data);
+
+          const getNotificationView = pushNotificationView(data);
+
+          openNotification(
+            "topRight",
+            getNotificationView.message,
+            getNotificationView.description,
+            getNotificationView.targetLink
+          );
+        } catch (e) {
+          console.error("Error parsing message:", e);
+        }
+      });
+
+      eventSource.addEventListener("error", (error) => {
+        console.error("EventSource error:", error);
+        eventSource.close();
+      });
+    }
+    return () => {
+      if (eventSource) {
+        eventSource.close();
+      }
+    };
+  });
+
+  const openNotification = (
+    placement: NotificationPlacement,
+    message: React.ReactNode,
+    description: React.ReactNode,
+    targetLink?: string
+  ) => {
+    api.open({
+      message: message,
+      closeIcon: <i style={{ fontSize: 18, color: "var(--font-secondary)", lineHeight: 0 }}>{SvgIcons.xMark}</i>,
+      description: description,
+
+      style: { cursor: "pointer" },
+      placement,
+      onClick: () => {
+        targetLink && router.push(targetLink);
+      },
+    });
+  };
+
+  useEffect(() => {
     onCheckTheme();
   }, [siteConfig.brand?.defaultTheme]);
 
@@ -133,7 +195,7 @@ const MarketingLayout: FC<{
         placement={placement}
         title="Notifications"
         trigger="click"
-        open={openNotification}
+        open={showNotification}
         onOpenChange={setOpenNotification}
       >
         <Badge
@@ -259,6 +321,7 @@ const MarketingLayout: FC<{
         className={`${styles.heroWrapper} hero__wrapper`}
         style={{ minHeight: isMobile ? mobileHeroMinHeight : "60px" }}
       >
+        {contextHolder}
         {isMobile && user?.role == Role.STUDENT ? (
           <Flex
             style={{ width: "90vw", padding: "10px 0px" }}

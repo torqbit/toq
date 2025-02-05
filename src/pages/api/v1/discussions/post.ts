@@ -90,7 +90,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         activity: getFirstTextFromHTML(comment),
       };
 
-      await NotificationHandler.postQuery(notificationData);
+      await NotificationHandler.createNotification(notificationData);
 
       let commentData = {
         comment: addDiscussion.comment,

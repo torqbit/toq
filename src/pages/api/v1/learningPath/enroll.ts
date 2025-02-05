@@ -8,8 +8,10 @@ import { errorHandler } from "@/lib/api-middlewares/errorHandler";
 import { getToken } from "next-auth/jwt";
 import { getCookieName } from "@/lib/utils";
 import MailerService from "@/services/MailerService";
-import { CourseState, orderStatus } from "@prisma/client";
+import { CourseState, EntityType, NotificationType, orderStatus } from "@prisma/client";
 import { APIResponse } from "@/types/apis";
+import { ISendNotificationProps } from "@/types/notification";
+import NotificationHandler from "@/actions/notification";
 
 export const validateReqBody = z.object({
   pathId: z.number(),
@@ -64,6 +66,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         slug: true,
         title: true,
         banner: true,
+        authorId: true,
         learningPathCourses: {
           select: {
             courseId: true,
@@ -91,6 +94,17 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           },
         });
       });
+
+      let notificationData: ISendNotificationProps = {
+        notificationType: NotificationType.ENROLLED,
+        recipientId: learningPath?.authorId,
+        subjectId: String(token?.id),
+        subjectType: EntityType.USER,
+        objectId: String(reqBody.pathId),
+        objectType: EntityType.LEARNING_PATH,
+      };
+
+      NotificationHandler.createNotification(notificationData);
 
       const configData = {
         name: token.name,
