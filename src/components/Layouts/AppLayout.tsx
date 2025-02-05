@@ -392,7 +392,6 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
       message: message,
       description: description,
       placement,
-      // style: { backgroundColor: "var(--bg-primary)" },
       onClick: () => {
         targetLink && router.push(targetLink);
       },
