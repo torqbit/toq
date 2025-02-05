@@ -328,7 +328,7 @@ const AssignmentContentTab: FC<{
             <>
               <SubjectiveAssignmentView
                 subjectiveQuestion={subjectiveQuestion}
-                isCompleteBtnDisabled={isCompleteBtnDisabled}
+                isCompleteBtnDisabled={!!submissionDetail}
                 subjectiveAnswer={subjectiveAnswer}
                 onUploadFileUrl={(url) => setSubjectiveAnswer((prv) => ({ ...prv, answerArchiveUrl: url }))}
                 onChangeEditor={(v) => setSubjectiveAnswer((prv) => ({ ...prv, answerContent: v }))}
