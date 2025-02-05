@@ -27,7 +27,6 @@ import { Role } from "@prisma/client";
 const { Content } = Layout;
 
 import type { NotificationArgsProps } from "antd";
-import pushNotificationView from "../Notification/PushNotificationView";
 type NotificationPlacement = NotificationArgsProps["placement"];
 const Context = React.createContext({ name: "Default" });
 
@@ -356,15 +355,7 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
       eventSource.addEventListener("message", (event) => {
         try {
           const data = JSON.parse(event.data);
-
-          const getNotificationView = pushNotificationView(data);
-
-          openNotification(
-            "topRight",
-            getNotificationView.message,
-            getNotificationView.description,
-            getNotificationView.onClick
-          );
+          openNotification("topRight", data.title, data.description);
         } catch (e) {
           console.error("Error parsing message:", e);
         }
@@ -384,16 +375,13 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
 
   const openNotification = (
     placement: NotificationPlacement,
-    message: React.ReactNode,
-    description: React.ReactNode,
-    onClick?: () => void
+    message: string = "this is test title",
+    description: string = "this is test description"
   ) => {
-    api.open({
+    api.info({
       message: message,
       description: description,
       placement,
-      style: { backgroundColor: "var(--bg-primary)" },
-      onClick,
     });
   };
 

@@ -14,7 +14,7 @@ import { LoadingOutlined } from "@ant-design/icons";
 export interface IComment extends Discussion {
   comment: string;
   user: {
-    email: string;
+    id: string;
     name: string;
     image: string;
   };

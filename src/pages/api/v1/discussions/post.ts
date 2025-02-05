@@ -5,11 +5,9 @@ import { withAuthentication } from "@/lib/api-middlewares/with-authentication";
 import { errorHandler } from "@/lib/api-middlewares/errorHandler";
 import { getToken } from "next-auth/jwt";
 import { getCookieName } from "@/lib/utils";
-import { EntityType, NotificationType, ResourceContentType, Role } from "@prisma/client";
+import { Role } from "@prisma/client";
 import { getCourseAccessRole } from "@/actions/getCourseAccessRole";
 import NotificationHandler from "@/actions/notification";
-import { ISendNotificationProps } from "@/types/notification";
-import { getFirstTextFromHTML } from "@/lib/upload/utils";
 
 /**
  * Post a query
@@ -49,27 +47,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         },
         select: {
           id: true,
-          resource: {
-            select: {
-              contentType: true,
-              chapter: {
-                select: {
-                  course: {
-                    select: {
-                      authorId: true,
-                    },
-                  },
-                },
-              },
-            },
-          },
 
           user: {
             select: {
               id: true,
               name: true,
               image: true,
-              email: true,
             },
           },
           comment: true,
@@ -77,33 +60,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         },
       });
 
-      let notificationData: ISendNotificationProps = {
-        notificationType: NotificationType.POST_QUERY,
-        recipientId: addDiscussion.resource.chapter.course.authorId,
-        subjectId: String(token?.id),
-        subjectType: EntityType.USER,
-        objectId: String(addDiscussion.id),
-        objectType:
-          addDiscussion.resource.contentType === ResourceContentType.Video
-            ? EntityType.VIDEO_LESSON
-            : EntityType.ASSIGNMENT_LESSON,
-        activity: getFirstTextFromHTML(comment),
-      };
+      NotificationHandler.notificationForQuery(addDiscussion.id);
 
-      await NotificationHandler.postQuery(notificationData);
-
-      let commentData = {
-        comment: addDiscussion.comment,
-        user: {
-          name: addDiscussion.user.name,
-          image: addDiscussion.user.image,
-          email: addDiscussion.user.email,
-        },
-        id: addDiscussion.id,
-        createdAt: addDiscussion.createdAt,
-      };
-
-      return res.status(200).json({ success: true, comment: commentData, message: "Query has been posted" });
+      return res.status(200).json({ success: true, comment: addDiscussion, message: "Query has been posted" });
     } else {
       return res.status(400).json({ success: false, error: "You are not enrolled to this course" });
     }
