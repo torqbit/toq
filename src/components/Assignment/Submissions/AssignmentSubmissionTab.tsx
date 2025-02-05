@@ -102,7 +102,7 @@ const AssignmentSubmissionTab: FC<{
       AssignmentService.saveAssignment(
         submitData,
         (result) => {
-          messageApi.success({ content: result.message });
+          messageApi.success({ content: "Assignment saved successfully" });
           setSaveLoading(false);
           //   setRefresh(!refresh);
         },

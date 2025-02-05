@@ -15,9 +15,10 @@ const ViewAssignment: FC<{
   ResponsiveLessonItemsList: JSX.Element;
   assignmentFiles: string[];
   onNextLesson: (chapterSeqId: number) => void;
+  setLessonRefresh: () => void;
   updateAssignmentWatchedStatus: (chapterSeqId: number, lessonId: number) => void;
   chapterSeqId: number;
-}> = ({ lessonId, onNextLesson, chapterSeqId }) => {
+}> = ({ lessonId, onNextLesson, chapterSeqId, setLessonRefresh }) => {
   const isMax933Width = useMediaQuery({ query: "(max-width: 933px)" });
   const { globalState } = useAppContext();
 
@@ -36,7 +37,11 @@ const ViewAssignment: FC<{
   return (
     <section className={style.view_submit_assignment}>
       <div style={{ width: isMax933Width ? "auto" : getTabWidth(), transition: "all .4s ease" }}>
-        <AssignmentContentTab lessonId={lessonId} onNextLesson={() => onNextLesson(chapterSeqId)} />
+        <AssignmentContentTab
+          lessonId={lessonId}
+          onNextLesson={() => onNextLesson(chapterSeqId)}
+          setLessonRefresh={setLessonRefresh}
+        />
       </div>
     </section>
   );

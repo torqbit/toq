@@ -25,8 +25,9 @@ import SubjectiveAssignmentView from "./SubjectiveAssignment/SubjectiveAssignmen
 
 const AssignmentContentTab: FC<{
   lessonId?: number;
+  setLessonRefresh: () => void;
   onNextLesson: () => void;
-}> = ({ lessonId, onNextLesson }) => {
+}> = ({ lessonId, onNextLesson, setLessonRefresh }) => {
   const router = useRouter();
   const [assignmentDetail, setAssignmentDetail] = useState<IAssignmentDetail>();
   const [submissionDetail, setSubmissionDetail] = useState<IAssignmentSubmissionDetail | null>(null);
@@ -141,11 +142,10 @@ const AssignmentContentTab: FC<{
     }
 
     if (assignmentDetail?.content._type === AssignmentType.MCQ) {
-      if (!selectedAnswers && !selectedAnswers["1"]) {
+      if (Object.keys(selectedAnswers).length === 0) {
         return messageApi.info({ content: "You haven't complete any question" });
       }
     }
-
     setSaveLoading(true);
     try {
       let submitData: any = {
@@ -178,6 +178,7 @@ const AssignmentContentTab: FC<{
             setRefresh(!refresh);
             messageApi.success({ content: "Assignment saved successfully" });
           }
+          setLessonRefresh();
         },
         (error) => {
           messageApi.error({ content: error });
@@ -203,7 +204,6 @@ const AssignmentContentTab: FC<{
         setSaveLoading(false);
         setCurrentQuestionIndex(0);
         setRefresh(!refresh);
-
         message.success("Assignment evaluated successfully");
       },
       (error) => {

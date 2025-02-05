@@ -102,6 +102,7 @@ const LessonView: FC<{ siteConfig: PageSiteConfig; courseId: number; marketingLa
   const { globalState } = useAppContext();
   const [loading, setLoading] = useState<boolean>(false);
   const [markAsLoading, setMarkAsLoading] = useState<boolean>(false);
+  const [lessonRefresh, setLessonRefresh] = useState<boolean>(false);
 
   const [courseDetail, setCourseDetails] = useState<{
     name: string;
@@ -171,12 +172,19 @@ const LessonView: FC<{ siteConfig: PageSiteConfig; courseId: number; marketingLa
         chapterSeq: courseLessons[foundIndex]?.chapterSeq,
         lesson: courseLessons[foundIndex].lessons[currentLessonIndex + 1] as any,
       });
-    } else if (courseLessons[foundIndex + 1].chapterName) {
-      router.push(`/courses/${router.query.slug}/lesson/${courseLessons[foundIndex + 1].lessons[0].lessonId}`);
+    } else if (courseLessons[foundIndex + 1] && courseLessons[foundIndex + 1]?.chapterName) {
+      router.push(`/courses/${router.query.slug}/lesson/${courseLessons[foundIndex + 1]?.lessons[0].lessonId}`);
       setCurrentLesson({
         chapterName: courseLessons[foundIndex + 1]?.chapterName,
         chapterSeq: courseLessons[foundIndex + 1]?.chapterSeq,
-        lesson: courseLessons[foundIndex + 1].lessons[0] as any,
+        lesson: courseLessons[foundIndex + 1]?.lessons[0] as any,
+      });
+    } else {
+      router.push(`/courses/${router.query.slug}/lesson/${courseLessons[0]?.lessons[0].lessonId}`);
+      setCurrentLesson({
+        chapterName: courseLessons[0]?.chapterName,
+        chapterSeq: courseLessons[0]?.chapterSeq,
+        lesson: courseLessons[0]?.lessons[0] as any,
       });
     }
   };
@@ -285,7 +293,7 @@ const LessonView: FC<{ siteConfig: PageSiteConfig; courseId: number; marketingLa
 
   useEffect(() => {
     courseId && getLessonsDetail(Number(courseId));
-  }, [courseId]);
+  }, [courseId, lessonRefresh]);
 
   useEffect(() => {
     if (router.query.lessonId && courseLessons.length > 0) {
@@ -653,6 +661,7 @@ const LessonView: FC<{ siteConfig: PageSiteConfig; courseId: number; marketingLa
                         updateAssignmentWatchedStatus={updateAssignmentWatchedStatus}
                         chapterSeqId={Number(currentLesson.chapterSeq)}
                         onNextLesson={onNextLesson}
+                        setLessonRefresh={() => setLessonRefresh(!lessonRefresh)}
                       />
                     </div>
                   ) : (
