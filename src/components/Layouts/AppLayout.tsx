@@ -390,6 +390,7 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
   ) => {
     api.open({
       message: message,
+      closeIcon: <i style={{ fontSize: 18, color: "var(--font-secondary)", lineHeight: 0 }}>{SvgIcons.xMark}</i>,
       description: description,
       placement,
       onClick: () => {

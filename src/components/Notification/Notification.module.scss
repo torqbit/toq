@@ -1,0 +1,29 @@
+.notification__avatar {
+  border: 2px solid var(--bg-segment);
+  width: 40px;
+  height: 40px;
+}
+
+.message__wrapper {
+  display: flex;
+  gap: 10px;
+  width: 384px;
+  > div:last-child {
+    max-width: 270px;
+    span {
+      color: var(--font-primary);
+    }
+  }
+}
+@media only screen and (max-width: 435px) {
+  .notification__avatar {
+    width: 30px;
+    height: 30px;
+  }
+  .message__wrapper {
+    width: 300px;
+    > div:last-child {
+      max-width: 170px;
+    }
+  }
+}

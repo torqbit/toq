@@ -51,7 +51,7 @@ class NotificationsHandler {
     res.name AS lessonName, 
     usr.name AS subjectName, 
     usr.image AS subjectImage, 
-    co.slug AS courseSlug
+    co.slug AS courseSlug,
     res.resourceId AS lessonId
   FROM Discussion AS dis
   INNER JOIN Resource AS res ON dis.resourceId = res.resourceId

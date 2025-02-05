@@ -1,22 +1,23 @@
 import { DiscussionNotification } from "@/types/notification";
 import { UserOutlined } from "@ant-design/icons";
 import { Avatar, Flex } from "antd";
+import styles from "./Notification.module.scss";
 
 const PostQueryView = (info: DiscussionNotification) => {
   return {
     message: (
-      <Flex justify="space-between">
+      <div className={styles.message__wrapper} style={{ display: "flex", gap: 10 }}>
         <Avatar
-          style={{ border: "2px solid var(--bg-segment)", width: 40, height: 40 }}
           src={info.subject.image}
+          className={styles.notification__avatar}
           icon={<UserOutlined size={25} />}
           alt="Profile"
         />
-        <div style={{ maxWidth: "80%" }}>
-          <span style={{ color: "var(--font-primary" }}>{info.subject.name}</span> posted a query in -
-          <span style={{ color: "var(--font-primary" }}>{info.object.name}</span>
+        <div>
+          <span>{info.subject.name}</span> posted a query in
+          <span> {info.object.name}</span>
         </div>
-      </Flex>
+      </div>
     ),
     description: (
       <>
