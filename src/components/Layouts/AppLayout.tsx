@@ -363,7 +363,7 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
             "topRight",
             getNotificationView.message,
             getNotificationView.description,
-            getNotificationView.onClick
+            getNotificationView.targetLink
           );
         } catch (e) {
           console.error("Error parsing message:", e);
@@ -386,14 +386,15 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
     placement: NotificationPlacement,
     message: React.ReactNode,
     description: React.ReactNode,
-    onClick?: () => void
+    targetLink?: string
   ) => {
     api.open({
       message: message,
       description: description,
       placement,
-      style: { backgroundColor: "var(--bg-primary)" },
-      onClick,
+      onClick: () => {
+        targetLink && router.push(targetLink);
+      },
     });
   };
 

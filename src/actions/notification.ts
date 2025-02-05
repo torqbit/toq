@@ -52,6 +52,7 @@ class NotificationsHandler {
     usr.name AS subjectName, 
     usr.image AS subjectImage, 
     co.slug AS courseSlug
+    res.resourceId AS lessonId
   FROM Discussion AS dis
   INNER JOIN Resource AS res ON dis.resourceId = res.resourceId
   INNER JOIN User AS  usr ON dis.userId = usr.id
@@ -77,7 +78,7 @@ class NotificationsHandler {
         notificationType: detail.notificationType,
         activity: detail.activity || undefined,
         createdAt: detail.createdAt,
-        targetLink: `/courses/${rawData[0].courseSlug}/lesson/${detail.objectId}?tab=discussions&queryId=${rawData[0].discussionId}`,
+        targetLink: `/courses/${rawData[0].courseSlug}/lesson/${rawData[0].lessonId}?tab=discussions&queryId=${rawData[0].discussionId}`,
       };
       return new APIResponse(true, 200, "Detail has been fetched", response);
     } else {
