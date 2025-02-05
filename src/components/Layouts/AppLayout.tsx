@@ -359,7 +359,12 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
 
           const getNotificationView = pushNotificationView(data);
 
-          openNotification("topRight", getNotificationView.message, getNotificationView.description);
+          openNotification(
+            "topRight",
+            getNotificationView.message,
+            getNotificationView.description,
+            getNotificationView.onClick
+          );
         } catch (e) {
           console.error("Error parsing message:", e);
         }
@@ -380,13 +385,15 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
   const openNotification = (
     placement: NotificationPlacement,
     message: React.ReactNode,
-    description: React.ReactNode
+    description: React.ReactNode,
+    onClick?: () => void
   ) => {
     api.open({
       message: message,
       description: description,
       placement,
       style: { backgroundColor: "var(--bg-primary)" },
+      onClick,
     });
   };
 
