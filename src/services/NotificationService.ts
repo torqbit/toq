@@ -1,7 +1,9 @@
-import { Course, CourseNotification, Discussion } from "@prisma/client";
+import { Course, CourseNotification, Discussion, Notification } from "@prisma/client";
 
 import { getFetch, postFetch } from "./request";
 import { INotification } from "@/lib/types/discussions";
+import { APIResponse } from "@/types/apis";
+import { INotificationListDetail } from "@/types/notification";
 
 export interface ICourseList extends Course {
   courseId: number;
@@ -44,21 +46,13 @@ class NotificationService {
   getNotifications = (
     offSet: number | undefined,
     limit: number | undefined,
-    onSuccess: (response: ApiResponse) => void,
-    onFailure: (message: string) => void
+    onSuccess: (response: APIResponse<INotificationListDetail>) => void
   ) => {
     getFetch(`/api/v1/notification/get/notification?offSet=${offSet}&&limit=${limit}`).then((result) => {
-      if (result.status == 400) {
-        result.json().then((r) => {
-          const failedResponse = r as FailedApiResponse;
-          onFailure(failedResponse.error);
-        });
-      } else if (result.status == 200) {
-        result.json().then((r) => {
-          const apiResponse = r as ApiResponse;
-          onSuccess(apiResponse);
-        });
-      }
+      result.json().then((r) => {
+        const apiResponse = r as APIResponse<INotificationListDetail>;
+        onSuccess(apiResponse);
+      });
     });
   };
 

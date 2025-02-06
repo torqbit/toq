@@ -15,6 +15,11 @@
     }
   }
 }
+
+.badgeIndicator {
+  color: #fff !important;
+  background: var(--btn-primary) !important;
+}
 @media only screen and (max-width: 435px) {
   .notification__avatar {
     width: 30px;

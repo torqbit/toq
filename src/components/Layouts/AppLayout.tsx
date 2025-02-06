@@ -23,12 +23,12 @@ import { Theme } from "@/types/theme";
 import { PageSiteConfig } from "@/services/siteConstant";
 import { LoadingOutlined } from "@ant-design/icons";
 import { Role } from "@prisma/client";
+import NotificationView from "../Notification/NotificationView";
 
 const { Content } = Layout;
 
 import type { NotificationArgsProps } from "antd";
 
-import pushNotificationView from "../Notification/PushNotificationView";
 type NotificationPlacement = NotificationArgsProps["placement"];
 const Context = React.createContext({ name: "Default" });
 
@@ -93,13 +93,6 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
       link: "admin/settings",
       key: "settings",
     },
-    {
-      title: "Notifications",
-      icon: SvgIcons.notification,
-
-      link: "admin/notifications",
-      key: "notifications",
-    },
   ];
 
   const userMenu: MenuProps["items"] = [
@@ -126,22 +119,6 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
       label: <Link href="/events">Events</Link>,
       key: "events",
       icon: <i style={{ fontSize: 18 }}>{SvgIcons.events}</i>,
-    },
-
-    {
-      label: <Link href="/notifications">Notifications</Link>,
-      key: "notifications",
-      icon: (
-        <Badge
-          color="blue"
-          classNames={{ indicator: styles.badgeIndicator }}
-          count={globalState.notifications && globalState.notifications > 0 ? globalState.notifications : 0}
-          style={{ fontSize: 10, paddingTop: 1.5 }}
-          size="small"
-        >
-          <i style={{ lineHeight: 0, color: "var(--font-secondary)", fontSize: 18 }}>{SvgIcons.notification}</i>
-        </Badge>
-      ),
     },
   ];
 
@@ -187,23 +164,6 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
       key: "events",
       className: sidebar.menu__item,
       icon: <i style={{ fontSize: 18 }}>{SvgIcons.events}</i>,
-    },
-
-    {
-      label: <Link href="/notifications">Notifications</Link>,
-      key: "notifications",
-      className: sidebar.menu__item,
-      icon: (
-        <Badge
-          color="blue"
-          classNames={{ indicator: styles.badgeIndicator }}
-          count={globalState.notifications && globalState.notifications > 0 ? globalState.notifications : 0}
-          style={{ fontSize: 10, paddingTop: 1.5 }}
-          size="small"
-        >
-          <i style={{ lineHeight: 0, color: "var(--font-secondary)", fontSize: 18 }}>{SvgIcons.notification}</i>
-        </Badge>
-      ),
     },
   ];
 
@@ -358,14 +318,19 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
         try {
           const data = JSON.parse(event.data);
 
-          const getNotificationView = pushNotificationView(data);
+          const getNotificationView = NotificationView({ ...data, hasViewed: false });
+          dispatch({
+            type: "SET_UNREAD_NOTIFICATION",
+            payload: data.notificationCount || 0,
+          });
 
-          openNotification(
-            "topRight",
-            getNotificationView.message,
-            getNotificationView.description,
-            getNotificationView.targetLink
-          );
+          data.notificationType &&
+            openNotification(
+              "topRight",
+              getNotificationView.message,
+              getNotificationView.description,
+              getNotificationView.targetLink
+            );
         } catch (e) {
           console.error("Error parsing message:", e);
         }
@@ -394,7 +359,6 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
       closeIcon: <i style={{ fontSize: 18, color: "var(--font-secondary)", lineHeight: 0 }}>{SvgIcons.xMark}</i>,
       description: description,
       placement,
-      duration: 0,
       style: { cursor: "pointer" },
       onClick: () => {
         targetLink && router.push(targetLink);

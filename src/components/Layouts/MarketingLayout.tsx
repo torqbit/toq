@@ -19,12 +19,11 @@ import Link from "next/link";
 import ThemeSwitch from "../ThemeSwitch/ThemeSwitch";
 import SvgIcons from "../SvgIcons";
 import { signOut, useSession } from "next-auth/react";
-import NotificationList from "../Notification/NotificationList";
 import { useRouter } from "next/router";
 import appLayoutStyles from "@/styles/Layout2.module.scss";
-import { TooltipPlacement } from "antd/es/tooltip";
-import pushNotificationView from "../Notification/PushNotificationView";
 import type { NotificationArgsProps } from "antd";
+import NotificationPopOver from "../Notification/NotificationPopOver";
+import NotificationView from "../Notification/NotificationView";
 type NotificationPlacement = NotificationArgsProps["placement"];
 
 const MarketingLayout: FC<{
@@ -135,14 +134,19 @@ const MarketingLayout: FC<{
         try {
           const data = JSON.parse(event.data);
 
-          const getNotificationView = pushNotificationView(data);
+          const getNotificationView = NotificationView({ ...data, hasViewed: false });
+          dispatch({
+            type: "SET_UNREAD_NOTIFICATION",
+            payload: data.notificationCount || 0,
+          });
 
-          openNotification(
-            "topRight",
-            getNotificationView.message,
-            getNotificationView.description,
-            getNotificationView.targetLink
-          );
+          data.notificationType &&
+            openNotification(
+              "topRight",
+              getNotificationView.message,
+              getNotificationView.description,
+              getNotificationView.targetLink
+            );
         } catch (e) {
           console.error("Error parsing message:", e);
         }
@@ -183,36 +187,6 @@ const MarketingLayout: FC<{
     onCheckTheme();
   }, [siteConfig.brand?.defaultTheme]);
 
-  const NotificationPopUp: FC<{ placement: TooltipPlacement }> = ({ placement }) => {
-    return (
-      <Popover
-        style={{ marginTop: 2 }}
-        content={
-          <div style={{ minWidth: "40vw" }}>
-            <NotificationList siteConfig={siteConfig} />
-          </div>
-        }
-        placement={placement}
-        title="Notifications"
-        trigger="click"
-        open={showNotification}
-        onOpenChange={setOpenNotification}
-      >
-        <Badge
-          color="blue"
-          classNames={{ indicator: styles.badgeIndicator }}
-          count={globalState.notifications && globalState.notifications > 0 ? globalState.notifications : 0}
-          style={{ fontSize: 10, paddingTop: 1.5 }}
-          size="small"
-        >
-          <i style={{ lineHeight: 0, color: "var(--font-secondary)", fontSize: 20, cursor: "pointer" }}>
-            {SvgIcons.notification}
-          </i>
-        </Badge>
-      </Popover>
-    );
-  };
-
   const getNavBarExtraContent = (userRole?: Role) => {
     let showThemeSwitch = siteConfig.brand?.themeSwitch;
 
@@ -239,7 +213,13 @@ const MarketingLayout: FC<{
                   <ThemeSwitch activeTheme={globalState.theme ?? "light"} previewMode={previewMode} />
                 )}
 
-                <NotificationPopUp placement="bottomLeft" />
+                <NotificationPopOver
+                  minWidth={isMobile ? "300px" : "420px"}
+                  placement="bottomLeft"
+                  siteConfig={siteConfig}
+                  showNotification={showNotification}
+                  onOpenNotification={setOpenNotification}
+                />
               </Flex>
               <Dropdown
                 menu={{
@@ -336,7 +316,13 @@ const MarketingLayout: FC<{
               </Flex>
             </Link>
             <Flex align="center" gap={10}>
-              <NotificationPopUp placement="bottomRight" />
+              <NotificationPopOver
+                placement="bottomLeft"
+                minWidth="420px"
+                siteConfig={siteConfig}
+                showNotification={showNotification}
+                onOpenNotification={setOpenNotification}
+              />
 
               <Dropdown
                 className={appLayoutStyles.mobileUserMenu}

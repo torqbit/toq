@@ -614,12 +614,27 @@
   }
 }
 
+.notification__page__wrapper {
+  max-width: fit-content;
+  padding: 20px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+
+  background-color: var(--bg-primary);
+}
+
 @media only screen and (max-width: 933px) and (orientation: landscape) {
   .setting_content,
   .course_content,
   .dashboard_content {
     margin-left: 60px;
     padding: 20px 20px 20px 40px;
+  }
+  .notification__page__wrapper {
+    max-width: 80vw;
   }
   .courseContainer {
     padding: 20px 20px 0px 40px;

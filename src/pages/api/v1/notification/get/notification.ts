@@ -7,78 +7,8 @@ import { errorHandler } from "@/lib/api-middlewares/errorHandler";
 import { getToken } from "next-auth/jwt";
 import { getCookieName } from "@/lib/utils";
 
-export const getNotifi = async (userId: string, limit: number, offSet: number) => {
-  return await prisma.notification.findMany({
-    where: {
-      toUserId: userId,
-      NOT: {
-        fromUserId: userId,
-      },
-    },
-    include: {
-      comment: {
-        select: {
-          comment: true,
-          resourceId: true,
-          parentCommentId: true,
-        },
-      },
-      resource: {
-        include: {
-          chapter: {
-            select: {
-              courseId: true,
-              course: {
-                select: {
-                  slug: true,
-                },
-              },
-            },
-          },
-        },
-      },
-
-      tagComment: {
-        select: {
-          comment: true,
-          resource: {
-            select: {
-              resourceId: true,
-              chapter: {
-                select: {
-                  courseId: true,
-                  chapterId: true,
-                  course: {
-                    select: {
-                      slug: true,
-                    },
-                  },
-                },
-              },
-            },
-          },
-          user: {
-            select: {
-              name: true,
-              image: true,
-            },
-          },
-        },
-      },
-      fromUser: {
-        select: {
-          name: true,
-          image: true,
-        },
-      },
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-    skip: offSet,
-    take: limit,
-  });
-};
+import NotificationHandler from "@/actions/notification";
+import { APIResponse } from "@/types/apis";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
@@ -91,23 +21,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       cookieName,
     });
 
-    const notifications = token?.id && (await getNotifi(token?.id, Number(limit), Number(offSet)));
+    if (token) {
+      const notificationData = await NotificationHandler.getAllNotifications(token.id, Number(limit), Number(offSet));
 
-    if (notifications && notifications.length > 0) {
-      const notificationsCount = await prisma.notification.count({
-        where: {
-          toUserId: token.id,
-          NOT: {
-            fromUserId: token.id,
-          },
-        },
-      });
-      return res.status(200).json({ success: true, notifications, notificationsCount });
+      return res.status(notificationData.status).json(notificationData);
     } else {
-      res.status(400).json({ success: false, error: "No notifications" });
+      res.status(404).json(new APIResponse(false, 404, "No notifications has been found"));
     }
   } catch (err) {
-    console.log(err);
     return errorHandler(err, res);
   }
 };

@@ -1,4 +1,4 @@
-import { NotificationType, EntityType } from "@prisma/client";
+import { NotificationType, EntityType, Notification } from "@prisma/client";
 
 export interface ISendNotificationProps {
   notificationType: NotificationType;
@@ -10,8 +10,14 @@ export interface ISendNotificationProps {
   activity?: string;
 }
 
+export interface INotificationListDetail {
+  list: DiscussionNotification[];
+  notificationsCount: number;
+}
+
 export interface NotificationPreview {
   notificationType: NotificationType;
+  hasViewed?: boolean;
   createdAt: Date;
 }
 
