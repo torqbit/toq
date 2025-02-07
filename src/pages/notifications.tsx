@@ -12,10 +12,10 @@ import { Role } from "@prisma/client";
 const Dashboard: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   return (
     <AppLayout siteConfig={siteConfig}>
-      <section className={styles.dashboard_content}>
+      <section className={styles.notification__page__wrapper}>
         <h3>Notifications</h3>
 
-        <NotificationList siteConfig={siteConfig} />
+        <NotificationList popOver={false} limit={10} siteConfig={siteConfig} />
       </section>
     </AppLayout>
   );

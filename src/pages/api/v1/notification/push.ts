@@ -31,16 +31,26 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     res.write("event: open\ndata: connected\n\n");
 
     // Function to send events
-    const sendEvent = (data: any) => {
+    const sendEvent = (data: any, notificationCount: number) => {
       startTime = new Date();
-      res.write(`data: ${JSON.stringify(data)}\n\n`);
+      res.write(`data: ${JSON.stringify({ ...data, notificationCount })}\n\n`);
     };
 
     let startTime = new Date();
     const intervalId = setInterval(async () => {
-      const notifications = token?.id && (await notificationHandler.fetchPushNotificaton(token?.id, startTime));
-      if (notifications && notifications.success) {
-        sendEvent(notifications.body);
+      if (token?.id) {
+        const unReadNotifications = await prisma.notification.count({
+          where: {
+            recipientId: token?.id,
+            hasViewed: false,
+          },
+        });
+        const notifications = await notificationHandler.fetchPushNotificaton(token?.id, startTime);
+        if (notifications && notifications.success) {
+          sendEvent(notifications.body, unReadNotifications);
+        } else {
+          res.write(`data: ${JSON.stringify({ notificationCount: unReadNotifications })}\n\n`);
+        }
       }
     }, 3000);
 

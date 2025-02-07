@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
 import { APIResponse } from "@/types/apis";
-import { DiscussionNotification, ISendNotificationProps } from "@/types/notification";
+import { DiscussionNotification, INotificationListDetail, ISendNotificationProps } from "@/types/notification";
 import { EntityType, Notification, NotificationType } from "@prisma/client";
 
 class NotificationsHandler {
@@ -14,8 +14,6 @@ class NotificationsHandler {
 
     return new APIResponse(true, 200, "Notification has been created");
   }
-
-  async queryReplied(data: ISendNotificationProps) {}
 
   async fetchPushNotificaton(userId: string, createTime: Date): Promise<APIResponse<any>> {
     const res = await prisma.notification.findFirst({
@@ -45,6 +43,57 @@ class NotificationsHandler {
       }
     } else {
       return new APIResponse(false, 404, "No notification found");
+    }
+  }
+
+  async getAllNotifications(
+    userId: string,
+    limit: number,
+    offSet: number
+  ): Promise<APIResponse<INotificationListDetail>> {
+    let totalNotifications = 0;
+    const allNotifications = await prisma.notification.findMany({
+      where: {
+        recipientId: userId,
+      },
+
+      orderBy: {
+        createdAt: "desc",
+      },
+      skip: offSet,
+      take: limit,
+    });
+    if (allNotifications && allNotifications.length > 0) {
+      totalNotifications = await prisma.notification.count({
+        where: {
+          recipientId: userId,
+        },
+      });
+
+      let detail = await Promise.all(
+        allNotifications.map((res) => {
+          switch (res.notificationType) {
+            case NotificationType.POST_QUERY:
+              return this.discussionViewDetail(res);
+            case NotificationType.REPLY_QUERY:
+              return this.discussionViewDetail(res);
+
+            case NotificationType.ENROLLED:
+              return this.enrolledViewDetail(res);
+            default:
+              return this.discussionViewDetail(res);
+          }
+        })
+      );
+
+      const list = detail && detail.length > 0 ? detail.map((d) => d.body as DiscussionNotification) : [];
+
+      return new APIResponse(true, 200, "Notification list has been fetched", {
+        list: list,
+        notificationsCount: totalNotifications,
+      });
+    } else {
+      return new APIResponse(false, 404, "No Notification found");
     }
   }
 
@@ -94,6 +143,7 @@ class NotificationsHandler {
 
         createdAt: detail.createdAt,
         targetLink,
+        hasViewed: detail.hasViewed,
       };
       return new APIResponse(true, 200, "Detail has been fetched", response);
     } else {
@@ -152,6 +202,7 @@ class NotificationsHandler {
         activity: detail.activity || undefined,
         createdAt: detail.createdAt,
         targetLink,
+        hasViewed: detail.hasViewed,
       };
       return new APIResponse(true, 200, "Detail has been fetched", response);
     } else {

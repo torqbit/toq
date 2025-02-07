@@ -5,7 +5,7 @@ import EnrolledView from "./EnrolledView";
 
 // create separate components
 
-const pushNotificationView = (
+const NotificationView = (
   detail: any
 ): { message: React.ReactNode; description: React.ReactNode; targetLink?: string } => {
   switch (detail.notificationType) {
@@ -26,4 +26,4 @@ const pushNotificationView = (
   }
 };
 
-export default pushNotificationView;
+export default NotificationView;

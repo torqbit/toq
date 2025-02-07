@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useState } from "react";
 import styles from "../../styles/Sidebar.module.scss";
 import { Avatar, Button, Dropdown, Flex, Layout, Menu, MenuProps, Modal, Space, Tooltip } from "antd";
 
@@ -12,6 +12,7 @@ import Feedback from "../Feedback/Feedback";
 
 import { Theme } from "@/types/theme";
 import { PageSiteConfig } from "@/services/siteConstant";
+import NotificationPopOver from "../Notification/NotificationPopOver";
 
 const { Sider } = Layout;
 
@@ -19,6 +20,8 @@ const Sidebar: FC<{ menu: MenuProps["items"]; siteConfig: PageSiteConfig }> = ({
   const { data: user, status, update } = useSession();
   const { globalState, dispatch } = useAppContext();
   const { brand } = siteConfig;
+
+  const [showNotification, setOpenNotification] = useState(false);
 
   const [modal, contextWrapper] = Modal.useModal();
 
@@ -131,18 +134,14 @@ const Sidebar: FC<{ menu: MenuProps["items"]; siteConfig: PageSiteConfig }> = ({
 
             <Feedback />
 
-            <Tooltip className={styles.actionTooltip} title={"Join Discord"}>
-              <Link href={"https://discord.gg/DHU38pGw7C"} target="_blank">
-                <i
-                  style={{
-                    fontSize: 20,
-                    lineHeight: 0,
-                    cursor: "pointer",
-                  }}
-                >
-                  {SvgIcons.discord}
-                </i>
-              </Link>
+            <Tooltip className={styles.actionTooltip} title={"View Notifications"}>
+              <NotificationPopOver
+                minWidth="420px"
+                placement="topRight"
+                siteConfig={siteConfig}
+                showNotification={showNotification}
+                onOpenNotification={setOpenNotification}
+              />
             </Tooltip>
           </Flex>
         )}
