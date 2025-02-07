@@ -112,7 +112,7 @@ class NotificationsHandler {
       WHERE co.courseId = ${detail.objectId} 
       LIMIT 1;
     `;
-      targetLink = `academy/course/${detail.objectId}/manage`;
+      targetLink = `/academy/course/${detail.objectId}/manage`;
     } else {
       rawData = await prisma.$queryRaw<any[]>`
       SELECT 
@@ -124,7 +124,7 @@ class NotificationsHandler {
       WHERE lPath.id = ${detail.objectId} 
       LIMIT 1;
     `;
-      targetLink = `academy/path/${detail.objectId}/manage`;
+      targetLink = `/academy/path/${detail.objectId}/manage`;
     }
 
     if (rawData.length > 0) {

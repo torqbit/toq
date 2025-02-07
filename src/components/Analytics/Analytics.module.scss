@@ -34,3 +34,31 @@
     margin: 0;
   }
 }
+
+.analytic__view__wrapper {
+  max-width: var(--container-width);
+  .analytics__stats__wrapper {
+    padding: 10px 0px;
+    display: grid;
+    gap: 40px;
+    grid-template-columns: repeat(auto-fill, 250px);
+    p {
+      margin: 0;
+    }
+
+    .stats {
+      background-color: var(--bg-primary);
+      p {
+        margin: 0;
+      }
+      h2 {
+        margin: 0 0 10px 0;
+        color: var(--font-secondary);
+      }
+      i {
+        font-size: 14px;
+        line-height: 0;
+      }
+    }
+  }
+}

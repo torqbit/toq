@@ -42,6 +42,14 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const siteConfig = getSiteConfig();
   const { site } = siteConfig;
   if (user) {
+    if (user.role === Role.STUDENT) {
+      return {
+        redirect: {
+          permanent: false,
+          destination: "/",
+        },
+      };
+    }
     return {
       props: {
         siteConfig: site,
