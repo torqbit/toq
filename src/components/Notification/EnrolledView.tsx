@@ -28,6 +28,7 @@ const EnrolledView = (info: DiscussionNotification) => {
       </div>
     ),
     description: <></>,
+    objectId: info.object.id,
     targetLink: info.targetLink,
   };
 };

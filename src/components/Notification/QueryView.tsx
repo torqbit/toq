@@ -32,14 +32,15 @@ const QueryView = (info: DiscussionNotification) => {
     description: (
       <>
         {info.activity ? (
-          <div style={{ padding: 10, borderRadius: 4, backgroundColor: "var(--bg-secondary)" }}>
-            <p style={{ textAlign: "left" }}>{info.activity}</p>
+          <div className={styles.description__wrapper}>
+            <p>{info.activity}</p>
           </div>
         ) : (
           <></>
         )}
       </>
     ),
+    objectId: info.object.id,
     targetLink: info.targetLink,
   };
 };

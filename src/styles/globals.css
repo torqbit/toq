@@ -33,7 +33,7 @@ h6 {
 }
 
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 /* Track */
@@ -43,12 +43,15 @@ h6 {
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: var(--btn-primary);
+  /* background: var(--btn-primary); */
+  background: var(--bg-scroll-bar);
+
+  border-radius: 30px;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: var(--font-secondary);
 }
 
 a {
@@ -86,7 +89,7 @@ p {
   --bg-selected-segment: #fff;
 
   --marketing-container-width: 1200px;
-
+  --bg-scroll-bar: #d5d5d5;
   --container-width: 1000px;
   --bg-content-form: #f5f5f5;
   --icon-color: #b7b4b4;
@@ -148,6 +151,8 @@ p {
   --bg-selected-segment: #202433;
   --bg-content-form: #202433;
   --font-mktg-secondary: #c8cddd;
+  --bg-scroll-bar: #555;
+
   --segment-bg: #151823;
   --strike: #caa3ae;
   --placeholder: #a3a3a3;

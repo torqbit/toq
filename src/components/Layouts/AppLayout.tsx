@@ -28,9 +28,9 @@ import NotificationView from "../Notification/NotificationView";
 const { Content } = Layout;
 
 import type { NotificationArgsProps } from "antd";
+import { getFetch } from "@/services/request";
 
 type NotificationPlacement = NotificationArgsProps["placement"];
-const Context = React.createContext({ name: "Default" });
 
 const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig: PageSiteConfig }> = ({
   children,
@@ -45,6 +45,7 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
   const [comment, setComment] = useState<string>("");
   const [api, contextHolder] = notification.useNotification();
   const { brand } = siteConfig;
+  const [messageApi, contextMessageHolder] = message.useMessage();
 
   const [conversationLoading, setConversationLoading] = useState<{
     postLoading: boolean;
@@ -318,7 +319,7 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
         try {
           const data = JSON.parse(event.data);
 
-          const getNotificationView = NotificationView({ ...data, hasViewed: false });
+          const getNotificationView = NotificationView({ ...data, hasViewed: true });
           dispatch({
             type: "SET_UNREAD_NOTIFICATION",
             payload: data.notificationCount || 0,
@@ -329,6 +330,7 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
               "topRight",
               getNotificationView.message,
               getNotificationView.description,
+              getNotificationView.objectId,
               getNotificationView.targetLink
             );
         } catch (e) {
@@ -348,10 +350,22 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
     };
   });
 
+  const updateNotification = async (id: number, targetLink?: string) => {
+    try {
+      let apiPath = `/api/v1/notification/update/${id}`;
+      getFetch(apiPath);
+
+      targetLink && router.push(targetLink);
+    } catch (err) {
+      messageApi.error(`${err}`);
+    }
+  };
+
   const openNotification = (
     placement: NotificationPlacement,
     message: React.ReactNode,
     description: React.ReactNode,
+    objectId?: string,
     targetLink?: string
   ) => {
     api.open({
@@ -361,7 +375,7 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
       placement,
       style: { cursor: "pointer" },
       onClick: () => {
-        targetLink && router.push(targetLink);
+        objectId && updateNotification(Number(objectId), targetLink);
       },
     });
   };
@@ -471,6 +485,7 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
       </Head>
       <Spin spinning={globalState.pageLoading} indicator={<LoadingOutlined spin />} size="large">
         {contextHolder}
+        {contextMessageHolder}
         {globalState.onlineStatus ? (
           <Layout hasSider className="default-container">
             <Sidebar menu={user?.role && user.role == Role.ADMIN ? adminMenu : userMenu} siteConfig={siteConfig} />

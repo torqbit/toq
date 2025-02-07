@@ -16,6 +16,20 @@
   }
 }
 
+.description__wrapper {
+  padding: 10px;
+  border-radius: 4px;
+  background-color: var(--bg-secondary);
+  p {
+    text-align: left;
+    -webkit-line-clamp: 2;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
 .badgeIndicator {
   color: #fff !important;
   background: var(--btn-primary) !important;

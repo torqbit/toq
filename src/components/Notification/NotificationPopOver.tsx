@@ -1,11 +1,12 @@
-import { Badge, Popover } from "antd";
+import { Badge, Button, Flex, message, Popover } from "antd";
 import { TooltipPlacement } from "antd/es/tooltip";
-import { FC } from "react";
+import { FC, useState } from "react";
 import SvgIcons from "../SvgIcons";
 import { useAppContext } from "../ContextApi/AppContext";
 import { PageSiteConfig } from "@/services/siteConstant";
 import styles from "./Notification.module.scss";
 import NotificationList from "./NotificationList";
+import NotificationService from "@/services/NotificationService";
 
 const NotificationPopOver: FC<{
   minWidth: string;
@@ -15,6 +16,25 @@ const NotificationPopOver: FC<{
   onOpenNotification: (value: boolean) => void;
 }> = ({ placement, siteConfig, minWidth, showNotification, onOpenNotification }) => {
   const { globalState } = useAppContext();
+  const [markLoading, setMarkLoading] = useState<boolean>(false);
+  const [totalNotifications, setTotalNotifications] = useState<number>(0);
+
+  const [messageApi, contextHolder] = message.useMessage();
+  const onMarkAll = () => {
+    setMarkLoading(true);
+
+    NotificationService.markAllRead(
+      (result) => {
+        messageApi.success("All notification has been read");
+        setMarkLoading(false);
+      },
+      (error) => {
+        messageApi.error(error);
+        setMarkLoading(false);
+      }
+    );
+  };
+  const isDisabled = !globalState.notifications || globalState.notifications === 0;
   return (
     <Popover
       style={{
@@ -24,15 +44,32 @@ const NotificationPopOver: FC<{
         border: "1px solid var(--border-color)",
       }}
       content={
-        <div style={{ minWidth, height: "70vh", overflowY: "auto" }}>
-          <NotificationList popOver siteConfig={siteConfig} limit={5} />
+        <div style={{ minWidth, height: "70vh", overflowY: "auto", padding: "0 10px" }}>
+          <NotificationList
+            popOver={showNotification}
+            setOpenNotification={onOpenNotification}
+            setTotalNotifications={setTotalNotifications}
+            siteConfig={siteConfig}
+            limit={5}
+          />
         </div>
+      }
+      title={
+        <Flex style={{ padding: "0 10px" }} align="center" justify="space-between">
+          <h4>Notifications</h4>
+          {totalNotifications > 0 && (
+            <Button disabled={isDisabled} loading={markLoading} onClick={onMarkAll} style={{ height: 32 }} size="small">
+              {isDisabled ? "All read" : "Mark all as read"}
+            </Button>
+          )}
+        </Flex>
       }
       placement={placement}
       trigger="click"
       open={showNotification}
       onOpenChange={onOpenNotification}
     >
+      {contextHolder}
       <Badge
         color="blue"
         classNames={{ indicator: styles.badgeIndicator }}

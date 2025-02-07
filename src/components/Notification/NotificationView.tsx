@@ -7,7 +7,7 @@ import EnrolledView from "./EnrolledView";
 
 const NotificationView = (
   detail: any
-): { message: React.ReactNode; description: React.ReactNode; targetLink?: string } => {
+): { message: React.ReactNode; description: React.ReactNode; objectId?: string; targetLink?: string } => {
   switch (detail.notificationType) {
     case NotificationType.POST_QUERY:
       let info = detail as DiscussionNotification;
