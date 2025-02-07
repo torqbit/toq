@@ -5,7 +5,7 @@ import { AnalyticsDuration, AnalyticsType, IAnalyticResponse, IAnalyticStats } f
 import AnalyticsService from "@/services/AnalyticsService";
 import AnalyticView from "@/components/Analytics/AnalyticView";
 
-const AdminDashboard: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
+const ProductManage: FC<{ siteConfig: PageSiteConfig; productId: number }> = ({ siteConfig, productId }) => {
   const [messageApi, contextHolder] = message.useMessage();
   const [loadingOverview, setLoadingOverview] = useState<boolean>(false);
   const [loadingAnalytics, setLoadingAnalytics] = useState<boolean>(false);
@@ -15,24 +15,25 @@ const AdminDashboard: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const [analyticStats, setAnalyticStat] = useState<IAnalyticResponse>();
 
   const handleAnalytics = (duration: AnalyticsDuration, type: AnalyticsType) => {
-    setLoadingAnalytics(true);
-    AnalyticsService.analyticStats(
-      duration,
-      type,
-      (result) => {
-        setAnalyticStat(result);
-        setLoadingAnalytics(false);
-      },
-      (error) => {
-        messageApi.error(error);
-        setLoadingAnalytics(false);
-      }
-    );
+    // setLoadingAnalytics(true);
+    // AnalyticsService.analyticStats(
+    //   duration,
+    //   type,
+    //   (result) => {
+    //     setAnalyticStat(result);
+    //     setLoadingAnalytics(false);
+    //   },
+    //   (error) => {
+    //     messageApi.error(error);
+    //     setLoadingAnalytics(false);
+    //   }
+    // );
   };
 
   useEffect(() => {
     setLoadingOverview(true);
-    AnalyticsService.overviewStats(
+    AnalyticsService.overviewStatsByProduct(
+      productId,
       (result) => {
         setOverViewStat(result);
         handleAnalytics("month", "Earnings");
@@ -61,4 +62,4 @@ const AdminDashboard: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   );
 };
 
-export default AdminDashboard;
+export default ProductManage;

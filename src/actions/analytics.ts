@@ -44,6 +44,69 @@ class Analytics {
     }
   }
 
+  async getOverviewDetailsByProduct(productId: number): Promise<APIResponse<IAnalyticStats[]>> {
+    const earningDetail = await this.getEarningByProduct(productId);
+    const enrollmentDetail = await this.getEnrollmentsByProduct(productId);
+    const usersDetail = await this.getActiveUsersByProduct(productId);
+
+    let overviewStats: IAnalyticStats[] = [
+      {
+        type: "Earnings",
+        total: `${earningDetail.body?.totalEarning}`,
+        comparedPercentage: Number(earningDetail.body?.comparedPercentage),
+      },
+      {
+        type: "Enrollments",
+        total: `${enrollmentDetail.body?.totalEnrollment}`,
+        comparedPercentage: Number(enrollmentDetail.body?.comparedPercentage),
+      },
+      {
+        type: "Users",
+        total: `${usersDetail.body?.totalUsers}`,
+        comparedPercentage: Number(usersDetail.body?.comparedPercentage),
+      },
+    ];
+
+    if (earningDetail.success && enrollmentDetail.success && usersDetail.success) {
+      return new APIResponse(true, 200, "Overview has been fetched successfully", overviewStats);
+    } else {
+      return new APIResponse(false, 404, "Overview stats not found");
+    }
+  }
+  async getEarningByProduct(productId: number): Promise<APIResponse<IEarningResponse>> {
+    const result = await prisma.$queryRaw<IResponseStats[]>`
+    SELECT 
+      (SELECT COALESCE(SUM(amount), 0) 
+       FROM \`Order\` 
+       WHERE orderStatus = ${orderStatus.SUCCESS} AND productId = ${productId}) AS total,
+  
+      (SELECT COALESCE(SUM(amount), 0) 
+       FROM \`Order\` 
+       WHERE updatedAt >= DATE_FORMAT(CURDATE(), '%Y-%m-01')  
+       AND updatedAt < DATE_FORMAT(DATE_ADD(CURDATE(), INTERVAL 1 MONTH), '%Y-%m-01') 
+       AND orderStatus = ${orderStatus.SUCCESS} 
+       AND productId = ${productId}) AS current,
+  
+      (SELECT COALESCE(SUM(amount), 0) 
+       FROM \`Order\`
+       WHERE updatedAt >= DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 1 MONTH), '%Y-%m-01') 
+       AND updatedAt < DATE_FORMAT(CURDATE(), '%Y-%m-01') 
+       AND orderStatus = ${orderStatus.SUCCESS} 
+       AND productId = ${productId}) AS previous;
+  `;
+
+    if (result.length > 0) {
+      return new APIResponse(true, 200, "", {
+        totalEarning: result[0].total,
+        comparedPercentage: compareByPercentage(result[0].current, result[0].previous),
+      });
+    } else {
+      return new APIResponse(true, 200, "Earnings Data not found", {
+        totalEarning: 0,
+        comparedPercentage: 0,
+      });
+    }
+  }
   async getTotalEarning(): Promise<APIResponse<IEarningResponse>> {
     const result = await prisma.$queryRaw<IResponseStats[]>` 
     SELECT 
@@ -98,6 +161,68 @@ class Analytics {
     } else {
       return new APIResponse(true, 200, "Enrollment Data not found", {
         totalEnrollment: 0,
+        comparedPercentage: 0,
+      });
+    }
+  }
+  async getEnrollmentsByProduct(productId: number): Promise<APIResponse<IEnrollmentResponse>> {
+    const enrollmentsResult = await prisma.$queryRaw<IResponseStats[]>`
+    SELECT 
+      (SELECT COALESCE(COUNT(*), 0) 
+       FROM \`Order\` 
+       WHERE productId = ${productId} AND orderStatus = ${orderStatus.SUCCESS}) AS total,
+  
+      (SELECT COALESCE(COUNT(*), 0) 
+       FROM \`Order\` 
+       WHERE createdAt >= DATE_FORMAT(CURDATE(), '%Y-%m-01') 
+       AND createdAt < DATE_FORMAT(DATE_ADD(CURDATE(), INTERVAL 1 MONTH), '%Y-%m-01') 
+       AND productId = ${productId} 
+       AND orderStatus = ${orderStatus.SUCCESS}) AS current,
+  
+      (SELECT COALESCE(COUNT(*), 0) 
+       FROM \`Order\` 
+       WHERE createdAt >= DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 1 MONTH), '%Y-%m-01') 
+       AND createdAt < DATE_FORMAT(CURDATE(), '%Y-%m-01') 
+       AND productId = ${productId} 
+       AND orderStatus = ${orderStatus.SUCCESS}) AS previous;
+  `;
+    if (enrollmentsResult.length > 0) {
+      return new APIResponse(true, 200, "", {
+        totalEnrollment: Number(enrollmentsResult[0].total),
+        comparedPercentage: compareByPercentage(
+          Number(enrollmentsResult[0].current),
+          Number(enrollmentsResult[0].previous)
+        ),
+      });
+    } else {
+      return new APIResponse(true, 200, "Enrollment Data not found", {
+        totalEnrollment: 0,
+        comparedPercentage: 0,
+      });
+    }
+  }
+  async getActiveUsersByProduct(productId: number): Promise<APIResponse<IUsersResponse>> {
+    const usersResult = await prisma.$queryRaw<IResponseStats[]>`
+    SELECT 
+    (SELECT COALESCE(COUNT(*), 0) 
+     FROM CourseProgress 
+     WHERE createdAt >= DATE_FORMAT(CURDATE(), '%Y-%m-01') 
+     AND createdAt < DATE_FORMAT(DATE_ADD(CURDATE(), INTERVAL 1 MONTH), '%Y-%m-01') AND courseId = ${productId}   ) AS current,
+
+    (SELECT COALESCE(COUNT(*), 0) 
+     FROM CourseProgress 
+     WHERE createdAt >= DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 1 MONTH), '%Y-%m-01') 
+     AND createdAt < DATE_FORMAT(CURDATE(), '%Y-%m-01') AND courseId = ${productId} ) AS previous ;
+
+   `;
+    if (usersResult.length > 0) {
+      return new APIResponse(true, 200, "", {
+        totalUsers: Number(usersResult[0].current),
+        comparedPercentage: compareByPercentage(Number(usersResult[0].current), Number(usersResult[0].previous)),
+      });
+    } else {
+      return new APIResponse(true, 200, "User Data not found", {
+        totalUsers: 0,
         comparedPercentage: 0,
       });
     }

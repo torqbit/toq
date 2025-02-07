@@ -103,6 +103,18 @@ class AnalyticsSerivce {
       });
     });
   };
+  overviewStatsByProduct = (
+    productId: number,
+    onSuccess: (response: IAnalyticStats[]) => void,
+    onFailure: (message: string) => void
+  ) => {
+    getFetch(`/api/v1/course/${productId}/analytics/overview`).then((result) => {
+      result.json().then((r) => {
+        const apiResponse = r as APIResponse<IAnalyticStats[]>;
+        apiResponse.body ? onSuccess(apiResponse.body) : onFailure(`${apiResponse.error}`);
+      });
+    });
+  };
   analyticStats = (
     duration: AnalyticsDuration,
     type: AnalyticsType,
