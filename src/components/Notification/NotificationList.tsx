@@ -1,19 +1,12 @@
 import React, { FC, useState } from "react";
 import styles from "./Notification.module.scss";
-import { useSession } from "next-auth/react";
-import { Avatar, Badge, Button, Divider, Flex, List, Skeleton } from "antd";
+import { Button, Divider, Flex, Skeleton } from "antd";
 
-import Link from "next/link";
-import { truncateString } from "@/services/helper";
 import moment from "moment";
 import NotificationService from "@/services/NotificationService";
-import { INotification } from "@/lib/types/discussions";
-import { DummydataList, getDummyArray } from "@/lib/dummyData";
+import { getDummyArray } from "@/lib/dummyData";
 import { useRouter } from "next/router";
 import { getFetch } from "@/services/request";
-import { UserOutlined } from "@ant-design/icons";
-import PurifyContent from "@/components/PurifyContent/PurifyContent";
-
 import { PageSiteConfig } from "@/services/siteConstant";
 import { EmptyNotification } from "@/components/SvgIcons";
 import { useAppContext } from "@/components/ContextApi/AppContext";
@@ -21,15 +14,15 @@ import { getIconTheme } from "@/services/darkThemeConfig";
 import { DiscussionNotification } from "@/types/notification";
 import NotificationView from "./NotificationView";
 
-const NotificationList: FC<{ siteConfig: PageSiteConfig; limit: number; popOver: boolean }> = ({
-  siteConfig,
-  limit = 10,
-  popOver,
-}) => {
+const NotificationList: FC<{
+  siteConfig: PageSiteConfig;
+  limit: number;
+  popOver: boolean;
+  setTotalNotifications: (value: number) => void;
+  setOpenNotification: (value: boolean) => void;
+}> = ({ siteConfig, setTotalNotifications, limit = 10, popOver, setOpenNotification }) => {
   const router = useRouter();
-  const { data: user } = useSession();
   const [loading, setLoading] = useState(false);
-  const [dataLoading, setDatatLoading] = useState<boolean>();
   const [notificationsCount, setNotificationsCount] = useState<number>(0);
   const [notificationsList, setNotificationsList] = useState<DiscussionNotification[]>();
   const { globalState } = useAppContext();
@@ -41,6 +34,7 @@ const NotificationList: FC<{ siteConfig: PageSiteConfig; limit: number; popOver:
         if (result.success && result.body) {
           setNotificationsList(result.body.list);
           setNotificationsCount(result.body?.notificationsCount);
+          setTotalNotifications(result.body.notificationsCount);
         } else {
           setNotificationsList([]);
           setNotificationsCount(0);
@@ -54,10 +48,11 @@ const NotificationList: FC<{ siteConfig: PageSiteConfig; limit: number; popOver:
     }
   };
 
-  const updateNotification = async (id: number, updateAll: boolean, targetLink?: string) => {
+  const updateNotification = async (id: number, targetLink?: string) => {
     try {
-      let apiPath = updateAll ? `/api/v1/notification/updateMany/update` : `/api/v1/notification/update/${id}`;
+      let apiPath = `/api/v1/notification/update/${id}`;
       getFetch(apiPath);
+      setOpenNotification(false);
       targetLink && router.push(targetLink);
     } catch (err) {}
   };
@@ -67,16 +62,18 @@ const NotificationList: FC<{ siteConfig: PageSiteConfig; limit: number; popOver:
     NotificationService.getNotifications(notificationsList?.length, 5, (result) => {
       if (result.success && result.body) {
         setNotificationsList(notificationsList?.concat(result.body?.list));
+        setNotificationsCount(result.body.notificationsCount);
+        setTotalNotifications(result.body.notificationsCount);
       }
     });
     setLoading(false);
   };
 
   React.useEffect(() => {
-    if (user) {
+    if (popOver) {
       getNotification();
     }
-  }, [user]);
+  }, [popOver]);
 
   return (
     <div className={styles.notification__list__wrapper}>
@@ -106,7 +103,7 @@ const NotificationList: FC<{ siteConfig: PageSiteConfig; limit: number; popOver:
             return (
               <div
                 onClick={() => {
-                  updateNotification(Number(item.object.id), false, item.targetLink);
+                  updateNotification(Number(item.object.id), item.targetLink);
                 }}
               >
                 <Flex vertical gap={10} style={{ marginTop: 5, cursor: "pointer" }} key={i}>

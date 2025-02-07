@@ -1,10 +1,10 @@
-import { FC, ReactNode, useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import React from "react";
 import styles from "@/templates/standard/components/Hero/Hero.module.scss";
 import landingPage from "@/styles/Marketing/LandingPage/LandingPage.module.scss";
 import Head from "next/head";
 import { useAppContext } from "../ContextApi/AppContext";
-import { Avatar, Badge, Button, ConfigProvider, Dropdown, Flex, notification, Popover, PopoverProps, Spin } from "antd";
+import { Avatar, Button, ConfigProvider, Dropdown, Flex, message, notification, Spin } from "antd";
 import darkThemeConfig from "@/services/darkThemeConfig";
 import antThemeConfig from "@/services/antThemeConfig";
 import { DEFAULT_THEME, PageSiteConfig } from "@/services/siteConstant";
@@ -24,6 +24,7 @@ import appLayoutStyles from "@/styles/Layout2.module.scss";
 import type { NotificationArgsProps } from "antd";
 import NotificationPopOver from "../Notification/NotificationPopOver";
 import NotificationView from "../Notification/NotificationView";
+import { getFetch } from "@/services/request";
 type NotificationPlacement = NotificationArgsProps["placement"];
 
 const MarketingLayout: FC<{
@@ -51,6 +52,7 @@ const MarketingLayout: FC<{
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
   const [showNotification, setOpenNotification] = useState(false);
   const [api, contextHolder] = notification.useNotification();
+  const [messageApi, contexMessagetHolder] = message.useMessage();
 
   const router = useRouter();
   const { data: session } = useSession();
@@ -134,7 +136,7 @@ const MarketingLayout: FC<{
         try {
           const data = JSON.parse(event.data);
 
-          const getNotificationView = NotificationView({ ...data, hasViewed: false });
+          const getNotificationView = NotificationView({ ...data, hasViewed: true });
           dispatch({
             type: "SET_UNREAD_NOTIFICATION",
             payload: data.notificationCount || 0,
@@ -145,6 +147,7 @@ const MarketingLayout: FC<{
               "topRight",
               getNotificationView.message,
               getNotificationView.description,
+              getNotificationView.objectId,
               getNotificationView.targetLink
             );
         } catch (e) {
@@ -164,10 +167,22 @@ const MarketingLayout: FC<{
     };
   });
 
+  const updateNotification = async (id: number, targetLink?: string) => {
+    try {
+      let apiPath = `/api/v1/notification/update/${id}`;
+      getFetch(apiPath);
+
+      targetLink && router.push(targetLink);
+    } catch (err) {
+      messageApi.error(`${err}`);
+    }
+  };
+
   const openNotification = (
     placement: NotificationPlacement,
     message: React.ReactNode,
     description: React.ReactNode,
+    objectId?: string,
     targetLink?: string
   ) => {
     api.open({
@@ -178,7 +193,7 @@ const MarketingLayout: FC<{
       style: { cursor: "pointer" },
       placement,
       onClick: () => {
-        targetLink && router.push(targetLink);
+        objectId && updateNotification(Number(objectId), targetLink);
       },
     });
   };
@@ -302,6 +317,7 @@ const MarketingLayout: FC<{
         style={{ minHeight: isMobile ? mobileHeroMinHeight : "60px" }}
       >
         {contextHolder}
+        {contexMessagetHolder}
         {isMobile && user?.role == Role.STUDENT ? (
           <Flex
             style={{ width: "90vw", padding: "10px 0px" }}

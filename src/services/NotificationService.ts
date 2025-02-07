@@ -138,6 +138,21 @@ class NotificationService {
     });
   };
 
+  markAllRead = (onSuccess: (response: ApiResponse) => void, onFailure: (message: string) => void) => {
+    getFetch(`/api/v1/notification/updateMany/update`).then((result) => {
+      if (result.status == 400) {
+        result.json().then((r) => {
+          const failedResponse = r as FailedApiResponse;
+          onFailure(failedResponse.error);
+        });
+      } else if (result.status == 200) {
+        result.json().then((r) => {
+          const apiResponse = r as ApiResponse;
+          onSuccess(apiResponse);
+        });
+      }
+    });
+  };
   checkCourseNotifications = (
     courseId: number,
 
