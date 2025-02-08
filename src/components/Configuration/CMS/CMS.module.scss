@@ -1,5 +1,5 @@
 .cms__container {
-  width: 1000px;
+  width: var(--container-width);
   background-color: var(--bg-primary);
   margin: 0px 0px 30px 0px;
   border-radius: 8px;

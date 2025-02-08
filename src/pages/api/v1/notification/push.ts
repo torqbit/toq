@@ -33,7 +33,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     // Function to send events
     const sendEvent = (data: any, notificationCount: number) => {
       startTime = new Date();
-      res.write(`data: ${JSON.stringify({ ...data, notificationCount })}\n\n`);
+      if (notificationCount > 0) {
+        res.write(`data: ${JSON.stringify({ ...data, notificationCount })}\n\n`);
+      }
     };
 
     let startTime = new Date();
@@ -49,7 +51,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         if (notifications && notifications.success) {
           sendEvent(notifications.body, unReadNotifications);
         } else {
-          res.write(`data: ${JSON.stringify({ notificationCount: unReadNotifications })}\n\n`);
+          if (unReadNotifications > 0) {
+            res.write(`data: ${JSON.stringify({ notificationCount: unReadNotifications })}\n\n`);
+          }
         }
       }
     }, 3000);
