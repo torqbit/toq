@@ -348,7 +348,7 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
         eventSource.close();
       }
     };
-  });
+  }, []);
 
   const updateNotification = async (id: number, targetLink?: string) => {
     try {
