@@ -9,6 +9,7 @@ import { IContentTabType } from "@/types/courses/Course";
 import SubmissionList from "@/components/Assignment/Submissions/SubmissionList";
 import ProductManage from "@/components/Manage/ProductManage";
 import prisma from "@/lib/prisma";
+import EnrolledList from "@/components/Courses/EnrolledList";
 const AnalyticsPage: NextPage<{ siteConfig: PageSiteConfig; courseInfo: { name: string; id: number } }> = ({
   siteConfig,
   courseInfo,
@@ -24,7 +25,11 @@ const AnalyticsPage: NextPage<{ siteConfig: PageSiteConfig; courseInfo: { name: 
     {
       key: "2",
       label: `Enrolments`,
-      children: <></>,
+      children: (
+        <>
+          <EnrolledList />
+        </>
+      ),
     },
     {
       key: "SUBMISSIONS" as IContentTabType,

@@ -7,9 +7,10 @@ import {
   CourseLessonAPIResponse,
   ICourseDetailView,
   ICourseListItem,
+  IEnrolledListResponse,
 } from "@/types/courses/Course";
 import { Chapter, Course, CourseCertificates, Resource } from "@prisma/client";
-import { postWithFile } from "./request";
+import { getFetch, postWithFile } from "./request";
 import { APIResponse } from "@/types/apis";
 
 export interface ICourseList extends Course {
@@ -327,6 +328,22 @@ class ProgramService {
         });
       }
     });
+  };
+
+  getEnrolledList = (
+    courseId: number,
+    limit: number,
+    offSet: number,
+    onSuccess: (response: APIResponse<{ list: IEnrolledListResponse[]; total: number }>) => void
+  ) => {
+    getFetch(`/api/v1/admin/course/enrolledList?courseId=${courseId}&limit=${limit}&offSet=${offSet}`).then(
+      (result) => {
+        result.json().then((r) => {
+          const apiResponse = r as APIResponse<{ list: IEnrolledListResponse[]; total: number }>;
+          onSuccess(apiResponse);
+        });
+      }
+    );
   };
 
   getRegisterCourses = (onSuccess: (response: ApiResponse) => void, onFailure: (message: string) => void) => {
