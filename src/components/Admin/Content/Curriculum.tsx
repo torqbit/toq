@@ -1,4 +1,4 @@
-import SvgIcons from "@/components/SvgIcons";
+import SvgIcons, { EmptyChapters, EmptyCourses } from "@/components/SvgIcons";
 import { ChapterDetail } from "@/types/courses/Course";
 import styles from "@/styles/Curriculum.module.scss";
 import { ResourceContentType } from "@prisma/client";
@@ -7,9 +7,13 @@ import { FC, useState } from "react";
 import ProgramService from "@/services/ProgramService";
 import ChapterLabel from "./Items/ChapterLabel";
 import ChapterItem from "./Items/ChapterItem";
+import { getIconTheme } from "@/services/darkThemeConfig";
+import { useAppContext } from "@/components/ContextApi/AppContext";
+import { PageSiteConfig } from "@/services/siteConstant";
 
 const Curriculum: FC<{
   chapters: ChapterDetail[];
+  siteConfig: PageSiteConfig;
   onDiscard: () => void;
   onRefresh: () => void;
   onEditResource: (id: number, content: ResourceContentType) => void;
@@ -20,6 +24,7 @@ const Curriculum: FC<{
   onSave: (value: string) => void;
 }> = ({
   onSave,
+  siteConfig,
   chapters,
   onRefresh,
   handleNewChapter,
@@ -30,6 +35,7 @@ const Curriculum: FC<{
   onDiscard,
 }) => {
   const [collapse, setCollapse] = useState<boolean>(false);
+  const { globalState } = useAppContext();
 
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -126,7 +132,7 @@ const Curriculum: FC<{
       {contextHolder}
       <div className={styles.curriculum_container}>
         <Flex justify="space-between" align="center">
-          <h1>Curriculum</h1>
+          {chapters.length > 0 && <h3>Curriculum</h3>}
 
           {chapters.length > 0 && (
             <Space>
@@ -220,7 +226,7 @@ const Curriculum: FC<{
         </div>
       ) : (
         <div className={styles.no_chapter_btn}>
-          <img src="/img/common/empty.svg" alt="" />
+          <EmptyChapters size={"300px"} {...getIconTheme(globalState.theme || "light", siteConfig.brand)} />
           <h4>No chapters were found</h4>
           <p>Start creating chapters and lessons to build your course curriculum</p>
           <Button onClick={() => handleNewChapter()} type="primary">
