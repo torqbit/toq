@@ -4,7 +4,7 @@ import { Dropdown, message, Progress, Skeleton, Table } from "antd";
 import { FC, useEffect, useState } from "react";
 import SvgIcons from "../SvgIcons";
 
-const EnrolledList: FC<{}> = () => {
+const EnrolledList: FC<{ courseId: number }> = ({ courseId }) => {
   const [list, setList] = useState<IEnrolledListResponse[]>([]);
   const [listLoading, setListLoading] = useState<boolean>(false);
   const [total, setTotal] = useState<number>(0);
@@ -81,7 +81,7 @@ const EnrolledList: FC<{}> = () => {
     });
   };
   useEffect(() => {
-    getEnrollList(5, 5, 0);
+    getEnrollList(courseId, 5, 0);
   }, []);
   return (
     <>
