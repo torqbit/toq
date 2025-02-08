@@ -348,7 +348,7 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
         eventSource.close();
       }
     };
-  });
+  }, []);
 
   const updateNotification = async (id: number, targetLink?: string) => {
     try {
@@ -436,9 +436,9 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
   };
 
   useEffect(() => {
+    let eventSource: EventSource;
     if (status === "authenticated") {
       if (user) {
-        getLatestNotificationCount();
         onChangeSelectedBar();
         onChangeSelectedNavBar();
         const userSession = user.user as UserSession;
@@ -455,10 +455,50 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
           type: "SET_LOADER",
           payload: false,
         });
+
+        eventSource = new EventSource("/api/v1/notification/push");
+
+        eventSource.addEventListener("open", (event) => {
+          console.log("Connection opened");
+        });
+
+        eventSource.addEventListener("message", (event) => {
+          try {
+            const data = JSON.parse(event.data);
+
+            const getNotificationView = NotificationView({ ...data, hasViewed: true });
+            dispatch({
+              type: "SET_UNREAD_NOTIFICATION",
+              payload: data.notificationCount || 0,
+            });
+
+            data.notificationType &&
+              openNotification(
+                "topRight",
+                getNotificationView.message,
+                getNotificationView.description,
+                getNotificationView.objectId,
+                getNotificationView.targetLink
+              );
+          } catch (e) {
+            console.error("Error parsing message:", e);
+          }
+        });
+
+        eventSource.addEventListener("error", (error) => {
+          console.error("EventSource error:", error);
+          eventSource.close();
+        });
       }
     } else if (status === "unauthenticated") {
       router.push("/login");
     }
+
+    return () => {
+      if (eventSource) {
+        eventSource.close();
+      }
+    };
   }, [user]);
 
   useEffect(() => {

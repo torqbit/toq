@@ -18,7 +18,7 @@ const ConfigFormLayout: FC<{
   formTitle,
   extraContent,
   isCollapsible = false,
-  width = "1000px",
+  width = "1200px",
   marginBottom,
   showArrow = true,
 }) => {

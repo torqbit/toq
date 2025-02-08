@@ -180,7 +180,7 @@
   .add_course_header {
     height: 50px;
     width: 100%;
-    padding: 0 15px;
+    padding: 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -208,13 +208,13 @@
   }
 
   .add_course_tabs {
-    padding: 10px 20px;
+    padding: 10px 0px;
     input {
       width: 250px;
     }
 
     .add_course_setting {
-      max-width: var(--container-width);
+      max-width: var(--marketing-container-width);
 
       .setting__video__segment {
         margin: 0 auto 10px auto;

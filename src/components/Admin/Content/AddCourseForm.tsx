@@ -496,7 +496,7 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
           </div>
           <div>
             <Dropdown.Button
-              type="primary"
+              type="default"
               onClick={() => {
                 courseData.state === StateType.DRAFT
                   ? onPublishCourse(StateType.ACTIVE)
