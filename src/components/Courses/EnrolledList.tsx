@@ -35,33 +35,33 @@ const EnrolledList: FC<{}> = () => {
       },
     },
 
-    {
-      title: "Action",
-      align: "center",
-      render: (u: IEnrolledListResponse) => {
-        return (
-          <Dropdown
-            menu={{
-              items: [
-                {
-                  key: "1",
-                  label: "Edit",
-                  onClick: () => {},
-                },
-                {
-                  key: "2",
-                  label: "Delete",
-                },
-              ],
-            }}
-            placement="bottomRight"
-          >
-            <i style={{ fontSize: 18, lineHeight: 0, color: "var(--font-secondary)" }}>{SvgIcons.threeDots}</i>
-          </Dropdown>
-        );
-      },
-      key: "action",
-    },
+    // {
+    //   title: "Action",
+    //   align: "center",
+    //   render: (u: IEnrolledListResponse) => {
+    //     return (
+    //       <Dropdown
+    //         menu={{
+    //           items: [
+    //             {
+    //               key: "1",
+    //               label: "Edit",
+    //               onClick: () => {},
+    //             },
+    //             {
+    //               key: "2",
+    //               label: "Delete",
+    //             },
+    //           ],
+    //         }}
+    //         placement="bottomRight"
+    //       >
+    //         <i style={{ fontSize: 18, lineHeight: 0, color: "var(--font-secondary)" }}>{SvgIcons.threeDots}</i>
+    //       </Dropdown>
+    //     );
+    //   },
+    //   key: "action",
+    // },
   ];
 
   const getEnrollList = (courseId: number, limit: number, offSet: number) => {
