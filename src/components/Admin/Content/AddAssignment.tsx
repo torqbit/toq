@@ -3,7 +3,7 @@ import styles from "@/styles/AddAssignment.module.scss";
 import { FC, useEffect, useState } from "react";
 import AssignmentService from "@/services/course/AssignmentService";
 import { ResourceContentType } from "@prisma/client";
-import { DeleteFilled, MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
+import { DeleteFilled, PlusOutlined } from "@ant-design/icons";
 import {
   IAssignmentDetails,
   AssignmentType,
@@ -15,23 +15,7 @@ import {
 import ConfigFormLayout from "@/components/Configuration/ConfigFormLayout";
 import ConfigForm from "@/components/Configuration/ConfigForm";
 import MCQForm from "./MCQForm/MCQForm";
-import FormDisableOverlay from "@/components/Configuration/FormDisableOverlay";
 import SubjectiveAssignmentForm from "./SubjectiveAssignment/SubjectiveAssignmentForm";
-
-const AssignmentTypeOptions = [
-  {
-    title: "Multiple Choice",
-    description: "Single or multiple correct answers",
-    value: AssignmentType.MCQ,
-    disabled: false,
-  },
-  {
-    title: "Subjective",
-    description: "Free text answers with option to upload attachments",
-    value: AssignmentType.SUBJECTIVE,
-    disabled: false,
-  },
-];
 
 export const createEmptyQuestion = (id: string): MultipleChoiceQA => ({
   id,
@@ -54,6 +38,7 @@ const AddAssignment: FC<{
   onRefresh: () => void;
   onDeleteResource: (id: number, isCanceled: boolean) => void;
   setEdit: (value: boolean) => void;
+  assignmentType: AssignmentType;
 }> = ({
   setResourceDrawer,
   contentType,
@@ -63,12 +48,12 @@ const AddAssignment: FC<{
   isEdit,
   showResourceDrawer,
   onDeleteResource,
+  assignmentType,
 }) => {
   const [assignmentForm] = Form.useForm();
   const [subjectiveForm] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
   const [editorValue, setEditorValue] = useState<string>("");
-  const [submissionType, setSubmissionType] = useState<AssignmentType>();
   const [questions, setQuestions] = useState<MultipleChoiceQA[]>([createEmptyQuestion("1")]);
   const [current, setCurrent] = useState<number>(0);
 
@@ -82,16 +67,16 @@ const AddAssignment: FC<{
         0
       );
       if (
-        submissionType === AssignmentType.SUBJECTIVE &&
+        assignmentType === AssignmentType.SUBJECTIVE &&
         sumOfGradingScore !== Number(assignmentForm.getFieldsValue().maximumScore)
       ) {
         return message.info("Ensure the sum of grading points equals the maximum points.");
       }
     }
 
-    if (!submissionType) return message.error("Please select assignment type");
+    if (!assignmentType) return message.error("Please select assignment type");
     if (
-      submissionType === AssignmentType.MCQ &&
+      assignmentType === AssignmentType.MCQ &&
       questions.length > 0 &&
       questions[0].title === "" &&
       questions[0].options[0].text === "" &&
@@ -103,9 +88,9 @@ const AddAssignment: FC<{
     let progAssignment: IAssignmentDetails;
 
     // Base object with `_type` for all cases
-    const baseAssignment = { _type: submissionType };
+    const baseAssignment = { _type: assignmentType };
 
-    switch (submissionType) {
+    switch (assignmentType) {
       case AssignmentType.MCQ:
         progAssignment = {
           ...baseAssignment,
@@ -163,7 +148,6 @@ const AddAssignment: FC<{
           assignmentForm.setFieldValue("title", assignmentDetail.name);
           assignmentForm.setFieldValue("estimatedDurationInMins", assignmentDetail.estimatedDurationInMins);
           assignmentForm.setFieldValue("assignmentType", assignmentDetail.content._type);
-          setSubmissionType(assignmentDetail.content._type);
 
           switch (assignmentDetail.content._type) {
             case AssignmentType.MCQ:
@@ -218,7 +202,6 @@ const AddAssignment: FC<{
     setQuestions([createEmptyQuestion("1")]);
     setCurrent(0);
     setEditorValue("");
-    setSubmissionType(undefined);
     onRefresh();
   };
 
@@ -276,11 +259,11 @@ const AddAssignment: FC<{
         size="small"
         progressDot
         direction="vertical"
-        className={styles.ant_steps}
+        className={styles.ant_steps_container}
         items={[
           {
             title: (
-              <ConfigFormLayout formTitle={"Configure Assignment Type"} width="100%">
+              <ConfigFormLayout formTitle={"Configure Assignment Type"} width="760px">
                 <Form form={assignmentForm} initialValues={{ estimatedDurationInMins: 30 }}>
                   <ConfigForm
                     title="Assignment Title"
@@ -301,37 +284,6 @@ const AddAssignment: FC<{
                       </Form.Item>
                     }
                   />
-                  <ConfigForm
-                    input={
-                      <Form.Item name="assignmentType">
-                        <Radio.Group>
-                          <Space style={{ width: "100%" }}>
-                            {AssignmentTypeOptions.map((item, i) => (
-                              <Radio
-                                key={item.value}
-                                value={item.value}
-                                disabled={item.disabled}
-                                onChange={(e) => {
-                                  setSubmissionType(e.target.value);
-                                  if (current === 0) setCurrent(1);
-                                }}
-                                className={`assignment_type_radio ${styles.assignment_type_radio}`}
-                              >
-                                <h5>{item.title}</h5>
-
-                                <p>{item.description}</p>
-                              </Radio>
-                            ))}
-                          </Space>
-                        </Radio.Group>
-                      </Form.Item>
-                    }
-                    title={"Assignment Type"}
-                    description={
-                      "Chose what kind of assignment you want to give in order to assess the skills of the student "
-                    }
-                    divider={false}
-                  />
                 </Form>
               </ConfigFormLayout>
             ),
@@ -339,19 +291,18 @@ const AddAssignment: FC<{
           {
             title: (
               <>
-                {submissionType === AssignmentType.MCQ && (
-                  <ConfigFormLayout formTitle={"Multiple choice question"} width="100%">
+                {assignmentType === AssignmentType.MCQ && (
+                  <ConfigFormLayout formTitle={"Multiple choice question"} width="760px">
                     <p>
                       Provide the list of questions that will be presented to the learners for completing this
                       assignment
                     </p>
                     <MCQForm questions={questions} setQuestions={setQuestions} />
-                    {current < 1 && <FormDisableOverlay message="First complete the previous step" />}
                   </ConfigFormLayout>
                 )}
 
-                {submissionType === AssignmentType.SUBJECTIVE && (
-                  <ConfigFormLayout formTitle={"Subjective"} width="100%">
+                {assignmentType === AssignmentType.SUBJECTIVE && (
+                  <ConfigFormLayout formTitle={"Subjective"} width="760px">
                     <p>
                       Provide the list of questions that will be presented to the learners for completing this
                       assignment
@@ -362,8 +313,6 @@ const AddAssignment: FC<{
                       editorValue={editorValue}
                       setEditorValue={(v) => setEditorValue(v)}
                     />
-
-                    {current < 1 && <FormDisableOverlay message="First complete the previous step" />}
                   </ConfigFormLayout>
                 )}
               </>
@@ -372,7 +321,7 @@ const AddAssignment: FC<{
 
           {
             title: (
-              <ConfigFormLayout formTitle={"Setup Grading"} width="100%">
+              <ConfigFormLayout formTitle={"Setup Grading"} width="760px">
                 <Form
                   form={assignmentForm}
                   initialValues={{
@@ -402,7 +351,7 @@ const AddAssignment: FC<{
                     description={"Setup the passing percentage for this assignment"}
                     divider={false}
                   />
-                  {submissionType === AssignmentType.SUBJECTIVE && (
+                  {assignmentType === AssignmentType.SUBJECTIVE && (
                     <ConfigForm
                       input={
                         <Form.List name="gradingParameters">
@@ -443,7 +392,6 @@ const AddAssignment: FC<{
                     />
                   )}
                 </Form>
-                {current < 2 && <FormDisableOverlay message="First complete the previous step" />}
               </ConfigFormLayout>
             ),
           },

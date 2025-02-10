@@ -27,6 +27,7 @@ import { postWithFile } from "@/services/request";
 import AddLesson from "./AddLesson";
 import { PageSiteConfig } from "@/services/siteConstant";
 import { createSlug, getBase64 } from "@/lib/utils";
+import { AssignmentType } from "@/types/courses/assignment";
 
 const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const [courseTrailerUploading, setCourseTrailerUploading] = useState<boolean>(false);
@@ -88,6 +89,7 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const [newTrailerThumbnail, setNewTrailerThumbnail] = useState<string>();
 
   const [uploadVideo, setUploadVideo] = useState<VideoInfo>();
+  const [assignmentType, setAssignmentType] = useState<AssignmentType>(AssignmentType.MCQ);
 
   const [courseDetails, setCourseDetails] = useState<ICourseDetailView>();
 
@@ -204,7 +206,7 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
     );
   };
 
-  const onAddResource = (chapterId: number, content: ResourceContentType) => {
+  const onAddResource = (chapterId: number, content: ResourceContentType, assignType?: AssignmentType) => {
     setEdit(false);
     ProgramService.createResource(
       {
@@ -222,6 +224,7 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
         !showResourceDrawer && setResourceDrawer(true);
         setVideoLesson({ ...videoLesson, chapterId: chapterId, video: undefined });
         setContentType(content);
+        setAssignmentType(assignType as AssignmentType);
       },
       (error) => {
         messageApi.error(error);
@@ -551,6 +554,7 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
           isEdit={isEdit}
           setCheckVideoState={setCheckVideoState}
           setEdit={setEdit}
+          assignmentType={assignmentType}
         />
       )}
     </>

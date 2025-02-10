@@ -1,5 +1,6 @@
 import SvgIcons from "@/components/SvgIcons";
 import styles from "@/styles/Curriculum.module.scss";
+import { AssignmentType } from "@/types/courses/assignment";
 import { ResourceContentType } from "@prisma/client";
 import { Dropdown, Flex, MenuProps, Popconfirm, Tag } from "antd";
 import { FC, ReactNode } from "react";
@@ -8,7 +9,7 @@ const ChapterLabel: FC<{
   title: string;
   id: number;
   onChange: (key: string | string[]) => void;
-  onAddResource: (id: number, content: ResourceContentType) => void;
+  onAddResource: (id: number, content: ResourceContentType, assignmentType?: AssignmentType) => void;
   onEditChapter: (id: number, content: ResourceContentType) => void;
   icon: ReactNode;
   state: string;
@@ -77,14 +78,16 @@ const ChapterLabel: FC<{
       key: "2",
       label: "Assignment",
       onClick: () => {
-        onAddResource(id, ResourceContentType.Assignment);
+        onAddResource(id, ResourceContentType.Assignment, AssignmentType.SUBJECTIVE);
       },
     },
 
     {
       key: "3",
       label: "Quiz",
-      onClick: () => {},
+      onClick: () => {
+        onAddResource(id, ResourceContentType.Assignment, AssignmentType.MCQ);
+      },
     },
   ];
   return (

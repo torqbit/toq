@@ -7,6 +7,7 @@ import { FC, useState } from "react";
 import ProgramService from "@/services/ProgramService";
 import ChapterLabel from "./Items/ChapterLabel";
 import ChapterItem from "./Items/ChapterItem";
+import { AssignmentType } from "@/types/courses/assignment";
 
 const Curriculum: FC<{
   chapters: ChapterDetail[];
@@ -14,7 +15,7 @@ const Curriculum: FC<{
   onRefresh: () => void;
   onEditResource: (id: number, content: ResourceContentType) => void;
   handleNewChapter: () => void;
-  onAddResource: (id: number, content: ResourceContentType) => void;
+  onAddResource: (id: number, content: ResourceContentType, assignmentType?: AssignmentType) => void;
   handleEditChapter: (chapterId: number) => void;
   deleteRes: (id: number, isCanceled: boolean) => void;
   onSave: (value: string) => void;

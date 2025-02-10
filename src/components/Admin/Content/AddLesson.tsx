@@ -6,6 +6,7 @@ import { $Enums, ResourceContentType } from "@prisma/client";
 import { IVideoLesson } from "@/types/courses/Course";
 import AddVideoLesson from "./AddVideoLesson";
 import { FormInstance } from "antd";
+import { AssignmentType } from "@/types/courses/assignment";
 
 const AddLesson: FC<{
   showResourceDrawer: boolean;
@@ -20,6 +21,7 @@ const AddLesson: FC<{
   isEdit: boolean;
   setEdit: (value: boolean) => void;
   form: FormInstance;
+  assignmentType: AssignmentType;
 }> = ({
   setResourceDrawer,
   showResourceDrawer,
@@ -33,6 +35,7 @@ const AddLesson: FC<{
   isEdit,
   setEdit,
   form,
+  assignmentType,
 }) => {
   return (
     <>
@@ -47,6 +50,7 @@ const AddLesson: FC<{
             onRefresh={onRefresh}
             onDeleteResource={onDeleteResource}
             setEdit={setEdit}
+            assignmentType={assignmentType}
           />
         </div>
       ) : (
