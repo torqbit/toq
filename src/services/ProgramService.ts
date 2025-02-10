@@ -46,6 +46,7 @@ export type ApiResponse = {
     courseName: string;
     progress: string;
     slug: string;
+    isExpired: boolean;
     courseId: number;
   }[];
   newChapter: {

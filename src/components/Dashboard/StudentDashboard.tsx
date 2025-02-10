@@ -1,4 +1,4 @@
-import { Button, Flex, List, message, Skeleton, Space, Spin, Tabs, TabsProps } from "antd";
+import { Button, Flex, List, message, Segmented, Skeleton, Space, Spin, Tabs, TabsProps } from "antd";
 import { FC, useEffect, useState } from "react";
 import { useAppContext } from "../ContextApi/AppContext";
 import { useRouter } from "next/router";
@@ -18,7 +18,7 @@ import { ILearningPathDetail } from "@/types/learingPath";
 import { ICourseListItem } from "@/types/courses/Course";
 
 export const EnrolledCourseProgressList: FC<{
-  courseData: { courseName: string; progress: string; courseId: number; slug: string }[];
+  courseData: { courseName: string; progress: string; isExpired: boolean; courseId: number; slug: string }[];
 }> = ({ courseData }) => {
   return (
     <>
@@ -56,8 +56,9 @@ const StudentDashboard: FC<{
 
   const [pageLoading, setPageLoading] = useState<boolean>(false);
   const [messageApi, contextHolder] = message.useMessage();
+  const [selectedSegment, setSelectedSegment] = useState<string>("active");
   const [allRegisterCourse, setAllRegisterCourse] =
-    useState<{ courseName: string; progress: string; courseId: number; slug: string }[]>();
+    useState<{ courseName: string; isExpired: boolean; progress: string; courseId: number; slug: string }[]>();
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
   const getProgress = () => {
     setPageLoading(true);
@@ -90,6 +91,22 @@ const StudentDashboard: FC<{
       children:
         !pageLoading && allRegisterCourse ? (
           <>
+            <Segmented
+              style={{ marginBottom: 10 }}
+              onChange={(value) => {
+                setSelectedSegment(value);
+              }}
+              options={[
+                {
+                  label: "Active",
+                  value: "active",
+                },
+                {
+                  label: "Expired",
+                  value: "expired",
+                },
+              ]}
+            />
             {allRegisterCourse && allRegisterCourse.length === 0 ? (
               <>
                 <div className={styles.no_course_found}>
@@ -114,7 +131,13 @@ const StudentDashboard: FC<{
                 </div>
               </>
             ) : (
-              <EnrolledCourseProgressList courseData={allRegisterCourse} />
+              <>
+                {selectedSegment === "active" ? (
+                  <EnrolledCourseProgressList courseData={allRegisterCourse.filter((cp) => !cp.isExpired)} />
+                ) : (
+                  <EnrolledCourseProgressList courseData={allRegisterCourse.filter((cp) => cp.isExpired)} />
+                )}
+              </>
             )}
           </>
         ) : (
