@@ -29,9 +29,10 @@ const EnrolledList: FC<{ courseId: number }> = ({ courseId }) => {
     {
       title: "COURSE PROGRESS",
       dataIndex: "progress",
+      align: "center",
       key: "progress",
       render: (u: number) => {
-        return <Progress trailColor="var(--bg-secondary)" percent={u} />;
+        return <Progress status="normal" trailColor="var(--bg-secondary)" percent={u} />;
       },
     },
 
@@ -67,7 +68,6 @@ const EnrolledList: FC<{ courseId: number }> = ({ courseId }) => {
   const getEnrollList = (courseId: number, limit: number, offSet: number) => {
     setListLoading(true);
     ProgramService.getEnrolledList(courseId, limit, offSet, (result) => {
-      console.log(result);
       if (result.success && result.body) {
         setList(result.body.list);
         setListLoading(false);
@@ -81,8 +81,9 @@ const EnrolledList: FC<{ courseId: number }> = ({ courseId }) => {
     });
   };
   useEffect(() => {
-    getEnrollList(courseId, 5, 0);
+    getEnrollList(courseId, 10, 0);
   }, []);
+
   return (
     <>
       {contextHolder}
@@ -105,6 +106,13 @@ const EnrolledList: FC<{ courseId: number }> = ({ courseId }) => {
         </div>
       )}
       <Table
+        pagination={{
+          onChange: (pageNumber) => {
+            return getEnrollList(courseId, 10, pageNumber * 5 - 5);
+          },
+
+          total: 10,
+        }}
         style={{ borderTopRightRadius: 0, borderTopLeftRadius: 0 }}
         dataSource={list}
         columns={columns}

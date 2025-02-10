@@ -24,7 +24,7 @@ const AnalyticsPage: NextPage<{ siteConfig: PageSiteConfig; courseInfo: { name: 
     },
     {
       key: "2",
-      label: `Enrolments`,
+      label: `Enrollments`,
       children: (
         <>
           <EnrolledList courseId={courseInfo.id} />
