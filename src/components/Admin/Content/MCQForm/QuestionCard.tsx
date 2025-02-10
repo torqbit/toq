@@ -36,24 +36,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, onQuestionChange,
   };
 
   return (
-    <ConfigFormLayout
-      formTitle={`Question ${question.id}`}
-      width="100%"
-      isCollapsible
-      marginBottom="10px"
-      extraContent={
-        <Popconfirm
-          title="Delete the question"
-          description="Are you sure to delete this question?"
-          onConfirm={() => onDeleteQuestion(question.id)}
-          onCancel={() => {}}
-          okText="Yes"
-          cancelText="No"
-        >
-          <DeleteFilled />
-        </Popconfirm>
-      }
-    >
+    <>
       <QuestionTitle
         title={question.title}
         description={question.description}
@@ -75,7 +58,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, onQuestionChange,
         explanation={question.answerExplanation || ""}
         onChange={(value: string) => onQuestionChange({ ...question, answerExplanation: value })}
       />
-    </ConfigFormLayout>
+    </>
   );
 };
 

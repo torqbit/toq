@@ -7,6 +7,7 @@ import { FC, useState } from "react";
 import ProgramService from "@/services/ProgramService";
 import ChapterLabel from "./Items/ChapterLabel";
 import ChapterItem from "./Items/ChapterItem";
+import { AssignmentType } from "@/types/courses/assignment";
 import { getIconTheme } from "@/services/darkThemeConfig";
 import { useAppContext } from "@/components/ContextApi/AppContext";
 import { PageSiteConfig } from "@/services/siteConstant";
@@ -18,7 +19,7 @@ const Curriculum: FC<{
   onRefresh: () => void;
   onEditResource: (id: number, content: ResourceContentType) => void;
   handleNewChapter: () => void;
-  onAddResource: (id: number, content: ResourceContentType) => void;
+  onAddResource: (id: number, content: ResourceContentType, assignmentType?: AssignmentType) => void;
   handleEditChapter: (chapterId: number) => void;
   deleteRes: (id: number, isCanceled: boolean) => void;
   onSave: (value: string) => void;
