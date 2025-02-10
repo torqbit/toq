@@ -271,8 +271,16 @@ const AssignmentContentTab: FC<{
                       !isCompleteBtnDisabled &&
                       assignmentDetail?.status !== submissionStatus.PENDING && (
                         <Popconfirm
-                          title="Finish & complete"
-                          description="Are you sure want to submit! It can't be undo"
+                          title={
+                            assignmentDetail?.content._type === AssignmentType.MCQ
+                              ? "Completed the Quiz?"
+                              : "Completed the assessment?"
+                          }
+                          description={
+                            assignmentDetail?.content._type === AssignmentType.MCQ
+                              ? "Are you sure you want to submit the answers and complete the quiz?"
+                              : "Are you sure you want to submit the answers and complete the assessment?"
+                          }
                           onConfirm={onSubmitQuestion}
                           onCancel={() => {}}
                           okText="Yes"

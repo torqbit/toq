@@ -4,7 +4,7 @@ import { IBrandConfig } from "@/types/schema";
 
 export const themeColors = {
   commons: {
-    success: "#52c41a",
+    success: "#1f883d",
   },
   dark: {
     bgPrimary: "#2c2c2c",

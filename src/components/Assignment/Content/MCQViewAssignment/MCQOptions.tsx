@@ -30,7 +30,7 @@ const MCQOption: React.FC<MCQOptionProps> = ({
         !areAnswersEqualForKey(correctOptionIndex, selectedAnswer) &&
         selectedAnswer?.includes(value.toString()) &&
         style.mcq_option_wrong
-      } ${correctOptionIndex?.includes(value.toString()) && style.mcq_option_selected}`}
+      } ${correctOptionIndex?.includes(value.toString()) && style.mcq_option_correct}`}
     >
       <Space style={{ width: "100%" }} direction="horizontal" size="middle">
         <Button size="small" style={{ border: "none" }}>
