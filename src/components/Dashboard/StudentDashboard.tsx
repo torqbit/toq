@@ -137,7 +137,7 @@ const StudentDashboard: FC<{
       children:
         !pageLoading && allRegisterCourse ? (
           <>
-            {allRegisterCourse && allRegisterCourse.length > 0 && (
+            {getSegmentOption(allRegisterCourse).length > 0 && (
               <Segmented
                 style={{ marginBottom: 10 }}
                 onChange={(value) => {
