@@ -88,6 +88,9 @@ p {
   --bg-segment: #f0f2fa;
   --bg-selected-segment: #fff;
 
+  --mcq_option_hover_bg: #eee;
+  --mcq_slt_option_bg: #e5e5e5;
+
   --marketing-container-width: 1200px;
   --bg-scroll-bar: #d5d5d5;
   --container-width: 1000px;
@@ -152,6 +155,9 @@ p {
   --bg-content-form: #202433;
   --font-mktg-secondary: #c8cddd;
   --bg-scroll-bar: #555;
+
+  --mcq_option_hover_bg: #222;
+  --mcq_slt_option_bg: #111;
 
   --segment-bg: #151823;
   --strike: #caa3ae;
