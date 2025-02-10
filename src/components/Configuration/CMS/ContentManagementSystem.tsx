@@ -344,6 +344,7 @@ const ContentManagementSystem: FC<{ siteConfig: PageSiteConfig; active: boolean 
                 title: (
                   <ConfigFormLayout
                     formTitle={"Configure Bunny.net"}
+                    width="1136px"
                     extraContent={
                       <Flex align="center" gap={10}>
                         {current < 0 && <Button onClick={() => accessKeyForm.resetFields()}>Reset</Button>}
@@ -392,6 +393,7 @@ const ContentManagementSystem: FC<{ siteConfig: PageSiteConfig; active: boolean 
               {
                 title: (
                   <ConfigFormLayout
+                    width="1136px"
                     extraContent={
                       <Button loading={vodLoading} onClick={() => videoForm.submit()} type="primary">
                         Save
@@ -439,6 +441,7 @@ const ContentManagementSystem: FC<{ siteConfig: PageSiteConfig; active: boolean 
                         </Button>
                       </Flex>
                     }
+                    width="1136px"
                     formTitle={"File Storage"}
                   >
                     <Form form={storageForm} onFinish={onSubmitStorageForm}>

@@ -358,6 +358,7 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
       children: uploadVideo?.videoUrl && (
         <Curriculum
           chapters={courseData.chapters}
+          siteConfig={siteConfig}
           onRefresh={onRefresh}
           handleNewChapter={handleNewChapter}
           onAddResource={onAddResource}
