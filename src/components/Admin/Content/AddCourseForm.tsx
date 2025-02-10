@@ -361,6 +361,7 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
       children: uploadVideo?.videoUrl && (
         <Curriculum
           chapters={courseData.chapters}
+          siteConfig={siteConfig}
           onRefresh={onRefresh}
           handleNewChapter={handleNewChapter}
           onAddResource={onAddResource}
@@ -499,7 +500,7 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
           </div>
           <div>
             <Dropdown.Button
-              type="primary"
+              type="default"
               onClick={() => {
                 courseData.state === StateType.DRAFT
                   ? onPublishCourse(StateType.ACTIVE)

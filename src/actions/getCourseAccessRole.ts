@@ -12,6 +12,7 @@ export const getCourseAccessRole = async (
   let isLearningPath = false;
   let dateJoined: Date = new Date();
   let pathId: number | undefined;
+  let isExpired;
 
   if (courseSlug && typeof courseId == "string") {
     const findCourse = await prisma.course.findUnique({
@@ -55,15 +56,42 @@ export const getCourseAccessRole = async (
     }));
 
   if (isLearningRegistered) {
+    const registrationDetails =
+      userId &&
+      (await prisma.courseRegistration.findFirst({
+        where: {
+          studentId: userId,
+
+          order: {
+            product: {
+              productId: findLearningPathCourse.learningPathId,
+            },
+          },
+        },
+        select: {
+          dateJoined: true,
+          expireIn: true,
+        },
+      }));
+
+    isExpired =
+      registrationDetails &&
+      registrationDetails.expireIn &&
+      registrationDetails.expireIn.getTime() < new Date().getTime();
+
     isLearningPath = true;
     pathId = findLearningPathCourse.learningPathId;
-    if (userRole === Role.ADMIN) {
-      role = Role.ADMIN;
-    } else if (userRole === Role.AUTHOR && findLearningPathCourse.course.authorId === userId) {
-      role = Role.AUTHOR;
+    if (isExpired) {
+      role = Role.NOT_ENROLLED;
     } else {
-      dateJoined = isLearningRegistered.updatedAt;
-      role = Role.STUDENT;
+      if (userRole === Role.ADMIN) {
+        role = Role.ADMIN;
+      } else if (userRole === Role.AUTHOR && findLearningPathCourse.course.authorId === userId) {
+        role = Role.AUTHOR;
+      } else {
+        dateJoined = isLearningRegistered.updatedAt;
+        role = Role.STUDENT;
+      }
     }
   } else {
     const registrationDetails =
@@ -80,6 +108,7 @@ export const getCourseAccessRole = async (
         },
         select: {
           dateJoined: true,
+          expireIn: true,
           order: {
             select: {
               product: {
@@ -96,7 +125,12 @@ export const getCourseAccessRole = async (
         },
       }));
 
-    if (registrationDetails) {
+    isExpired =
+      registrationDetails &&
+      registrationDetails.expireIn &&
+      registrationDetails.expireIn?.getTime() < new Date().getTime();
+
+    if (registrationDetails && !isExpired) {
       if (userRole === Role.ADMIN) {
         role = Role.ADMIN;
       } else if (userRole === Role.AUTHOR && registrationDetails.order.product.course?.authorId === userId) {

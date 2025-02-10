@@ -1,5 +1,4 @@
 .add__learing__path__wrapper {
-  max-width: var(--container-width);
   margin: 0 auto;
   padding-bottom: 10px;
   .setting_header {
@@ -7,6 +6,12 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    a {
+      color: var(--font-secondary);
+      &:hover {
+        color: var(--btn-primary);
+      }
+    }
   }
   .upload__learning__banner {
     cursor: pointer;

@@ -165,7 +165,7 @@ const MarketingLayout: FC<{
         eventSource.close();
       }
     };
-  });
+  }, []);
 
   const updateNotification = async (id: number, targetLink?: string) => {
     try {

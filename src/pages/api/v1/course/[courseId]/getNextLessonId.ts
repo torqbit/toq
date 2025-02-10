@@ -105,11 +105,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         return res.status(200).json({ success: true, nextLessonId: courseDetail?.chapters[0].resource[0].resourceId });
       }
     }
-
-    return res.status(400).json({
-      success: false,
-      error: "Something went wrong, Contact the support team",
-    });
   } catch (err) {
     return errorHandler(err, res);
   }

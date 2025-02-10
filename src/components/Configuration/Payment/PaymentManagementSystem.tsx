@@ -173,6 +173,7 @@ const PaymentManagementSystem: FC<{ active: boolean }> = ({ active }) => {
           {
             title: (
               <ConfigFormLayout
+                width="1136px"
                 extraContent={
                   <Flex align="center" gap={10}>
                     {
@@ -228,6 +229,7 @@ const PaymentManagementSystem: FC<{ active: boolean }> = ({ active }) => {
           {
             title: (
               <ConfigFormLayout
+                width="1136px"
                 extraContent={
                   <Flex align="center" gap={10}>
                     {

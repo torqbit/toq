@@ -15,6 +15,22 @@ import {
 } from "@prisma/client";
 import { IAssignmentDetails, IAssignmentSubmissionDetail, IEvaluationResult } from "./assignment";
 
+export interface IEnrolledListResponse {
+  studentName: string;
+  dateJoined: string;
+  lastActivity?: string;
+  progress: number;
+}
+
+export interface IRegisteredCoursesList {
+  courseName: string;
+  isExpired: boolean;
+  progress: string;
+  courseId: number;
+  slug: string;
+}
+[];
+
 export interface IHeroCoursePreview {
   courseName: string;
   authorImage: string;
