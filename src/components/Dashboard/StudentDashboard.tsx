@@ -1,4 +1,4 @@
-import { Button, Flex, List, message, Skeleton, Space, Spin, Tabs, TabsProps } from "antd";
+import { Button, Flex, List, message, Segmented, Skeleton, Space, Spin, Tabs, TabsProps } from "antd";
 import { FC, useEffect, useState } from "react";
 import { useAppContext } from "../ContextApi/AppContext";
 import { useRouter } from "next/router";
@@ -15,10 +15,10 @@ import { getDummyArray } from "@/lib/dummyData";
 import { useMediaQuery } from "react-responsive";
 import Academy from "../Academy/Academy";
 import { ILearningPathDetail } from "@/types/learingPath";
-import { ICourseListItem } from "@/types/courses/Course";
+import { ICourseListItem, IRegisteredCoursesList } from "@/types/courses/Course";
 
 export const EnrolledCourseProgressList: FC<{
-  courseData: { courseName: string; progress: string; courseId: number; slug: string }[];
+  courseData: { courseName: string; progress: string; isExpired: boolean; courseId: number; slug: string }[];
 }> = ({ courseData }) => {
   return (
     <>
@@ -56,8 +56,8 @@ const StudentDashboard: FC<{
 
   const [pageLoading, setPageLoading] = useState<boolean>(false);
   const [messageApi, contextHolder] = message.useMessage();
-  const [allRegisterCourse, setAllRegisterCourse] =
-    useState<{ courseName: string; progress: string; courseId: number; slug: string }[]>();
+  const [selectedSegment, setSelectedSegment] = useState<string>("active");
+  const [allRegisterCourse, setAllRegisterCourse] = useState<IRegisteredCoursesList[]>();
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
   const getProgress = () => {
     setPageLoading(true);
@@ -81,6 +81,53 @@ const StudentDashboard: FC<{
 
   const onChange = (key: string) => {};
 
+  const getSegmentOption = (allRegisterCourse: IRegisteredCoursesList[]) => {
+    let expired = allRegisterCourse && allRegisterCourse.filter((cp) => cp.isExpired).length;
+    let completed = allRegisterCourse && allRegisterCourse.filter((cp) => cp.progress == "100%").length;
+    if (expired > 0 && completed > 0) {
+      return [
+        {
+          label: "Active",
+          value: "active",
+        },
+        {
+          label: "Completed",
+          value: "completed",
+        },
+        {
+          label: "Expired",
+          value: "expired",
+        },
+      ];
+    } else if (expired > 0 && completed == 0) {
+      return [
+        {
+          label: "Active",
+          value: "active",
+        },
+
+        {
+          label: "Expired",
+          value: "expired",
+        },
+      ];
+    } else if (expired == 0 && completed > 0) {
+      return [
+        {
+          label: "Active",
+          value: "active",
+        },
+
+        {
+          label: "Completed",
+          value: "completed",
+        },
+      ];
+    } else {
+      return [];
+    }
+  };
+
   const items: TabsProps["items"] = [
     {
       key: "student",
@@ -90,6 +137,15 @@ const StudentDashboard: FC<{
       children:
         !pageLoading && allRegisterCourse ? (
           <>
+            {getSegmentOption(allRegisterCourse).length > 0 && (
+              <Segmented
+                style={{ marginBottom: 10 }}
+                onChange={(value) => {
+                  setSelectedSegment(value);
+                }}
+                options={getSegmentOption(allRegisterCourse)}
+              />
+            )}
             {allRegisterCourse && allRegisterCourse.length === 0 ? (
               <>
                 <div className={styles.no_course_found}>
@@ -114,7 +170,18 @@ const StudentDashboard: FC<{
                 </div>
               </>
             ) : (
-              <EnrolledCourseProgressList courseData={allRegisterCourse} />
+              <>
+                {selectedSegment === "active" && (
+                  <EnrolledCourseProgressList courseData={allRegisterCourse.filter((cp) => !cp.isExpired)} />
+                )}
+
+                {selectedSegment === "expired" && (
+                  <EnrolledCourseProgressList courseData={allRegisterCourse.filter((cp) => cp.isExpired)} />
+                )}
+                {selectedSegment === "completed" && (
+                  <EnrolledCourseProgressList courseData={allRegisterCourse.filter((cp) => cp.progress == "100%")} />
+                )}
+              </>
             )}
           </>
         ) : (

@@ -30,23 +30,23 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     let courseProgress = await prisma.$queryRaw<
       any[]
-    >`select co.courseId, co.name,co.slug, COUNT(re.resourceId) as lessons, COUNT(cp.resourceId) as watched_lessons FROM Course as co
+    >`select co.courseId, co.name,co.slug,cr.expireIn as expiryDate, COUNT(re.resourceId) as lessons, COUNT(cp.resourceId) as watched_lessons FROM Course as co
   INNER JOIN Chapter as ch ON co.courseId = ch.courseId 
   INNER JOIN \`Order\` as ord ON ord.productId = co.courseId
   INNER JOIN CourseRegistration as cr ON ord.id = cr.orderId
   INNER JOIN Resource as re ON ch.chapterId = re.chapterId
   LEFT OUTER JOIN CourseProgress as cp ON re.resourceId = cp.resourceId AND cr.studentId = cp.studentId
   WHERE  re.state = ${StateType.ACTIVE} AND cr.studentId = ${token?.id} AND cr.courseState != ${CourseState.COMPLETED}
-  GROUP BY co.courseId, co.name
+  GROUP BY co.courseId, co.name, cr.expireIn
   UNION
-  select co.courseId, co.name,co.slug, COUNT(re.resourceId) as lessons, COUNT(cp.resourceId) as watched_lessons FROM Course as co
+  select co.courseId, co.name,cr.expireIn as expiryDate,co.slug, COUNT(re.resourceId) as lessons, COUNT(cp.resourceId) as watched_lessons FROM Course as co
   INNER JOIN Chapter as ch ON co.courseId = ch.courseId 
   INNER JOIN \`Order\` as ord ON ord.productId =  co.courseId
   INNER JOIN CourseRegistration as cr ON ord.id = cr.orderId
   INNER JOIN Resource as re ON ch.chapterId = re.chapterId
   INNER JOIN CourseProgress as cp ON re.resourceId = cp.resourceId AND cr.studentId = cp.studentId
   WHERE  re.state = ${StateType.ACTIVE} AND cr.studentId = ${token?.id} AND cr.courseState = ${CourseState.COMPLETED}
-  GROUP BY co.courseId, co.name
+  GROUP BY co.courseId, co.name, cr.expireIn
 
   UNION
   
@@ -54,6 +54,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     co.courseId, 
     co.name, 
     co.slug, 
+    cr.expireIn as expiryDate,
     COUNT(re.resourceId) AS lessons, 
     COUNT(cp.resourceId) AS watched_lessons 
   FROM Course AS co
@@ -67,7 +68,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   WHERE re.state = ${StateType.ACTIVE} 
     AND cr.studentId = ${token?.id} 
     AND cr.courseState != ${CourseState.COMPLETED}
-  GROUP BY co.courseId, co.name
+  GROUP BY co.courseId, co.name, cr.expireIn
   `;
 
     if (courseProgress.length > 0) {
@@ -76,10 +77,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           courseName: cp.name,
           courseId: cp.courseId,
           slug: cp.slug,
+          isExpired: cp.expiryDate && new Date(cp.expiryDate).getTime() < new Date().getTime(),
           progress: `${Math.floor(percentage(Number(cp.watched_lessons), Number(cp.lessons)))}%`,
         };
       });
     }
+
+    console.log(courseProgress, "cp");
 
     return res.status(200).json({
       info: false,
@@ -88,6 +92,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       progress: courseProgress,
     });
   } catch (error) {
+    console.log(error);
     return errorHandler(error, res);
   }
 };

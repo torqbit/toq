@@ -22,6 +22,15 @@ export interface IEnrolledListResponse {
   progress: number;
 }
 
+export interface IRegisteredCoursesList {
+  courseName: string;
+  isExpired: boolean;
+  progress: string;
+  courseId: number;
+  slug: string;
+}
+[];
+
 export interface IHeroCoursePreview {
   courseName: string;
   authorImage: string;
