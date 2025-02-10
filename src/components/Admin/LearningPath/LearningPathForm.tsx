@@ -29,6 +29,7 @@ import CourseSelectForm from "./CourseSelectForm";
 import { DragEndEvent } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
 import LearningPathSerivices from "@/services/learningPath/LearningPathSerivices";
+import Link from "next/link";
 const { TextArea } = Input;
 
 const LearningPathForm: FC<{
@@ -121,9 +122,14 @@ const LearningPathForm: FC<{
           initialValues={initialValue}
         >
           <Flex justify="space-between" align="center" className={styles.setting_header}>
-            <h3>{title}</h3>
+            <Flex gap={10} align="center">
+              <Link href={"/academy"} style={{ lineHeight: 0 }}>
+                <i style={{ lineHeight: 0, fontSize: 18 }}>{SvgIcons.arrowLeft}</i>
+              </Link>
+              <h3 style={{ margin: 0 }}>{title}</h3>
+            </Flex>
             <Flex gap={20}>
-              {pathId ? (
+              {pathId && (
                 <Popconfirm
                   title={`Delete the learning Path`}
                   description={`Are you sure you want to  delete this entire learning path?`}
@@ -133,15 +139,8 @@ const LearningPathForm: FC<{
                 >
                   <Button>Discard</Button>
                 </Popconfirm>
-              ) : (
-                <Button
-                  onClick={() => {
-                    router.push("/academy");
-                  }}
-                >
-                  Go Back
-                </Button>
               )}
+
               <Dropdown.Button
                 disabled={courseList.length < 2}
                 loading={loading}
