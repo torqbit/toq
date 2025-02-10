@@ -42,7 +42,7 @@ Setting up local environment is extremely easy and straight forward. Follow the 
 1. Edit the `docker-compose.yml` file to include the Google & Github client credentials, and the email id that will be the admin for the platform.
 1. Now run the command `docker-compose up` to launch the web app and the MySQL server.
 
-You are ready to play around the platform. Do not forget to refresh the browser (in case id does not auto-reload)
+You are ready to play around the platform. Do not forget to refresh the browser (in case it does not auto-reload)
 
 Thats it!
 
