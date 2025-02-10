@@ -8,6 +8,7 @@ import {
   ICourseDetailView,
   ICourseListItem,
   IEnrolledListResponse,
+  IRegisteredCoursesList,
 } from "@/types/courses/Course";
 import { Chapter, Course, CourseCertificates, Resource } from "@prisma/client";
 import { getFetch, postWithFile } from "./request";
@@ -42,13 +43,7 @@ export type ApiResponse = {
     completed: boolean;
     certificateIssueId: string;
   };
-  progress: {
-    courseName: string;
-    progress: string;
-    slug: string;
-    isExpired: boolean;
-    courseId: number;
-  }[];
+  progress: IRegisteredCoursesList[];
   newChapter: {
     ChapterId: number;
   };
