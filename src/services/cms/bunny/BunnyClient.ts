@@ -181,18 +181,33 @@ export class BunnyClient {
     mainStorageRegion: string,
     linkedHostname: string
   ): Promise<APIResponse<string>> => {
-    const res = await fetch(
-      `https://${this.getCDNbaseEndpoint(mainStorageRegion)}/${zoneName}/${path}`,
-      this.getClientFileOptions(file)
-    );
-    const uploadRes = await res.json();
+    // Validate and sanitize inputs
+    if (!this.isValidPath(path)) {
+      return new APIResponse(false, 400, "Invalid path format");
+    }
 
-    return new APIResponse(
-      uploadRes.HttpCode == 201,
-      uploadRes.HttpCode,
-      uploadRes.Message,
-      uploadRes.HttpCode == 201 ? `https://${linkedHostname}/${path}` : ""
-    );
+    if (!zoneName.match(/^[a-zA-Z0-9-]+$/)) {
+      return new APIResponse(false, 400, "Invalid zone name format");
+    }
+
+    try {
+      const res = await fetch(
+        `https://${this.getCDNbaseEndpoint(mainStorageRegion)}/${encodeURIComponent(zoneName)}/${encodeURIComponent(
+          path
+        )}`,
+        this.getClientFileOptions(file)
+      );
+      const uploadRes = await res.json();
+
+      return new APIResponse(
+        uploadRes.HttpCode == 201,
+        uploadRes.HttpCode,
+        uploadRes.Message,
+        uploadRes.HttpCode == 201 ? `https://${linkedHostname}/${path}` : ""
+      );
+    } catch (error: any) {
+      return new APIResponse(false, 500, error.message || "Failed to upload image");
+    }
   };
 
   downloadPrivateFiles = async (
@@ -223,8 +238,8 @@ export class BunnyClient {
   deleteCDNImage = async (filePath: string, linkedHostname: string, zoneName: string): Promise<APIResponse<string>> => {
     const parseUrl = filePath && url.parse(filePath);
     const existingPath = parseUrl && parseUrl.pathname;
-    if (parseUrl && parseUrl.host === linkedHostname && this.isValidPath(existingPath)) {
-      const deleteUrl = `https://storage.bunnycdn.com/${zoneName}/${encodeURIComponent(existingPath)}`;
+    if (parseUrl && parseUrl.host === linkedHostname && this.isValidPath(existingPath || "")) {
+      const deleteUrl = `https://storage.bunnycdn.com/${zoneName}/${encodeURIComponent(existingPath || "")}`;
       const response = await fetch(deleteUrl, this.getDeleteOption());
       if (response.ok) {
         return new APIResponse(true, response.status, response.statusText);
