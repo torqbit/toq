@@ -81,6 +81,9 @@ export const getEnrolledListByCourse = async (
     const getTotalEnrolled = await prisma.order.findMany({
       distinct: ["studentId"],
       where: whereCluase,
+      orderBy: {
+        createdAt: "desc",
+      },
     });
 
     const courseProgress = result.map((cp: any) => {

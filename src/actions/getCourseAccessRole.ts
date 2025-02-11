@@ -42,16 +42,17 @@ export const getCourseAccessRole = async (
   const isLearningRegistered =
     findLearningPathCourse &&
     userId &&
-    (await prisma.order.findUnique({
+    (await prisma.order.findFirst({
       where: {
-        studentId_productId: {
-          studentId: userId,
-          productId: findLearningPathCourse.learningPathId,
-        },
+        studentId: userId,
+        productId: findLearningPathCourse.learningPathId,
         orderStatus: orderStatus.SUCCESS,
       },
       select: {
         updatedAt: true,
+      },
+      orderBy: {
+        createdAt: "desc",
       },
     }));
 

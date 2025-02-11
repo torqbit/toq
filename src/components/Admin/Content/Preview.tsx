@@ -43,7 +43,8 @@ const Preview: FC<{
   handleLessonRedirection: (courseId: number) => void;
   paymentCallback?: boolean;
   extraStyle?: CSSProperties;
-}> = ({ courseDetail, previewMode, handlePurchase, handleLessonRedirection, paymentCallback, extraStyle }) => {
+  loading?: boolean;
+}> = ({ courseDetail, previewMode, handlePurchase, handleLessonRedirection, paymentCallback, extraStyle, loading }) => {
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
   const router = useRouter();
   return (
@@ -146,6 +147,7 @@ const Preview: FC<{
                       <h2>{courseDetail.pricing.amount == 0 ? "Free" : courseDetail.pricing.amount}</h2>
                     </Flex>
                     <Button
+                      loading={loading}
                       type="primary"
                       size="large"
                       style={{ width: 200 }}
@@ -164,6 +166,7 @@ const Preview: FC<{
                       <h2>{courseDetail.pricing.amount == 0 ? "Free" : courseDetail.pricing.amount}</h2>
                     </Flex>
                     <Button
+                      loading={loading}
                       type="primary"
                       size="large"
                       style={{ width: 200 }}
@@ -198,6 +201,7 @@ const Preview: FC<{
                     </Flex>
                     <Button
                       type="primary"
+                      loading={loading}
                       size="large"
                       style={{ width: 200 }}
                       onClick={(e) => handleLessonRedirection(courseDetail.id)}

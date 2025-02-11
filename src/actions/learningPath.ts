@@ -171,14 +171,15 @@ class LearningPath {
   ): Promise<APIResponse<ILearningPreviewDetail>> {
     let role = userRole;
 
-    const findOrder = await prisma.order.findUnique({
+    const findOrder = await prisma.order.findFirst({
       where: {
-        studentId_productId: {
-          studentId: String(userId),
-          productId: pathId,
-        },
+        studentId: String(userId),
+        productId: pathId,
 
         orderStatus: orderStatus.SUCCESS,
+      },
+      orderBy: {
+        createdAt: "desc",
       },
     });
 

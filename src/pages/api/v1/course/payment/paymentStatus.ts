@@ -20,12 +20,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const { courseId } = req.query;
 
-    const latestOrder = await prisma.order.findUnique({
+    const latestOrder = await prisma.order.findFirst({
       where: {
-        studentId_productId: {
-          productId: Number(courseId),
-          studentId: String(token?.id),
-        },
+        productId: Number(courseId),
+        studentId: String(token?.id),
+      },
+      orderBy: {
+        createdAt: "desc",
       },
 
       select: {
