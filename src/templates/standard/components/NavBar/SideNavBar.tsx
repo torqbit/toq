@@ -1,7 +1,6 @@
 import React, { FC, useState } from "react";
 import Link from "next/link";
-import DOMPurify from "isomorphic-dompurify";
-import { Badge, Drawer, Flex } from "antd";
+import { Drawer, Flex } from "antd";
 import styles from "./NavBar.module.scss";
 import { INavBarProps } from "@/types/landing/navbar";
 import ThemeSwitch from "@/components/ThemeSwitch/ThemeSwitch";
@@ -9,6 +8,19 @@ import Hamburger from "hamburger-react";
 import { Role } from "@prisma/client";
 import SvgIcons from "@/components/SvgIcons";
 import ResponsiveAppNavBar from "./ResponsiveAppNavBar";
+
+const authorizedUrls = [
+  "/home",
+  "/about",
+  "/contact",
+  "/courses",
+  "/blogs",
+  "/academy",
+  "/changelog",
+  "/terms-conditions",
+  "/events",
+  "/workshops",
+];
 
 const MobileNav: FC<INavBarProps> = ({ items, showThemeSwitch, activeTheme, brand, previewMode, user }) => {
   const [showSideNav, setSideNav] = useState(false);
@@ -127,7 +139,7 @@ const MobileNav: FC<INavBarProps> = ({ items, showThemeSwitch, activeTheme, bran
                       >
                         {item.title === "Courses" ? (
                           <a
-                            href={DOMPurify.sanitize(item.link)}
+                            href={authorizedUrls.includes(item.link) ? item.link : "#"}
                             style={{ color: "var(--font-secondary)" }}
                             className={styles.menuTitle}
                             aria-label={`link to ${item.title}`}
@@ -138,7 +150,7 @@ const MobileNav: FC<INavBarProps> = ({ items, showThemeSwitch, activeTheme, bran
                           <Link
                             key={i}
                             style={{ color: "var(--font-secondary)" }}
-                            href={DOMPurify.sanitize(item.link)}
+                            href={authorizedUrls.includes(item.link) ? item.link : "#"}
                             aria-label={`link to ${item.title}`}
                           >
                             {item.title}
