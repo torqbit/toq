@@ -21,6 +21,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   // cashfreeService.handleWebhook(order: ZodOrder): Promise<CourseRegistration| undefined>
   // billingService.sendCourseInvoice(cr: CourseRegistration): Promise<boolean>
 
+  console.log(req.body, "webhook body info");
+
   if (body.data.order) {
     const signature = req.headers["cf-signature"];
 
@@ -28,6 +30,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const pms = new PaymentManagemetService();
     const isWebhookVerified = await pms.handleWebhook(gatewayProvider.CASHFREE, String(signature), webhookPayload);
+    console.log(isWebhookVerified, "is verified detail");
     if (!isWebhookVerified.success) {
       return res.status(200).json({ success: false, message: isWebhookVerified.message });
     }
@@ -52,6 +55,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       },
     });
 
+    console.log(orderDetail, "latest order detail in webhook");
     if (orderDetail?.orderStatus == orderStatus.PENDING) {
       await prisma.order.update({
         where: {

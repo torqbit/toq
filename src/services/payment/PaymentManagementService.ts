@@ -57,6 +57,7 @@ export class PaymentManagemetService {
             signature,
             payload
           );
+          console.log(isVerified, "checking in payment service");
           return new APIResponse(
             isVerified,
             isVerified ? 200 : 400,
