@@ -24,6 +24,14 @@ export class CashfreePaymentProvider implements PaymentServiceProvider {
     this.secretId = secretId;
   }
 
+  async verifyWebhook(signature: string, payload: string): Promise<boolean> {
+    Cashfree.XClientId = this.clientId;
+    Cashfree.XClientSecret = this.secretId;
+    const isValidSignature = Cashfree.PGVerifyWebhookSignature(signature, payload, this.secretId);
+    console.log(isValidSignature, "checking webhook validation in cashfree service");
+    return isValidSignature ? true : false;
+  }
+
   async updateOrder(
     orderId: string,
     gatewayOrderId: string,

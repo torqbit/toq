@@ -4,6 +4,7 @@ import {
   CourseRegistration,
   CourseType,
   EntityType,
+  gatewayProvider,
   NotificationType,
   Order,
   orderStatus,
@@ -43,6 +44,33 @@ export const paymentsConstants = {
 export class PaymentManagemetService {
   serviceType: ServiceType = ServiceType.PAYMENTS;
   defaultGateway: string = "CASHFREE";
+
+  handleWebhook = async (gateway: string, signature: string, payload: string): Promise<APIResponse<any>> => {
+    switch (gateway) {
+      case gatewayProvider.CASHFREE:
+        const secretStore = SecretsManager.getSecretsProvider();
+
+        const clientId = await secretStore.get(paymentsConstants.CF_CLIENT_ID);
+        const clientSecret = await secretStore.get(paymentsConstants.CF_CLIENT_SECRET);
+        if (clientId && clientSecret) {
+          const isVerified = await new CashfreePaymentProvider(clientId, clientSecret).verifyWebhook(
+            signature,
+            payload
+          );
+          console.log(isVerified, "checking in payment service");
+          return new APIResponse(
+            isVerified,
+            isVerified ? 200 : 400,
+            isVerified ? "Webhook has been verified" : "Unable to verify the webhook signature"
+          );
+        } else {
+          return new APIResponse<any>(false, 404, "No configuration found for the given payment gateway");
+        }
+
+      default:
+        return new APIResponse<any>(false, 404, "No configuration found for the given payment gateway");
+    }
+  };
 
   getGatewayConfig = async (gateway: string): Promise<APIResponse<any>> => {
     switch (gateway) {
