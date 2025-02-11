@@ -6,13 +6,9 @@ import { withMethods } from "@/lib/api-middlewares/with-method";
 import * as z from "zod";
 import { errorHandler } from "@/lib/api-middlewares/errorHandler";
 import { getToken } from "next-auth/jwt";
-import { addDays, getCookieName } from "@/lib/utils";
-import MailerService from "@/services/MailerService";
-import { CourseState, CourseType, EntityType, NotificationType, orderStatus } from "@prisma/client";
-import { PaymentManagemetService } from "@/services/payment/PaymentManagementService";
-import { CashFreeConfig, CoursePaymentConfig, UserConfig } from "@/types/payment";
-import { DiscussionNotification, ISendNotificationProps } from "@/types/notification";
-import NotificationHandler from "@/actions/notification";
+import { getCookieName } from "@/lib/utils";
+import enrollmentService from "@/actions/enrollmentService";
+import { APIResponse } from "@/types/apis";
 
 export const validateReqBody = z.object({
   courseId: z.number(),
@@ -34,145 +30,22 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     // check is user Active
 
     if (!token || !token.isActive) {
-      return res.status(400).json({
-        success: false,
-        error: " You don't have an active user",
-      });
+      return res
+        .status(400)
+        .json(new APIResponse(false, 400, " You don't have an active user", { alreadyEnrolled: true }));
     }
+
+    let studentInfo = {
+      studentId: token.id,
+      email: String(token.email),
+      name: String(token.name),
+      phone: token.phone,
+    };
+
+    const enrollCourse = await enrollmentService.courseEnrollment(studentInfo, reqBody.courseId);
+    return res.status(enrollCourse.status).json(enrollCourse);
 
     // check user already enrolled
-
-    const alreadyEnrolled =
-      reqBody.orderId &&
-      (await prisma.courseRegistration.findUnique({
-        where: {
-          orderId: reqBody.orderId,
-        },
-        select: {
-          registrationId: true,
-        },
-      }));
-
-    if (alreadyEnrolled) {
-      return res.status(400).json({
-        success: false,
-        alreadyEnrolled: true,
-        error: "You have already enrolled in this course",
-      });
-    }
-
-    const course = await prisma.course.findUnique({
-      where: {
-        courseId: reqBody.courseId,
-      },
-      select: {
-        courseType: true,
-        tvThumbnail: true,
-        name: true,
-        slug: true,
-        expiryInDays: true,
-        coursePrice: true,
-        authorId: true,
-        user: {
-          select: {
-            name: true,
-          },
-        },
-      },
-    });
-    let courseType = course?.courseType;
-
-    if (course) {
-      const expiryDate = addDays(Number(course.expiryInDays));
-      // IF COURSE IS FREE
-
-      if (courseType === CourseType.FREE) {
-        await prisma.$transaction(async (tx) => {
-          const createOrder = await tx.order.create({
-            data: {
-              studentId: token.id,
-              orderStatus: orderStatus.SUCCESS,
-              productId: reqBody.courseId,
-              amount: 0,
-            },
-          });
-
-          await prisma.courseRegistration.create({
-            data: {
-              studentId: token.id,
-              expireIn: expiryDate,
-              orderId: createOrder.id,
-              courseState: CourseState.ENROLLED,
-            },
-          });
-        });
-
-        let notificationData: ISendNotificationProps = {
-          notificationType: NotificationType.ENROLLED,
-          recipientId: course?.authorId,
-          subjectId: String(token?.id),
-          subjectType: EntityType.USER,
-          objectId: String(reqBody.courseId),
-          objectType: EntityType.COURSE,
-        };
-
-        NotificationHandler.createNotification(notificationData);
-
-        const configData = {
-          name: token.name,
-          email: token.email,
-
-          url: `${process.env.NEXTAUTH_URL}/courses/${course.slug}`,
-          course: {
-            name: course.name,
-            thumbnail: course.tvThumbnail,
-          },
-        };
-
-        MailerService.sendMail("COURSE_ENROLMENT", configData).then((result) => {
-          console.log(result.error);
-        });
-
-        return res.status(200).json({
-          success: true,
-          message: "Congratulations! You’ve successfully enrolled in this course.",
-        });
-      }
-
-      // IF COURSE IS PAID
-
-      if (courseType === CourseType.PAID) {
-        if (!token.phone) {
-          return res.status(400).json({ success: false, error: "Missing phone number", phoneNotFound: true });
-        } else if (token.phone.length > 10 || token.phone.length < 10) {
-          return res
-            .status(400)
-            .json({ success: false, error: "Phone number must be of 10 digits !", phoneNotFound: true });
-        } else {
-          const userConfig: UserConfig = {
-            studentId: String(token.id),
-            email: String(token.email),
-            studentName: String(token.name),
-            phone: token.phone,
-          };
-
-          const courseConfig: CoursePaymentConfig = {
-            courseId: reqBody.courseId,
-            slug: String(course.slug),
-            amount: Number(course.coursePrice),
-            coursePrice: Number(course.coursePrice),
-          };
-          const pms = new PaymentManagemetService();
-
-          const paymentData = await pms.processPayment(userConfig, courseConfig);
-          if (paymentData.success) {
-            return res.status(paymentData.status).json({ ...paymentData.body, success: paymentData.success });
-          } else {
-            return res.status(paymentData.status).json({ success: paymentData.success, error: paymentData.message });
-          }
-        }
-      }
-    }
   } catch (error: any) {
     console.log(error);
     return errorHandler(error, res);

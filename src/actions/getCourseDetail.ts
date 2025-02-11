@@ -89,13 +89,14 @@ const courseDetailForStudent = async (
 
   const isLearningRegistered =
     findLearningPathCourse &&
-    (await prisma.order.findUnique({
+    (await prisma.order.findFirst({
       where: {
-        studentId_productId: {
-          studentId: userId,
-          productId: findLearningPathCourse.learningPathId,
-        },
+        studentId: userId,
+        productId: findLearningPathCourse.learningPathId,
         orderStatus: orderStatus.SUCCESS,
+      },
+      orderBy: {
+        createdAt: "desc",
       },
     }));
 

@@ -22,6 +22,24 @@ export interface IEnrolledListResponse {
   progress: number;
 }
 
+export interface ICourseEnrollmentProps {
+  courseInfo: {
+    expiryDate: Date;
+    courseId: number;
+    authorId: string;
+    coursePrice: number;
+    slug: string;
+    name: string;
+    tvThumbnail: string;
+  };
+  studentInfo: {
+    studentId: string;
+    name: string;
+    email: string;
+    phone?: string;
+  };
+}
+
 export interface IRegisteredCoursesList {
   courseName: string;
   isExpired: boolean;

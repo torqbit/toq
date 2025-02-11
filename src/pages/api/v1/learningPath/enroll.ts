@@ -40,12 +40,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     // check user already enrolled
 
-    const alreadyEnrolled = await prisma.order.findUnique({
+    const alreadyEnrolled = await prisma.order.findFirst({
       where: {
-        studentId_productId: {
-          productId: reqBody.pathId,
-          studentId: token.id,
-        },
+        productId: reqBody.pathId,
+        studentId: token.id,
+      },
+      orderBy: {
+        createdAt: "desc",
       },
     });
 

@@ -542,7 +542,6 @@ model Order {
   product          Product             @relation(fields: [productId], references: [productId], onDelete: Cascade)
   user             User                @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
-  @@unique([studentId, productId])
   @@index([studentId, gatewayOrderId])
   @@index([productId])
 }

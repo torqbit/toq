@@ -23,18 +23,18 @@ import { getCourseDetailedView } from "@/actions/courses";
 import Preview from "@/components/Admin/Content/Preview";
 import { useSession } from "next-auth/react";
 import { useMediaQuery } from "react-responsive";
-import { getCourseAccessRole } from "@/actions/getCourseAccessRole";
+import { APIResponse } from "@/types/apis";
 
 const LearnCoursesPage: NextPage<{
   siteConfig: PageSiteConfig;
-  userRole: Role;
+  role: Role;
   course: ICoursePriviewInfo;
   courseViewDetail?: ICourseDetailView;
   lessons: CourseLessons[];
   courseId: number;
-}> = ({ siteConfig, userRole, course, courseViewDetail, lessons, courseId }) => {
+}> = ({ siteConfig, role, course, courseViewDetail, lessons, courseId }) => {
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
-
+  const [userRole, setUserRole] = useState<Role>(role);
   const router = useRouter();
   const [form] = Form.useForm();
   const { data: user } = useSession();
@@ -125,13 +125,15 @@ const LearnCoursesPage: NextPage<{
         },
         "/api/v1/course/enroll"
       );
-      const result = (await res.json()) as IResponse;
+      const response = (await res.json()) as APIResponse<any>;
+      let result = response.body;
+      setLoading(false);
 
-      if (res.ok && result.success) {
+      if (response.success) {
         if (courseDetail?.course.courseType === $Enums.CourseType.FREE) {
           setLoading(false);
           setRefresh(!refresh);
-
+          setUserRole(Role.STUDENT);
           modal.success({
             title: result.message,
             onOk: () => {
@@ -146,10 +148,10 @@ const LearnCoursesPage: NextPage<{
           router.replace(`/courses/${router.query.slug}/lesson/${nextLessonId}`);
           setLoading(false);
         } else {
-          if (result.phoneNotFound && result.error) {
-            setModal({ active: true, message: result.error });
+          if (result.phoneNotFound && response.error) {
+            setModal({ active: true, message: response.error });
           } else {
-            messageApi.error(result.error);
+            messageApi.error(response.error);
           }
           setLoading(false);
         }
@@ -176,7 +178,6 @@ const LearnCoursesPage: NextPage<{
     const res = await getFetch(`/api/v1/course/payment/paymentStatus?courseId=${courseId}`);
     const result = (await res.json()) as IResponse;
     if (router.query.callback) {
-      console.log(router.query.callback);
       setPaymentStatus(result.status);
       setAlertConfig({ type: result.alertType, message: result.alertMessage, description: result.alertDescription });
     }
@@ -228,6 +229,7 @@ const LearnCoursesPage: NextPage<{
               <Preview
                 courseDetail={courseViewDetail}
                 previewMode={false}
+                loading={loading}
                 handlePurchase={() => {
                   userRole && userRole === Role.STUDENT
                     ? handlePurchase(courseId)
@@ -252,6 +254,7 @@ const LearnCoursesPage: NextPage<{
               <Preview
                 courseDetail={courseViewDetail}
                 previewMode={false}
+                loading={loading}
                 handlePurchase={handlePurchase}
                 paymentCallback={router.query.callback === "payment"}
                 handleLessonRedirection={handleLessonRedirection}
@@ -299,7 +302,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
     if (user) {
       return {
         props: {
-          userRole: user?.role,
+          role: user?.role,
           siteConfig: site,
           course: {
             ...info.courseInfo,
