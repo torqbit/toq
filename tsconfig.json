@@ -21,6 +21,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "cacheConfig.js"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "cacheConfig.mjs"],
   "exclude": ["node_modules"]
 }

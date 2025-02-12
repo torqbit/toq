@@ -1,5 +1,5 @@
 // Workbox RuntimeCaching config: https://developers.google.com/web/tools/workbox/reference-docs/latest/module-workbox-build#.RuntimeCachingEntry
-module.exports = [
+export default [
   {
     urlPattern: /^https:\/\/fonts\.(?:gstatic)\.com\/.*/i,
     handler: "CacheFirst",

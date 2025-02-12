@@ -45,12 +45,7 @@ const PreviewCertificate: FC<{ courseName: string; userName: string; userRole: R
         <Flex justify={userRole == Role.STUDENT ? "center" : "flex-start"}>
           <div className={styles.certificate_image}>
             <img src={`/static/course/certificate/${router.query.certificateId}`} alt={userName ?? "Certificate"} />
-            {/* <Spin
-            spinning={true}
-            indicator={<LoadingOutlined spin />}
-            style={{ position: "absolute", top: "calc(50% - 40px)", left: "50%" }}
-            size="large"
-          /> */}
+
             <Button
               onClick={() => {
                 router.push(`/courses/${router.query.slug}/certificate/download/${String(router.query.certificateId)}`);
