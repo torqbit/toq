@@ -28,7 +28,6 @@ class AuthService {
         service_type: true,
       },
     });
-    console.log(configDetails);
     const serviceType = configDetails.map((s) => s.service_type);
     const allExist = serviceType.includes(ServiceType.CMS) && serviceType.includes(ServiceType.PAYMENTS);
     if (userRole === Role.ADMIN) {

@@ -135,7 +135,7 @@ const LearnCoursesPage: NextPage<{
           setRefresh(!refresh);
           setUserRole(Role.STUDENT);
           modal.success({
-            title: result.message,
+            title: response.message,
             onOk: () => {
               handleLessonRedirection(courseId);
             },
@@ -157,6 +157,7 @@ const LearnCoursesPage: NextPage<{
         }
       }
     } catch (err: any) {
+      console.log(err);
       messageApi.error("Error while enrolling course ", err?.message);
       setLoading(false);
     }

@@ -48,9 +48,7 @@ const SubjectiveAssignmentForm: FC<{
         message.error(`${info.file.name} file upload failed.`);
       }
     },
-    onDrop(e) {
-      console.log("Dropped files", e.dataTransfer.files);
-    },
+    onDrop(e) {},
   };
 
   useEffect(() => {

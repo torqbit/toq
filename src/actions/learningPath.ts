@@ -7,8 +7,7 @@ import { ILearningCourseList, ILearningPathDetail, ILearningPreviewDetail } from
 import { CourseType, orderStatus, ProductType, Role, StateType } from "@prisma/client";
 import { uploadThumbnail } from "./courses";
 import appConstant from "@/services/appConstant";
-import { convertSecToHourandMin } from "@/pages/admin/content";
-import { getCourseAccessRole } from "./getCourseAccessRole";
+
 class LearningPath {
   async createLearningPath(
     file: any,
