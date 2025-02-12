@@ -58,23 +58,6 @@ const nextConfig = {
   },
 
   productionBrowserSourceMaps: false,
-  webpack: (config, { buildId, dev, isServer, defaultLoaders, nextRuntime, webpack }) => {
-    if (config.cache && !dev) {
-      config.cache = Object.freeze({
-        type: "memory",
-      });
-      config.cache.maxMemoryGenerations = 0;
-    }
-
-    config.module.rules.push({
-      test: /\.js$/,
-      resolve: {
-        fullySpecified: false,
-      },
-    });
-
-    return config;
-  },
   typescript: {
     //for production
     ignoreBuildErrors: true,
