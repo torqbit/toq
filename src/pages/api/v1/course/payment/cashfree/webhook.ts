@@ -30,7 +30,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const pms = new PaymentManagemetService();
     const isWebhookVerified = await pms.handleWebhook(gatewayProvider.CASHFREE, String(signature), webhookPayload);
-    console.log(isWebhookVerified, "is verified detail");
     if (!isWebhookVerified.success) {
       return res.status(200).json({ success: false, message: isWebhookVerified.message });
     }

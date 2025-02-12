@@ -462,7 +462,6 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
           form.setFieldValue("certificate_template", result.courseDetails.certificateTemplate);
           form.setFieldValue("previewMode", result.courseDetails.previewMode);
           form.setFieldValue("coursePrice", result.courseDetails.coursePrice);
-          console.log(result.courseDetails);
           if (result.courseDetails.chapters.length > 0 || result.courseDetails.tvUrl) {
             setTabActive(true);
           }

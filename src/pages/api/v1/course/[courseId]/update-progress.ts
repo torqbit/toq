@@ -31,7 +31,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const hasAccess = await getCourseAccessRole(token?.role, userId, Number(courseId));
 
-    let pId = hasAccess.pathId ? hasAccess.pathId : Number(courseId);
+    let pId = hasAccess.productId;
     const cr = await prisma.courseRegistration.findFirst({
       where: {
         studentId: token?.id,
@@ -79,7 +79,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         res.status(400).json({ success: false, error: "Unable to update the course progress" });
       }
     } else {
-      res.status(400).json({ success: false, error: "You are not enrolled in this course" });
+      res.status(403).json({ success: false, error: "You are not enrolled in this course" });
     }
   } catch (error) {
     return errorHandler(error, res);

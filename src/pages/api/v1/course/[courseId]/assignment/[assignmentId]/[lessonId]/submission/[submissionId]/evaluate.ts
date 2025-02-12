@@ -82,7 +82,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const hasAccess = await getCourseAccessRole(savedSubmission.user.role, savedSubmission.user.id, courseId);
 
-    let pId = hasAccess.pathId ? hasAccess.pathId : courseId;
+    let pId = hasAccess.productId;
     const cr = await prisma.courseRegistration.findFirst({
       where: {
         studentId: token?.id,

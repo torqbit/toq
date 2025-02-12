@@ -241,15 +241,14 @@ export const getCourseDetailedView = async (
       } else {
         //get the registration details for this course and userId
         const hasAccess = await getCourseAccessRole(user.role, user.id, courseId, isSlug);
-        if (hasAccess && hasAccess.role == Role.STUDENT) {
+        if (hasAccess && hasAccess.role == Role.STUDENT && hasAccess.dateExpiry && hasAccess.dateJoined) {
           userRole = Role.STUDENT;
-          const endDate = new Date(hasAccess.dateJoined);
 
           let certificateInfo = await prisma.courseRegistration.findFirst({
             where: {
               studentId: user.id,
               order: {
-                productId: hasAccess.isLearningPath ? hasAccess.pathId : courseDBDetails.courseId,
+                productId: hasAccess.isLearningPath ? hasAccess.productId : courseDBDetails.courseId,
               },
             },
             select: {
@@ -269,13 +268,11 @@ export const getCourseDetailedView = async (
               ? undefined
               : certificateInfo?.certificate.map((certi) => certi.id)[0];
 
-          endDate.setDate(hasAccess.dateJoined.getDate() + courseDBDetails.expiryInDays);
-
           // Get today's date
           const today = new Date();
 
           // Calculate the difference in time (in milliseconds) between the end date and today
-          const timeDifference = endDate.getTime() - today.getTime();
+          const timeDifference = hasAccess.dateExpiry.getTime() - today.getTime();
 
           remainingDays = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
           enrolmentDate = hasAccess.dateJoined.toLocaleDateString("en-US", {
@@ -401,7 +398,7 @@ export const listCourseListItems = async (token: JWT | null): Promise<ICourseLis
             where: {
               studentId: token.id,
               order: {
-                productId: hasAccess.isLearningPath ? hasAccess.pathId : c.courseId,
+                productId: hasAccess.isLearningPath ? hasAccess.productId : c.courseId,
               },
             },
           });
