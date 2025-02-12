@@ -14,7 +14,7 @@
     "start:prod": "cross-env NODE_ENV=production & next start"
   },
   "dependencies": {
-    "@ant-design/cssinjs": "1.22.0",
+    "@ant-design/cssinjs": "1.23.0",
     "@ant-design/icons": "^5.4.0",
     "@cashfreepayments/cashfree-js": "^1.0.5",
     "@cashfreepayments/cashfree-sdk": "^0.1.7",
@@ -31,7 +31,7 @@
     "@react-pdf/renderer": "^3.1.14",
     "@types/js-yaml": "^4.0.9",
     "@types/nodemailer": "^6.4.17",
-    "antd": "^5.24.0",
+    "antd": "^5.20.0",
     "antd-img-crop": "4.23.0",
     "aos": "^3.0.0-beta.6",
     "bcryptjs": "^2.4.3",
