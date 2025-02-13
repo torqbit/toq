@@ -7,8 +7,8 @@ import { withMethods } from "@/lib/api-middlewares/with-method";
 import { withAuthentication } from "@/lib/api-middlewares/with-authentication";
 import { withUserAuthorized } from "@/lib/api-middlewares/with-authorized";
 import { IEventAccessDeniedMailConfig, IEventAccessMailConfig } from "@/lib/emailConfig";
-import MailerService from "@/services/MailerService";
 import { EventAccess } from "@prisma/client";
+import EmailManagementService from "@/services/cms/email/EmailManagementService";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
@@ -58,17 +58,19 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         loactionUrl: String(grantPermission.event.eventLink),
         location: String(grantPermission.event.location),
       };
+      const ms = await EmailManagementService.getMailerService();
 
-      await MailerService.sendMail("GRANT_ACCESS", configData).then((r) => {
-        if (r.error) {
-          console.log(r.error);
-        }
-        return res.status(200).json({
-          success: true,
-          status: grantPermission.status,
-          message: `Booking has been accepted for ${name}`,
-        });
-      });
+      ms &&
+        (await ms.sendMail("GRANT_ACCESS", configData).then((r) => {
+          if (r.error) {
+            console.log(r.error);
+          }
+          return res.status(200).json({
+            success: true,
+            status: grantPermission.status,
+            message: `Booking has been accepted for ${name}`,
+          });
+        }));
     } else {
       let configData: IEventAccessDeniedMailConfig = {
         name: name,
@@ -76,17 +78,19 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         email: email,
         reason: comment,
       };
+      const ms = await EmailManagementService.getMailerService();
 
-      await MailerService.sendMail("DENIED_ACCESS", configData).then((r) => {
-        if (r.error) {
-          console.log(r.error);
-        }
-        return res.status(200).json({
-          success: true,
-          status: grantPermission.status,
-          message: `Booking has been rejected for ${name}`,
-        });
-      });
+      ms &&
+        (await ms.sendMail("DENIED_ACCESS", configData).then((r) => {
+          if (r.error) {
+            console.log(r.error);
+          }
+          return res.status(200).json({
+            success: true,
+            status: grantPermission.status,
+            message: `Booking has been rejected for ${name}`,
+          });
+        }));
     }
   } catch (error) {
     console.log(error);

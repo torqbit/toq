@@ -4,11 +4,10 @@ import { CourseState, CourseType, EntityType, NotificationType, orderStatus } fr
 import { addDays } from "@/lib/utils";
 import { ISendNotificationProps } from "@/types/notification";
 import NotificationHandler from "@/actions/notification";
-import MailerService from "@/services/MailerService";
 import { CoursePaymentConfig, PaymentApiResponse, UserConfig } from "@/types/payment";
 import { PaymentManagemetService } from "@/services/payment/PaymentManagementService";
 import { ICourseEnrollmentProps } from "@/types/courses/Course";
-
+import EmailManagemetService from "@/services/cms/email/EmailManagementService";
 class EnrollmentService {
   async sendNotificationAndMail(info: ICourseEnrollmentProps): Promise<APIResponse<string>> {
     let notificationData: ISendNotificationProps = {
@@ -33,10 +32,12 @@ class EnrollmentService {
       },
     };
 
-    MailerService.sendMail("COURSE_ENROLMENT", configData).then((result) => {
-      console.log(result.error);
-    });
-
+    const ms = await EmailManagemetService.getMailerService();
+    if (ms) {
+      ms.sendMail("COURSE_ENROLMENT", configData).then((result) => {
+        console.log(result.error);
+      });
+    }
     return new APIResponse(true, 200, "Congratulations! You’ve successfully enrolled in this course.");
   }
 
