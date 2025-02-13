@@ -115,6 +115,29 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
     );
   };
 
+  const updateCourseData = () => {
+    ProgramService.getCourseDetails(
+      Number(router.query.id),
+      (result) => {
+        setCourseData({
+          ...courseData,
+          expiryInDays: result.courseDetails.expiryInDays,
+          name: result.courseDetails.name,
+          description: result.courseDetails.description,
+          chapters: result.courseDetails.chapters,
+          difficultyLevel: result.courseDetails.difficultyLevel,
+          state: result?.courseDetails.state,
+          coursePrice: result.courseDetails.coursePrice,
+          thumbnail: result.courseDetails.thumbnail,
+          courseType: result.courseDetails.courseType,
+        });
+      },
+      (err) => {
+        message.error(err);
+      }
+    );
+  };
+
   const onSubmit = () => {
     let courseName = form.getFieldsValue().course_name || courseData?.name;
 
@@ -178,6 +201,7 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
       (result) => {
         !isCanceled && messageApi.success(result.message);
         onRefresh();
+        updateCourseData();
       },
       (error) => {
         messageApi.error(error);
@@ -217,14 +241,21 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
       } as ResourceDetails,
       (result) => {
         content === $Enums.ResourceContentType.Assignment;
-        videoForm.setFieldValue("name", result.resource.name);
-        videoForm.setFieldValue("description", result.resource.description);
+        if (content == ResourceContentType.Video) {
+          videoForm.setFieldValue("name", result.resource.name);
+          videoForm.setFieldValue("description", result.resource.description);
+          setVideoLesson({ ...videoLesson, chapterId: chapterId, video: undefined });
+        } else if (content == ResourceContentType.Assignment) {
+          setAssignmentType(assignType as AssignmentType);
+        }
+
         setResId(result.resource.resourceId);
         setLoading(false);
         !showResourceDrawer && setResourceDrawer(true);
-        setVideoLesson({ ...videoLesson, chapterId: chapterId, video: undefined });
         setContentType(content);
-        setAssignmentType(assignType as AssignmentType);
+
+        //update the state for course detail
+        updateCourseData();
       },
       (error) => {
         messageApi.error(error);
@@ -313,18 +344,37 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
     );
   };
 
-  const onPublishCourse = (state: string) => {
-    const courseLessons = courseDetails?.chapters.flatMap((c) => c.lessons);
-    if (courseLessons && courseLessons.length >= 2) {
+  const onPublishCourse = (state: StateType) => {
+    const courseActiveLessons = courseData.chapters
+      .flatMap((c) => c.resource)
+      .filter((lesson) => lesson.state == StateType.ACTIVE);
+
+    if (state == StateType.DRAFT) {
       ProgramService.updateCourseState(
         Number(router.query.id),
         state,
         (result) => {
-          router.push("/academy");
+          console.log(result);
+          message.success(`Your course has been saved as draft`);
         },
-        (error) => {}
+        (error) => {
+          message.error(error);
+        }
       );
-    } else {
+    } else if (courseActiveLessons && state == StateType.ACTIVE && courseActiveLessons.length >= 2) {
+      ProgramService.updateCourseState(
+        Number(router.query.id),
+        state,
+        (result) => {
+          console.log(result);
+          message.success(`Your course has been successfully published.`);
+          router.push(`/courses/${result.course.slug}`);
+        },
+        (error) => {
+          message.error(error);
+        }
+      );
+    } else if (courseActiveLessons && state == StateType.ACTIVE && courseActiveLessons.length < 2) {
       message.error("Minimum two published lessons are required to publish the course");
     }
   };
@@ -391,7 +441,7 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
     },
   ];
 
-  useEffect(() => {
+  const updateCourseDetailedView = () => {
     ProgramService.fetchCourseDetailedView(
       Number(router.query.id),
       (result) => {
@@ -399,6 +449,10 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
       },
       (err) => message.error(err)
     );
+  };
+
+  useEffect(() => {
+    updateCourseDetailedView();
   }, [activeKey]);
 
   useEffect(() => {

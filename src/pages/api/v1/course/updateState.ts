@@ -20,8 +20,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       info: false,
       success: true,
       message: state == StateType.ACTIVE ? "Course has been published" : "Course has been moved to draft",
-
-      programs: updateState,
+      course: updateState,
     });
   } catch (error) {
     return errorHandler(error, res);
