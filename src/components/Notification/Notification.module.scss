@@ -20,6 +20,7 @@
   padding: 10px;
   border-radius: 4px;
   background-color: var(--bg-secondary);
+  max-height: 400px;
   p {
     text-align: left;
     -webkit-line-clamp: 2;
@@ -44,5 +45,8 @@
     > div:last-child {
       max-width: 170px;
     }
+  }
+  .description__wrapper {
+    max-width: 80vw;
   }
 }

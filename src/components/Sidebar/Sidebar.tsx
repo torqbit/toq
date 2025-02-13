@@ -136,7 +136,7 @@ const Sidebar: FC<{ menu: MenuProps["items"]; siteConfig: PageSiteConfig }> = ({
 
             <Tooltip className={styles.actionTooltip} title={"View Notifications"}>
               <NotificationPopOver
-                minWidth="420px"
+                minWidth="440px"
                 placement="topRight"
                 siteConfig={siteConfig}
                 showNotification={showNotification}
