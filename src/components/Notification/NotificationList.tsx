@@ -106,7 +106,7 @@ const NotificationList: FC<{
                   updateNotification(Number(item.object.id), item.targetLink);
                 }}
               >
-                <Flex vertical gap={10} style={{ marginTop: 5, cursor: "pointer" }} key={i}>
+                <Flex vertical gap={10} style={{ marginTop: 5, cursor: "pointer", maxWidth: 440 }} key={i}>
                   <Flex justify="space-between">
                     {getNotificationView.message}
                     <span>{moment(new Date(item.createdAt), "YYYY-MM-DDThh:mm:ss").fromNow()}</span>

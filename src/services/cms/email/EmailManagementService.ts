@@ -16,33 +16,9 @@ export const emailConstantsVariable = {
 class EmailManagemetService {
   serviceType: ServiceType = ServiceType.EMAIL;
 
-  getEmailCredentials = async (): Promise<APIResponse<any>> => {
-    try {
-      const secretStore = SecretsManager.getSecretsProvider();
-      const smtpHost = await secretStore.get(emailConstantsVariable.SMTP_HOST);
-      const smtpUser = await secretStore.get(emailConstantsVariable.SMTP_USER);
-      const smtpFromEmail = await secretStore.get(emailConstantsVariable.SMTP_FROM_EMAIL);
-      if (!smtpHost || !smtpUser || !smtpFromEmail) {
-        return {
-          success: false,
-          error: "Email credentials not found",
-          message: "Email credentials not found",
-          status: 400,
-        };
-      }
-      return {
-        success: true,
-        body: { smtpHost, smtpUser, smtpFromEmail },
-        message: "Successfully fetched the email configuration",
-        status: 200,
-      };
-    } catch (error: any) {
-      return { success: false, error: "error", message: error.message, status: 400 };
-    }
-  };
   getMailerService = async (): Promise<emailService> => {
     try {
-      const providerDetail = await this.getPrivateEmailCredentials();
+      const providerDetail = await this.getEmailCredentials();
       if (providerDetail.body) {
         const ms = new MailerService(providerDetail.body);
         return ms;
@@ -53,7 +29,7 @@ class EmailManagemetService {
       throw new Error(`something went wrong dur to ${error}`);
     }
   };
-  getPrivateEmailCredentials = async (): Promise<APIResponse<IPrivateCredentialInfo>> => {
+  getEmailCredentials = async (): Promise<APIResponse<IPrivateCredentialInfo>> => {
     try {
       const secretStore = SecretsManager.getSecretsProvider();
       const smtpHost = await secretStore.get(emailConstantsVariable.SMTP_HOST);
@@ -87,7 +63,7 @@ class EmailManagemetService {
     email: string
   ): Promise<APIResponse<void>> => {
     try {
-      const providerDetail = await this.getPrivateEmailCredentials();
+      const providerDetail = await this.getEmailCredentials();
       let result: any;
       if (providerDetail.body) {
         const es = new emailService(providerDetail.body);
