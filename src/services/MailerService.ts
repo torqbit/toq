@@ -29,11 +29,10 @@ import EventAccessEmail from "@/components/Email/EventAccessEmail";
 import EventAccessDeniedEmail from "@/components/Email/EventAccessDeniedEmail";
 import TestEmailCredentialsEmail from "@/components/Email/TestEmailCredentialsEmail";
 
-import { emailConstantsVariable } from "./cms/email/EmailManagementService";
-import SecretsManager from "./secrets/SecretsManager";
 import { getSiteConfig } from "./getSiteConfig";
 import { PageSiteConfig } from "./siteConstant";
 import LearningEnrolmentEmail from "@/components/Email/LearningEnrollmentEmail";
+import { IPrivateCredentialInfo } from "@/types/mail";
 
 export const getEmailErrorMessage = (response: string, message?: string) => {
   let errResponse;
@@ -51,35 +50,35 @@ export const getEmailErrorMessage = (response: string, message?: string) => {
   return errResponse;
 };
 
-class MailerService {
+export default class MailerService {
+  name: string = "";
   private transporter!: Transporter;
   siteConfig: PageSiteConfig;
   private SMTP_HOST: string | undefined;
   private SMTP_USER: string | undefined;
   private SMTP_PASSWORD: string | undefined;
   private SMTP_FROM_EMAIL: string | undefined;
-  private secretStore = SecretsManager.getSecretsProvider();
 
-  async initialize() {
-    this.SMTP_HOST = await this.secretStore.get(emailConstantsVariable.SMTP_HOST);
-    this.SMTP_USER = await this.secretStore.get(emailConstantsVariable.SMTP_USER);
-    this.SMTP_PASSWORD = await this.secretStore.get(emailConstantsVariable.SMTP_PASSWORD);
-    this.SMTP_FROM_EMAIL = await this.secretStore.get(emailConstantsVariable.SMTP_FROM_EMAIL);
+  async initialize(info: IPrivateCredentialInfo) {
+    this.SMTP_HOST = info.smtpHost;
+    this.SMTP_FROM_EMAIL = info.smtpFromEmail;
+    this.SMTP_PASSWORD = info.smtpPassword;
+    this.SMTP_USER = info.smtpUser;
 
     this.transporter = nodemailer.createTransport({
       port: 587,
-      host: this.SMTP_HOST || process.env.NEXT_SMTP_HOST,
+      host: this.SMTP_HOST,
       secure: false,
       auth: {
-        user: this.SMTP_USER || process.env.NEXT_SMTP_USER,
-        pass: this.SMTP_PASSWORD || process.env.NEXT_SMTP_PASSWORD,
+        user: this.SMTP_USER,
+        pass: this.SMTP_PASSWORD,
       },
-      from: `${this.SMTP_FROM_EMAIL || process.env.NEXT_SMTP_USER_EMAIL}`,
+      from: `${this.SMTP_FROM_EMAIL}`,
     });
   }
-  constructor() {
+  constructor(info: IPrivateCredentialInfo) {
     this.siteConfig = getSiteConfig()?.site;
-    this.initialize();
+    this.initialize(info);
   }
   sendMail = (eventType: IEmailEventType, config: any) => {
     const { site } = getSiteConfig();
@@ -400,5 +399,3 @@ class MailerService {
     }
   }
 }
-
-export default new MailerService();

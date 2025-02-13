@@ -3,7 +3,7 @@ import { withMethods } from "@/lib/api-middlewares/with-method";
 import { errorHandler } from "@/lib/api-middlewares/errorHandler";
 import { withUserAuthorized } from "@/lib/api-middlewares/with-authorized";
 import { emailCredentials } from "@/types/cms/email";
-import { EmailManagemetService } from "@/services/cms/email/EmailManagementService";
+import EmailManagemetService from "@/services/cms/email/EmailManagementService";
 import { getToken } from "next-auth/jwt";
 import { getCookieName } from "@/lib/utils";
 
@@ -17,8 +17,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     });
     const body = await req.body;
     const accessConfig = emailCredentials.parse(body);
-    const emailManager = new EmailManagemetService();
-    const result = await emailManager.verifyEmailCredentialsAndSave(accessConfig, token?.name as string, token?.email as string);
+    const result = await EmailManagemetService.verifyEmailCredentialsAndSave(
+      accessConfig,
+      token?.name as string,
+      token?.email as string
+    );
     return res.status(result.status).json(result);
   } catch (error) {
     return errorHandler(error, res);

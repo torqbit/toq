@@ -9,13 +9,13 @@ import fs from "fs";
 import os from "os";
 import prisma from "@/lib/prisma";
 const PDFDocument = require("pdfkit");
-import { ICertificateInfo, IEventCertificateInfo } from "@/types/courses/Course";
+import { IEventCertificateInfo } from "@/types/courses/Course";
 import { ContentManagementService } from "../cms/ContentManagementService";
 import { FileObjectType } from "@/types/cms/common";
 import { IEventEmailConfig } from "@/lib/emailConfig";
-import MailerService from "../MailerService";
 import { getDateAndYear } from "@/lib/utils";
 import { $Enums } from "@prisma/client";
+import EmailManagementService from "../cms/email/EmailManagementService";
 const homeDir = os.homedir();
 const dirPath = path.join(homeDir, `${appConstant.homeDirName}/${appConstant.staticFileDirName}`);
 if (!fs.existsSync(dirPath)) {
@@ -354,10 +354,12 @@ export class CeritificateService {
         pdfPath: String(certificatePdfPath),
         slug: String(certificatInfo?.slug),
       };
+      const ms = await EmailManagementService.getMailerService();
 
-      MailerService.sendMail("EVENT_COMPLETION", configData).then((result) => {
-        console.log(result.error);
-      });
+      ms &&
+        ms.sendMail("EVENT_COMPLETION", configData).then((result) => {
+          console.log(result.error);
+        });
 
       return new APIResponse(true, 200, `Email has been successfully sent to ${certificatInfo.studentName}`);
     };

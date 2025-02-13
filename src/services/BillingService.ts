@@ -2,13 +2,14 @@ import { generateDayAndYear } from "@/lib/utils";
 import { InvoiceData } from "@/types/payment";
 import prisma from "@/lib/prisma";
 import appConstant from "./appConstant";
-import MailerService from "./MailerService";
 import path from "path";
 import { createTempDir } from "@/actions/checkTempDirExist";
 import { ContentManagementService } from "./cms/ContentManagementService";
 import { FileObjectType } from "@/types/cms/common";
 import { APIResponse } from "@/types/apis";
 import os from "os";
+import EmailManagementService from "./cms/email/EmailManagementService";
+import { getSiteConfig } from "./getSiteConfig";
 
 const fs = require("fs");
 const PDFDocument = require("pdfkit");
@@ -29,7 +30,8 @@ export class BillingService {
     function generateHr(y: number) {
       doc.strokeColor("#aaaaaa").lineWidth(1).moveTo(50, y).lineTo(550, y).stroke();
     }
-    const logoPath = path.join(process.cwd(), appConstant.platformLogo);
+    const { site } = getSiteConfig();
+    const logoPath = path.join(process.cwd(), `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/${site.brand.icon}`);
     // header
     function generateHeader(invoiceData: InvoiceData) {
       doc
@@ -195,11 +197,13 @@ export class BillingService {
         thumbnail: invoice.courseDetail.thumbnail,
       },
     };
+    const ms = await EmailManagementService.getMailerService();
 
-    MailerService.sendMail("COURSE_ENROLMENT", configData).then(async (result) => {
-      console.log(result.error);
-      fs.unlinkSync(pdfPath);
-    });
+    ms &&
+      ms.sendMail("COURSE_ENROLMENT", configData).then(async (result) => {
+        console.log(result.error);
+        fs.unlinkSync(pdfPath);
+      });
   }
 
   async uploadInvoice(pdfPath: string, invoice: InvoiceData): Promise<APIResponse<string>> {

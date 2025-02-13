@@ -6,8 +6,8 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import bcrypt from "bcryptjs";
 import prisma from "@/lib/prisma";
 import getUserByEmail from "@/actions/getUserByEmail";
-import MailerService from "@/services/MailerService";
 import { $Enums } from "@prisma/client";
+import EmailManagementService from "@/services/cms/email/EmailManagementService";
 
 const sendWelcomeEmail = async (name: string, email: string) => {
   const configData = {
@@ -15,10 +15,12 @@ const sendWelcomeEmail = async (name: string, email: string) => {
     url: `${process.env.NEXTAUTH_URL}/dashboard`,
     email: email,
   };
-
-  MailerService.sendMail("NEW_USER", configData).then((result) => {
-    console.log(result.error);
-  });
+  const ms = await EmailManagementService.getMailerService();
+  if (ms) {
+    ms.sendMail("NEW_USER", configData).then((result) => {
+      console.log(result.error);
+    });
+  }
 };
 
 export const authOptions: NextAuthOptions = {

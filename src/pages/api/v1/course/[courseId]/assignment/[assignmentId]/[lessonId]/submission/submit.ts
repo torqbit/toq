@@ -7,8 +7,8 @@ import { getToken } from "next-auth/jwt";
 import { compareByHash, convertToDayMonthTime, getCookieName, mapToArray } from "@/lib/utils";
 import appConstant from "@/services/appConstant";
 import { submissionStatus } from "@prisma/client";
-import MailerService from "@/services/MailerService";
 import { IAssignmentSubmissionConfig } from "@/lib/emailConfig";
+import EmailManagementService from "@/services/cms/email/EmailManagementService";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
@@ -128,9 +128,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             submissionCount: totalSubmissions,
           };
 
-          MailerService.sendMail("ASSIGNMENT_SUBMISSION", config).then(async (result) => {
-            console.log(result.error);
-          });
+          const ms = await EmailManagementService.getMailerService();
+
+          ms &&
+            ms.sendMail("ASSIGNMENT_SUBMISSION", config).then(async (result) => {
+              console.log(result.error);
+            });
         }
 
         if (savedSubmission) {

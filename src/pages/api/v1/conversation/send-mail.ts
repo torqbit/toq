@@ -6,7 +6,7 @@ import { errorHandler } from "@/lib/api-middlewares/errorHandler";
 import { getToken } from "next-auth/jwt";
 import { getCookieName } from "@/lib/utils";
 import { IFeedBackConfig } from "@/lib/emailConfig";
-import MailerService from "@/services/MailerService";
+import EmailManagementService from "@/services/cms/email/EmailManagementService";
 
 /**
  * Post a conversation
@@ -33,13 +33,16 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       feedback: feedback,
     } as IFeedBackConfig;
 
-    await MailerService.sendMail("FEEDBACK", config).then((result) => {
-      if (result.error) {
-        res.status(400).json({ success: false, error: result.error, token });
-      } else {
-        res.status(200).json({ success: true, message: "Mail has been sent to admin", token });
-      }
-    });
+    const ms = await EmailManagementService.getMailerService();
+
+    ms &&
+      (await ms.sendMail("FEEDBACK", config).then((result) => {
+        if (result.error) {
+          res.status(400).json({ success: false, error: result.error, token });
+        } else {
+          res.status(200).json({ success: true, message: "Mail has been sent to admin", token });
+        }
+      }));
   } catch (err) {
     return errorHandler(err, res);
   }

@@ -7,11 +7,11 @@ import * as z from "zod";
 import { errorHandler } from "@/lib/api-middlewares/errorHandler";
 import { getToken } from "next-auth/jwt";
 import { getCookieName } from "@/lib/utils";
-import MailerService from "@/services/MailerService";
 import { CourseState, EntityType, NotificationType, orderStatus } from "@prisma/client";
 import { APIResponse } from "@/types/apis";
 import { ISendNotificationProps } from "@/types/notification";
 import NotificationHandler from "@/actions/notification";
+import EmailManagementService from "@/services/cms/email/EmailManagementService";
 
 export const validateReqBody = z.object({
   pathId: z.number(),
@@ -117,10 +117,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           thumbnail: learningPath.banner,
         },
       };
+      const ms = await EmailManagementService.getMailerService();
 
-      MailerService.sendMail("LEARNING_ENROLMENT", configData).then((result) => {
-        console.log(result.error);
-      });
+      ms &&
+        ms.sendMail("LEARNING_ENROLMENT", configData).then((result) => {
+          console.log(result.error);
+        });
 
       return res.status(200).json({
         success: true,
