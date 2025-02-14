@@ -192,9 +192,7 @@ export class BunnyClient {
 
     try {
       const res = await fetch(
-        `https://${this.getCDNbaseEndpoint(mainStorageRegion)}/${encodeURIComponent(zoneName)}/${encodeURIComponent(
-          path
-        )}`,
+        `https://${this.getCDNbaseEndpoint(mainStorageRegion)}/${zoneName}/${path}`,
         this.getClientFileOptions(file)
       );
       const uploadRes = await res.json();
@@ -521,7 +519,6 @@ export class BunnyClient {
         };
         const deletionResponse = await fetch(url, delOptions);
         if (deletionResponse.status == 204) {
-          console.log(`the watermark for the video library ${videoLibId}`);
         }
       }
       const file = await downloadImg.arrayBuffer();
@@ -550,7 +547,7 @@ export class BunnyClient {
     );
   };
   isValidPath(path: string): boolean {
-    const allowedPathPattern = /^\/[a-zA-Z0-9_\-\/]+$/;
+    const allowedPathPattern = /^(https?:\/\/)?([\w-]+(\.[\w-]+)*\/)*[\w-]+\.(jpg|jpeg|png|gif|bmp|webp|svg|tiff)$/i;
     return allowedPathPattern.test(path);
   }
 }
