@@ -286,6 +286,7 @@ class LearningPath {
       return total + courseDuration;
     }, 0);
 
+    const durationInSeconds = totalVideoDuration || 0;
     if (detail) {
       const instructors = new Set(detail.learningPathCourses.map((c) => `${c.course.user.image}`));
 
@@ -299,7 +300,7 @@ class LearningPath {
         role: role,
         currency: appConstant.currency,
         assignmentsCount: Number(totalAssignments),
-        contentDurationInHrs: Math.floor(totalVideoDuration || 0 / 60),
+        contentDurationInHrs: Math.floor(durationInSeconds / 3600),
         author: {
           name: detail.author.name,
           designation: "a course instructor at OpenAI",
