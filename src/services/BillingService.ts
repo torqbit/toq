@@ -7,18 +7,63 @@ import { createTempDir } from "@/actions/checkTempDirExist";
 import { ContentManagementService } from "./cms/ContentManagementService";
 import { FileObjectType } from "@/types/cms/common";
 import { APIResponse } from "@/types/apis";
+import https from "https";
+import http from "http";
 import os from "os";
+
 import EmailManagementService from "./cms/email/EmailManagementService";
 import { getSiteConfig } from "./getSiteConfig";
+import { cwd } from "process";
 
 const fs = require("fs");
 const PDFDocument = require("pdfkit");
+
+async function downloadImage(url: string, filename: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    try {
+      const dirPath = path.join(os.homedir(), ".torqbit");
+      if (!fs.existsSync(dirPath)) {
+        fs.mkdirSync(dirPath, { recursive: true });
+      }
+
+      const filePath = path.join(dirPath, filename);
+      const file = fs.createWriteStream(filePath);
+
+      const protocol = url.startsWith("https") ? https : http;
+
+      protocol
+        .get(url, (response) => {
+          response.pipe(file);
+          file.on("finish", () => {
+            file.close();
+            console.log(`Image downloaded as ${filePath}`);
+            resolve(filePath);
+          });
+        })
+        .on("error", (err) => {
+          fs.unlink(filePath, () => {});
+          console.error(`Error downloading image: ${err.message}`);
+          reject(err);
+        });
+    } catch (error: any) {
+      console.error(`Unexpected error: ${error.message}`);
+      reject(error);
+    }
+  });
+}
 
 export class BillingService {
   // currency formatter
 
   async createPdf(invoice: InvoiceData, savePath: string): Promise<string> {
     let doc = new PDFDocument({ margin: 50 });
+    const homeDir = os.homedir();
+    let dirPath = path.join(homeDir, `${appConstant.homeDirName}/${appConstant.staticFileDirName}`);
+    if (!fs.existsSync(dirPath)) {
+      fs.mkdirSync(dirPath, {
+        recursive: true,
+      });
+    }
 
     // currency formatter
 
@@ -31,11 +76,18 @@ export class BillingService {
       doc.strokeColor("#aaaaaa").lineWidth(1).moveTo(50, y).lineTo(550, y).stroke();
     }
     const { site } = getSiteConfig();
-    const logoPath = path.join(process.cwd(), `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/${site.brand.icon}`);
+
     // header
-    function generateHeader(invoiceData: InvoiceData) {
+    async function generateHeader(invoiceData: InvoiceData) {
+      let imagePath = site.brand.icon;
+      const localImgPath = await downloadImage(imagePath, "brand-icon.png");
+      // const sourcePath = path.join(
+      //   homeDir,
+      //   `${appConstant.homeDirName}/${appConstant.staticFileDirName}/${imagePath.split("/").pop()}`
+      // );
+
       doc
-        .image(logoPath, 50, 45, { width: 50 })
+        .image(localImgPath, 50, 45, { width: 50 })
         .fillColor("#666")
         .fontSize(20)
         .text(invoiceData.businessInfo.platformName, 110, 62)
@@ -138,17 +190,8 @@ export class BillingService {
       };
     }
 
-    const homeDir = os.homedir();
-    const dirPath = path.join(homeDir, `${appConstant.homeDirName}/${appConstant.staticFileDirName}`);
-
-    if (!fs.existsSync(dirPath)) {
-      fs.mkdirSync(dirPath, {
-        recursive: true,
-      });
-    }
-
     const amountDetail = calculateGst(Number(invoice.totalAmount), invoice.businessInfo.taxRate);
-    generateHeader(invoice);
+    await generateHeader(invoice);
     generateBillTo(invoice);
     generateCustomerInformation(invoice);
     generateInvoiceTable(invoice);
@@ -245,15 +288,15 @@ export class BillingService {
             this.mailInvoice(savePath, invoice)
               .then((r) => console.log("invoice sent through mail"))
               .catch((error) => {
-                console.log(error, "error while sending  invoice mail");
+                console.error(`Failed to send the invoice. ${error.message}`);
               });
           })
           .catch((error) => {
-            console.log(error, "error while uploading invoice");
+            console.error(`Failed to upload the invoice: ${error.message}`);
           });
       })
       .catch((error) => {
-        console.log(error, "error while creating pdf");
+        console.error(`Failed to create the pdf: ${error.message}`);
       });
   }
 }

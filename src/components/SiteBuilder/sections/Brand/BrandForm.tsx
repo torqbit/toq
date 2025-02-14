@@ -84,10 +84,19 @@ const BrandForm: FC<{
         }
         const res = await postRes.json();
         if (res.success) {
-          setBrandImage({ ...brandImage, [imageType]: `/static/${res.imgName}` });
+          setBrandImage({
+            ...brandImage,
+            [imageType]:
+              imageType === "icon"
+                ? `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/static/${res.imgName}`
+                : `/static/${res.imgName}`,
+          });
           setBrandConfig({
             ...brandConfig,
-            [imageType]: `/static/${res.imgName}`,
+            [imageType]:
+              imageType === "icon"
+                ? `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/static/${res.imgName}`
+                : `/static/${res.imgName}`,
             favicon: res.icoFileName ? `/static/${res.icoFileName}` : brandConfig?.favicon,
           });
         }

@@ -24,8 +24,8 @@ site:
       youtube: https://youtube.com/@torqbit
     name: Torqbit
     brandColor: "#8980fd"
-    title: Making online fun and easy
-    icon: /img/brand/torqbit-icon.png
+    title: Modern education starts here
+    icon: https://cdn.torqbit.com/static/brand-icon.png
   darkMode: true
   heroSection:
     title: Welcome to Torqbit Academy
