@@ -288,7 +288,7 @@ export class BillingService {
             this.mailInvoice(savePath, invoice)
               .then((r) => console.log("invoice sent through mail"))
               .catch((error) => {
-                console.log(error, "error while sending  invoice mail");
+                console.error(`Failed to send the invoice. ${error.message}`);
               });
           })
           .catch((error) => {
