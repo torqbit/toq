@@ -292,11 +292,11 @@ export class BillingService {
               });
           })
           .catch((error) => {
-            console.log(error, "error while uploading invoice");
+            console.error(`Failed to upload the invoice: ${error.message}`);
           });
       })
       .catch((error) => {
-        console.log(error, "error while creating pdf");
+        console.error(`Failed to create the pdf: ${error.message}`);
       });
   }
 }
