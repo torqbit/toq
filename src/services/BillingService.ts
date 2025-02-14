@@ -7,13 +7,50 @@ import { createTempDir } from "@/actions/checkTempDirExist";
 import { ContentManagementService } from "./cms/ContentManagementService";
 import { FileObjectType } from "@/types/cms/common";
 import { APIResponse } from "@/types/apis";
+import https from "https";
+import http from "http";
 import os from "os";
+
 import EmailManagementService from "./cms/email/EmailManagementService";
 import { getSiteConfig } from "./getSiteConfig";
 import { cwd } from "process";
 
 const fs = require("fs");
 const PDFDocument = require("pdfkit");
+
+async function downloadImage(url: string, filename: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    try {
+      const dirPath = path.join(os.homedir(), ".torqbit");
+      if (!fs.existsSync(dirPath)) {
+        fs.mkdirSync(dirPath, { recursive: true });
+      }
+
+      const filePath = path.join(dirPath, filename);
+      const file = fs.createWriteStream(filePath);
+
+      const protocol = url.startsWith("https") ? https : http;
+
+      protocol
+        .get(url, (response) => {
+          response.pipe(file);
+          file.on("finish", () => {
+            file.close();
+            console.log(`Image downloaded as ${filePath}`);
+            resolve(filePath);
+          });
+        })
+        .on("error", (err) => {
+          fs.unlink(filePath, () => {});
+          console.error(`Error downloading image: ${err.message}`);
+          reject(err);
+        });
+    } catch (error: any) {
+      console.error(`Unexpected error: ${error.message}`);
+      reject(error);
+    }
+  });
+}
 
 export class BillingService {
   // currency formatter
@@ -41,16 +78,16 @@ export class BillingService {
     const { site } = getSiteConfig();
 
     // header
-    function generateHeader(invoiceData: InvoiceData) {
+    async function generateHeader(invoiceData: InvoiceData) {
       let imagePath = site.brand.icon;
-
-      const sourcePath = path.join(
-        homeDir,
-        `${appConstant.homeDirName}/${appConstant.staticFileDirName}/${imagePath.split("/").pop()}`
-      );
+      const localImgPath = await downloadImage(imagePath, "brand-icon.png");
+      // const sourcePath = path.join(
+      //   homeDir,
+      //   `${appConstant.homeDirName}/${appConstant.staticFileDirName}/${imagePath.split("/").pop()}`
+      // );
 
       doc
-        .image(sourcePath, 50, 45, { width: 50 })
+        .image(localImgPath, 50, 45, { width: 50 })
         .fillColor("#666")
         .fontSize(20)
         .text(invoiceData.businessInfo.platformName, 110, 62)
@@ -154,7 +191,7 @@ export class BillingService {
     }
 
     const amountDetail = calculateGst(Number(invoice.totalAmount), invoice.businessInfo.taxRate);
-    generateHeader(invoice);
+    await generateHeader(invoice);
     generateBillTo(invoice);
     generateCustomerInformation(invoice);
     generateInvoiceTable(invoice);
