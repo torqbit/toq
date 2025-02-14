@@ -10,6 +10,7 @@ import { APIResponse } from "@/types/apis";
 import os from "os";
 import EmailManagementService from "./cms/email/EmailManagementService";
 import { getSiteConfig } from "./getSiteConfig";
+import { cwd } from "process";
 
 const fs = require("fs");
 const PDFDocument = require("pdfkit");
@@ -19,6 +20,13 @@ export class BillingService {
 
   async createPdf(invoice: InvoiceData, savePath: string): Promise<string> {
     let doc = new PDFDocument({ margin: 50 });
+    const homeDir = os.homedir();
+    let dirPath = path.join(homeDir, `${appConstant.homeDirName}/${appConstant.staticFileDirName}`);
+    if (!fs.existsSync(dirPath)) {
+      fs.mkdirSync(dirPath, {
+        recursive: true,
+      });
+    }
 
     // currency formatter
 
@@ -31,11 +39,18 @@ export class BillingService {
       doc.strokeColor("#aaaaaa").lineWidth(1).moveTo(50, y).lineTo(550, y).stroke();
     }
     const { site } = getSiteConfig();
-    const logoPath = path.join(process.cwd(), `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/${site.brand.icon}`);
+
     // header
     function generateHeader(invoiceData: InvoiceData) {
+      let imagePath = site.brand.icon;
+
+      const sourcePath = path.join(
+        homeDir,
+        `${appConstant.homeDirName}/${appConstant.staticFileDirName}/${imagePath.split("/").pop()}`
+      );
+
       doc
-        .image(logoPath, 50, 45, { width: 50 })
+        .image(sourcePath, 50, 45, { width: 50 })
         .fillColor("#666")
         .fontSize(20)
         .text(invoiceData.businessInfo.platformName, 110, 62)
@@ -136,15 +151,6 @@ export class BillingService {
         subtotal: subtotal.toFixed(2),
         gstAmount: gstAmount.toFixed(2),
       };
-    }
-
-    const homeDir = os.homedir();
-    const dirPath = path.join(homeDir, `${appConstant.homeDirName}/${appConstant.staticFileDirName}`);
-
-    if (!fs.existsSync(dirPath)) {
-      fs.mkdirSync(dirPath, {
-        recursive: true,
-      });
     }
 
     const amountDetail = calculateGst(Number(invoice.totalAmount), invoice.businessInfo.taxRate);
