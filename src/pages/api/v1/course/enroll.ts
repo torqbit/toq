@@ -30,9 +30,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     // check is user Active
 
     if (!token || !token.isActive) {
-      return res
-        .status(400)
-        .json(new APIResponse(false, 400, " You don't have an active user", { alreadyEnrolled: true }));
+      return res.status(400).json(new APIResponse(false, 400, " You are not  an active user"));
     }
 
     let studentInfo = {

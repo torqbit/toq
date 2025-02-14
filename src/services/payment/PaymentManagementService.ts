@@ -25,6 +25,7 @@ import {
   InvoiceData,
   paymentCustomerDetail,
   ISuccessPaymentData,
+  latestOrderDetail,
 } from "@/types/payment";
 import { CashfreePaymentProvider } from "./CashfreePaymentProvider";
 import SecretsManager from "../secrets/SecretsManager";
@@ -420,11 +421,21 @@ export class PaymentManagemetService {
     }
   };
 
-  getLatestOrder = async (studentId: string, productId: number): Promise<Order | undefined> => {
+  getLatestOrder = async (studentId: string, productId: number): Promise<latestOrderDetail | undefined> => {
     const latestOrder = await prisma.order.findFirst({
       where: {
         studentId,
         productId,
+      },
+      select: {
+        orderStatus: true,
+        id: true,
+        updatedAt: true,
+        registeredCourse: {
+          select: {
+            expireIn: true,
+          },
+        },
       },
 
       orderBy: {
@@ -457,7 +468,14 @@ export class PaymentManagemetService {
      * if payment is in success state
      */
 
-    if (latestOrder && latestOrder.orderStatus === orderStatus.SUCCESS) {
+    if (
+      latestOrder &&
+      latestOrder.orderStatus === orderStatus.SUCCESS &&
+      latestOrder.registeredCourse &&
+      (!latestOrder.registeredCourse.expireIn ||
+        (latestOrder.registeredCourse.expireIn &&
+          latestOrder.registeredCourse.expireIn?.getTime() > new Date().getTime()))
+    ) {
       return new APIResponse(false, 208, `You have already purchased this course`);
     }
 
@@ -478,7 +496,13 @@ export class PaymentManagemetService {
      */
     try {
       const paymentProvider = await this.getPaymentProvider(this.defaultGateway);
-      if (!latestOrder || latestOrder.orderStatus === orderStatus.FAILED) {
+      if (
+        !latestOrder ||
+        latestOrder.orderStatus === orderStatus.FAILED ||
+        (latestOrder.registeredCourse &&
+          latestOrder.registeredCourse.expireIn &&
+          latestOrder.registeredCourse.expireIn.getTime() < new Date().getTime())
+      ) {
         const order = await prisma.order.create({
           data: {
             studentId: userConfig.studentId,
