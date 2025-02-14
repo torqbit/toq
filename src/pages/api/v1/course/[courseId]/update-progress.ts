@@ -53,6 +53,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           },
         },
       },
+      orderBy: {
+        createdAt: "desc",
+      },
     });
     const isExist = cr?.certificate.find((c) => c.productId === Number(courseId));
 

@@ -67,7 +67,7 @@ class EnrollmentService {
 
   async paidCourseEnrollment(
     info: ICourseEnrollmentProps
-  ): Promise<APIResponse<PaymentApiResponse | { phoneNotFound: boolean }>> {
+  ): Promise<APIResponse<PaymentApiResponse | { phoneNotFound: boolean } | { alreadyEnrolled: boolean }>> {
     if (!info.studentInfo.phone) {
       return new APIResponse(false, 404, "Missing phone number", { phoneNotFound: true });
     } else if (info.studentInfo.phone.length > 10 || info.studentInfo.phone.length < 10) {
@@ -89,6 +89,9 @@ class EnrollmentService {
       const pms = new PaymentManagemetService();
 
       const paymentData = await pms.processPayment(userConfig, courseConfig);
+      if (paymentData.status == 208) {
+        return new APIResponse(paymentData.success, paymentData.status, paymentData.message, { alreadyEnrolled: true });
+      }
       return paymentData;
     }
   }
@@ -147,7 +150,7 @@ class EnrollmentService {
 
     if (courseDetail) {
       if (registrationDetail?.expireIn && registrationDetail.expireIn.getTime() > new Date().getTime()) {
-        return new APIResponse(false, 400, "You have already enrolled in this course");
+        return new APIResponse(false, 400, "You have already enrolled in this course", { alreadyEnrolled: true });
       } else {
         if (courseDetail?.coursePrice == 0) {
           return await this.freeCourseEnrollment(info);

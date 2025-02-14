@@ -1,7 +1,6 @@
 import React, { FC, useState } from "react";
 import styles from "./Notification.module.scss";
 import { Button, Divider, Flex, Skeleton } from "antd";
-
 import moment from "moment";
 import NotificationService from "@/services/NotificationService";
 import { getDummyArray } from "@/lib/dummyData";

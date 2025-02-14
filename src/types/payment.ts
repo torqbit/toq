@@ -88,6 +88,15 @@ export interface OrderDetail extends Order {
   // gatewayOrder: CashfreeOrder[];
 }
 
+export interface latestOrderDetail {
+  id: string;
+  orderStatus: $Enums.orderStatus | null;
+  updatedAt: Date;
+  registeredCourse: {
+    expireIn: Date | null;
+  } | null;
+}
+
 export interface InvoiceData {
   courseDetail: {
     courseId: number;
