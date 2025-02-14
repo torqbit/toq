@@ -128,9 +128,7 @@ const MarketingLayout: FC<{
     if (user) {
       eventSource = new EventSource("/api/v1/notification/push");
 
-      eventSource.addEventListener("open", (event) => {
-        console.log("Connection opened");
-      });
+      eventSource.addEventListener("open", (event) => {});
 
       eventSource.addEventListener("message", (event) => {
         try {

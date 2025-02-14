@@ -27,7 +27,6 @@ interface IProps {
 
 export const CourseEnrolmentEmail = ({ configData }: IProps) => {
   const { site }: { site: PageSiteConfig } = getSiteConfig();
-  console.log(site, "site ");
 
   return (
     <Tailwind>

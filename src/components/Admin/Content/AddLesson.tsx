@@ -39,7 +39,7 @@ const AddLesson: FC<{
 }) => {
   return (
     <>
-      {contentType === $Enums.ResourceContentType.Assignment ? (
+      {contentType === $Enums.ResourceContentType.Assignment && showResourceDrawer && (
         <div className={styles.assignmentDrawerContainer}>
           <AddAssignment
             setResourceDrawer={setResourceDrawer}
@@ -53,7 +53,8 @@ const AddLesson: FC<{
             assignmentType={assignmentType}
           />
         </div>
-      ) : (
+      )}
+      {contentType === $Enums.ResourceContentType.Video && showResourceDrawer && (
         <AddVideoLesson
           onRefresh={onRefresh}
           currResId={currResId}

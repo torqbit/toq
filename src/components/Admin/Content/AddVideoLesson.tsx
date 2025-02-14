@@ -132,7 +132,10 @@ const AddVideoLesson: FC<{
         form.resetFields();
         setLoading(false);
         form.setFieldValue("contentType", "Video");
-        setResourceDrawer(false);
+        setTimeout(() => {
+          setResourceDrawer(false);
+        }, 300);
+
         onRefresh();
         if (isEdit) {
           setEdit(true);
@@ -187,7 +190,9 @@ const AddVideoLesson: FC<{
     if (intervalId && videoLesson && videoLesson.video && videoLesson.video.state == VideoState.READY) {
       clearInterval(Number(intervalId));
     }
-    return () => intervalId && clearInterval(Number(intervalId));
+    return () => {
+      intervalId && clearInterval(Number(intervalId));
+    };
   }, [checkLessonVideoState]);
 
   const uploadFile = async (file: any, title: string) => {
@@ -232,16 +237,21 @@ const AddVideoLesson: FC<{
   return (
     <>
       {contextHolder}
+
       <Drawer
         classNames={{ header: styles.headerWrapper, body: styles.body, footer: styles.footer }}
         width={400}
         maskClosable={false}
         closeIcon={true}
         onClose={() => {
-          currResId && !isEdit && onDeleteResource(currResId, true);
-          setResourceDrawer(false);
-          form.resetFields();
-          onRefresh();
+          if (resourceVideoUploading) {
+            message.info(`Wait for the video to completely upload`);
+          } else {
+            currResId && !isEdit && onDeleteResource(currResId, true);
+            setResourceDrawer(false);
+            form.resetFields();
+            onRefresh();
+          }
         }}
         className={styles.newResDetails}
         title={isEdit ? `Update ${contentType} Details` : `New ${contentType} Details`}
@@ -264,9 +274,13 @@ const AddVideoLesson: FC<{
               type="default"
               loading={loading}
               onClick={() => {
-                setResourceDrawer(false);
-                currResId && !isEdit && onDeleteResource(currResId, true);
-                form.resetFields();
+                if (resourceVideoUploading) {
+                  message.info(`Wait for the video to completely upload`);
+                } else {
+                  setResourceDrawer(false);
+                  currResId && !isEdit && onDeleteResource(currResId, true);
+                  form.resetFields();
+                }
               }}
             >
               Cancel
@@ -304,13 +318,19 @@ const AddVideoLesson: FC<{
               <ConfigFormItem
                 layout="vertical"
                 input={
-                  <Input.TextArea
-                    onChange={(e) => {
-                      setVideoLesson({ ...videoLesson, description: e.currentTarget.value });
-                    }}
-                    rows={4}
-                    placeholder="Brief description about the video"
-                  />
+                  <Form.Item
+                    name={"description"}
+                    rules={[{ required: true, message: "Description about the video lesson required" }]}
+                  >
+                    <Input.TextArea
+                      onChange={(e) => {
+                        setVideoLesson({ ...videoLesson, description: e.currentTarget.value });
+                      }}
+                      rows={4}
+                      value={form.getFieldsValue().description}
+                      placeholder="Brief description about the video"
+                    />
+                  </Form.Item>
                 }
                 title={"Description"}
                 description={"Provide a brief description about the video"}
@@ -322,7 +342,7 @@ const AddVideoLesson: FC<{
                   <Form.Item
                     name="videoUrl"
                     label="Upload Video"
-                    rules={[{ required: true, message: "Please Enter Description" }]}
+                    rules={[{ required: true, message: "Please upload video" }]}
                   >
                     <Upload
                       name="avatar"

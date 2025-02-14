@@ -240,7 +240,6 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
         contentType: content,
       } as ResourceDetails,
       (result) => {
-        content === $Enums.ResourceContentType.Assignment;
         if (content == ResourceContentType.Video) {
           videoForm.setFieldValue("name", result.resource.name);
           videoForm.setFieldValue("description", result.resource.description);
@@ -354,7 +353,6 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
         Number(router.query.id),
         state,
         (result) => {
-          console.log(result);
           message.success(`Your course has been saved as draft`);
         },
         (error) => {
@@ -366,7 +364,6 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
         Number(router.query.id),
         state,
         (result) => {
-          console.log(result);
           message.success(`Your course has been successfully published.`);
           router.push(`/courses/${result.course.slug}`);
         },

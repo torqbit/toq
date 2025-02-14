@@ -48,6 +48,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           Number(fields.videoId[0]),
           "lesson"
         );
+
         if (newThumbnailResponse.success && newThumbnailResponse.body) {
           const trailerThumbnail = newThumbnailResponse.body;
           await prisma.video.update({
@@ -58,13 +59,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               thumbnail: trailerThumbnail,
             },
           });
-          return res
-            .status(200)
-            .json({
-              success: true,
-              message: "Thumbnail has been successfully uploaded",
-              fileCDNPath: trailerThumbnail,
-            });
+          return res.status(200).json({
+            success: true,
+            message: "Thumbnail has been successfully uploaded",
+            fileCDNPath: trailerThumbnail,
+          });
         } else {
           throw new Error("Unable to upload the thumnail, due to missing trailer video details");
         }

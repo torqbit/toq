@@ -116,7 +116,7 @@ const ContentManagementSystem: FC<{ siteConfig: PageSiteConfig; active: boolean 
       optional: false,
 
       description:
-        "Select te enabled resolutions that will be encoded. Only resolutions smaller than or equal to the original video resolutions will be used during encoding.",
+        "Select the enabled resolutions that will be encoded. Only resolutions smaller than or equal to the original video resolutions will be used during encoding.",
       input: (
         <Select
           labelInValue

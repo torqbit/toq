@@ -43,7 +43,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         if (err) {
           console.error("Error saving image:", err);
         } else {
-          console.log(`Image saved to ${profilePath}`);
         }
       });
 

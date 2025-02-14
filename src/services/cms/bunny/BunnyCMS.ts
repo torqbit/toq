@@ -543,7 +543,6 @@ export class BunnyCMS implements IContentProvider<BunnyAuthConfig, BunnyCMSConfi
         //get the course/lesson details
         const currentEpochTime = new Date().getTime();
         const thumbImg = `${objectId}-${objectType}-thumb-${currentEpochTime}.${fileExtension}`;
-
         const cdnUploadResponse = await this.uploadCDNImage(
           cmsConfig,
           thumbnail,
