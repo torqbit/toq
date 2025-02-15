@@ -47,6 +47,7 @@ const AssignmentContentTab: FC<{
   const [isResultView, setResultView] = useState<boolean>(false);
   const [messageApi, contextHolder] = message.useMessage();
   const [isCompleteBtnDisabled, setCompleteBtnDisabled] = useState<boolean>(false);
+  const [finishDisabled, setFinishDisabled] = useState<boolean>(true);
 
   const getAssignmentDetail = (lessonId: number, isNoAnswer: boolean) => {
     setLoading(true);
@@ -133,19 +134,11 @@ const AssignmentContentTab: FC<{
 
   const onSubmitQuestion = () => {
     if (assignmentDetail?.content._type === AssignmentType.SUBJECTIVE) {
-      if (!subjectiveAnswer.answerContent) {
-        return messageApi.info({ content: "Please write you answer" });
-      }
       if (subjectiveQuestion?.file_for_candidate && !subjectiveAnswer.answerArchiveUrl) {
         return messageApi.info({ content: "Please upload assignment file" });
       }
     }
 
-    if (assignmentDetail?.content._type === AssignmentType.MCQ) {
-      if (Object.keys(selectedAnswers).length === 0) {
-        return messageApi.info({ content: "You haven't complete any question" });
-      }
-    }
     setSaveLoading(true);
     try {
       let submitData: any = {
@@ -225,6 +218,25 @@ const AssignmentContentTab: FC<{
     lessonId && getAssignmentDetail(lessonId, false);
   }, [lessonId, assignmentDetail?.assignmentId, refresh]);
 
+  useEffect(() => {
+    if (
+      (assignmentDetail?.content._type === AssignmentType.MCQ && Object.keys(selectedAnswers).length === 0) ||
+      selectedAnswers[`${1}`]?.length === 0
+    ) {
+      setFinishDisabled(true);
+    } else {
+      setFinishDisabled(false);
+    }
+
+    if (assignmentDetail?.content._type === AssignmentType.SUBJECTIVE) {
+      if (!subjectiveAnswer.answerContent || !subjectiveAnswer?.answerContent?.replace(/(<p><br><\/p>)+$/, "")) {
+        setFinishDisabled(true);
+      } else {
+        setFinishDisabled(false);
+      }
+    }
+  }, [selectedAnswers, subjectiveAnswer]);
+
   return (
     <>
       {contextHolder}
@@ -291,9 +303,11 @@ const AssignmentContentTab: FC<{
                             loading={saveLoading}
                             style={{
                               background:
-                                !!evaluationResult || isCompleteBtnDisabled ? "" : themeColors.commons.success,
+                                !!evaluationResult || isCompleteBtnDisabled || finishDisabled
+                                  ? ""
+                                  : themeColors.commons.success,
                             }}
-                            disabled={!!evaluationResult || isCompleteBtnDisabled}
+                            disabled={!!evaluationResult || isCompleteBtnDisabled || finishDisabled}
                           >
                             Finish & complete <ArrowRightOutlined />
                           </Button>
