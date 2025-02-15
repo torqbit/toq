@@ -25,7 +25,7 @@ const lessonDetailForStudent = async (
     return new Promise(async (resolve, reject) => {
       let resultRows = await prisma.$queryRaw<
         ILessonPreviewDetail[]
-      >`SELECT  ch.sequenceId as chapterSeq, re.sequenceId as resourceSeq,sub.status as assignmentStatus , re.resourceId, re.name as lessonName, co.name as courseName, co.description,co.previewMode,
+      >`SELECT DISTINCT  ch.sequenceId as chapterSeq, re.sequenceId as resourceSeq,sub.status as assignmentStatus , re.resourceId, re.name as lessonName, co.name as courseName, co.description,co.previewMode,
   re.description as lessonDescription, vi.id as videoId, vi.videoUrl, vi.videoDuration, ch.chapterId,re.contentType as contentType ,assign.estimatedDuration,
   ch.name as chapterName, cp.resourceId as watchedRes FROM Course as co 
   INNER JOIN \`Order\` as o ON o.productId = co.courseId
@@ -46,7 +46,7 @@ const lessonDetailForStudent = async (
     return new Promise(async (resolve, reject) => {
       let resultRows = await prisma.$queryRaw<
         ILessonPreviewDetail[]
-      >`SELECT  ch.sequenceId as chapterSeq, re.sequenceId as resourceSeq,sub.status as assignmentStatus , re.resourceId, re.name as lessonName, co.name as courseName, co.description,co.previewMode,
+      >`SELECT DISTINCT  ch.sequenceId as chapterSeq, re.sequenceId as resourceSeq,sub.status as assignmentStatus , re.resourceId, re.name as lessonName, co.name as courseName, co.description,co.previewMode,
   re.description as lessonDescription, vi.id as videoId, vi.videoUrl, vi.videoDuration, ch.chapterId,re.contentType as contentType ,assign.estimatedDuration,
   ch.name as chapterName, cp.resourceId as watchedRes FROM Course as co 
   INNER JOIN \`Order\` as o ON o.productId = co.courseId
