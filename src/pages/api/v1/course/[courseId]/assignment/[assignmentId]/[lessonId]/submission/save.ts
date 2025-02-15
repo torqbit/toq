@@ -11,6 +11,7 @@ import { Role, submissionStatus } from "@prisma/client";
 import getUserRole from "@/actions/getRole";
 import { APIResponse } from "@/types/apis";
 import withValidation from "@/lib/api-middlewares/with-validation";
+import { getCourseAccessRole } from "@/actions/getCourseAccessRole";
 
 export const validateReqBody = z.object({
   assignmentId: z.coerce.number(),
@@ -25,6 +26,32 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const token = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
     const body = req.body;
     const { assignmentId, lessonId, content } = validateReqBody.parse(body);
+
+    const courseDetail = await prisma.assignment.findFirst({
+      where: {
+        lessonId: lessonId,
+      },
+      select: {
+        lesson: {
+          select: {
+            chapter: {
+              select: {
+                courseId: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const courseAccess = await getCourseAccessRole(token?.role, token?.id, courseDetail?.lesson.chapter.courseId);
+
+    if (courseAccess.role != Role.STUDENT) {
+      return res
+        .status(401)
+        .json(new APIResponse(false, 401, "Only enrolled students are allowed to attempt the assessment"));
+    }
+
     const savedSubmission = await prisma.assignmentSubmission.findFirst({
       where: {
         assignmentId: assignmentId,
