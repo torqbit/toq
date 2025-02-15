@@ -42,6 +42,15 @@ class LearningPathServices {
     });
   };
 
+  latestLesson = (pathId: number, onSuccess: (response: APIResponse<string>) => void) => {
+    getFetch(`/api/v1/learningPath/${pathId}/getLatestLesson`).then((result) => {
+      result.json().then((r) => {
+        const apiResponse = r as APIResponse<string>;
+        onSuccess(apiResponse);
+      });
+    });
+  };
+
   delete = (
     pathId: number,
     onSuccess: (response: APIResponse<string>) => void,
