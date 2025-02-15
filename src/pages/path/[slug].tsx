@@ -23,6 +23,7 @@ import { useMediaQuery } from "react-responsive";
 import learningPath from "@/actions/learningPath";
 import { ILearningPreviewDetail } from "@/types/learingPath";
 import LearningPathDetail from "@/components/Admin/LearningPath/LearningPathDetail";
+import LearningPathSerivices from "@/services/learningPath/LearningPathSerivices";
 
 const LearnCoursesPage: NextPage<{
   siteConfig: PageSiteConfig;
@@ -44,20 +45,14 @@ const LearnCoursesPage: NextPage<{
 
   const [enableModal, setModal] = useState<{ active: boolean; message: string }>({ active: false, message: "" });
 
-  const getNextLessonId = async (courseId: number) => {
-    ProgramService.getNextLessonId(
-      courseId,
-      (result) => {
-        setNextLessonId(result.nextLessonId);
-      },
-      (error) => {
-        messageApi.error(error);
-      }
-    );
+  const getLatestLessonId = async (pathId: number) => {
+    LearningPathSerivices.latestLesson(pathId, (result) => {
+      result.body ? router.push(`/${result.body}`) : messageApi.error(result.error);
+    });
   };
 
-  const handleLessonRedirection = async (courseId: number) => {
-    router.push(`/courses/${detail.learningPathCourses[0].slug}`);
+  const handleLessonRedirection = async (pathId: number) => {
+    getLatestLessonId(pathId);
   };
 
   const handlePurchase = async (pathId: number) => {

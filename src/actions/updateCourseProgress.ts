@@ -46,6 +46,8 @@ const updateCourseProgress = async (
           const courseProgress = await prisma.$queryRaw<
             any[]
           >`select COUNT(re.resourceId) as lessons, COUNT(cp.resourceId) as watched_lessons FROM Course as co
+          INNER JOIN \`Order\` as o ON o.productId = co.courseId
+          INNER JOIN CourseRegistration as cr ON cr.orderId = o.id
         INNER JOIN Chapter as ch ON co.courseId = ch.courseId 
         INNER JOIN Resource as re ON ch.chapterId = re.chapterId
         LEFT OUTER JOIN CourseProgress as cp ON re.resourceId = cp.resourceId AND  cp.studentId = ${studentId}

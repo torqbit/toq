@@ -27,17 +27,19 @@ import { APIResponse } from "@/types/apis";
 
 const LearnCoursesPage: NextPage<{
   siteConfig: PageSiteConfig;
-  role: Role;
+  userRole: Role;
   course: ICoursePriviewInfo;
-  courseViewDetail?: ICourseDetailView;
+  viewDetail?: ICourseDetailView;
   lessons: CourseLessons[];
   courseId: number;
-}> = ({ siteConfig, role, course, courseViewDetail, lessons, courseId }) => {
+}> = ({ siteConfig, userRole, course, viewDetail, lessons, courseId }) => {
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
-  const [userRole, setUserRole] = useState<Role>(role);
+
   const router = useRouter();
   const [form] = Form.useForm();
   const { data: user } = useSession();
+  const [courseViewDetail, setCourseViewDetail] = useState<ICourseDetailView | undefined>(viewDetail);
+
   const [courseDetail, setCourseDetail] = useState<CourseLessonAPIResponse>({
     success: lessons.length > 0,
     statusCode: lessons.length > 0 ? 200 : 404,
@@ -108,7 +110,7 @@ const LearnCoursesPage: NextPage<{
     ProgramService.getNextLessonId(
       courseId,
       (result) => {
-        router.replace(`/courses/${router.query.slug}/lesson/${result.nextLessonId}`);
+        router.push(`/courses/${router.query.slug}/lesson/${result.nextLessonId}`);
       },
       (error) => {
         messageApi.error(error);
@@ -132,8 +134,7 @@ const LearnCoursesPage: NextPage<{
       if (response.success) {
         if (courseDetail?.course.courseType === $Enums.CourseType.FREE) {
           setLoading(false);
-          setRefresh(!refresh);
-          setUserRole(Role.STUDENT);
+          setCourseViewDetail({ ...courseViewDetail, role: Role.STUDENT } as ICourseDetailView);
           modal.success({
             title: response.message,
             onOk: () => {
@@ -145,7 +146,7 @@ const LearnCoursesPage: NextPage<{
         }
       } else {
         if (result.alreadyEnrolled) {
-          router.replace(`/courses/${router.query.slug}/lesson/${nextLessonId}`);
+          router.push(`/courses/${router.query.slug}/lesson/${nextLessonId}`);
           setLoading(false);
         } else {
           if (result.phoneNotFound && response.error) {
@@ -163,37 +164,36 @@ const LearnCoursesPage: NextPage<{
     }
   };
 
-  useEffect(() => {
-    if (courseId) {
-      userRole && getNextLessonId(courseId);
-      userRole && getPaymentStatus();
+  // useEffect(() => {
+  //   if (courseId) {
+  //     userRole && getPaymentStatus();
 
-      setTimeout(() => {
-        userRole && getPaymentStatus();
-      }, appConstant.payment.lockoutMinutes + 3000);
-    }
-  }, [courseId, refresh]);
+  //     setTimeout(() => {
+  //       userRole && getPaymentStatus();
+  //     }, appConstant.payment.lockoutMinutes + 3000);
+  //   }
+  // }, [courseId, refresh]);
 
-  const getPaymentStatus = async () => {
-    setPaymentStatusLoading(true);
-    const res = await getFetch(`/api/v1/course/payment/paymentStatus?courseId=${courseId}`);
-    const result = (await res.json()) as IResponse;
-    if (router.query.callback) {
-      setPaymentStatus(result.status);
-      setAlertConfig({ type: result.alertType, message: result.alertMessage, description: result.alertDescription });
-    }
+  // const getPaymentStatus = async () => {
+  //   setPaymentStatusLoading(true);
+  //   const res = await getFetch(`/api/v1/course/payment/paymentStatus?courseId=${courseId}`);
+  //   const result = (await res.json()) as IResponse;
+  //   if (router.query.callback) {
+  //     setPaymentStatus(result.status);
+  //     setAlertConfig({ type: result.alertType, message: result.alertMessage, description: result.alertDescription });
+  //   }
 
-    if (result.success) {
-      setPaymentDisable(result.paymentDisable);
-      setOrderId(result.orderId);
-      setPaymentStatus(result.status);
-      setPaymentStatusLoading(false);
-    } else {
-      setPaymentDisable(false);
-      setPaymentStatus(result.status);
-      setPaymentStatusLoading(false);
-    }
-  };
+  //   if (result.success) {
+  //     setPaymentDisable(result.paymentDisable);
+  //     setOrderId(result.orderId);
+  //     setPaymentStatus(result.status);
+  //     setPaymentStatusLoading(false);
+  //   } else {
+  //     setPaymentDisable(false);
+  //     setPaymentStatus(result.status);
+  //     setPaymentStatusLoading(false);
+  //   }
+  // };
 
   const onCloseAlert = () => {
     router.replace(`/courses/${router.query.slug}`);
@@ -303,14 +303,14 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
     if (user) {
       return {
         props: {
-          role: user?.role,
+          userRole: user?.role,
           siteConfig: site,
           course: {
             ...info.courseInfo,
             progress: info.progress,
             userStatus: info.courseInfo.userStatus ? info.courseInfo.userStatus : Role.NA,
           },
-          courseViewDetail: cdv.body,
+          viewDetail: cdv.body,
           lessons: info.chapterLessons,
           courseId: courseInfo.courseId,
         },
@@ -324,7 +324,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
             progress: info.progress,
             userStatus: info.courseInfo.userStatus ? info.courseInfo.userStatus : Role.NA,
           },
-          courseViewDetail: cdv.body,
+          viewDetail: cdv.body,
           lessons: info.chapterLessons,
           courseId: courseInfo.courseId,
         },
@@ -335,7 +335,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
       props: {
         siteConfig: site,
         lessons: [],
-        courseViewDetail: cdv.body,
+        viewDetail: cdv.body,
         courseId: courseInfo?.courseId,
       },
     };
