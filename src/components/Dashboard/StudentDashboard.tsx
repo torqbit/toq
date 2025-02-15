@@ -172,7 +172,9 @@ const StudentDashboard: FC<{
             ) : (
               <>
                 {selectedSegment === "active" && (
-                  <EnrolledCourseProgressList courseData={allRegisterCourse.filter((cp) => !cp.isExpired)} />
+                  <EnrolledCourseProgressList
+                    courseData={allRegisterCourse.filter((cp) => !cp.isExpired && cp.progress !== "100%")}
+                  />
                 )}
 
                 {selectedSegment === "expired" && (
