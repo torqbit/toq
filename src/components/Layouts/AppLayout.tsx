@@ -41,19 +41,9 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
 
   const isMobile = useMediaQuery({ query: "(max-width: 933px)" });
   const { globalState, dispatch } = useAppContext();
-  const [conversationList, setConversationList] = useState<IConversationData[]>();
-  const [comment, setComment] = useState<string>("");
   const [api, contextHolder] = notification.useNotification();
   const { brand } = siteConfig;
   const [messageApi, contextMessageHolder] = message.useMessage();
-
-  const [conversationLoading, setConversationLoading] = useState<{
-    postLoading: boolean;
-    replyLoading: boolean;
-  }>({
-    postLoading: false,
-    replyLoading: false,
-  });
 
   const router = useRouter();
 
@@ -262,56 +252,14 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
     });
   };
 
-  const getAllConversation = () => {
-    ConversationService.getAllConversation(
-      (result) => {
-        setConversationList(result.comments);
-      },
-      (error) => {}
-    );
-  };
-
-  const onPost = () => {
-    setConversationLoading({ postLoading: true, replyLoading: false });
-    if (comment) {
-      let id = conversationList && conversationList[0].id;
-      ConversationService.addConversation(
-        String(comment),
-        id,
-        (result) => {
-          const updateList = conversationList?.map((list, i) => {
-            if (i === conversationList.length - 1) {
-              return {
-                ...list,
-                comments: [...list.comments, result.conversation.comment],
-              };
-            } else {
-              return list;
-            }
-          });
-          setConversationList(updateList as IConversationData[]);
-          message.success(result.message);
-          setComment("");
-          setConversationLoading({ postLoading: false, replyLoading: false });
-        },
-        (error) => {
-          message.error(error);
-          setConversationLoading({ postLoading: false, replyLoading: false });
-        }
-      );
-    } else {
-      message.warning("Type a comment first");
-      setConversationLoading({ postLoading: false, replyLoading: false });
-    }
-  };
-
-  //TODO: Disabled notifications for now
   useEffect(() => {
     let eventSource: EventSource;
-    if (user) {
+    if (user && globalState.onlineStatus && globalState.onlineStatus) {
       eventSource = new EventSource("/api/v1/notification/push");
 
-      eventSource.addEventListener("open", (event) => {});
+      eventSource.addEventListener("open", (event) => {
+        console.log(`event source opened at : ${new Date()}`);
+      });
 
       eventSource.addEventListener("message", (event) => {
         try {
@@ -343,10 +291,11 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
     }
     return () => {
       if (eventSource) {
+        console.log(`closing the event source: ${new Date()}`);
         eventSource.close();
       }
     };
-  }, []);
+  }, [globalState.onlineStatus]);
 
   const updateNotification = async (id: number, targetLink?: string) => {
     try {
@@ -453,50 +402,10 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
           type: "SET_LOADER",
           payload: false,
         });
-
-        eventSource = new EventSource("/api/v1/notification/push");
-
-        eventSource.addEventListener("open", (event) => {
-          console.log("Connection opened");
-        });
-
-        eventSource.addEventListener("message", (event) => {
-          try {
-            const data = JSON.parse(event.data);
-
-            const getNotificationView = NotificationView({ ...data, hasViewed: true });
-            dispatch({
-              type: "SET_UNREAD_NOTIFICATION",
-              payload: data.notificationCount || 0,
-            });
-
-            data.notificationType &&
-              openNotification(
-                "topRight",
-                getNotificationView.message,
-                getNotificationView.description,
-                getNotificationView.objectId,
-                getNotificationView.targetLink
-              );
-          } catch (e) {
-            console.error("Error parsing message:", e);
-          }
-        });
-
-        eventSource.addEventListener("error", (error) => {
-          console.error("EventSource error:", error);
-          eventSource.close();
-        });
       }
     } else if (status === "unauthenticated") {
       router.push("/login");
     }
-
-    return () => {
-      if (eventSource) {
-        eventSource.close();
-      }
-    };
   }, [user]);
 
   useEffect(() => {
@@ -573,7 +482,8 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
                 {children}
               </Content>
             </Layout>
-            <div className={styles.responsiveNavContainer}>
+            {/* //TODO: create the responsive nav */}
+            {/* <div className={styles.responsiveNavContainer}>
               {responsiveNav.map((nav, i) => {
                 return (
                   <>
@@ -589,13 +499,12 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
                         size="small"
                       >
                         <div
-                          key={i}
                           className={
                             globalState.selectedResponsiveMenu === nav.link ? styles.selectedNavBar : styles.navBar
                           }
                           onClick={() => dispatch({ type: "SET_NAVBAR_MENU", payload: nav.link as IResponsiveNavMenu })}
                         >
-                          <Link key={i} href={`/${nav.link}`}>
+                          <Link href={`/${nav.link}`}>
                             <span></span>
                             <Flex vertical align="center" gap={5} justify="space-between">
                               <i>{nav.icon}</i>
@@ -612,7 +521,7 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
                         }
                         onClick={() => dispatch({ type: "SET_NAVBAR_MENU", payload: nav.key as IResponsiveNavMenu })}
                       >
-                        <Link key={i} href={`/${nav.link}`}>
+                        <Link href={`/${nav.link}`}>
                           <span></span>
                           <Flex vertical align="center" gap={5} justify="space-between">
                             <i>{nav.icon}</i>
@@ -624,7 +533,7 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
                   </>
                 );
               })}
-            </div>
+            </div> */}
           </Layout>
         ) : (
           <Offline />
