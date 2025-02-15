@@ -38,7 +38,7 @@ const AddAssignment: FC<{
   onRefresh: () => void;
   onDeleteResource: (id: number, isCanceled: boolean) => void;
   setEdit: (value: boolean) => void;
-  assignmentType: AssignmentType;
+  lessonType: AssignmentType;
 }> = ({
   setResourceDrawer,
   contentType,
@@ -48,7 +48,7 @@ const AddAssignment: FC<{
   isEdit,
   showResourceDrawer,
   onDeleteResource,
-  assignmentType,
+  lessonType,
 }) => {
   const [assignmentForm] = Form.useForm();
   const [subjectiveForm] = Form.useForm();
@@ -56,6 +56,7 @@ const AddAssignment: FC<{
   const [editorValue, setEditorValue] = useState<string>("");
   const [questions, setQuestions] = useState<MultipleChoiceQA[]>([createEmptyQuestion("1")]);
   const [current, setCurrent] = useState<number>(0);
+  const [assignmentType, setAssignmentType] = useState<AssignmentType>(lessonType);
 
   const handleAssignment = async () => {
     // GRADING PARAMETERS CHECK
@@ -148,6 +149,7 @@ const AddAssignment: FC<{
           assignmentForm.setFieldValue("title", assignmentDetail.name);
           assignmentForm.setFieldValue("estimatedDurationInMins", assignmentDetail.estimatedDurationInMins);
           assignmentForm.setFieldValue("assignmentType", assignmentDetail.content._type);
+          setAssignmentType(assignmentDetail.content._type);
 
           switch (assignmentDetail.content._type) {
             case AssignmentType.MCQ:
