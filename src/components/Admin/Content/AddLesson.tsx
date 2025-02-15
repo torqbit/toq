@@ -50,7 +50,7 @@ const AddLesson: FC<{
             onRefresh={onRefresh}
             onDeleteResource={onDeleteResource}
             setEdit={setEdit}
-            assignmentType={assignmentType}
+            lessonType={assignmentType}
           />
         </div>
       )}
