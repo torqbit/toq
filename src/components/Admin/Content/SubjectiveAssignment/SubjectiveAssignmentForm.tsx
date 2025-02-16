@@ -27,7 +27,7 @@ const SubjectiveAssignmentForm: FC<{
     fileList: fileList,
     multiple: false,
     data: {
-      existArchiveUrl: subjectiveForm.getFieldsValue().archiveUrl,
+      existArchiveUrl: subjectiveForm?.getFieldsValue()?.archiveUrl,
     },
     style: {
       height: 200,

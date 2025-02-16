@@ -5,7 +5,7 @@ import pwa from "next-pwa";
 import cacheConfig from "./cacheConfig.mjs";
 
 const nextConfig = {
-  reactStrictMode: true,
+  // reactStrictMode: true,
   transpilePackages: [
     // antd & deps
     "@ant-design",
@@ -49,6 +49,10 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "**.b-cdn.net",
+      },
+      {
+        protocol: "https",
+        hostname: "**.torqbit.com",
       },
       {
         protocol: protocol.slice(0, -1) || "http",
