@@ -12,12 +12,14 @@ const MCQForm: React.FC<{
   questions: MultipleChoiceQA[];
   setQuestions: React.Dispatch<React.SetStateAction<MultipleChoiceQA[]>>;
 }> = ({ questions, setQuestions }) => {
+  const [activePanel, setActivePanel] = useState<string[]>([]);
   const handleQuestionChange = (updatedQuestion: MultipleChoiceQA) => {
     setQuestions((prev) => prev.map((q) => (q.id === updatedQuestion.id ? updatedQuestion : q)));
   };
 
   const handleAddQuestion = () => {
     const newId = String(questions.length + 1);
+    setActivePanel([newId]);
     setQuestions((prev) => [...prev, createEmptyQuestion(newId)]);
   };
   const handleDeleteQuestion = (questionId: string) => {
@@ -33,6 +35,8 @@ const MCQForm: React.FC<{
         <Collapse
           style={{ borderRadius: 4 }}
           accordion
+          activeKey={activePanel}
+          onChange={setActivePanel}
           items={questions.map((question, i) => {
             return {
               key: question.id,

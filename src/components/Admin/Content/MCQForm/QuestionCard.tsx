@@ -1,5 +1,5 @@
 import React from "react";
-import { Alert, Card, Popconfirm } from "antd";
+import { Alert, Card, message, Popconfirm } from "antd";
 import QuestionTitle from "./QuestionTitle";
 import OptionsSection from "./OptionSection";
 import { AnswerKeys } from "./AnswerKeys";
@@ -15,6 +15,7 @@ interface QuestionCardProps {
 }
 
 const QuestionCard: React.FC<QuestionCardProps> = ({ question, onQuestionChange, onDeleteQuestion }) => {
+  const [messageApi, contextHolder] = message.useMessage();
   const handleOptionChange = (index: number, value: string) => {
     const newOptions = [...question.options];
     newOptions[index] = { ...newOptions[index], text: value };
@@ -22,11 +23,15 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, onQuestionChange,
   };
 
   const handleAddOption = () => {
-    const newKey = String.fromCharCode(65 + question.options.length);
-    onQuestionChange({
-      ...question,
-      options: [...question.options, { key: newKey, text: "" }],
-    });
+    if (question.options.length < 10) {
+      const newKey = String.fromCharCode(65 + question.options.length);
+      onQuestionChange({
+        ...question,
+        options: [...question.options, { key: newKey, text: "" }],
+      });
+    } else {
+      messageApi.info({ content: "You can add maximum 10 Options" });
+    }
   };
 
   const onDeleteOption = (index: number) => {
@@ -37,6 +42,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, onQuestionChange,
 
   return (
     <>
+      {contextHolder}
       <QuestionTitle
         title={question.title}
         description={question.description}

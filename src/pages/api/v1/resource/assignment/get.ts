@@ -74,7 +74,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         maximumScore: assignmentDetail.maximumPoints,
         passingScore: assignmentDetail.passingScore,
       };
-      if (detail.content._type === AssignmentType.MCQ && !assignmentDetail?.submission[0]?.status) {
+
+      let isNoAnswer = assignmentDetail?.submission[0]?.status
+        ? !assignmentDetail?.submission[0]?.status
+        : query.isNoAnswer === "true";
+      if (detail.content._type === AssignmentType.MCQ && isNoAnswer) {
         let assignmentContent = detail.content as MCQAssignment;
         let questions = assignmentContent.questions;
         let updateQuestion = questions.map((question) => {

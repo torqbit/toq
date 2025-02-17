@@ -148,7 +148,7 @@ const AddAssignment: FC<{
       },
       (result) => {
         onClose(false);
-        messageApi.success({ content: result.message });
+        messageApi.success({ content: "Assignment Saved" });
         setLoading(false);
       },
       (error) => {
