@@ -29,6 +29,7 @@ const { Content } = Layout;
 
 import type { NotificationArgsProps } from "antd";
 import { getFetch } from "@/services/request";
+import ResponsiveNavBar from "../Sidebar/ResponsiveNavBar";
 
 type NotificationPlacement = NotificationArgsProps["placement"];
 
@@ -264,7 +265,7 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
       eventSource.addEventListener("message", (event) => {
         try {
           const data = JSON.parse(event.data);
-
+          console.log(data, "data");
           const getNotificationView = NotificationView({ ...data, hasViewed: true });
           dispatch({
             type: "SET_UNREAD_NOTIFICATION",
@@ -295,7 +296,7 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
         eventSource.close();
       }
     };
-  }, [globalState.onlineStatus]);
+  }, [router.pathname]);
 
   const updateNotification = async (id: number, targetLink?: string) => {
     try {
@@ -482,58 +483,7 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
                 {children}
               </Content>
             </Layout>
-            {/* //TODO: create the responsive nav */}
-            {/* <div className={styles.responsiveNavContainer}>
-              {responsiveNav.map((nav, i) => {
-                return (
-                  <>
-                    {nav.title === "Notifications" ? (
-                      <Badge
-                        key={i}
-                        color="blue"
-                        classNames={{ indicator: styles.badgeIndicator }}
-                        count={
-                          globalState.notifications && globalState.notifications > 0 ? globalState.notifications : 0
-                        }
-                        style={{ fontSize: 8, paddingTop: 1.5 }}
-                        size="small"
-                      >
-                        <div
-                          className={
-                            globalState.selectedResponsiveMenu === nav.link ? styles.selectedNavBar : styles.navBar
-                          }
-                          onClick={() => dispatch({ type: "SET_NAVBAR_MENU", payload: nav.link as IResponsiveNavMenu })}
-                        >
-                          <Link href={`/${nav.link}`}>
-                            <span></span>
-                            <Flex vertical align="center" gap={5} justify="space-between">
-                              <i>{nav.icon}</i>
-                              <div className={styles.navTitle}>{nav.title}</div>
-                            </Flex>
-                          </Link>
-                        </div>
-                      </Badge>
-                    ) : (
-                      <div
-                        key={i}
-                        className={
-                          globalState.selectedResponsiveMenu === nav.key ? styles.selectedNavBar : styles.navBar
-                        }
-                        onClick={() => dispatch({ type: "SET_NAVBAR_MENU", payload: nav.key as IResponsiveNavMenu })}
-                      >
-                        <Link href={`/${nav.link}`}>
-                          <span></span>
-                          <Flex vertical align="center" gap={5} justify="space-between">
-                            <i>{nav.icon}</i>
-                            <div className={styles.navTitle}>{nav.title}</div>
-                          </Flex>
-                        </Link>
-                      </div>
-                    )}
-                  </>
-                );
-              })}
-            </div> */}
+            <ResponsiveNavBar items={responsiveNav} />
           </Layout>
         ) : (
           <Offline />

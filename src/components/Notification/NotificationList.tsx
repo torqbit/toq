@@ -24,7 +24,7 @@ const NotificationList: FC<{
   const [loading, setLoading] = useState(false);
   const [notificationsCount, setNotificationsCount] = useState<number>(0);
   const [notificationsList, setNotificationsList] = useState<DiscussionNotification[]>();
-  const { globalState } = useAppContext();
+  const { globalState, dispatch } = useAppContext();
 
   const getNotification = async () => {
     try {
@@ -52,6 +52,10 @@ const NotificationList: FC<{
       let apiPath = `/api/v1/notification/update/${id}`;
       getFetch(apiPath);
       setOpenNotification(false);
+      dispatch({
+        type: "SET_UNREAD_NOTIFICATION",
+        payload: globalState.notifications ? globalState.notifications - 1 : 0,
+      });
       targetLink && router.push(targetLink);
     } catch (err) {}
   };
