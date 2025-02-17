@@ -547,7 +547,8 @@ export class BunnyClient {
     );
   };
   isValidPath(path: string): boolean {
-    const allowedPathPattern = /^(https?:\/\/)?([\w-]+(\.[\w-]+)*\/)*[\w-]+\.(jpg|jpeg|png|gif|bmp|webp|svg|tiff)$/i;
+    const allowedPathPattern =
+      /^(https?:\/\/)?([\w-]+(\.[\w-]+)*\/)*[\w-]+\.(jpg|jpeg|png|gif|bmp|webp|svg|tiff|pdf|zip)$/i;
     return allowedPathPattern.test(path);
   }
 }
