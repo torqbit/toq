@@ -36,9 +36,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, selectedAnswer, o
       {isEvaluated && question.answerExplanation && (
         <div className={style.question_explanation}>
           <h5>Explanation</h5>
-          <p>
-            <PurifyContent content={question.answerExplanation as string} />
-          </p>
+          <p>{question.answerExplanation}</p>
         </div>
       )}
     </div>

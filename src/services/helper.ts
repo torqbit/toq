@@ -1,3 +1,4 @@
+import { MultipleChoiceQA } from "@/types/courses/assignment";
 import moment from "moment";
 
 export const convertMinsToHrsMins = (mins: number) => {
@@ -71,4 +72,21 @@ export const createCourseExpiry = (time: number) => {
 
 export const getCreatedDate = (time: number) => {
   return moment(time).format("MMMM  D  YYYY");
+};
+
+export const findEmptyCorrectOptions = (questions: MultipleChoiceQA[]): number[] => {
+  return questions.reduce((indices: number[], question, index) => {
+    if (!question.correctOptionIndex || question.correctOptionIndex.length === 0) {
+      indices.push(index);
+    }
+    return indices;
+  }, []);
+};
+export const findEmptyGivenOptions = (questions: MultipleChoiceQA[]): number[] => {
+  return questions.reduce((indices: number[], question, index) => {
+    if (!question.options || question.options.length === 0) {
+      indices.push(index);
+    }
+    return indices;
+  }, []);
 };

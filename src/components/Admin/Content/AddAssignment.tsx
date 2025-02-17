@@ -16,6 +16,7 @@ import ConfigFormLayout from "@/components/Configuration/ConfigFormLayout";
 import ConfigForm from "@/components/Configuration/ConfigForm";
 import MCQForm from "./MCQForm/MCQForm";
 import SubjectiveAssignmentForm from "./SubjectiveAssignment/SubjectiveAssignmentForm";
+import { findEmptyCorrectOptions, findEmptyGivenOptions } from "@/services/helper";
 
 export const createEmptyQuestion = (id: string): MultipleChoiceQA => ({
   id,
@@ -57,6 +58,7 @@ const AddAssignment: FC<{
   const [questions, setQuestions] = useState<MultipleChoiceQA[]>([createEmptyQuestion("1")]);
   const [current, setCurrent] = useState<number>(0);
   const [assignmentType, setAssignmentType] = useState<AssignmentType>(lessonType);
+  const [messageApi, contextHolder] = message.useMessage();
 
   const handleAssignment = async () => {
     // GRADING PARAMETERS CHECK
@@ -71,11 +73,11 @@ const AddAssignment: FC<{
         assignmentType === AssignmentType.SUBJECTIVE &&
         sumOfGradingScore !== Number(assignmentForm.getFieldsValue().maximumScore)
       ) {
-        return message.info("Ensure the sum of grading points equals the maximum points.");
+        return messageApi.info({ content: "Ensure the sum of grading points equals the maximum points." });
       }
     }
 
-    if (!assignmentType) return message.error("Please select assignment type");
+    if (!assignmentType) return messageApi.error({ content: "Please select assignment type" });
     if (
       assignmentType === AssignmentType.MCQ &&
       questions.length > 0 &&
@@ -83,8 +85,26 @@ const AddAssignment: FC<{
       questions[0].options[0].text === "" &&
       questions[0].options[1].text === ""
     ) {
-      return message.error("Please complete the questions");
+      return messageApi.error({ content: "Please complete the questions" });
     }
+
+    if (assignmentType === AssignmentType.MCQ) {
+      const indices = findEmptyCorrectOptions(questions);
+      const givenOptionIndeices = findEmptyGivenOptions(questions);
+      if (indices.length > 0) {
+        return messageApi.info({
+          content: `Please select a correct answer key for question ${indices.map((v) => v + 1).join(",")}`,
+        });
+      }
+      if (givenOptionIndeices.length > 0) {
+        return messageApi.info({
+          content: `Please give at least two option to choose the answer in question  ${indices
+            .map((v) => v + 1)
+            .join(",")}`,
+        });
+      }
+    }
+
     setLoading(true);
     let progAssignment: IAssignmentDetails;
 
@@ -128,12 +148,12 @@ const AddAssignment: FC<{
       },
       (result) => {
         onClose(false);
-        message.success(result.message);
+        messageApi.success({ content: result.message });
         setLoading(false);
       },
       (error) => {
         setLoading(false);
-        message.error(error);
+        messageApi.error({ content: error });
       }
     );
     setLoading(false);
@@ -255,6 +275,7 @@ const AddAssignment: FC<{
         </Space>
       }
     >
+      {contextHolder}
       <Steps
         current={current}
         status="finish"
