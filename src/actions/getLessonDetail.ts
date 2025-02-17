@@ -1,6 +1,5 @@
 import { ILessonPreviewDetail } from "@/types/courses/Course";
 import { $Enums, CourseState, Role, StateType } from "@prisma/client";
-import { $Enums, CourseState, Role, StateType } from "@prisma/client";
 import prisma from "@/lib/prisma";
 const lessonDetailForStudentByLearningPath = async (
   learningPathId: number,
@@ -84,9 +83,6 @@ const lessonDetailForStudentByCourse = async (
   ORDER BY chapterSeq, resourceSeq;`;
 
       resolve({ lessonDetail: resultRows, userRole: Role.STUDENT });
-    });
-  } else {
-    return new Promise(async (resolve, reject) => {
     });
   } else {
     return new Promise(async (resolve, reject) => {
