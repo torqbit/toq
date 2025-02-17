@@ -18,7 +18,7 @@ const ResponsiveNavBar: FC<{
       <div className={styles.responsiveNavContainer}>
         {items.map((nav, i) => {
           return (
-            <>
+            <div key={i}>
               {nav.title === "Notifications" ? (
                 <Badge
                   key={i}
@@ -43,7 +43,6 @@ const ResponsiveNavBar: FC<{
                 </Badge>
               ) : (
                 <div
-                  key={i}
                   className={globalState.selectedResponsiveMenu === nav.key ? styles.selectedNavBar : styles.navBar}
                   onClick={() => dispatch({ type: "SET_NAVBAR_MENU", payload: nav.key as IResponsiveNavMenu })}
                 >
@@ -56,7 +55,7 @@ const ResponsiveNavBar: FC<{
                   </Link>
                 </div>
               )}
-            </>
+            </div>
           );
         })}
       </div>
