@@ -113,18 +113,14 @@ const LoginPage: NextPage<{
               validateTrigger="onSubmit"
             >
               <Form.Item name="name" label="" rules={[{ required: true, message: "Name is required" }]}>
-                <Input placeholder="Enter your name" style={{ height: 40, background: "transparent" }} />
+                <Input placeholder="Enter your name" style={{ height: 40 }} />
               </Form.Item>
               <Form.Item
                 name="email"
                 label=""
                 rules={[{ required: true, message: "Email is required" }, { type: "email" }]}
               >
-                <Input
-                  type="email"
-                  placeholder="Enter your email address"
-                  style={{ height: 40, background: "transparent" }}
-                />
+                <Input type="email" placeholder="Enter your email address" style={{ height: 40 }} />
               </Form.Item>
               <Form.Item
                 name="password"
@@ -134,7 +130,7 @@ const LoginPage: NextPage<{
                   { min: 6, message: "Password must be atleast 6 characters" },
                 ]}
               >
-                <Input.Password placeholder="Enter your password" style={{ height: 40, background: "transparent" }} />
+                <Input.Password placeholder="Enter your password" style={{ height: 40 }} />
               </Form.Item>
               <Button
                 onClick={() => {

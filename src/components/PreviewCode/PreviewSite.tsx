@@ -72,7 +72,7 @@ const PreviewSite = forwardRef<HTMLIFrameElement, PreviewProps>((props, ref) => 
           loading="lazy"
           style={{ transform: "scale(0.9)", width: "111%" }}
           className={styles.site__preview__iframe}
-          {...props}
+          src={props.src}
         ></iframe>
       </div>
     </section>
