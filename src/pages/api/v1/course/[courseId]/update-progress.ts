@@ -66,7 +66,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         String(token?.id),
         ResourceContentType.Video,
         cr?.registrationId,
-        typeof isExist !== "undefined"
+        typeof isExist !== "undefined",
+
+        hasAccess.isLearningPath ? hasAccess.productId : undefined
       );
 
       if (courseProgress) {
