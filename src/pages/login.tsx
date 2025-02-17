@@ -34,7 +34,6 @@ const LoginPage: NextPage<{
   const [loginError, setLoginError] = React.useState("");
   const [loginForm] = Form.useForm();
   const { data: session, status: sessionStatus } = useSession();
-
   const [messageApi, contextHolder] = message.useMessage();
   const { brand } = siteConfig;
 
@@ -72,8 +71,11 @@ const LoginPage: NextPage<{
     }).then(async (response) => {
       if (response && !response.ok) {
         setLoginLoading(false);
-
-        messageApi.error(response.error);
+        if (response.status === 401 && response.error?.includes("Illegal arguments")) {
+          messageApi.error("Try a different login method ");
+        } else {
+          messageApi.error(response.error);
+        }
       } else if (response && response.ok && response.url) {
         setLoginLoading(false);
 
@@ -157,10 +159,10 @@ const LoginPage: NextPage<{
 
           {!emailLogin && (
             <>
-              {loginMethods.configured.map((provider) => {
+              {loginMethods.configured.map((provider, i) => {
                 if (provider === authConstants.CREDENTIALS_AUTH_PROVIDER) {
                   return (
-                    <>
+                    <div key={i}>
                       <Button
                         style={{ width: 250, height: 40 }}
                         onClick={() => {
@@ -171,11 +173,11 @@ const LoginPage: NextPage<{
                       >
                         Login with Email
                       </Button>
-                    </>
+                    </div>
                   );
                 } else {
                   return (
-                    <>
+                    <div key={i}>
                       <Tooltip
                         title={
                           loginMethods.available.includes(provider)
@@ -199,7 +201,7 @@ const LoginPage: NextPage<{
                           Login with {capitalizeFirstLetter(provider)}
                         </Button>
                       </Tooltip>
-                    </>
+                    </div>
                   );
                 }
               })}
