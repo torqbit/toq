@@ -229,8 +229,16 @@ const Preview: FC<{
             </Flex>
             <Flex gap={10} align="center">
               <i>{SvgIcons.clockFilled}</i>
-              {courseDetail.role === Role.STUDENT && <div>{courseDetail.remainingDays} days of access remaining</div>}
-              {courseDetail.role !== Role.STUDENT && <div>{courseDetail.expiryInDays} days of access</div>}
+              {courseDetail.remainingDays ? (
+                <>
+                  {courseDetail.role === Role.STUDENT && (
+                    <div>{courseDetail.remainingDays} days of access remaining</div>
+                  )}
+                  {courseDetail.role !== Role.STUDENT && <div>{courseDetail.expiryInDays} days of access</div>}
+                </>
+              ) : (
+                <>Life time access</>
+              )}
             </Flex>
             <Flex gap={10} align="center">
               <i>{SvgIcons.checkBadgeFilled}</i>

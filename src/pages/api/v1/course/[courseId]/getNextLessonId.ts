@@ -56,6 +56,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             resource: {
               where: {
                 state: StateType.ACTIVE,
+                createdAt: {
+                  lte: hasAccess.dateJoined,
+                },
               },
               orderBy: {
                 sequenceId: "asc",

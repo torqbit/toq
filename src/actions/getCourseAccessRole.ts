@@ -67,8 +67,10 @@ export const getCourseAccessRole = async (
 
   if (findLearningPathCourse && userId) {
     const enrollmentDetails = await getEnrollmentDetails(userId, findLearningPathCourse.learningPathId);
+
     if (enrollmentDetails) {
       isExpired = enrollmentDetails.expireIn && enrollmentDetails.expireIn?.getTime() < new Date().getTime();
+
       if (!isExpired) {
         return {
           role: Role.STUDENT,
