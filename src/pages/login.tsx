@@ -126,14 +126,10 @@ const LoginPage: NextPage<{
                 label=""
                 rules={[{ required: true, message: "Email is required" }, { type: "email" }]}
               >
-                <Input
-                  type="email"
-                  placeholder="Enter your email address.."
-                  style={{ height: 40, background: "transparent" }}
-                />
+                <Input type="email" placeholder="Enter your email address.." style={{ height: 40 }} />
               </Form.Item>
               <Form.Item name="password" label="" rules={[{ required: true, message: "Password is required" }]}>
-                <Input.Password placeholder="Enter your password" style={{ height: 40, background: "transparent" }} />
+                <Input.Password placeholder="Enter your password" style={{ height: 40 }} />
               </Form.Item>
               <Button
                 loading={loginLoading}
