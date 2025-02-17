@@ -10,8 +10,7 @@ const updateCourseProgress = async (
   contentType: ResourceContentType,
   registrationId?: number,
   certificateExist?: boolean,
-  totalLessons?: number,
-  totalWatched?: number
+  learningPathId?: number
 ): Promise<{ lessonsCompleted: number; totalLessons: number }> => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -24,9 +23,7 @@ const updateCourseProgress = async (
         },
       });
 
-      if (checkProgress) {
-        resolve({ lessonsCompleted: Number(totalWatched), totalLessons: Number(totalLessons) });
-      } else {
+      if (!checkProgress) {
         const updateProgress = await prisma?.courseProgress.create({
           data: {
             courseId: courseId,
@@ -43,9 +40,25 @@ const updateCourseProgress = async (
         });
 
         if (updateProgress) {
-          const courseProgress = await prisma.$queryRaw<
-            any[]
-          >`select COUNT(re.resourceId) as lessons, COUNT(cp.resourceId) as watched_lessons FROM Course as co
+          let courseProgress: any[] = [];
+
+          if (learningPathId) {
+            courseProgress = await prisma.$queryRaw<
+              any[]
+            >`select COUNT(re.resourceId) as lessons, COUNT(cp.resourceId) as watched_lessons FROM LearningPath as lp
+          INNER JOIN LearningPathCourses as lpc ON lpc.learningPathId = lp.id
+          INNER JOIN Course as co ON co.courseId = lpc.courseId
+          INNER JOIN \`Order\` as o ON o.productId = lp.id
+          INNER JOIN CourseRegistration as cr ON cr.orderId = o.id
+        INNER JOIN Chapter as ch ON co.courseId = ch.courseId 
+        INNER JOIN Resource as re ON ch.chapterId = re.chapterId
+        LEFT OUTER JOIN CourseProgress as cp ON re.resourceId = cp.resourceId AND  cp.studentId = ${studentId}
+        WHERE lp.id = ${learningPathId} AND co.courseId = ${Number(courseId)} AND re.state = ${StateType.ACTIVE} 
+        `;
+          } else {
+            courseProgress = await prisma.$queryRaw<
+              any[]
+            >`select COUNT(re.resourceId) as lessons, COUNT(cp.resourceId) as watched_lessons FROM Course as co
           INNER JOIN \`Order\` as o ON o.productId = co.courseId
           INNER JOIN CourseRegistration as cr ON cr.orderId = o.id
         INNER JOIN Chapter as ch ON co.courseId = ch.courseId 
@@ -53,6 +66,8 @@ const updateCourseProgress = async (
         LEFT OUTER JOIN CourseProgress as cp ON re.resourceId = cp.resourceId AND  cp.studentId = ${studentId}
         WHERE co.courseId = ${Number(courseId)} AND re.state = ${StateType.ACTIVE} 
         `;
+          }
+
           if (courseProgress.length > 0) {
             const lessonsDetail = {
               lessonsCompleted: Number(courseProgress[0].watched_lessons),

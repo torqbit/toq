@@ -4,6 +4,15 @@ export interface ILearningCourseList {
   courseId: number;
   name?: string;
 }
+export interface ILearningPathCourseStatus {
+  courseId: number;
+  totalLessons: number;
+  watchedLesson: number;
+  slug: string;
+  latestProgressDate: Date;
+  latestLessonId: number;
+  firstLessonId: number;
+}
 export interface ILearningPreviewDetail {
   title: string;
   id: number;
