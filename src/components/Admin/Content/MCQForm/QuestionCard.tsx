@@ -30,7 +30,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, onQuestionChange,
         options: [...question.options, { key: newKey, text: "" }],
       });
     } else {
-      messageApi.info({ content: "You can add maximum 10 Options" });
+      messageApi.info({ content: "You can add maximum of ten options" });
     }
   };
 
