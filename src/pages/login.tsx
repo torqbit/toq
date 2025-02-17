@@ -1,4 +1,4 @@
-import { Alert, Button, ConfigProvider, Flex, Form, Input, message, Tooltip } from "antd";
+import { Alert, Button, ConfigProvider, Flex, Form, Input, message, Modal, Tooltip } from "antd";
 import React, { useEffect, useState } from "react";
 import styles from "@/styles/Login.module.scss";
 import { signIn, useSession } from "next-auth/react";
@@ -34,7 +34,7 @@ const LoginPage: NextPage<{
   const [loginError, setLoginError] = React.useState("");
   const [loginForm] = Form.useForm();
   const { data: session, status: sessionStatus } = useSession();
-
+  const [modal, contextHolderModal] = Modal.useModal();
   const [messageApi, contextHolder] = message.useMessage();
   const { brand } = siteConfig;
 
@@ -72,8 +72,11 @@ const LoginPage: NextPage<{
     }).then(async (response) => {
       if (response && !response.ok) {
         setLoginLoading(false);
-
-        messageApi.error(response.error);
+        if (response.status === 401 && response.error?.includes("Illegal arguments")) {
+          messageApi.error("Try a different login method ");
+        } else {
+          messageApi.error(response.error);
+        }
       } else if (response && response.ok && response.url) {
         setLoginLoading(false);
 
@@ -100,6 +103,7 @@ const LoginPage: NextPage<{
         className={`${styles.login_page_wrapper} ${styles[`bg__${globalState.theme === "dark" ? "dark" : "light"}`]}`}
       >
         {contextHolder}
+        {contextHolderModal}
         <div className={styles.social_login_container}>
           {siteConfig.brand?.icon && typeof siteConfig.brand.icon === "string" ? (
             <object type="image/png" data={siteConfig.brand.icon} height={60} width={60} aria-label={`Brand icon`}>
@@ -157,10 +161,10 @@ const LoginPage: NextPage<{
 
           {!emailLogin && (
             <>
-              {loginMethods.configured.map((provider) => {
+              {loginMethods.configured.map((provider, i) => {
                 if (provider === authConstants.CREDENTIALS_AUTH_PROVIDER) {
                   return (
-                    <>
+                    <div key={i}>
                       <Button
                         style={{ width: 250, height: 40 }}
                         onClick={() => {
@@ -171,11 +175,11 @@ const LoginPage: NextPage<{
                       >
                         Login with Email
                       </Button>
-                    </>
+                    </div>
                   );
                 } else {
                   return (
-                    <>
+                    <div key={i}>
                       <Tooltip
                         title={
                           loginMethods.available.includes(provider)
@@ -199,7 +203,7 @@ const LoginPage: NextPage<{
                           Login with {capitalizeFirstLetter(provider)}
                         </Button>
                       </Tooltip>
-                    </>
+                    </div>
                   );
                 }
               })}

@@ -158,10 +158,10 @@ const LoginPage: NextPage<{
 
           {!emailSignup && (
             <>
-              {loginMethods.configured.map((provider) => {
+              {loginMethods.configured.map((provider, i) => {
                 if (provider === authConstants.CREDENTIALS_AUTH_PROVIDER) {
                   return (
-                    <>
+                    <div key={i}>
                       <Button
                         onClick={() => {
                           setSignupWithEmail(true);
@@ -172,11 +172,11 @@ const LoginPage: NextPage<{
                       >
                         Signup with Email
                       </Button>
-                    </>
+                    </div>
                   );
                 } else {
                   return (
-                    <>
+                    <div key={i}>
                       <Tooltip
                         title={
                           loginMethods.available.includes(provider)
@@ -199,7 +199,7 @@ const LoginPage: NextPage<{
                           Continue with {capitalizeFirstLetter(provider)}
                         </Button>
                       </Tooltip>
-                    </>
+                    </div>
                   );
                 }
               })}
