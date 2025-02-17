@@ -11,91 +11,7 @@ import { orderStatus, Role, StateType } from "@prisma/client";
 import { getCourseAccessRole } from "@/actions/getCourseAccessRole";
 import { getLearningPathAccessRole } from "@/actions/getLearningPathAccessRole";
 import { APIResponse } from "@/types/apis";
-
-const getLatestLesson = async (
-  pathId: number,
-  userId: string
-): Promise<
-  APIResponse<{
-    courseId: number;
-    totalLessons: number;
-    watchedLesson: number;
-    slug: string;
-    latestProgressDate: Date;
-    latestLessonId: number;
-    firstLessonId: number;
-  }>
-> => {
-  const resultRows = await prisma.$queryRaw<
-    {
-      courseId: number;
-      totalLessons: number;
-      watchedLesson: number;
-      slug: string;
-      latestProgressDate: Date;
-      latestLessonId: number;
-      firstLessonId: number;
-    }[]
-  >`
-SELECT 
-    co.courseId,
-    co.slug,
-    COUNT(DISTINCT r.resourceId) AS totalLessons,  
-    COUNT(DISTINCT cp.courseProgressId) AS watchedLesson,  
-    MAX(cp.createdAt) AS latestProgressDate,  
-     (SELECT r.resourceId
-     FROM Resource r
-     WHERE r.chapterId = ch.chapterId
-     ORDER BY r.createdAt ASC LIMIT 1) AS firstLessonId ,
-    (SELECT cpr.resourceId
-     FROM CourseProgress cpr
-     WHERE cpr.courseId = co.courseId
-     AND cpr.studentId = o.studentId
-      
-     ORDER BY cpr.createdAt DESC LIMIT 1) AS latestLessonId  
-FROM LearningPath AS lp
-INNER JOIN \`Order\` AS o 
-    ON o.productId = lp.id 
-    AND o.orderStatus = ${orderStatus.SUCCESS}
-INNER JOIN CourseRegistration AS cr 
-    ON cr.orderId = o.id
-INNER JOIN LearningPathCourses AS lc 
-    ON lc.learningPathId = lp.id
-INNER JOIN Course AS co 
-    ON co.courseId = lc.courseId
-INNER JOIN Chapter AS ch 
-    ON ch.courseId = co.courseId 
-    AND ch.state = ${StateType.ACTIVE}
-INNER JOIN Resource AS r 
-    ON r.chapterId = ch.chapterId 
-    AND r.state = ${StateType.ACTIVE}
-LEFT JOIN CourseProgress AS cp 
-    ON cp.courseId = co.courseId 
-    AND cp.studentId = o.studentId
-WHERE lp.id = ${pathId}
-  AND o.studentId = ${userId}
-  AND r.createdAt <= cr.dateJoined
-GROUP BY co.courseId, lp.id,ch.chapterId,cr.dateJoined,o.studentId
-ORDER BY lc.sequenceId ASC;
-
-
-`;
-
-  console.log(resultRows);
-  if (resultRows.length > 0) {
-    const totalCompletedCourses = resultRows.filter(
-      (row) => row.watchedLesson > 0 && row.watchedLesson == row.totalLessons
-    );
-    const inCompletedCourses = resultRows.filter((row) => row.watchedLesson < row.totalLessons);
-    if (totalCompletedCourses.length == resultRows.length) {
-      return new APIResponse(true, 200, "Detail has been fetched", totalCompletedCourses[0]);
-    } else {
-      return new APIResponse(true, 200, "Detail has been fetched", inCompletedCourses[0]);
-    }
-  } else {
-    return new APIResponse(false, 404, "Unable to find the learning path detail");
-  }
-};
+import { getLearningPathCourseStatus } from "@/actions/getLearningPathCourseStatus";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   let cookieName = getCookieName();
@@ -111,15 +27,28 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const hasAccess = await getLearningPathAccessRole(Number(pathId), token?.role, token?.id);
     if (hasAccess.role == Role.STUDENT) {
-      const latestLessonDetail = await getLatestLesson(Number(pathId), String(userId));
-      if (latestLessonDetail.body) {
+      const latestLessonDetail = await getLearningPathCourseStatus(Number(pathId), String(userId));
+      if (latestLessonDetail.body && latestLessonDetail.body.length > 0) {
         let lessonId;
-        if (latestLessonDetail.body && latestLessonDetail.body.watchedLesson == 0) {
-          lessonId = latestLessonDetail.body.firstLessonId;
+        let slug;
+
+        const totalCompletedCourses = latestLessonDetail.body.filter(
+          (row) => row.watchedLesson > 0 && row.watchedLesson == row.totalLessons
+        );
+
+        const inCompletedCourses = latestLessonDetail.body.filter((row) => row.watchedLesson < row.totalLessons);
+        if (totalCompletedCourses.length == latestLessonDetail.body.length) {
+          lessonId = totalCompletedCourses[0].firstLessonId;
+          slug = totalCompletedCourses[0].slug;
         } else {
-          lessonId = latestLessonDetail.body.latestLessonId;
+          lessonId =
+            inCompletedCourses[0].watchedLesson == 0
+              ? inCompletedCourses[0].firstLessonId
+              : inCompletedCourses[0].latestLessonId;
+          slug = inCompletedCourses[0].slug;
         }
-        let redirectLink = `courses/${latestLessonDetail.body.slug}/lesson/${lessonId}`;
+
+        let redirectLink = `courses/${slug}/lesson/${lessonId}`;
         return res
           .status(latestLessonDetail.status)
           .json(

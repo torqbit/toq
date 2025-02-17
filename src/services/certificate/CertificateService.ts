@@ -14,7 +14,7 @@ import { ContentManagementService } from "../cms/ContentManagementService";
 import { FileObjectType } from "@/types/cms/common";
 import { IEventEmailConfig } from "@/lib/emailConfig";
 import { getDateAndYear } from "@/lib/utils";
-import { $Enums } from "@prisma/client";
+import { $Enums, CourseState } from "@prisma/client";
 import EmailManagementService from "../cms/email/EmailManagementService";
 const homeDir = os.homedir();
 const dirPath = path.join(homeDir, `${appConstant.homeDirName}/${appConstant.staticFileDirName}`);
@@ -290,7 +290,7 @@ export class CeritificateService {
             registrationId: registrationId,
           },
           data: {
-            courseState: "COMPLETED",
+            courseState: CourseState.COMPLETED,
           },
         }));
       return new APIResponse(true, 200, "Certificate has been created ", certificateIssueId);

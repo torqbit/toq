@@ -188,8 +188,8 @@ const StudentDashboard: FC<{
           </>
         ) : (
           <Flex gap={5} vertical>
-            {getDummyArray(5).map((t) => {
-              return <Skeleton.Input style={{ width: "100%" }} />;
+            {getDummyArray(5).map((t, i) => {
+              return <Skeleton.Input key={i} style={{ width: "100%" }} />;
             })}
           </Flex>
         ),

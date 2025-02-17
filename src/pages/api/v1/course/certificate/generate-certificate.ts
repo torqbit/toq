@@ -11,6 +11,7 @@ import { CeritificateService } from "@/services/certificate/CertificateService";
 import { APIResponse } from "@/types/apis";
 import { getCourseAccessRole } from "@/actions/getCourseAccessRole";
 import { Role } from "@prisma/client";
+import { getLearningPathCourseStatus } from "@/actions/getLearningPathCourseStatus";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
@@ -48,6 +49,18 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         },
       },
     });
+    let updateRegistration = true;
+    if (hasAccess.isLearningPath) {
+      const getLearningStatus = await getLearningPathCourseStatus(pId, String(token?.id));
+      if (getLearningStatus.body && getLearningStatus.body.length > 0) {
+        let TotalCompleted = getLearningStatus.body.filter(
+          (f) => f.watchedLesson > 0 && f.totalLessons === f.watchedLesson
+        );
+        updateRegistration = TotalCompleted.length == getLearningStatus.body.length;
+      } else {
+        updateRegistration = false;
+      }
+    }
 
     if (hasAccess.role === Role.STUDENT) {
       const isExist = cr?.certificate.find((c) => c.productId === Number(productId));
@@ -58,7 +71,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       } else {
         cr?.registrationId &&
           (await new CeritificateService()
-            .generateCourseCertificate(cr.registrationId, Number(productId), cr.user.name, !hasAccess.isLearningPath)
+            .generateCourseCertificate(cr.registrationId, Number(productId), cr.user.name, updateRegistration)
             .then((r) => {
               if (r.success) {
                 return res.status(200).json({ ...r, certificateIssueId: r.body });
