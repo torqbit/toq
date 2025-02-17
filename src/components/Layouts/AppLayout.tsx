@@ -265,7 +265,6 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
       eventSource.addEventListener("message", (event) => {
         try {
           const data = JSON.parse(event.data);
-          console.log(data, "data");
           const getNotificationView = NotificationView({ ...data, hasViewed: true });
           dispatch({
             type: "SET_UNREAD_NOTIFICATION",
