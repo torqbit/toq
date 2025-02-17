@@ -159,7 +159,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         String(token?.id),
         ResourceContentType.Assignment,
         cr?.registrationId,
-        typeof isExist !== "undefined"
+        typeof isExist !== "undefined",
+
+        hasAccess.isLearningPath ? hasAccess.productId : undefined
       );
     } else {
       return res.status(404).json(new APIResponse(false, 404, "Evaluation not submitted"));

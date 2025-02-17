@@ -28,7 +28,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const hasAccess = await getCourseAccessRole(token?.role, token?.id, Number(courseId));
 
-    const detail = await getLessonDetail(Number(courseId), hasAccess?.role, token?.id);
+    const detail = await getLessonDetail(
+      Number(courseId),
+      hasAccess?.role,
+      token?.id,
+      hasAccess.isLearningPath ? hasAccess.productId : undefined
+    );
 
     if (detail?.lessonDetail && detail.lessonDetail.length > 0) {
       courseName = detail?.lessonDetail[0].courseName;
