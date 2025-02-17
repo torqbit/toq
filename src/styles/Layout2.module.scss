@@ -198,7 +198,9 @@
     .navTitle {
       font-size: 12px;
     }
-
+    a {
+      color: var(--font-secondary);
+    }
     .selectedNavBar {
       color: var(--font-primary);
       width: 60px;

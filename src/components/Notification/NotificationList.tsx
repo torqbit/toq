@@ -52,6 +52,7 @@ const NotificationList: FC<{
       let apiPath = `/api/v1/notification/update/${id}`;
       getFetch(apiPath);
       setOpenNotification(false);
+
       targetLink && router.push(targetLink);
     } catch (err) {}
   };
