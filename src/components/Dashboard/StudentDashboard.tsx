@@ -29,8 +29,8 @@ export const EnrolledCourseProgressList: FC<{
         bordered={false}
         dataSource={courseData}
         className={styles.enrolled_course_list}
-        renderItem={(item) => (
-          <Link href={`/courses/${item.slug}`}>
+        renderItem={(item, i) => (
+          <Link href={`/courses/${item.slug}`} key={i}>
             <List.Item className={styles.enroll_course_item}>
               <div>{item.courseName}</div>
               <Space className={styles.completed_course} size={5}>
@@ -172,7 +172,9 @@ const StudentDashboard: FC<{
             ) : (
               <>
                 {selectedSegment === "active" && (
-                  <EnrolledCourseProgressList courseData={allRegisterCourse.filter((cp) => !cp.isExpired)} />
+                  <EnrolledCourseProgressList
+                    courseData={allRegisterCourse.filter((cp) => !cp.isExpired && cp.progress !== "100%")}
+                  />
                 )}
 
                 {selectedSegment === "expired" && (

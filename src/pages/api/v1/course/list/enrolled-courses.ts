@@ -30,7 +30,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     let courseProgress = await prisma.$queryRaw<
       any[]
-    >`select co.courseId, co.name,co.slug,cr.expireIn as expiryDate, COUNT(re.resourceId) as lessons, COUNT(cp.resourceId) as watched_lessons FROM Course as co
+    >`select co.courseId,co.slug as courseSlug, co.name,cr.expireIn as expiryDate, COUNT(re.resourceId) as lessons, COUNT(cp.resourceId) as watched_lessons FROM Course as co
   INNER JOIN Chapter as ch ON co.courseId = ch.courseId 
   INNER JOIN \`Order\` as ord ON ord.productId = co.courseId
   INNER JOIN CourseRegistration as cr ON ord.id = cr.orderId
@@ -39,7 +39,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   WHERE  re.state = ${StateType.ACTIVE} AND cr.studentId = ${token?.id} AND cr.courseState != ${CourseState.COMPLETED}
   GROUP BY co.courseId, co.name, cr.expireIn
   UNION
-  select co.courseId, co.name,cr.expireIn as expiryDate,co.slug, COUNT(re.resourceId) as lessons, COUNT(cp.resourceId) as watched_lessons FROM Course as co
+  select co.courseId,co.slug as courseSlug, co.name,cr.expireIn as expiryDate, COUNT(re.resourceId) as lessons, COUNT(cp.resourceId) as watched_lessons FROM Course as co
   INNER JOIN Chapter as ch ON co.courseId = ch.courseId 
   INNER JOIN \`Order\` as ord ON ord.productId =  co.courseId
   INNER JOIN CourseRegistration as cr ON ord.id = cr.orderId
@@ -52,8 +52,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   
   SELECT 
     co.courseId, 
+    co.slug as courseSlug,
     co.name, 
-    co.slug, 
+   
     cr.expireIn as expiryDate,
     COUNT(re.resourceId) AS lessons, 
     COUNT(cp.resourceId) AS watched_lessons 
@@ -76,7 +77,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         return {
           courseName: cp.name,
           courseId: cp.courseId,
-          slug: cp.slug,
+          slug: cp.courseSlug,
           isExpired: cp.expiryDate && new Date(cp.expiryDate).getTime() < new Date().getTime(),
           progress: `${Math.floor(percentage(Number(cp.watched_lessons), Number(cp.lessons)))}%`,
         };

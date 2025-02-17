@@ -25,7 +25,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         removeExtension(files.file[0].originalFilename),
         FileObjectType.ARCHIVE,
         "assignment",
-        fields.existArchiveUrl[0]
+        fields?.existArchiveUrl
       );
       return res
         .status(response.status)

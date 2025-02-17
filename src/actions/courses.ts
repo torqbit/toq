@@ -241,7 +241,7 @@ export const getCourseDetailedView = async (
       } else {
         //get the registration details for this course and userId
         const hasAccess = await getCourseAccessRole(user.role, user.id, courseId, isSlug);
-        if (hasAccess && hasAccess.role == Role.STUDENT && hasAccess.dateExpiry && hasAccess.dateJoined) {
+        if (hasAccess && hasAccess.role == Role.STUDENT && hasAccess.dateJoined) {
           userRole = Role.STUDENT;
 
           let certificateInfo = await prisma.courseRegistration.findFirst({
@@ -272,9 +272,9 @@ export const getCourseDetailedView = async (
           const today = new Date();
 
           // Calculate the difference in time (in milliseconds) between the end date and today
-          const timeDifference = hasAccess.dateExpiry.getTime() - today.getTime();
+          const timeDifference = hasAccess.dateExpiry ? hasAccess.dateExpiry.getTime() - today.getTime() : undefined;
 
-          remainingDays = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
+          remainingDays = timeDifference && Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
           enrolmentDate = hasAccess.dateJoined.toLocaleDateString("en-US", {
             month: "short",
             day: "2-digit",
@@ -338,7 +338,7 @@ export const getCourseDetailedView = async (
       chapters: chapters,
       trailerEmbedUrl: courseDBDetails.tvUrl || undefined,
       role: userRole,
-      remainingDays: remainingDays,
+      remainingDays: remainingDays || null,
       enrolmentDate: enrolmentDate || null,
       certificateId: certificateId || null,
       author: {
