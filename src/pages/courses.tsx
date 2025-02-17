@@ -1,7 +1,7 @@
 import type { GetServerSidePropsContext, NextPage } from "next";
 import styles from "@/styles/Dashboard.module.scss";
 import React, { FC, useEffect, useState } from "react";
-import { Course, Role, User } from "@prisma/client";
+import { Course, Role, StateType, User } from "@prisma/client";
 import Courses from "@/components/Courses/Courses";
 import { Spin, message, Flex, Button } from "antd";
 
@@ -24,37 +24,6 @@ import { CoursesListView } from "@/components/Courses/CourseListView/CourseListV
 import { useSession } from "next-auth/react";
 import { LoadingOutlined } from "@ant-design/icons";
 import { useMediaQuery } from "react-responsive";
-
-const CoursesView: FC<{
-  courses: Course[];
-  role: Role;
-  siteConfig: PageSiteConfig;
-  currentTheme: Theme;
-  handleCourseCreate: () => void;
-}> = ({ courses, role, currentTheme, siteConfig, handleCourseCreate }) => {
-  return (
-    <>
-      {courses.filter((c) => c.state === "ACTIVE").length > 0 ? (
-        <Courses allCourses={courses.filter((c) => c.state === "ACTIVE")} userRole={role} />
-      ) : (
-        <>
-          <div className={styles.no_course_found}>
-            <EmptyCourses size="300px" {...getIconTheme(currentTheme, siteConfig.brand)} />
-            <h4 style={{ marginBottom: 20 }}>No Courses were found</h4>
-            {role === Role.ADMIN && courses.length === 0 && (
-              <Button onClick={handleCourseCreate} type="primary">
-                <Flex align="center" gap={10}>
-                  <span>Add Course</span>
-                  <i style={{ lineHeight: 0 }}>{SvgIcons.arrowRight}</i>
-                </Flex>
-              </Button>
-            )}
-          </div>
-        </>
-      )}
-    </>
-  );
-};
 
 const CoursesPage: NextPage<{ siteConfig: PageSiteConfig; userRole: Role }> = ({ siteConfig, userRole }) => {
   const [courses, setCourses] = useState<ICourseListItem[]>();
