@@ -243,11 +243,15 @@ export const CoursesListView: FC<{
       )}
 
       {typeof role === "undefined" && courses.length > 0 && !loading && (
-        <div className={styles.course__grid}>
-          {courses.map((c, index) => (
-            <CourseViewItem course={c} key={index} />
-          ))}
-        </div>
+        <>
+          <div className={styles.course__grid}>
+            {courses
+              .filter((c) => c.state == StateType.ACTIVE)
+              .map((c, index) => (
+                <CourseViewItem course={c} key={index} />
+              ))}
+          </div>
+        </>
       )}
 
       {typeof role === "undefined" && courses.length == 0 && !loading && (

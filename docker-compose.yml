@@ -1,6 +1,6 @@
 services:
   web:
-    image: torqbit/torqbit:0.1.7-rc1
+    image: torqbit/torqbit:0.1.7-rc2
     ports:
       - "8080:80"
     build: .
@@ -16,8 +16,14 @@ services:
       retries: 5
       start_period: 15s
 
-    env_file:
-      - "./docker.env"
+    environment:
+      DATABASE_URL: "mysql://admin:torq123@db:3306/torqbitdb"
+      NODE_ENV: "production"
+      PORT: 8080
+      NEXT_PUBLIC_SECRET: "1RIpybeRHk21xmtzk2jjPxvayAD8FEtHauQTbx8bShE="
+      NEXTAUTH_URL: "http://localhost:8080"
+      NEXT_PUBLIC_APP_ENV: "development"
+      NEXT_PUBLIC_NEXTAUTH_URL: "http://localhost:8080"
 
     networks:
       - app-network
