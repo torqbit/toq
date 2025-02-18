@@ -30,7 +30,6 @@ const SortableItem: FC<{
     transform: CSS.Transform.toString(transform),
     transition,
   };
-  console.log(state, "state");
   const dropdownMenu: MenuProps["items"] = [
     ...(lesson.assignment && state === "Published"
       ? []
