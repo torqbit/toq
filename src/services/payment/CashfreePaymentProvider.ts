@@ -129,7 +129,8 @@ export class CashfreePaymentProvider implements PaymentServiceProvider {
   async processPendingPayment(
     orderId: string,
     userConfig: UserConfig,
-    courseConfig: CoursePaymentConfig
+    courseConfig: CoursePaymentConfig,
+    liveMode: boolean
   ): Promise<APIResponse<PaymentApiResponse>> {
     let currentTime = new Date();
     const orderDetail = await prisma.order.findUnique({
@@ -168,7 +169,7 @@ export class CashfreePaymentProvider implements PaymentServiceProvider {
           },
         });
 
-        const paymentData = await this.createOrder(order.id, userConfig, courseConfig);
+        const paymentData = await this.createOrder(order.id, userConfig, courseConfig, liveMode);
         return new APIResponse(true, 200, "Order has been created", paymentData);
       } else {
         await prisma.order.update({
@@ -195,15 +196,15 @@ export class CashfreePaymentProvider implements PaymentServiceProvider {
   async createOrder(
     orderId: string,
     userConfig: UserConfig,
-    courseConfig: CoursePaymentConfig
+    courseConfig: CoursePaymentConfig,
+    liveMode: boolean
   ): Promise<APIResponse<PaymentApiResponse>> {
     try {
       let currentTime = new Date();
       const sessionExpiry = new Date(currentTime.getTime() + appConstant.payment.sessionExpiryDuration);
-
       Cashfree.XClientId = this.clientId;
       Cashfree.XClientSecret = this.secretId;
-      Cashfree.XEnvironment = Cashfree.Environment.SANDBOX;
+      Cashfree.XEnvironment = liveMode ? Cashfree.Environment.PRODUCTION : Cashfree.Environment.SANDBOX;
       const date = new Date();
       let request = {
         order_amount: courseConfig.amount,
@@ -278,7 +279,8 @@ export class CashfreePaymentProvider implements PaymentServiceProvider {
   async purchaseCourse(
     courseConfig: CoursePaymentConfig,
     userConfig: UserConfig,
-    orderId: string
+    orderId: string,
+    liveMode: boolean
   ): Promise<APIResponse<PaymentApiResponse>> {
     let currentTime = new Date();
     const orderDetail = await prisma.order.findUnique({
@@ -300,7 +302,7 @@ export class CashfreePaymentProvider implements PaymentServiceProvider {
       ) {
         return new APIResponse(false, 102, "Your payment session is still active.");
       }
-      const paymentResponse = await this.processPendingPayment(orderId, userConfig, courseConfig);
+      const paymentResponse = await this.processPendingPayment(orderId, userConfig, courseConfig, liveMode);
       return new APIResponse(
         paymentResponse.success,
         paymentResponse.status,
@@ -308,7 +310,7 @@ export class CashfreePaymentProvider implements PaymentServiceProvider {
         paymentResponse.body
       );
     } else {
-      const response = await this.createOrder(orderId, userConfig, courseConfig);
+      const response = await this.createOrder(orderId, userConfig, courseConfig, liveMode);
       return new APIResponse(response.success, response.status, response.message, response.body);
     }
   }
