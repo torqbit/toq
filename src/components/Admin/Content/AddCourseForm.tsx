@@ -39,7 +39,6 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const [settingloading, setSettingloading] = useState<boolean>(false);
   const [checkVideoState, setCheckVideoState] = useState<boolean>(false);
   const [file, setFile] = useState<File>();
-  const [currency, setCurrency] = useState<string>("");
 
   const [selectedCourseType, setSelectedCourseType] = useState<{
     free: boolean;
@@ -90,6 +89,7 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
     description: "",
     expiryInDays: 365,
     chapters: [],
+    currency: "",
     thumbnail: "",
     courseType: $Enums.CourseType.FREE,
   });
@@ -376,7 +376,6 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
           form={form}
           onSubmit={onSubmit}
           onDiscard={onDiscard}
-          currency={currency}
           courseData={courseData}
           onUploadTrailer={onUploadTrailer}
           uploadTeaserThumbnail={uploadTeaserThumbnail}
@@ -486,8 +485,6 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
       ProgramService.getCourseDetails(
         Number(router.query.id),
         (result) => {
-          setCurrency(result.currency);
-
           setUploadVideo({
             ...uploadVideo,
             previewUrl: "",
@@ -519,6 +516,7 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
             difficultyLevel: result.courseDetails.difficultyLevel,
             state: result?.courseDetails.state,
             coursePrice: result.courseDetails.coursePrice,
+            currency: result.currency,
             thumbnail: result.courseDetails.thumbnail,
             courseType: result.courseDetails.courseType,
           });

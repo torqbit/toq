@@ -3,7 +3,6 @@ import { InvoiceData } from "@/types/payment";
 import prisma from "@/lib/prisma";
 import appConstant from "./appConstant";
 import path from "path";
-import { createTempDir } from "@/actions/checkTempDirExist";
 import { ContentManagementService } from "./cms/ContentManagementService";
 import { FileObjectType } from "@/types/cms/common";
 import { APIResponse } from "@/types/apis";
@@ -149,7 +148,7 @@ export class BillingService {
     }
 
     // table
-    async function generateInvoiceTable(invoice: InvoiceData) {
+    function generateInvoiceTable(invoice: InvoiceData) {
       const invoiceTableTop = 380;
 
       doc.font("Helvetica-Bold");
@@ -162,9 +161,9 @@ export class BillingService {
       generateTableRow(
         position,
         String(item.courseName),
-        formatCurrency(invoice.totalAmount, await getCurrency(gatewayProvider.CASHFREE)),
+        formatCurrency(invoice.totalAmount, String(invoice.currency)),
         item.validUpTo,
-        formatCurrency(invoice.totalAmount, await getCurrency(gatewayProvider.CASHFREE))
+        formatCurrency(invoice.totalAmount, String(invoice.currency))
       );
 
       generateHr(position + 20);
@@ -201,9 +200,9 @@ export class BillingService {
         350,
         "left",
         "#666",
-        `Subtotal in ${await getCurrency(gatewayProvider.CASHFREE)}`,
+        `Subtotal in ${invoice.currency}`,
         `Integrated GST (${invoice.businessInfo.taxRate}%)`,
-        `Total in ${await getCurrency(gatewayProvider.CASHFREE)}`
+        `Total in ${invoice.currency}`
       );
 
       generatePriceSummary(
@@ -282,11 +281,12 @@ export class BillingService {
   }
 
   async sendInvoice(invoice: InvoiceData, savePath: string) {
-    this.createPdf(invoice, savePath)
+    let invoiceData = { ...invoice, currency: await getCurrency(gatewayProvider.CASHFREE) };
+    this.createPdf(invoiceData, savePath)
       .then(async (result) => {
-        this.uploadInvoice(result, invoice)
+        this.uploadInvoice(result, invoiceData)
           .then((result) => {
-            this.mailInvoice(savePath, invoice)
+            this.mailInvoice(savePath, invoiceData)
               .then((r) => console.log("invoice sent through mail"))
               .catch((error) => {
                 console.error(`Failed to send the invoice. ${error.message}`);

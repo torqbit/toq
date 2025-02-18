@@ -263,6 +263,7 @@ export interface CourseData {
   chapters: ChapterDetail[];
   difficultyLevel?: courseDifficultyType;
   certificateTemplate?: string;
+  currency?: string;
   courseType?: string;
   coursePrice?: number;
   thumbnail?: string;

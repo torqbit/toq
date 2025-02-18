@@ -42,10 +42,10 @@ const CourseSetting: FC<{
     name: string;
     description: string;
     expiryInDays: number;
+    currency?: string;
     chapters: ChapterDetail[];
     coursePrice?: number;
   };
-  currency: string;
   trailerThumbnail?: string;
   uploadVideo?: VideoInfo;
   settingLoading?: boolean;
@@ -61,7 +61,6 @@ const CourseSetting: FC<{
   onSetCourseData,
   settingLoading,
   trailerThumbnail,
-  currency,
 }) => {
   const handleChange: UploadProps["onChange"] = (info) => {
     if (info.file.status === "uploading") {
@@ -279,12 +278,12 @@ const CourseSetting: FC<{
                           onSetCourseData("coursePrice", e.currentTarget.value);
                         }}
                         defaultValue={courseData.coursePrice}
-                        suffix={currency}
+                        suffix={courseData.currency}
                       />
                     </Form.Item>
                   }
                   title={"Course Price"}
-                  description={`Enter the price of the course in ${currency}`}
+                  description={`Enter the price of the course in ${courseData.currency}`}
                   divider={true}
                   layout="horizontal"
                 />
