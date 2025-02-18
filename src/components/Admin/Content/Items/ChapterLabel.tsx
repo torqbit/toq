@@ -96,7 +96,7 @@ const ChapterLabel: FC<{
         <div style={{ cursor: "pointer" }}>
           <Flex gap={10} align="center" onClick={() => onChange(keyValue)}>
             <i style={{ lineHeight: 0, fontSize: 18, color: "var(--font-secondary)" }}>{icon}</i>
-            <div> {title}</div>
+            <div> {title == "" ? "Untitled" : title}</div>
           </Flex>
         </div>
         <div>

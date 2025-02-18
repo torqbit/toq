@@ -235,14 +235,12 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
     ProgramService.createResource(
       {
         chapterId: chapterId,
-        name: "Untitled",
-        description: "Description about the lesson",
+        name: "",
+        description: "",
         contentType: content,
       } as ResourceDetails,
       (result) => {
         if (content == ResourceContentType.Video) {
-          videoForm.setFieldValue("name", result.resource.name);
-          videoForm.setFieldValue("description", result.resource.description);
           setVideoLesson({ ...videoLesson, chapterId: chapterId, video: undefined });
         } else if (content == ResourceContentType.Assignment) {
           setAssignmentType(assignType as AssignmentType);

@@ -47,7 +47,8 @@ const AddVideoLesson: FC<{
 
   const [checkLessonVideoState, setCheckLessonVideoState] = useState<boolean>();
   const [uploadedChunkPercentage, setUplaodedChunksPercentage] = useState<number>(0);
-  const onUploadVideo = async (file: RcFile, title: string, resourceId: number) => {
+  const onUploadVideo = async (file: RcFile, resourceId: number) => {
+    let title = `${resourceId}-${new Date().getTime()}`;
     setResourceVideoUploading(true);
     const chunkSize = 2 * 1024 * 1024;
     const totalChunks = Math.ceil(file.size / chunkSize);
@@ -355,7 +356,7 @@ const AddVideoLesson: FC<{
                       className={"resource_video_uploader"}
                       showUploadList={false}
                       beforeUpload={(file) => {
-                        currResId && onUploadVideo(file, form.getFieldsValue().name, currResId);
+                        currResId && onUploadVideo(file, currResId);
                       }}
                     >
                       {videoLesson?.video?.state == VideoState.READY && !resourceVideoUploading && (
