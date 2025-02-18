@@ -1,7 +1,5 @@
-import { getDummyArray } from "@/lib/dummyData";
 import prisma from "@/lib/prisma";
-import { compareByPercentage, convertToDayMonthTime, getFormattedDate } from "@/lib/utils";
-import appConstant from "@/services/appConstant";
+import { compareByPercentage, getFormattedDate } from "@/lib/utils";
 import { APIResponse } from "@/types/apis";
 import {
   AnalyticsDuration,
@@ -12,18 +10,21 @@ import {
   IResponseStats,
   IUsersResponse,
 } from "@/types/courses/analytics";
-import { orderStatus, Role } from "@prisma/client";
+import { gatewayProvider, orderStatus, Role } from "@prisma/client";
+import { getCurrency } from "./getCurrency";
 class Analytics {
   async getOverviewDetails(): Promise<APIResponse<IAnalyticStats[]>> {
     const earningDetail = await this.getTotalEarning();
     const enrollmentDetail = await this.getTotalEnrollments();
     const usersDetail = await this.getTotalUsers();
+    const currency = await getCurrency(gatewayProvider.CASHFREE);
 
     let overviewStats: IAnalyticStats[] = [
       {
         type: "Earnings",
         total: `${earningDetail.body?.totalEarning}`,
         comparedPercentage: Number(earningDetail.body?.comparedPercentage),
+        currency,
       },
       {
         type: "Enrollments",
@@ -48,12 +49,14 @@ class Analytics {
     const earningDetail = await this.getEarningByProduct(productId);
     const enrollmentDetail = await this.getEnrollmentsByProduct(productId);
     const usersDetail = await this.getActiveUsersByProduct(productId);
+    const currency = await getCurrency(gatewayProvider.CASHFREE);
 
     let overviewStats: IAnalyticStats[] = [
       {
         type: "Earnings",
         total: `${earningDetail.body?.totalEarning}`,
         comparedPercentage: Number(earningDetail.body?.comparedPercentage),
+        currency,
       },
       {
         type: "Enrollments",
@@ -416,6 +419,7 @@ class Analytics {
           data,
         },
       ],
+      currency: await getCurrency(gatewayProvider.CASHFREE),
     });
   }
 

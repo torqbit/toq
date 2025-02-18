@@ -10,7 +10,8 @@ import { readFieldWithSingleFile } from "@/lib/upload/utils";
 import { ContentManagementService } from "@/services/cms/ContentManagementService";
 import appConstant from "@/services/appConstant";
 import { IChapterView, ICourseDetailView, ILessonView } from "@/types/courses/Course";
-import { courseDifficultyType, ResourceContentType, Role, StateType } from "@prisma/client";
+import { courseDifficultyType, gatewayProvider, ResourceContentType, Role, StateType } from "@prisma/client";
+import { getCurrency } from "@/actions/getCurrency";
 
 export const config = {
   api: {
@@ -191,7 +192,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         },
         pricing: {
           amount: updateDetails.coursePrice || 0,
-          currency: appConstant.currency,
+          currency: await getCurrency(gatewayProvider.CASHFREE),
         },
         contentDurationInHrs: contentDurationInHrs,
         assignmentsCount: assignmentCount,

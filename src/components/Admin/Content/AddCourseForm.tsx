@@ -1,5 +1,4 @@
 import React, { FC, useEffect, useState } from "react";
-import AppLayout from "@/components/Layouts/AppLayout";
 import Link from "next/link";
 import Setting from "./Setting";
 import styles from "@/styles/Dashboard.module.scss";
@@ -9,15 +8,7 @@ import Curriculum from "./Curriculum";
 import { useRouter } from "next/router";
 import Preview from "./Preview";
 import ProgramService from "@/services/ProgramService";
-import {
-  ChapterDetail,
-  CourseData,
-  CourseLessonAPIResponse,
-  ICourseDetailView,
-  IVideoLesson,
-  VideoAPIResponse,
-  VideoInfo,
-} from "@/types/courses/Course";
+import { CourseData, ICourseDetailView, IVideoLesson, VideoAPIResponse, VideoInfo } from "@/types/courses/Course";
 import AddCourseChapter from "@/components/Admin/Content/AddCourseChapter";
 import { $Enums, ResourceContentType, StateType, VideoState } from "@prisma/client";
 import { ResourceDetails } from "@/lib/types/program";
@@ -26,7 +17,7 @@ import { postWithFile } from "@/services/request";
 
 import AddLesson from "./AddLesson";
 import { PageSiteConfig } from "@/services/siteConstant";
-import { createSlug, getBase64 } from "@/lib/utils";
+import { getBase64 } from "@/lib/utils";
 import { AssignmentType } from "@/types/courses/assignment";
 
 const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
@@ -98,6 +89,7 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
     description: "",
     expiryInDays: 365,
     chapters: [],
+    currency: "",
     thumbnail: "",
     courseType: $Enums.CourseType.FREE,
   });
@@ -524,6 +516,7 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
             difficultyLevel: result.courseDetails.difficultyLevel,
             state: result?.courseDetails.state,
             coursePrice: result.courseDetails.coursePrice,
+            currency: result.currency,
             thumbnail: result.courseDetails.thumbnail,
             courseType: result.courseDetails.courseType,
           });

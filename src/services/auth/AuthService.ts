@@ -32,12 +32,12 @@ class AuthService {
     const allExist = serviceType.includes(ServiceType.CMS) && serviceType.includes(ServiceType.PAYMENTS);
     if (userRole === Role.ADMIN) {
       if (allExist) {
-        return redirectUrl !== "undefined" ? redirectUrl : "/dashboard";
+        return redirectUrl !== "undefined" ? `/${redirectUrl}` : "/dashboard";
       } else {
         return "/admin/onboard/complete";
       }
     } else {
-      return redirectUrl !== "undefined" ? redirectUrl : "/dashboard";
+      return redirectUrl !== "undefined" ? `/${redirectUrl}` : "/dashboard";
     }
   };
 }

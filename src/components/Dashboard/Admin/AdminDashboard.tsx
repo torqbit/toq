@@ -9,6 +9,7 @@ const AdminDashboard: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const [messageApi, contextHolder] = message.useMessage();
   const [loadingOverview, setLoadingOverview] = useState<boolean>(false);
   const [loadingAnalytics, setLoadingAnalytics] = useState<boolean>(false);
+  const [currency, setCurrency] = useState<string>();
 
   const [overviewStats, setOverViewStat] = useState<IAnalyticStats[]>([]);
 
@@ -20,6 +21,7 @@ const AdminDashboard: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
       duration,
       type,
       (result) => {
+        setCurrency(result.currency);
         setAnalyticStat(result);
         setLoadingAnalytics(false);
       },
@@ -56,6 +58,7 @@ const AdminDashboard: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
         overviewStats={overviewStats}
         loadingAnalytics={loadingAnalytics}
         handleAnalytics={handleAnalytics}
+        currency={currency}
       />
     </>
   );

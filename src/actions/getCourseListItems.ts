@@ -1,9 +1,9 @@
 import { APIResponse } from "@/types/apis";
 import { ICourseListItem } from "@/types/courses/Course";
 import prisma from "@/lib/prisma";
-import appConstant from "@/services/appConstant";
-import { Role, StateType } from "@prisma/client";
+import { gatewayProvider, Role, StateType } from "@prisma/client";
 import { getCourseAccessRole } from "./getCourseAccessRole";
+import { getCurrency } from "./getCurrency";
 
 export const getCouseListItems = async (token?: {
   role?: Role;
@@ -54,7 +54,7 @@ export const getCouseListItems = async (token?: {
         author: c.user.name,
         price: c.coursePrice,
         trailerThumbnail: c.tvThumbnail || null,
-        currency: appConstant.currency,
+        currency: await getCurrency(gatewayProvider.CASHFREE),
         state: c.state,
         userRole: userRole || Role.NOT_ENROLLED,
       };

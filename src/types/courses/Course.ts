@@ -253,6 +253,7 @@ export interface CourseAPIResponse {
   statusCode: number;
   message: string;
   courseDetails: CourseInfo;
+  currency: string;
 }
 export interface CourseData {
   name: string;
@@ -262,6 +263,7 @@ export interface CourseData {
   chapters: ChapterDetail[];
   difficultyLevel?: courseDifficultyType;
   certificateTemplate?: string;
+  currency?: string;
   courseType?: string;
   coursePrice?: number;
   thumbnail?: string;

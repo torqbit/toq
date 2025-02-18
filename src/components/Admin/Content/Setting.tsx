@@ -42,6 +42,7 @@ const CourseSetting: FC<{
     name: string;
     description: string;
     expiryInDays: number;
+    currency?: string;
     chapters: ChapterDetail[];
     coursePrice?: number;
   };
@@ -277,12 +278,12 @@ const CourseSetting: FC<{
                           onSetCourseData("coursePrice", e.currentTarget.value);
                         }}
                         defaultValue={courseData.coursePrice}
-                        suffix={"INR"}
+                        suffix={courseData.currency}
                       />
                     </Form.Item>
                   }
                   title={"Course Price"}
-                  description={"Enter the price of the course"}
+                  description={`Enter the price of the course in ${courseData.currency}`}
                   divider={true}
                   layout="horizontal"
                 />

@@ -3,7 +3,6 @@ import { InvoiceData } from "@/types/payment";
 import prisma from "@/lib/prisma";
 import appConstant from "./appConstant";
 import path from "path";
-import { createTempDir } from "@/actions/checkTempDirExist";
 import { ContentManagementService } from "./cms/ContentManagementService";
 import { FileObjectType } from "@/types/cms/common";
 import { APIResponse } from "@/types/apis";
@@ -13,7 +12,8 @@ import os from "os";
 
 import EmailManagementService from "./cms/email/EmailManagementService";
 import { getSiteConfig } from "./getSiteConfig";
-import { cwd } from "process";
+import { getCurrency } from "@/actions/getCurrency";
+import { gatewayProvider } from "@prisma/client";
 
 const fs = require("fs");
 const PDFDocument = require("pdfkit");
@@ -281,11 +281,12 @@ export class BillingService {
   }
 
   async sendInvoice(invoice: InvoiceData, savePath: string) {
-    this.createPdf(invoice, savePath)
+    let invoiceData = { ...invoice, currency: await getCurrency(gatewayProvider.CASHFREE) };
+    this.createPdf(invoiceData, savePath)
       .then(async (result) => {
-        this.uploadInvoice(result, invoice)
+        this.uploadInvoice(result, invoiceData)
           .then((result) => {
-            this.mailInvoice(savePath, invoice)
+            this.mailInvoice(savePath, invoiceData)
               .then((r) => console.log("invoice sent through mail"))
               .catch((error) => {
                 console.error(`Failed to send the invoice. ${error.message}`);

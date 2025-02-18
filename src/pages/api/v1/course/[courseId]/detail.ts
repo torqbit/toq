@@ -3,6 +3,8 @@ import { NextApiResponse, NextApiRequest } from "next";
 import { errorHandler } from "@/lib/api-middlewares/errorHandler";
 import { withMethods } from "@/lib/api-middlewares/with-method";
 import { withAuthentication } from "@/lib/api-middlewares/with-authentication";
+import { getCurrency } from "@/actions/getCurrency";
+import { gatewayProvider } from "@prisma/client";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
@@ -40,6 +42,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       statusCode: 200,
       message: "Fetched course",
       courseDetails: course,
+      currency: await getCurrency(gatewayProvider.CASHFREE),
     });
   } catch (error) {
     return errorHandler(error, res);
