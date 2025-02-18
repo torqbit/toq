@@ -17,6 +17,7 @@ import ConfigForm from "@/components/Configuration/ConfigForm";
 import MCQForm from "./MCQForm/MCQForm";
 import SubjectiveAssignmentForm from "./SubjectiveAssignment/SubjectiveAssignmentForm";
 import { findEmptyCorrectOptions, findEmptyGivenOptions } from "@/services/helper";
+import { MessageInstance } from "antd/es/message/interface";
 
 export const createEmptyQuestion = (id: string): MultipleChoiceQA => ({
   id,
@@ -40,6 +41,7 @@ const AddAssignment: FC<{
   onDeleteResource: (id: number, isCanceled: boolean) => void;
   setEdit: (value: boolean) => void;
   lessonType: AssignmentType;
+  messageApi: MessageInstance;
 }> = ({
   setResourceDrawer,
   contentType,
@@ -50,6 +52,7 @@ const AddAssignment: FC<{
   showResourceDrawer,
   onDeleteResource,
   lessonType,
+  messageApi,
 }) => {
   const [assignmentForm] = Form.useForm();
   const [subjectiveForm] = Form.useForm();
@@ -58,7 +61,6 @@ const AddAssignment: FC<{
   const [questions, setQuestions] = useState<MultipleChoiceQA[]>([createEmptyQuestion("1")]);
   const [current, setCurrent] = useState<number>(0);
   const [assignmentType, setAssignmentType] = useState<AssignmentType>(lessonType);
-  const [messageApi, contextHolder] = message.useMessage();
 
   const handleAssignment = async () => {
     // GRADING PARAMETERS CHECK
@@ -275,7 +277,6 @@ const AddAssignment: FC<{
         </Space>
       }
     >
-      {contextHolder}
       <Steps
         current={current}
         status="finish"
