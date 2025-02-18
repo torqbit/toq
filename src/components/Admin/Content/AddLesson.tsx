@@ -5,7 +5,7 @@ import styles from "@/styles/AddCourse.module.scss";
 import { $Enums, ResourceContentType } from "@prisma/client";
 import { IVideoLesson } from "@/types/courses/Course";
 import AddVideoLesson from "./AddVideoLesson";
-import { FormInstance } from "antd";
+import { FormInstance, message } from "antd";
 import { AssignmentType } from "@/types/courses/assignment";
 
 const AddLesson: FC<{
@@ -37,8 +37,11 @@ const AddLesson: FC<{
   form,
   assignmentType,
 }) => {
+  const [messageApi, contextHolder] = message.useMessage();
+
   return (
     <>
+      {contextHolder}
       {contentType === $Enums.ResourceContentType.Assignment && showResourceDrawer && (
         <div className={styles.assignmentDrawerContainer}>
           <AddAssignment
@@ -51,6 +54,7 @@ const AddLesson: FC<{
             onDeleteResource={onDeleteResource}
             setEdit={setEdit}
             lessonType={assignmentType}
+            messageApi={messageApi}
           />
         </div>
       )}

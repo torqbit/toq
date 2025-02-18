@@ -18,7 +18,7 @@ const ViewAssignment: FC<{
   setLessonRefresh: () => void;
   updateAssignmentWatchedStatus: (chapterSeqId: number, lessonId: number) => void;
   chapterSeqId: number;
-}> = ({ lessonId, onNextLesson, chapterSeqId, setLessonRefresh }) => {
+}> = ({ lessonId, onNextLesson, chapterSeqId, setLessonRefresh, userRole }) => {
   const isMax933Width = useMediaQuery({ query: "(max-width: 933px)" });
   const { globalState } = useAppContext();
 
@@ -41,6 +41,7 @@ const ViewAssignment: FC<{
           lessonId={lessonId}
           onNextLesson={() => onNextLesson(chapterSeqId)}
           setLessonRefresh={setLessonRefresh}
+          userRole={userRole}
         />
       </div>
     </section>

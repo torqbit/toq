@@ -4,7 +4,7 @@ import { DndContext, DragEndEvent } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { IResourceDetail } from "@/lib/types/learn";
-import { Dropdown, Flex, MenuProps, Modal, Popconfirm, Tag } from "antd";
+import { Dropdown, Flex, MenuProps, message, Modal, Popconfirm, Tag } from "antd";
 import styles from "@/styles/Curriculum.module.scss";
 import SvgIcons from "@/components/SvgIcons";
 import { ResourceContentType, StateType } from "@prisma/client";
@@ -24,27 +24,55 @@ const SortableItem: FC<{
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
   const [dragActive, setDragActive] = useState<boolean>(false);
   const [modal, contextHolder] = Modal.useModal();
+  const [messageApi, contextMessageHolder] = message.useMessage();
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
   };
+  console.log(state, "state");
   const dropdownMenu: MenuProps["items"] = [
-    {
-      key: "1",
-      label: "Edit",
-      onClick: () => {
-        onEditResource(lesson.resourceId, lesson.contentType as ResourceContentType);
-        setTimeout(() => {}, 500);
-      },
-    },
-    {
-      key: "2",
-      label: state === "Published" ? "Move to Draft" : "Publish",
-      onClick: () => {
-        updateResState(lesson.resourceId, state === "Published" ? StateType.DRAFT : StateType.ACTIVE);
-      },
-    },
+    ...(lesson.assignment && state === "Published"
+      ? []
+      : [
+          {
+            key: "1",
+            label: "Edit",
+            onClick: () => {
+              onEditResource(lesson.resourceId, lesson.contentType as ResourceContentType);
+              setTimeout(() => {}, 500);
+            },
+          },
+
+          {
+            key: "2",
+            label:
+              lesson.assignment && state === "Draft" ? (
+                <Popconfirm
+                  title={`Publish the assignment`}
+                  description={`Once the assignment is published, it can no longer be edited.`}
+                  onConfirm={() => {
+                    updateResState(lesson.resourceId, StateType.ACTIVE);
+                  }}
+                  okText="Yes"
+                  cancelText="No"
+                >
+                  Publish
+                </Popconfirm>
+              ) : state === "Published" ? (
+                "Move to Draft"
+              ) : (
+                "Publish"
+              ),
+            onClick: () => {
+              if (lesson.assignment && state === "Draft") {
+                return;
+              } else {
+                updateResState(lesson.resourceId, state === "Published" ? StateType.DRAFT : StateType.ACTIVE);
+              }
+            },
+          },
+        ]),
 
     {
       key: "3",
@@ -69,6 +97,7 @@ const SortableItem: FC<{
     <div ref={setNodeRef} style={style} {...attributes}>
       <Flex justify="space-between" align="center">
         {contextHolder}
+        {contextMessageHolder}
         <Flex align="center" gap={5}>
           <i
             {...listeners}

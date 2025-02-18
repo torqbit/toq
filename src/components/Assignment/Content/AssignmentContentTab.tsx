@@ -19,7 +19,7 @@ import {
 import { ArrowRightOutlined, DownloadOutlined, LeftOutlined, LoadingOutlined, RightOutlined } from "@ant-design/icons";
 import { useRouter } from "next/router";
 import { setLocalStorage } from "@/lib/utils";
-import { submissionStatus } from "@prisma/client";
+import { Role, submissionStatus } from "@prisma/client";
 import { themeColors } from "@/services/darkThemeConfig";
 import SubjectiveAssignmentView from "./SubjectiveAssignment/SubjectiveAssignmentView";
 
@@ -27,7 +27,8 @@ const AssignmentContentTab: FC<{
   lessonId?: number;
   setLessonRefresh: () => void;
   onNextLesson: () => void;
-}> = ({ lessonId, onNextLesson, setLessonRefresh }) => {
+  userRole: Role;
+}> = ({ lessonId, onNextLesson, setLessonRefresh, userRole }) => {
   const router = useRouter();
   const [assignmentDetail, setAssignmentDetail] = useState<IAssignmentDetail>();
   const [submissionDetail, setSubmissionDetail] = useState<IAssignmentSubmissionDetail | null>(null);
@@ -279,7 +280,8 @@ const AssignmentContentTab: FC<{
                       </Button>
                     )}
 
-                    {!isResultView &&
+                    {userRole === Role.STUDENT &&
+                      !isResultView &&
                       !isCompleteBtnDisabled &&
                       assignmentDetail?.status !== submissionStatus.PENDING && (
                         <Popconfirm
