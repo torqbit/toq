@@ -12,6 +12,7 @@ import {
 } from "@/types/payment";
 import appConstant from "../appConstant";
 import { APIResponse } from "@/types/apis";
+import { getCurrency } from "@/actions/getCurrency";
 
 export class CashfreePaymentProvider implements PaymentServiceProvider {
   name: string = String(gatewayProvider.CASHFREE);
@@ -206,7 +207,7 @@ export class CashfreePaymentProvider implements PaymentServiceProvider {
       const date = new Date();
       let request = {
         order_amount: courseConfig.amount,
-        order_currency: "INR",
+        order_currency: await getCurrency(gatewayProvider.CASHFREE),
 
         customer_details: {
           customer_id: userConfig.studentId,
@@ -261,9 +262,14 @@ export class CashfreePaymentProvider implements PaymentServiceProvider {
             },
           });
 
-          return { success: false, error: error.response.data.message };
+          return { success: false, message: error.response.data.message };
         });
-      return new APIResponse(true, 200, "Payment successfull", paymentData);
+      return new APIResponse(
+        paymentData.success ? paymentData.success : false,
+        paymentData.success ? 200 : 400,
+        paymentData.message,
+        paymentData
+      );
     } catch (error: any) {
       return new APIResponse(false, 500, error);
     }

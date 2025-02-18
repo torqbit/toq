@@ -13,7 +13,8 @@ import os from "os";
 
 import EmailManagementService from "./cms/email/EmailManagementService";
 import { getSiteConfig } from "./getSiteConfig";
-import { cwd } from "process";
+import { getCurrency } from "@/actions/getCurrency";
+import { gatewayProvider } from "@prisma/client";
 
 const fs = require("fs");
 const PDFDocument = require("pdfkit");
@@ -148,7 +149,7 @@ export class BillingService {
     }
 
     // table
-    function generateInvoiceTable(invoice: InvoiceData) {
+    async function generateInvoiceTable(invoice: InvoiceData) {
       const invoiceTableTop = 380;
 
       doc.font("Helvetica-Bold");
@@ -161,9 +162,9 @@ export class BillingService {
       generateTableRow(
         position,
         String(item.courseName),
-        formatCurrency(invoice.totalAmount, String(invoice.currency)),
+        formatCurrency(invoice.totalAmount, await getCurrency(gatewayProvider.CASHFREE)),
         item.validUpTo,
-        formatCurrency(invoice.totalAmount, String(invoice.currency))
+        formatCurrency(invoice.totalAmount, await getCurrency(gatewayProvider.CASHFREE))
       );
 
       generateHr(position + 20);
@@ -200,9 +201,9 @@ export class BillingService {
         350,
         "left",
         "#666",
-        `Subtotal in ${invoice.currency}`,
+        `Subtotal in ${await getCurrency(gatewayProvider.CASHFREE)}`,
         `Integrated GST (${invoice.businessInfo.taxRate}%)`,
-        `Total in ${invoice.currency}`
+        `Total in ${await getCurrency(gatewayProvider.CASHFREE)}`
       );
 
       generatePriceSummary(

@@ -26,6 +26,7 @@ export interface IUsersStats {
 export interface IAnalyticResponse {
   info: IAnalyticStats;
   data: Serie[];
+  currency?: string;
 }
 
 export interface IEarningResponse {
@@ -47,4 +48,5 @@ export interface IAnalyticStats {
   type: AnalyticsType;
   total: string;
   comparedPercentage: number;
+  currency?: string;
 }

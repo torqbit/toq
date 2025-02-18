@@ -5,12 +5,12 @@ import { FC } from "react";
 import appConstant from "@/services/appConstant";
 import SvgIcons from "../SvgIcons";
 
-const AnalyticsCard: FC<IAnalyticStats> = ({ type, total, comparedPercentage }) => {
+const AnalyticsCard: FC<IAnalyticStats> = ({ type, total, comparedPercentage, currency }) => {
   return (
     <Card className={styles.stats}>
       <p>Total {type}</p>
       <h2>
-        {type == "Earnings" && appConstant.payment.currency} {total}
+        {type == "Earnings" && currency ? currency : ""} {total}
       </h2>
       <Flex align="center">
         {comparedPercentage && comparedPercentage !== 0 ? (

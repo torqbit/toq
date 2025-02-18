@@ -15,7 +15,8 @@ const AnalyticView: FC<{
   overviewStats: IAnalyticStats[];
   loadingAnalytics: boolean;
   handleAnalytics: (duration: AnalyticsDuration, type: AnalyticsType) => void;
-}> = ({ siteConfig, analyticStats, overviewStats, loadingOverview, handleAnalytics, loadingAnalytics }) => {
+  currency?: string;
+}> = ({ siteConfig, analyticStats, overviewStats, loadingOverview, handleAnalytics, loadingAnalytics, currency }) => {
   const [selectedTab, setTab] = useState<AnalyticsType>("Earnings");
   const handleTabs = (value: AnalyticsType) => {
     setTab(value);
@@ -35,6 +36,7 @@ const AnalyticView: FC<{
               handleAnalytic={handleAnalytics}
               data={analyticStats.data}
               siteConfig={siteConfig}
+              currency={currency}
             />
           ) : (
             <AnalyticSkeleton />
@@ -55,6 +57,7 @@ const AnalyticView: FC<{
               handleAnalytic={handleAnalytics}
               data={analyticStats.data}
               siteConfig={siteConfig}
+              currency={currency}
             />
           ) : (
             <AnalyticSkeleton />
@@ -75,6 +78,7 @@ const AnalyticView: FC<{
               handleAnalytic={handleAnalytics}
               data={analyticStats.data}
               siteConfig={siteConfig}
+              currency={currency}
             />
           ) : (
             <AnalyticSkeleton />

@@ -15,9 +15,18 @@ import {
   VideoAPIResponse,
 } from "@/types/courses/Course";
 import { mergeChunks, saveToLocal } from "@/lib/upload/utils";
-import { courseDifficultyType, Prisma, ResourceContentType, Role, StateType } from "@prisma/client";
+import {
+  ConfigurationState,
+  courseDifficultyType,
+  gatewayProvider,
+  Prisma,
+  ResourceContentType,
+  Role,
+  StateType,
+} from "@prisma/client";
 import { JWT } from "next-auth/jwt";
 import { getCourseAccessRole } from "./getCourseAccessRole";
+import { getCurrency } from "./getCurrency";
 
 export const uploadThumbnail = async (
   file: any,
@@ -348,7 +357,7 @@ export const getCourseDetailedView = async (
       },
       pricing: {
         amount: courseDBDetails.coursePrice || 0,
-        currency: "INR",
+        currency: await getCurrency(gatewayProvider.CASHFREE),
       },
       contentDurationInHrs: contentDurationInHrs,
       assignmentsCount: assignmentCount,
@@ -416,7 +425,8 @@ export const listCourseListItems = async (token: JWT | null): Promise<ICourseLis
         author: c.user.name,
         price: c.coursePrice,
         trailerThumbnail: c.tvThumbnail || null,
-        currency: appConstant.currency,
+        currency: await getCurrency(gatewayProvider.CASHFREE),
+
         state: c.state,
         userRole: userRole,
       };

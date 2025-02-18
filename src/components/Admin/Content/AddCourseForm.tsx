@@ -1,5 +1,4 @@
 import React, { FC, useEffect, useState } from "react";
-import AppLayout from "@/components/Layouts/AppLayout";
 import Link from "next/link";
 import Setting from "./Setting";
 import styles from "@/styles/Dashboard.module.scss";
@@ -9,15 +8,7 @@ import Curriculum from "./Curriculum";
 import { useRouter } from "next/router";
 import Preview from "./Preview";
 import ProgramService from "@/services/ProgramService";
-import {
-  ChapterDetail,
-  CourseData,
-  CourseLessonAPIResponse,
-  ICourseDetailView,
-  IVideoLesson,
-  VideoAPIResponse,
-  VideoInfo,
-} from "@/types/courses/Course";
+import { CourseData, ICourseDetailView, IVideoLesson, VideoAPIResponse, VideoInfo } from "@/types/courses/Course";
 import AddCourseChapter from "@/components/Admin/Content/AddCourseChapter";
 import { $Enums, ResourceContentType, StateType, VideoState } from "@prisma/client";
 import { ResourceDetails } from "@/lib/types/program";
@@ -26,7 +17,7 @@ import { postWithFile } from "@/services/request";
 
 import AddLesson from "./AddLesson";
 import { PageSiteConfig } from "@/services/siteConstant";
-import { createSlug, getBase64 } from "@/lib/utils";
+import { getBase64 } from "@/lib/utils";
 import { AssignmentType } from "@/types/courses/assignment";
 
 const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
@@ -48,6 +39,7 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const [settingloading, setSettingloading] = useState<boolean>(false);
   const [checkVideoState, setCheckVideoState] = useState<boolean>(false);
   const [file, setFile] = useState<File>();
+  const [currency, setCurrency] = useState<string>("");
 
   const [selectedCourseType, setSelectedCourseType] = useState<{
     free: boolean;
@@ -384,6 +376,7 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
           form={form}
           onSubmit={onSubmit}
           onDiscard={onDiscard}
+          currency={currency}
           courseData={courseData}
           onUploadTrailer={onUploadTrailer}
           uploadTeaserThumbnail={uploadTeaserThumbnail}
@@ -493,6 +486,8 @@ const AddCourseForm: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
       ProgramService.getCourseDetails(
         Number(router.query.id),
         (result) => {
+          setCurrency(result.currency);
+
           setUploadVideo({
             ...uploadVideo,
             previewUrl: "",

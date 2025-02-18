@@ -58,7 +58,6 @@ const Curriculum: FC<{
       state,
       (result) => {
         messageApi.success(result.message);
-
         onRefresh();
       },
       (error) => {}

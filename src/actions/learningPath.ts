@@ -4,9 +4,9 @@ import { APIResponse } from "@/types/apis";
 import { FileObjectType } from "@/types/cms/common";
 
 import { ILearningCourseList, ILearningPathDetail, ILearningPreviewDetail } from "@/types/learingPath";
-import { CourseType, orderStatus, ProductType, Role, StateType } from "@prisma/client";
+import { CourseType, gatewayProvider, orderStatus, ProductType, Role, StateType } from "@prisma/client";
 import { uploadThumbnail } from "./courses";
-import appConstant from "@/services/appConstant";
+import { getCurrency } from "./getCurrency";
 
 class LearningPath {
   async createLearningPath(
@@ -298,7 +298,8 @@ class LearningPath {
         price: detail?.price,
         slug: detail?.slug,
         role: role,
-        currency: appConstant.currency,
+        currency: await getCurrency(gatewayProvider.CASHFREE),
+
         assignmentsCount: Number(totalAssignments),
         contentDurationInHrs: Math.floor(durationInSeconds / 3600),
         author: {

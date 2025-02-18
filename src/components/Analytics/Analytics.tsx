@@ -24,7 +24,8 @@ const Analytics: FC<{
   loading: boolean;
   data: Serie[];
   siteConfig: PageSiteConfig;
-}> = ({ info, handleAnalytic, loading, data, siteConfig }) => {
+  currency?: string;
+}> = ({ info, handleAnalytic, loading, data, siteConfig, currency }) => {
   const [segment, setSegment] = useState<AnalyticsDuration>("month");
   const getDescription = (type: AnalyticsType) => {
     switch (type) {
@@ -33,7 +34,7 @@ const Analytics: FC<{
           <p>
             This {segment} you earned{" "}
             <strong>
-              {appConstant.payment.currency} {info.total}
+              {currency} {info.total}
             </strong>
             &nbsp; which is <strong>{Math.abs(info.comparedPercentage)}% </strong>{" "}
             {info.comparedPercentage > 0 ? "more" : "less"} than last {segment}
@@ -78,7 +79,7 @@ const Analytics: FC<{
         return (
           <ToolTipContainer
             title="Earned"
-            value={` ${appConstant.currency} ${value}`}
+            value={` ${currency} ${value}`}
             date={
               segment === "month"
                 ? `on ${date} ${new Date().toLocaleString("default", { month: "short" })}`
