@@ -60,6 +60,7 @@ const LessonItem: FC<{
   icon: ReactNode;
 }> = ({ title, loading, refresh, selectedLesson, keyValue, icon, resourceId }) => {
   const [completed, setCompleted] = useState<boolean>();
+  const isMobile = useMediaQuery({ query: "(max-width: 433px)" });
 
   return (
     <>
@@ -70,18 +71,24 @@ const LessonItem: FC<{
           style={{
             padding: resourceId > 0 ? "5px 0px" : 0,
             paddingLeft: resourceId > 0 ? "20px" : 0,
+            minWidth: isMobile ? "70vw" : "inherit",
           }}
           className={`${selectedLesson && resourceId === selectedLesson.resourceId && styles.selectedLable} ${
             resourceId > 0 ? styles.lessonLabelContainer : styles.labelContainer
           }`}
         >
-          <Flex justify="space-between" align="center" onClick={() => {}}>
+          <Flex
+            justify="space-between"
+            align="center"
+            style={{ width: isMobile ? "70vw" : "inherit" }}
+            onClick={() => {}}
+          >
             <div className={styles.title_container}>
               <Flex gap={10} align="center">
                 <i style={{ lineHeight: 0, fontSize: 18, color: "var(--font-secondary)" }}>
                   {completed ? SvgIcons.check : icon}
                 </i>
-                <div style={{ cursor: "auto" }}>{title}</div>
+                <div style={{ cursor: "auto", width: isMobile ? "70vw" : "inherit" }}>{title}</div>
               </Flex>
             </div>
           </Flex>
@@ -333,9 +340,14 @@ const LessonView: FC<{ siteConfig: PageSiteConfig; courseId: number; marketingLa
                     color: "var(--font-secondary)",
                   }}
                 >
-                  {getLessonItems(item.contentType as ResourceContentType, item.isWatched, item.assignmentStatus)}
+                  {getLessonItemsIcon(item.contentType as ResourceContentType, item.isWatched, item.assignmentStatus)}
                 </i>
-                <p style={{ marginBottom: 0, marginLeft: 5 }}>{item.title}</p>
+                <p
+                  className={styles.responsive__lesson__title}
+                  style={{ marginBottom: 0, marginLeft: 5, fontSize: isMobile ? "1rem" : "inherit" }}
+                >
+                  {item.title}
+                </p>
               </div>
 
               <div>
@@ -372,7 +384,7 @@ const LessonView: FC<{ siteConfig: PageSiteConfig; courseId: number; marketingLa
     };
   });
 
-  const getLessonItems = (
+  const getLessonItemsIcon = (
     contentType: ResourceContentType,
     isWatched: boolean,
     assignmentStatus?: submissionStatus
@@ -431,7 +443,7 @@ const LessonView: FC<{ siteConfig: PageSiteConfig; courseId: number; marketingLa
                 color: "var(--font-secondary)",
               }}
             >
-              {getLessonItems(l.contentType as ResourceContentType, l.isWatched, l.assignmentStatus)}
+              {getLessonItemsIcon(l.contentType as ResourceContentType, l.isWatched, l.assignmentStatus)}
             </i>
           ),
         };
@@ -600,7 +612,12 @@ const LessonView: FC<{ siteConfig: PageSiteConfig; courseId: number; marketingLa
             </Flex>
           </div>
           {isMobile && (
-            <Flex className={styles.responsive_action_btn} align="center" justify="space-between">
+            <Flex
+              className={styles.responsive_action_btn}
+              style={{ marginBottom: 20 }}
+              align="center"
+              justify="space-between"
+            >
               <Link href={`/courses/${router.query.slug}`}>
                 <Button>
                   <Flex gap={5} align="center">

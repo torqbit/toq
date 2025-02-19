@@ -236,9 +236,10 @@
     .coursehHeaderLinks {
       .courseName {
         display: block;
+
+        width: 200px;
         text-overflow: ellipsis;
         overflow: hidden;
-        width: 200px;
         -webkit-line-clamp: 1;
         -webkit-box-orient: vertical;
         white-space: nowrap;

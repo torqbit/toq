@@ -205,8 +205,9 @@
       margin-bottom: 20px;
       display: flex;
       .goBackArrow {
-        width: 20px;
-        height: 20px;
+        width: 16px;
+        height: 16px;
+        line-height: 0;
       }
     }
 
@@ -261,9 +262,27 @@
       }
     }
   }
+  .responsive__lesson__title {
+    max-width: 200px;
+
+    -webkit-line-clamp: 2;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
 
 @media only screen and (max-width: 933px) and (orientation: landscape) {
+  .responsive__lesson__title {
+    max-width: 200px;
+
+    -webkit-line-clamp: 2;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
   .learn_course_page {
     padding: 20px;
     min-height: 100vh;
@@ -274,8 +293,9 @@
       margin-bottom: 20px;
       display: flex;
       .goBackArrow {
-        width: 20px;
-        height: 20px;
+        width: 16px;
+        height: 16px;
+        line-height: 0;
       }
     }
 
