@@ -75,9 +75,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         passingScore: assignmentDetail.passingScore,
       };
 
-      let isNoAnswer = assignmentDetail?.submission[0]?.status
-        ? !assignmentDetail?.submission[0]?.status
-        : query.isNoAnswer === "true";
+      let isNoAnswer =
+        assignmentDetail?.submission[0]?.status === undefined && query.isNoAnswer === "true" ? true : false;
+
       if (detail.content._type === AssignmentType.MCQ && isNoAnswer) {
         let assignmentContent = detail.content as MCQAssignment;
         let questions = assignmentContent.questions;

@@ -90,3 +90,10 @@ export const findEmptyGivenOptions = (questions: MultipleChoiceQA[]): number[] =
     return indices;
   }, []);
 };
+
+export const cleanEmptyOptions = (questions: MultipleChoiceQA[]) => {
+  return questions.map((question) => ({
+    ...question,
+    options: question.options.filter((option) => option.text.trim() !== ""),
+  }));
+};

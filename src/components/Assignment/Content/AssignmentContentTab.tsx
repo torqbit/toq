@@ -216,7 +216,7 @@ const AssignmentContentTab: FC<{
 
   useEffect(() => {
     resetState();
-    lessonId && getAssignmentDetail(lessonId, false);
+    lessonId && getAssignmentDetail(lessonId, true);
   }, [lessonId, assignmentDetail?.assignmentId, refresh]);
 
   useEffect(() => {

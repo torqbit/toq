@@ -16,7 +16,7 @@ import ConfigFormLayout from "@/components/Configuration/ConfigFormLayout";
 import ConfigForm from "@/components/Configuration/ConfigForm";
 import MCQForm from "./MCQForm/MCQForm";
 import SubjectiveAssignmentForm from "./SubjectiveAssignment/SubjectiveAssignmentForm";
-import { findEmptyCorrectOptions, findEmptyGivenOptions } from "@/services/helper";
+import { cleanEmptyOptions, findEmptyCorrectOptions, findEmptyGivenOptions } from "@/services/helper";
 import { MessageInstance } from "antd/es/message/interface";
 
 export const createEmptyQuestion = (id: string): MultipleChoiceQA => ({
@@ -117,7 +117,7 @@ const AddAssignment: FC<{
       case AssignmentType.MCQ:
         progAssignment = {
           ...baseAssignment,
-          questions: questions,
+          questions: cleanEmptyOptions(questions),
         } as MCQAssignment;
         break;
 
