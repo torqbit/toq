@@ -17,6 +17,7 @@ const PaymentManagementSystem: FC<{ active: boolean }> = ({ active }) => {
   const paymentGateway = $Enums.gatewayProvider.CASHFREE;
   const [messageApi, contextHolder] = message.useMessage();
   const [current, setCurrent] = useState<number>(0);
+  const [paymentAuthReset, setPaymentAuthReset] = useState<boolean>(false);
 
   const orderCurrency = ["INR", "USD", "EUR"];
   const paymentMethods = [
@@ -34,13 +35,22 @@ const PaymentManagementSystem: FC<{ active: boolean }> = ({ active }) => {
       gateway: paymentGateway,
       apiKey: paymentAuthForm.getFieldsValue().apiKey,
       secretKey: paymentAuthForm.getFieldsValue().secretKey,
+      config: {
+        name: paymentGateway,
+        paymentConfig: {
+          currency: "",
+          liveMode: liveMode || false,
+          paymentMethods: [],
+        },
+      },
     };
 
     paymentsClient.verifyPaymentGateway(
       data,
       (response) => {
         setVerifyLoading(false);
-
+        setPaymentAuthReset(false);
+        setCurrent(1);
         messageApi.success(response.message);
       },
       (error) => {
@@ -80,6 +90,7 @@ const PaymentManagementSystem: FC<{ active: boolean }> = ({ active }) => {
 
   useEffect(() => {
     active &&
+      !paymentAuthReset &&
       paymentsClient.getPaymentGatewayConfig(
         paymentGateway,
         (response) => {
@@ -87,13 +98,16 @@ const PaymentManagementSystem: FC<{ active: boolean }> = ({ active }) => {
           }
           if (response.body && response.body.state == "AUTHENTICATED") {
             setCurrent(1);
+            setLiveMode(response.body.config.liveMode);
+            paymentAuthForm.setFieldsValue({
+              liveMode: response.body.config.liveMode,
+            });
           } else if (response.body && response.body.state == "PAYMENT_CONFIGURED") {
             setCurrent(2);
             setLiveMode(response.body.config.liveMode);
             paymentInfoForm.setFieldsValue({
               currency: response.body.config.currency,
               paymentMethods: response.body.config.paymentMethods,
-              liveMode: response.body.config.liveMode,
             });
           }
         },
@@ -101,7 +115,7 @@ const PaymentManagementSystem: FC<{ active: boolean }> = ({ active }) => {
           messageApi.error(error);
         }
       );
-  }, [active]);
+  }, [active, paymentAuthReset]);
 
   const paymentSecretItems = [
     {
@@ -119,6 +133,38 @@ const PaymentManagementSystem: FC<{ active: boolean }> = ({ active }) => {
       description: "The secret key that will be used to authenticate with the Cashfree service",
       input: <Input.Password placeholder="*********" />,
       inputName: "secretKey",
+    },
+    {
+      title: "Select Environment mode",
+      description: "Choose the environment  for your Cashfree integration.",
+
+      input: (
+        <Flex align="center" gap={10}>
+          <Radio
+            disabled={current > 0 && !paymentAuthReset}
+            checked={!liveMode}
+            onChange={(e) => {
+              setLiveMode(false);
+              paymentInfoForm.setFieldValue("liveMode", false);
+            }}
+          >
+            Test mode
+          </Radio>
+          <Radio
+            disabled={current > 0 && !paymentAuthReset}
+            checked={liveMode}
+            onChange={(e) => {
+              setLiveMode(true);
+              paymentInfoForm.setFieldValue("liveMode", true);
+            }}
+          >
+            Live mode
+          </Radio>
+        </Flex>
+      ),
+      optional: false,
+
+      inputName: "liveMode",
     },
   ];
   const paymentInfo = [
@@ -139,36 +185,6 @@ const PaymentManagementSystem: FC<{ active: boolean }> = ({ active }) => {
       optional: false,
 
       inputName: "currency",
-    },
-    {
-      title: "Select Environment mode",
-      description: "Choose the environment  for your Cashfree integration.",
-
-      input: (
-        <Flex align="center" gap={10}>
-          <Radio
-            checked={!liveMode}
-            onChange={(e) => {
-              setLiveMode(false);
-              paymentInfoForm.setFieldValue("liveMode", false);
-            }}
-          >
-            Test mode
-          </Radio>
-          <Radio
-            checked={liveMode}
-            onChange={(e) => {
-              setLiveMode(true);
-              paymentInfoForm.setFieldValue("liveMode", true);
-            }}
-          >
-            Live mode
-          </Radio>
-        </Flex>
-      ),
-      optional: false,
-
-      inputName: "liveMode",
     },
     {
       title: "Payment Methods",
@@ -213,17 +229,27 @@ const PaymentManagementSystem: FC<{ active: boolean }> = ({ active }) => {
                 width="1136px"
                 extraContent={
                   <Flex align="center" gap={10}>
-                    {
+                    {paymentAuthReset ? (
                       <Button
                         onClick={() => {
                           paymentAuthForm.resetFields();
+                          setPaymentAuthReset(false);
+                        }}
+                      >
+                        Cancel
+                      </Button>
+                    ) : (
+                      <Button
+                        onClick={() => {
+                          paymentAuthForm.resetFields();
+                          setPaymentAuthReset(true);
                         }}
                       >
                         Reset
                       </Button>
-                    }
+                    )}
 
-                    {current > 0 ? (
+                    {current > 0 && !paymentAuthReset ? (
                       <Tag style={{ padding: "5px 10px" }}>
                         <Flex align="center" gap={5}>
                           <i style={{ lineHeight: 0, fontSize: 15 }}>{SvgIcons.checkFilled}</i>
@@ -244,13 +270,29 @@ const PaymentManagementSystem: FC<{ active: boolean }> = ({ active }) => {
                     return (
                       <ConfigForm
                         input={
-                          <Form.Item
-                            style={{ width: 250 }}
-                            name={item.inputName}
-                            rules={[{ required: true, message: "API key is required!" }]}
-                          >
-                            {<Input.Password disabled={current > 0} placeholder={"***************"} />}
-                          </Form.Item>
+                          item.inputName == "liveMode" ? (
+                            <Form.Item
+                              initialValue={liveMode}
+                              style={{ width: 250 }}
+                              name={item.inputName}
+                              rules={[{ required: true, message: "Environment is required!" }]}
+                            >
+                              {item.input}
+                            </Form.Item>
+                          ) : (
+                            <Form.Item
+                              style={{ width: 250 }}
+                              name={item.inputName}
+                              rules={[{ required: true, message: "API key is required!" }]}
+                            >
+                              {
+                                <Input.Password
+                                  disabled={current > 0 && !paymentAuthReset}
+                                  placeholder={"***************"}
+                                />
+                              }
+                            </Form.Item>
+                          )
                         }
                         title={item.title}
                         description={item.description}
@@ -271,6 +313,7 @@ const PaymentManagementSystem: FC<{ active: boolean }> = ({ active }) => {
                   <Flex align="center" gap={10}>
                     {
                       <Button
+                        disabled={paymentAuthReset}
                         onClick={() => {
                           paymentInfoForm.resetFields();
                         }}
@@ -279,7 +322,12 @@ const PaymentManagementSystem: FC<{ active: boolean }> = ({ active }) => {
                       </Button>
                     }
 
-                    <Button loading={saveLoading} onClick={() => paymentInfoForm.submit()} type="primary">
+                    <Button
+                      disabled={paymentAuthReset}
+                      loading={saveLoading}
+                      onClick={() => paymentInfoForm.submit()}
+                      type="primary"
+                    >
                       Save
                     </Button>
                   </Flex>

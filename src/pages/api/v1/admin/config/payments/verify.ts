@@ -13,7 +13,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const result = await paymentManager.verifyConnection(
       accessConfig.gateway,
       accessConfig.apiKey,
-      accessConfig.secretKey
+      accessConfig.secretKey,
+      accessConfig.config
     );
     return res.status(result.status).json(result);
   } catch (error) {
