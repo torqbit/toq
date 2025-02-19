@@ -137,6 +137,9 @@ export default {
     currency: "INR",
     lockoutMinutes: 30 * 1000,
     sessionExpiryDuration: 24 * 60 * 60 * 1000,
+    cashfree: {
+      paymentMethods: "upi, nb, cc, dc,app",
+    },
 
     taxRate: 18,
   },

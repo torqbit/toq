@@ -39,8 +39,7 @@ export interface PaymentServiceProvider {
   purchaseCourse(
     courseConfig: CoursePaymentConfig,
     userConfig: UserConfig,
-    orderId: string,
-    liveMode: boolean
+    orderId: string
   ): Promise<APIResponse<PaymentApiResponse>>;
   updateOrder(
     orderId: string,
@@ -145,6 +144,14 @@ export const paymentAuth = z.object({
   apiKey: z.string().min(2, "Access key is required"),
   secretKey: z.string().min(2, "Secret key is required"),
   gateway: z.string().min(2, "Payment gateway is required"),
+  config: z.object({
+    paymentConfig: z.object({
+      currency: z.string(),
+      paymentMethods: z.array(z.string()),
+      liveMode: z.boolean(),
+    }),
+    name: z.string().min(2, "Payment gateway is required"),
+  }),
 });
 
 export type PaymentAuthConfig = z.infer<typeof paymentAuth>;

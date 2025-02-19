@@ -14,6 +14,9 @@ export const authConstants = {
 export function capitalizeFirstLetter(val: string) {
   return String(val).charAt(0).toUpperCase() + String(val).slice(1);
 }
+export function convertArrayToString(arr: string[]): string {
+  return arr.sort().join(", ");
+}
 export const getCookieName = () => {
   let cookieName = appConstant.development.cookieName;
   if (process.env.NEXT_PUBLIC_APP_ENV === "production") {

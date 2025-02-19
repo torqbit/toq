@@ -13,6 +13,8 @@ import {
 import appConstant from "../appConstant";
 import { APIResponse } from "@/types/apis";
 import { getCurrency } from "@/actions/getCurrency";
+import { PaymentManagemetService } from "./PaymentManagementService";
+import { convertArrayToString } from "@/lib/utils";
 
 export class CashfreePaymentProvider implements PaymentServiceProvider {
   name: string = String(gatewayProvider.CASHFREE);
@@ -129,8 +131,7 @@ export class CashfreePaymentProvider implements PaymentServiceProvider {
   async processPendingPayment(
     orderId: string,
     userConfig: UserConfig,
-    courseConfig: CoursePaymentConfig,
-    liveMode: boolean
+    courseConfig: CoursePaymentConfig
   ): Promise<APIResponse<PaymentApiResponse>> {
     let currentTime = new Date();
     const orderDetail = await prisma.order.findUnique({
@@ -169,7 +170,7 @@ export class CashfreePaymentProvider implements PaymentServiceProvider {
           },
         });
 
-        const paymentData = await this.createOrder(order.id, userConfig, courseConfig, liveMode);
+        const paymentData = await this.createOrder(order.id, userConfig, courseConfig);
         return new APIResponse(true, 200, "Order has been created", paymentData);
       } else {
         await prisma.order.update({
@@ -196,10 +197,21 @@ export class CashfreePaymentProvider implements PaymentServiceProvider {
   async createOrder(
     orderId: string,
     userConfig: UserConfig,
-    courseConfig: CoursePaymentConfig,
-    liveMode: boolean
+    courseConfig: CoursePaymentConfig
   ): Promise<APIResponse<PaymentApiResponse>> {
     try {
+      let liveMode = false;
+      let paymentMethods = appConstant.payment.cashfree.paymentMethods;
+      const paymentManager = new PaymentManagemetService();
+      const result = await paymentManager.getGatewayConfig(gatewayProvider.CASHFREE);
+      if (result.body && result.body.config) {
+        liveMode = result.body.config.liveMode;
+        paymentMethods =
+          result.body.config.paymentMethods.length > 0
+            ? convertArrayToString(result.body.config.paymentMethods)
+            : paymentMethods;
+      }
+
       let currentTime = new Date();
       const sessionExpiry = new Date(currentTime.getTime() + appConstant.payment.sessionExpiryDuration);
       Cashfree.XClientId = this.clientId;
@@ -219,7 +231,7 @@ export class CashfreePaymentProvider implements PaymentServiceProvider {
         order_meta: {
           return_url: `${process.env.NEXTAUTH_URL}/courses/${courseConfig.slug}?callback=payment&order_id=${orderId}`,
           notify_url: `${process.env.NEXTAUTH_URL}/api/v1/course/payment/cashfree/webhook`,
-          payment_methods: "upi, nb, cc, dc,app",
+          payment_methods: paymentMethods,
         },
         order_note: "",
         order_expiry_time: sessionExpiry.toISOString(),
@@ -279,8 +291,7 @@ export class CashfreePaymentProvider implements PaymentServiceProvider {
   async purchaseCourse(
     courseConfig: CoursePaymentConfig,
     userConfig: UserConfig,
-    orderId: string,
-    liveMode: boolean
+    orderId: string
   ): Promise<APIResponse<PaymentApiResponse>> {
     let currentTime = new Date();
     const orderDetail = await prisma.order.findUnique({
@@ -302,7 +313,7 @@ export class CashfreePaymentProvider implements PaymentServiceProvider {
       ) {
         return new APIResponse(false, 102, "Your payment session is still active.");
       }
-      const paymentResponse = await this.processPendingPayment(orderId, userConfig, courseConfig, liveMode);
+      const paymentResponse = await this.processPendingPayment(orderId, userConfig, courseConfig);
       return new APIResponse(
         paymentResponse.success,
         paymentResponse.status,
@@ -310,7 +321,7 @@ export class CashfreePaymentProvider implements PaymentServiceProvider {
         paymentResponse.body
       );
     } else {
-      const response = await this.createOrder(orderId, userConfig, courseConfig, liveMode);
+      const response = await this.createOrder(orderId, userConfig, courseConfig);
       return new APIResponse(response.success, response.status, response.message, response.body);
     }
   }

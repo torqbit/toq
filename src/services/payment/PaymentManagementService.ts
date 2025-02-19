@@ -99,7 +99,12 @@ export class PaymentManagemetService {
     }
   };
 
-  verifyConnection = async (gateway: string, clientId: string, clientSecret: string): Promise<APIResponse<void>> => {
+  verifyConnection = async (
+    gateway: string,
+    clientId: string,
+    clientSecret: string,
+    config: GatewayConfig
+  ): Promise<APIResponse<void>> => {
     switch (gateway) {
       case $Enums.gatewayProvider.CASHFREE:
         const cf = new CashfreePaymentProvider(clientId, clientSecret);
@@ -117,6 +122,7 @@ export class PaymentManagemetService {
               secretId: clientSecret,
               clientId: clientId,
             },
+            paymentConfig: config.paymentConfig,
           };
           this.saveConfig(cfConfig, ConfigurationState.AUTHENTICATED);
         }
@@ -467,12 +473,6 @@ export class PaymentManagemetService {
     /**
      * if payment is in success state
      */
-    let liveMode = false;
-
-    const gatewayProviderDetail = await this.getGatewayConfig(this.defaultGateway);
-    if (gatewayProviderDetail.body && gatewayProviderDetail.body.config && gatewayProviderDetail.body.config.liveMode) {
-      liveMode = true;
-    }
 
     if (
       latestOrder &&
@@ -522,7 +522,7 @@ export class PaymentManagemetService {
           },
         });
 
-        const paymentData = await paymentProvider.purchaseCourse(courseConfig, userConfig, order.id, liveMode);
+        const paymentData = await paymentProvider.purchaseCourse(courseConfig, userConfig, order.id);
         return paymentData;
       }
 
@@ -531,12 +531,7 @@ export class PaymentManagemetService {
        */
 
       if (latestOrder.orderStatus === orderStatus.PENDING) {
-        const pendingPaymentResponse = await paymentProvider.purchaseCourse(
-          courseConfig,
-          userConfig,
-          latestOrder.id,
-          liveMode
-        );
+        const pendingPaymentResponse = await paymentProvider.purchaseCourse(courseConfig, userConfig, latestOrder.id);
         return pendingPaymentResponse;
       }
 
