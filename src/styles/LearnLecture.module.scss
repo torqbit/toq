@@ -765,22 +765,26 @@
   cursor: pointer;
   transition: all 0.3s;
   color: rgba(0, 0, 0, 0.85);
-  &:hover {
-    background-color: var(--mcq_option_hover_bg);
-  }
   .ant-btn {
     border: none;
   }
 }
 
+.mcq_option_hover:hover {
+  background-color: var(--mcq_option_hover_bg);
+}
+
 .mcq_option_wrong {
   background-color: rgba(228, 135, 135, 0.35);
 }
+.cursor_disabled {
+  cursor: unset;
+}
 .mcq_option_correct {
-  background-color: rgba(180, 236, 209, 0.35) !important;
+  background-color: rgba(180, 236, 209, 0.35);
 }
 .mcq_option_selected {
-  background-color: var(--mcq_slt_option_bg) !important;
+  background-color: var(--mcq_slt_option_bg);
   border-color: var(--btn-primary);
   color: #000;
 }
