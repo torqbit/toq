@@ -77,18 +77,18 @@ class Analytics {
     const result = await prisma.$queryRaw<IResponseStats[]>`
     SELECT 
       (SELECT COALESCE(SUM(amount), 0) 
-       FROM \`Order\` 
+       FROM Order
        WHERE orderStatus = ${orderStatus.SUCCESS} AND productId = ${productId}) AS total,
   
       (SELECT COALESCE(SUM(amount), 0) 
-       FROM \`Order\` 
+       FROM Order 
        WHERE updatedAt >= DATE_FORMAT(CURDATE(), '%Y-%m-01')  
        AND updatedAt < DATE_FORMAT(DATE_ADD(CURDATE(), INTERVAL 1 MONTH), '%Y-%m-01') 
        AND orderStatus = ${orderStatus.SUCCESS} 
        AND productId = ${productId}) AS current,
   
       (SELECT COALESCE(SUM(amount), 0) 
-       FROM \`Order\`
+       FROM Order
        WHERE updatedAt >= DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 1 MONTH), '%Y-%m-01') 
        AND updatedAt < DATE_FORMAT(CURDATE(), '%Y-%m-01') 
        AND orderStatus = ${orderStatus.SUCCESS} 
@@ -108,17 +108,24 @@ class Analytics {
     }
   }
   async getTotalEarning(): Promise<APIResponse<IEarningResponse>> {
+    const success = orderStatus.SUCCESS;
+    const testResult = await prisma.$queryRaw<any[]>`
+    SELECT * FROM "Order" WHERE "orderStatus" = ${success}::"orderStatus";`;
+
+    console.log(testResult);
     const result = await prisma.$queryRaw<IResponseStats[]>` 
     SELECT 
-    (SELECT COALESCE(SUM(amount), 0) FROM \`Order\` WHERE  orderStatus = ${orderStatus.SUCCESS}) AS total,
+    (SELECT COALESCE(SUM(amount), 0) FROM "Order" WHERE "orderStatus" = ${success}::"orderStatus") AS total,
     (SELECT COALESCE(SUM(amount), 0) 
-     FROM \`Order\` 
-     WHERE updatedAt >= DATE_FORMAT(CURDATE(), '%Y-%m-01') 
-     AND updatedAt < DATE_FORMAT(DATE_ADD(CURDATE(), INTERVAL 1 MONTH), '%Y-%m-01') AND orderStatus = ${orderStatus.SUCCESS} ) AS current,
+     FROM "Order"
+     WHERE 'updatedAt' >= date_trunc('month', CURRENT_DATE)
+     AND 'updatedAt' < date_trunc('month', CURRENT_DATE + INTERVAL '1 month') 
+     AND "orderStatus" = ${success}::"orderStatus") AS current,
     (SELECT COALESCE(SUM(amount), 0) 
-     FROM \`Order\`
-     WHERE updatedAt >= DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 1 MONTH), '%Y-%m-01') 
-     AND updatedAt < DATE_FORMAT(CURDATE(), '%Y-%m-01') AND orderStatus = ${orderStatus.SUCCESS}) AS previous`;
+     FROM "Order"
+     WHERE updatedAt >= date_trunc('month', CURRENT_DATE - INTERVAL '1 month')
+     AND updatedAt < date_trunc('month', CURRENT_DATE)
+     AND "orderStatus" = ${success}::"orderStatus") AS previous`;
 
     if (result.length > 0) {
       return new APIResponse(true, 200, "", {
@@ -169,18 +176,18 @@ class Analytics {
     const enrollmentsResult = await prisma.$queryRaw<IResponseStats[]>`
     SELECT 
       (SELECT COALESCE(COUNT(*), 0) 
-       FROM \`Order\` 
+       FROM Order
        WHERE productId = ${productId} AND orderStatus = ${orderStatus.SUCCESS}) AS total,
   
       (SELECT COALESCE(COUNT(*), 0) 
-       FROM \`Order\` 
+       FROM Order
        WHERE createdAt >= DATE_FORMAT(CURDATE(), '%Y-%m-01') 
        AND createdAt < DATE_FORMAT(DATE_ADD(CURDATE(), INTERVAL 1 MONTH), '%Y-%m-01') 
        AND productId = ${productId} 
        AND orderStatus = ${orderStatus.SUCCESS}) AS current,
   
       (SELECT COALESCE(COUNT(*), 0) 
-       FROM \`Order\` 
+       FROM Order
        WHERE createdAt >= DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 1 MONTH), '%Y-%m-01') 
        AND createdAt < DATE_FORMAT(CURDATE(), '%Y-%m-01') 
        AND productId = ${productId} 
@@ -318,7 +325,7 @@ class Analytics {
     DATE(paymentTime) AS createdAt,
      SUM(amount) AS amount
      FROM 
-    \`Order\`
+    Order
      WHERE 
      paymentTime >= ${getFormattedDate(
        new Date(this.getDateCondition(duration).startDate)
@@ -333,7 +340,7 @@ class Analytics {
       MONTH(paymentTime) AS createdAt,
       SUM(amount) AS amount
       FROM 
-      \`Order\`
+      Order
       WHERE 
        paymentTime >= ${getFormattedDate(
          new Date(this.getDateCondition(duration).startDate)

@@ -5,9 +5,9 @@ generator client {
 }
 
 datasource db {
-  provider     = "mysql"
+  provider     = "postgresql"
   url          = env("DATABASE_URL")
-  relationMode = "prisma"
+  relationMode = "foreignKeys"
 }
 
 //****  DB CONFIG END  ****//
@@ -295,11 +295,11 @@ model CourseProgress {
 
 //****** Discussion Schema ******//
 model Discussion {
-  id              Int      @unique @default(autoincrement()) @db.Int()
+  id              Int      @id @default(autoincrement())
   userId          String
   resourceId      Int
   tagCommentId    Int?
-  comment         String?  @db.MediumText
+  comment         String?  @db.Text
   attachedFiles   Json?
   parentCommentId Int?
   createdAt       DateTime @default(now())
@@ -333,7 +333,7 @@ enum EntityType {
 }
 
 model Notification {
-  id               Int              @unique @default(autoincrement()) @db.Int()
+  id               Int              @unique @default(autoincrement())
   notificationType NotificationType
   recipientId      String
   subjectId        String
@@ -351,7 +351,7 @@ model Notification {
 //****   conversation table ****//
 
 model Conversation {
-  id                   Int      @unique @default(autoincrement()) @db.Int()
+  id                   Int      @unique @default(autoincrement())
   authorId             String
   comment              String?  @db.Text
   attachedFiles        Json?
@@ -366,7 +366,7 @@ model Conversation {
 
 //****** UserJoinWaiting Schema ******//
 model UserJoinWaiting {
-  id         Int      @default(autoincrement()) @db.Int()
+  id         Int      @default(autoincrement()) 
   email      String
   ip         String?
   sequenceId Int?
@@ -396,7 +396,7 @@ enum ServiceType {
 }
 
 model ServiceProvider {
-  id             Int                @default(autoincrement()) @db.Int()
+  id             Int                @default(autoincrement()) 
   service_type   ServiceType        @unique
   provider_name  String             @db.Text()
   providerDetail Json?
@@ -421,7 +421,7 @@ model CourseCertificates {
 }
 
 model CourseNotification {
-  id              Int       @unique @default(autoincrement()) @db.Int()
+  id              Int       @unique @default(autoincrement()) 
   email           String
   courseId        Int
   createdAt       DateTime  @default(now())
@@ -642,7 +642,7 @@ model Events {
   title               String?             @unique
   banner              String?
   slug                String?             @unique
-  description         String?             @db.MediumText()
+  description         String?             @db.Text()
   startTime           DateTime?
   endTime             DateTime?
   eventType           EventType?
