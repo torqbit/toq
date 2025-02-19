@@ -65,7 +65,13 @@ export const getCourseAccessRole = async (
     },
   });
 
-  if (findLearningPathCourse && userId) {
+  if (
+    findLearningPathCourse &&
+    userId &&
+    userRole != Role.ADMIN &&
+    userRole !== Role.AUTHOR &&
+    findLearningPathCourse?.course.authorId !== userId
+  ) {
     const enrollmentDetails = await getEnrollmentDetails(userId, findLearningPathCourse.learningPathId);
 
     if (enrollmentDetails) {
@@ -83,7 +89,13 @@ export const getCourseAccessRole = async (
       }
     }
   }
-  if (cId && userId) {
+  if (
+    cId &&
+    userId &&
+    userRole != Role.ADMIN &&
+    userRole !== Role.AUTHOR &&
+    findLearningPathCourse?.course.authorId !== userId
+  ) {
     const enrollmentDetails = await getEnrollmentDetails(userId, Number(cId));
     if (enrollmentDetails) {
       isExpired = enrollmentDetails.expireIn && enrollmentDetails.expireIn?.getTime() < new Date().getTime();
