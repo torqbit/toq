@@ -177,6 +177,7 @@ const PaymentManagementSystem: FC<{ active: boolean }> = ({ active }) => {
         <Select
           labelInValue
           optionLabelProp="label"
+          removeIcon={<i style={{ fontSize: 14, color: "var(--font-secondary)", lineHeight: 0 }}>{SvgIcons.xMark}</i>}
           style={{ width: 250 }}
           mode="tags"
           placeholder="Select payment methods"

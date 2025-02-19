@@ -227,7 +227,7 @@ const MarketingLayout: FC<{
                 )}
 
                 <NotificationPopOver
-                  minWidth={isMobile ? "300px" : "420px"}
+                  minWidth={isMobile ? "70vw" : "420px"}
                   placement="bottomLeft"
                   siteConfig={siteConfig}
                   showNotification={showNotification}
@@ -332,7 +332,7 @@ const MarketingLayout: FC<{
             <Flex align="center" gap={10}>
               <NotificationPopOver
                 placement="bottomLeft"
-                minWidth="420px"
+                minWidth={isMobile ? "70vw" : "420px"}
                 siteConfig={siteConfig}
                 showNotification={showNotification}
                 onOpenNotification={setOpenNotification}
@@ -369,7 +369,9 @@ const MarketingLayout: FC<{
                 placement="bottomRight"
                 arrow={{ pointAtCenter: true }}
               >
-                <i className={appLayoutStyles.verticalDots}>{SvgIcons.verticalThreeDots}</i>
+                <i style={{ fontSize: 30, color: "var(--font-secondary)" }} className={appLayoutStyles.verticalDots}>
+                  {SvgIcons.verticalThreeDots}
+                </i>
               </Dropdown>
             </Flex>
           </Flex>

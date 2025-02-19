@@ -475,7 +475,9 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
                     placement="bottomRight"
                     arrow={{ pointAtCenter: true }}
                   >
-                    <i className={styles.verticalDots}>{SvgIcons.verticalThreeDots}</i>
+                    <i style={{ fontSize: 30, color: "var(--font-secondary)" }} className={styles.verticalDots}>
+                      {SvgIcons.verticalThreeDots}
+                    </i>
                   </Dropdown>
                 </Flex>
 
