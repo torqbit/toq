@@ -26,7 +26,10 @@ class PaymentsClient {
   getPaymentGatewayConfig = (
     gateway: $Enums.gatewayProvider,
     onSuccess: (
-      response: APIResponse<{ state: ConfigurationState; config: { currency: string; paymentMethods: string[] } }>
+      response: APIResponse<{
+        state: ConfigurationState;
+        config: { currency: string; paymentMethods: string[]; liveMode: boolean };
+      }>
     ) => void,
     onFailure: (err: string) => void
   ) => {
@@ -34,7 +37,7 @@ class PaymentsClient {
       .then(async (result) => {
         const response = (await result.json()) as APIResponse<{
           state: ConfigurationState;
-          config: { currency: string; paymentMethods: string[] };
+          config: { currency: string; paymentMethods: string[]; liveMode: boolean };
         }>;
         if (response.success) {
           onSuccess(response);

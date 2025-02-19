@@ -1,4 +1,4 @@
-import { Button, Flex, Form, Input, message, Select, Steps, Tag } from "antd";
+import { Button, Flex, Form, Input, message, Radio, Select, Steps, Tag } from "antd";
 import ConfigFormLayout from "../ConfigFormLayout";
 import ConfigForm from "../ConfigForm";
 import { FC, useEffect, useState } from "react";
@@ -12,6 +12,7 @@ const PaymentManagementSystem: FC<{ active: boolean }> = ({ active }) => {
   const [paymentInfoForm] = Form.useForm();
   const [verifyLoading, setVerifyLoading] = useState<boolean>(false);
   const [saveLoading, setSaveLoading] = useState<boolean>(false);
+  const [liveMode, setLiveMode] = useState<boolean>();
 
   const paymentGateway = $Enums.gatewayProvider.CASHFREE;
   const [messageApi, contextHolder] = message.useMessage();
@@ -56,6 +57,7 @@ const PaymentManagementSystem: FC<{ active: boolean }> = ({ active }) => {
       ...paymentInfoForm.getFieldsValue(),
       gateway: paymentGateway,
       currency: paymentInfoForm.getFieldsValue().currency,
+      liveMode: liveMode || false,
       paymentMethods: paymentInfoForm
         .getFieldsValue()
         .paymentMethods.map((r: any) => (typeof r !== "object" ? r : r.value)),
@@ -87,9 +89,11 @@ const PaymentManagementSystem: FC<{ active: boolean }> = ({ active }) => {
             setCurrent(1);
           } else if (response.body && response.body.state == "PAYMENT_CONFIGURED") {
             setCurrent(2);
+            setLiveMode(response.body.config.liveMode);
             paymentInfoForm.setFieldsValue({
               currency: response.body.config.currency,
               paymentMethods: response.body.config.paymentMethods,
+              liveMode: response.body.config.liveMode,
             });
           }
         },
@@ -117,7 +121,6 @@ const PaymentManagementSystem: FC<{ active: boolean }> = ({ active }) => {
       inputName: "secretKey",
     },
   ];
-
   const paymentInfo = [
     {
       title: "Select Currency",
@@ -133,7 +136,39 @@ const PaymentManagementSystem: FC<{ active: boolean }> = ({ active }) => {
           })}
         </Select>
       ),
+      optional: false,
+
       inputName: "currency",
+    },
+    {
+      title: "Select Environment mode",
+      description: "Choose the environment  for your Cashfree integration.",
+
+      input: (
+        <Flex align="center" gap={10}>
+          <Radio
+            checked={!liveMode}
+            onChange={(e) => {
+              setLiveMode(false);
+              paymentInfoForm.setFieldValue("liveMode", false);
+            }}
+          >
+            Test mode
+          </Radio>
+          <Radio
+            checked={liveMode}
+            onChange={(e) => {
+              setLiveMode(true);
+              paymentInfoForm.setFieldValue("liveMode", true);
+            }}
+          >
+            Live mode
+          </Radio>
+        </Flex>
+      ),
+      optional: false,
+
+      inputName: "liveMode",
     },
     {
       title: "Payment Methods",
@@ -156,6 +191,7 @@ const PaymentManagementSystem: FC<{ active: boolean }> = ({ active }) => {
         </Select>
       ),
       inputName: "paymentMethods",
+
       optional: true,
     },
   ];

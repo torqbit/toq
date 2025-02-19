@@ -16,6 +16,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       paymentConfig: {
         paymentMethods: paymentConfig.paymentMethods,
         currency: paymentConfig.currency,
+        liveMode: paymentConfig.liveMode,
       },
     };
     const result = await paymentManager.saveConfig(gatewayConfig, ConfigurationState.PAYMENT_CONFIGURED);

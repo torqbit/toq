@@ -467,6 +467,12 @@ export class PaymentManagemetService {
     /**
      * if payment is in success state
      */
+    let liveMode = false;
+
+    const gatewayProviderDetail = await this.getGatewayConfig(this.defaultGateway);
+    if (gatewayProviderDetail.body && gatewayProviderDetail.body.config && gatewayProviderDetail.body.config.liveMode) {
+      liveMode = true;
+    }
 
     if (
       latestOrder &&
@@ -516,7 +522,7 @@ export class PaymentManagemetService {
           },
         });
 
-        const paymentData = await paymentProvider.purchaseCourse(courseConfig, userConfig, order.id);
+        const paymentData = await paymentProvider.purchaseCourse(courseConfig, userConfig, order.id, liveMode);
         return paymentData;
       }
 
@@ -525,7 +531,12 @@ export class PaymentManagemetService {
        */
 
       if (latestOrder.orderStatus === orderStatus.PENDING) {
-        const pendingPaymentResponse = await paymentProvider.purchaseCourse(courseConfig, userConfig, latestOrder.id);
+        const pendingPaymentResponse = await paymentProvider.purchaseCourse(
+          courseConfig,
+          userConfig,
+          latestOrder.id,
+          liveMode
+        );
         return pendingPaymentResponse;
       }
 
