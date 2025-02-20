@@ -392,7 +392,7 @@ const AddAssignment: FC<{
                                       name={[name, "questionIndex"]}
                                       rules={[{ required: true, message: "Please enter any question no" }]}
                                     >
-                                      <Input placeholder="Question 01" />
+                                      <Input placeholder="e.g. Question 1" />
                                     </Form.Item>
                                   </Col>
                                   <Col span={10}>
