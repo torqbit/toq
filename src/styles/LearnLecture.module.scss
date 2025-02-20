@@ -786,6 +786,9 @@
 .mcq_option_selected {
   background-color: var(--mcq_slt_option_bg);
   border-color: var(--btn-primary);
+  &:hover {
+    background-color: var(--mcq_slt_option_bg);
+  }
   color: #000;
 }
 
