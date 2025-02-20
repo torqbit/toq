@@ -108,7 +108,7 @@ const SubjectiveAssignmentView: FC<{
           />
         )}
 
-        {!evaluate && (
+        {!evaluate && subjectiveQuestion?.file_for_candidate && (
           <Form.Item
             style={{ marginTop: 50 }}
             name="archiveUrl"

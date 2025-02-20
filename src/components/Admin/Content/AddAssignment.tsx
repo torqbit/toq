@@ -65,6 +65,10 @@ const AddAssignment: FC<{
   const handleAssignment = async () => {
     // GRADING PARAMETERS CHECK
 
+    if (!assignmentForm.getFieldValue("title")) {
+      return messageApi.info({ content: "Please enter assignment title" });
+    }
+
     if (assignmentType === AssignmentType.SUBJECTIVE) {
       if (assignmentForm.getFieldValue("gradingParameters")?.length) {
         const questionScores = assignmentForm.getFieldValue("gradingParameters") as QuestionScore[];
