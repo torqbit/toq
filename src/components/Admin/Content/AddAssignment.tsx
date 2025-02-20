@@ -65,6 +65,7 @@ const AddAssignment: FC<{
   const handleAssignment = async () => {
     // GRADING PARAMETERS CHECK
 
+    await assignmentForm.validateFields();
     if (assignmentType === AssignmentType.SUBJECTIVE) {
       if (assignmentForm.getFieldValue("gradingParameters")?.length) {
         const questionScores = assignmentForm.getFieldValue("gradingParameters") as QuestionScore[];
@@ -82,8 +83,6 @@ const AddAssignment: FC<{
         return messageApi.info({ content: "Please add some description for assignment" });
       }
     }
-
-    if (!assignmentType) return messageApi.error({ content: "Please select assignment type" });
     if (
       assignmentType === AssignmentType.MCQ &&
       questions.length > 0 &&
@@ -262,7 +261,6 @@ const AddAssignment: FC<{
             loading={loading}
             onClick={() => {
               handleAssignment();
-              assignmentForm.submit();
               subjectiveForm.submit();
             }}
             type="primary"
