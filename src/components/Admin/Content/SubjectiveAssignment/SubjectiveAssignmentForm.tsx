@@ -97,7 +97,7 @@ const SubjectiveAssignmentForm: FC<{
       <Form.Item
         name="file_for_candidate"
         label="Select a file for candidate"
-        rules={[{ required: true, message: "Please Select a file" }]}
+        rules={[{ required: false, message: "Please Select a file" }]}
       >
         <Select placeholder="Select assignment type">
           {appConstant.documentExtensions.map((file, i) => {

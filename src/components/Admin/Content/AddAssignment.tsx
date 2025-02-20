@@ -65,17 +65,21 @@ const AddAssignment: FC<{
   const handleAssignment = async () => {
     // GRADING PARAMETERS CHECK
 
-    if (assignmentForm.getFieldValue("gradingParameters")?.length) {
-      const questionScores = assignmentForm.getFieldValue("gradingParameters") as QuestionScore[];
-      const sumOfGradingScore = questionScores.reduce(
-        (acc, currentValue) => Number(acc) + Number(currentValue.score),
-        0
-      );
-      if (
-        assignmentType === AssignmentType.SUBJECTIVE &&
-        sumOfGradingScore !== Number(assignmentForm.getFieldsValue().maximumScore)
-      ) {
-        return messageApi.info({ content: "Ensure the sum of grading points equals the maximum points." });
+    if (assignmentType === AssignmentType.SUBJECTIVE) {
+      if (assignmentForm.getFieldValue("gradingParameters")?.length) {
+        const questionScores = assignmentForm.getFieldValue("gradingParameters") as QuestionScore[];
+        const sumOfGradingScore = questionScores.reduce(
+          (acc, currentValue) => Number(acc) + Number(currentValue.score),
+          0
+        );
+        if (sumOfGradingScore !== Number(assignmentForm.getFieldsValue().maximumScore)) {
+          return messageApi.info({ content: "Ensure the sum of grading points equals the maximum points." });
+        }
+      } else {
+        return messageApi.info({ content: "Add atleast one grading parameter" });
+      }
+      if (editorValue.replace(/(<p><br><\/p>)+$/, "") === "") {
+        return messageApi.info({ content: "Please add some description for assignment" });
       }
     }
 
@@ -293,7 +297,7 @@ const AddAssignment: FC<{
                     title="Assignment Title"
                     description="Enter the title of the assignment"
                     input={
-                      <Form.Item name="title">
+                      <Form.Item name="title" rules={[{ required: true }]}>
                         <Input placeholder="Enter the title of the assignment" />
                       </Form.Item>
                     }
@@ -384,15 +388,20 @@ const AddAssignment: FC<{
                               {fields.map(({ key, name, ...restField }) => (
                                 <Row key={key} justify="end" gutter={[10, 10]}>
                                   <Col span={3}>
-                                    <Button type="text" onClick={() => remove(name)} icon={<DeleteFilled />} />
+                                    <Button
+                                      type="text"
+                                      disabled={fields.length === 1}
+                                      onClick={() => remove(name)}
+                                      icon={<DeleteFilled />}
+                                    />
                                   </Col>
                                   <Col span={10}>
                                     <Form.Item
                                       {...restField}
                                       name={[name, "questionIndex"]}
-                                      rules={[{ required: true, message: "Please enter any question no" }]}
+                                      rules={[{ required: true, message: "Required question no" }]}
                                     >
-                                      <Input placeholder="e.g. Question 1" />
+                                      <Input placeholder="e.g. Parameter Name" />
                                     </Form.Item>
                                   </Col>
                                   <Col span={10}>
