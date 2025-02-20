@@ -66,6 +66,9 @@ const SubjectiveAssignmentView: FC<{
         message.error(`${info.file.name} file upload failed.`);
       }
     },
+    onPreview: (file) => {
+      window.open(`/download/private-file?fileUrl=${subjectiveAnswer.answerArchiveUrl}`, "_blank");
+    },
   };
   return (
     <section className={style.subjective_assignment_view}>
@@ -87,7 +90,7 @@ const SubjectiveAssignmentView: FC<{
           </Tooltip>
         )}
 
-        {evaluate ? <h4>Answer</h4> : <h4>Write your Answer</h4>}
+        {evaluate ? <h4>Answer</h4> : <h5>Write your Answer</h5>}
         {evaluate ? (
           <>
             <PurifyContent content={subjectiveAnswer.answerContent as string} />
