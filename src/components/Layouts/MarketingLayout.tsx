@@ -118,10 +118,12 @@ const MarketingLayout: FC<{
       type: "SET_SITE_CONFIG",
       payload: siteConfig,
     });
-    dispatch({
-      type: "SET_LOADER",
-      payload: false,
-    });
+    if (localStorage.getItem("theme")) {
+      dispatch({
+        type: "SET_LOADER",
+        payload: false,
+      });
+    }
   };
 
   useEffect(() => {
@@ -296,6 +298,51 @@ const MarketingLayout: FC<{
         );
     }
   };
+  if (!globalState.pageLoading) {
+    return (
+      <ConfigProvider theme={globalState.theme == "dark" ? darkThemeConfig(siteConfig) : antThemeConfig(siteConfig)}>
+        <Head>
+          <title>{`${siteConfig.brand?.name} · ${siteConfig.brand?.title}`}</title>
+          <meta name="description" content={siteConfig.brand?.description} />
+          <meta
+            property="og:image"
+            content={
+              siteConfig.brand?.themeSwitch && siteConfig.brand.defaultTheme == "dark"
+                ? siteConfig.heroSection?.banner?.darkModePath
+                : siteConfig.heroSection?.banner?.lightModePath
+            }
+          />
+          <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+          <link rel="icon" href={siteConfig.brand?.favicon} />
+        </Head>
+        <section
+          className={`${styles.heroWrapper} hero__wrapper`}
+          style={{ minHeight: isMobile ? mobileHeroMinHeight : "60px" }}
+        >
+          {contextHolder}
+          {contexMessagetHolder}
+          {isMobile && user?.role == Role.STUDENT ? (
+            <Flex
+              style={{ width: "90vw", padding: "10px 0px" }}
+              align="center"
+              justify="space-between"
+              className={router.pathname.startsWith("/academy/course/") ? "" : appLayoutStyles.userNameWrapper}
+            >
+              <Link href={"/setting"}>
+                <Flex align="center" gap={10} style={{ cursor: "pointer" }}>
+                  <Avatar src={user?.image} icon={<UserOutlined />} />
+                  <h4 style={{ margin: 0 }}> {user?.name}</h4>
+                </Flex>
+              </Link>
+              <Flex align="center" gap={10}>
+                <NotificationPopOver
+                  placement="bottomLeft"
+                  minWidth={isMobile ? "70vw" : "420px"}
+                  siteConfig={siteConfig}
+                  showNotification={showNotification}
+                  onOpenNotification={setOpenNotification}
+                />
+
 
   return (
     <ConfigProvider theme={globalState.theme == "dark" ? darkThemeConfig(siteConfig) : antThemeConfig(siteConfig)}>
@@ -359,66 +406,74 @@ const MarketingLayout: FC<{
                       ),
                     },
 
-                    {
-                      key: "1",
-                      label: "Logout",
-                      onClick: () => {
-                        signOut();
-                      },
-                    },
-                  ],
-                }}
-                trigger={["click"]}
-                placement="bottomRight"
-                arrow={{ pointAtCenter: true }}
-              >
-                <i style={{ fontSize: 30, color: "var(--font-secondary)" }} className={appLayoutStyles.verticalDots}>
-                  {SvgIcons.verticalThreeDots}
-                </i>
-              </Dropdown>
-            </Flex>
-          </Flex>
-        ) : (
-          <></>
-        )}
 
-        {NavBarComponent && (
-          <NavBarComponent
-            user={user}
-            isMobile={isMobile}
-            defaultNavlink={previewMode ? "#" : "/login"}
+                      {
+                        key: "1",
+                        label: "Logout",
+                        onClick: () => {
+                          signOut();
+                        },
+                      },
+                    ],
+                  }}
+                  trigger={["click"]}
+                  placement="bottomRight"
+                  arrow={{ pointAtCenter: true }}
+                >
+                  <i style={{ fontSize: 30, color: "var(--font-secondary)" }} className={appLayoutStyles.verticalDots}>
+                    {SvgIcons.verticalThreeDots}
+                  </i>
+                </Dropdown>
+              </Flex>
+            </Flex>
+          ) : (
+            <></>
+          )}
+
+          {NavBarComponent && (
+            <NavBarComponent
+              user={user}
+              isMobile={isMobile}
+              defaultNavlink={previewMode ? "#" : "/login"}
+              homeLink={homeLink ? homeLink : "/"}
+              items={siteConfig.navBar?.links ?? []}
+              showThemeSwitch={siteConfig.brand?.themeSwitch ?? DEFAULT_THEME.brand.themeSwitch}
+              activeTheme={globalState.theme ?? "light"}
+              brand={brandInfo}
+              previewMode={previewMode}
+              extraContent={getNavBarExtraContent(user?.role)}
+              navBarWidth={navBarWidth}
+            />
+          )}
+
+          {heroSection}
+        </section>
+        <Spin spinning={globalState.pageLoading} indicator={<LoadingOutlined spin />} size="large">
+          <div
+            className={`${landingPage.children_wrapper} children__wrapper`}
+            style={{ minHeight: isMobile && heroSection ? `calc(50vh - 250px)` : `calc(100vh - 250px)` }}
+          >
+            {children}
+          </div>
+        </Spin>
+
+        {showFooter && (
+          <Footer
+            siteConfig={siteConfig}
             homeLink={homeLink ? homeLink : "/"}
-            items={siteConfig.navBar?.links ?? []}
-            showThemeSwitch={siteConfig.brand?.themeSwitch ?? DEFAULT_THEME.brand.themeSwitch}
+            isMobile={isMobile}
             activeTheme={globalState.theme ?? "light"}
-            brand={brandInfo}
-            previewMode={previewMode}
-            extraContent={getNavBarExtraContent(user?.role)}
-            navBarWidth={navBarWidth}
           />
         )}
-
-        {heroSection}
-      </section>
-      <Spin spinning={globalState.pageLoading} indicator={<LoadingOutlined spin />} size="large">
-        <div
-          className={`${landingPage.children_wrapper} children__wrapper`}
-          style={{ minHeight: isMobile && heroSection ? `calc(50vh - 250px)` : `calc(100vh - 250px)` }}
-        >
-          {children}
-        </div>
-      </Spin>
-
-      {showFooter && (
-        <Footer
-          siteConfig={siteConfig}
-          homeLink={homeLink ? homeLink : "/"}
-          isMobile={isMobile}
-          activeTheme={globalState.theme ?? "light"}
-        />
-      )}
-    </ConfigProvider>
-  );
+      </ConfigProvider>
+    );
+  } else {
+    return (
+      <>
+        <Spin spinning={true} indicator={<LoadingOutlined spin />} fullscreen size="large" />
+      </>
+    );
+  }
 };
 
 export default MarketingLayout;

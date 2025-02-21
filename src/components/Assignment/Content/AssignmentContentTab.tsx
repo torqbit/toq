@@ -221,12 +221,12 @@ const AssignmentContentTab: FC<{
 
   useEffect(() => {
     if (
-      (assignmentDetail?.content._type === AssignmentType.MCQ && Object.keys(selectedAnswers).length === 0) ||
-      selectedAnswers[`${1}`]?.length === 0
+      assignmentDetail?.content._type === AssignmentType.MCQ &&
+      Object.values(selectedAnswers).some((arr) => arr.length)
     ) {
-      setFinishDisabled(true);
-    } else {
       setFinishDisabled(false);
+    } else {
+      setFinishDisabled(true);
     }
 
     if (assignmentDetail?.content._type === AssignmentType.SUBJECTIVE) {
@@ -297,6 +297,7 @@ const AssignmentContentTab: FC<{
                           }
                           onConfirm={onSubmitQuestion}
                           onCancel={() => {}}
+                          okButtonProps={{ loading: saveLoading }}
                           okText="Yes"
                           cancelText="No"
                         >

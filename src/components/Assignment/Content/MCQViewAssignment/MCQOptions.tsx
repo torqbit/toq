@@ -24,9 +24,9 @@ const MCQOption: React.FC<MCQOptionProps> = ({
   return (
     <div
       onClick={onClick}
-      className={`${style.mcq_option} ${
-        isSelected && correctOptionIndex?.length === 0 ? style.mcq_option_selected : ""
-      }  ${
+      className={`${style.mcq_option}
+      ${correctOptionIndex.length === 0 ? style.mcq_option_hover : style.cursor_disabled}
+       ${isSelected && correctOptionIndex?.length === 0 ? style.mcq_option_selected : ""}  ${
         !areAnswersEqualForKey(correctOptionIndex, selectedAnswer) &&
         selectedAnswer?.includes(value.toString()) &&
         style.mcq_option_wrong
