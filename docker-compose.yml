@@ -1,6 +1,6 @@
 services:
   web:
-    image: torqbit/torqbit:0.1.7-rc2
+    image: torqbit/torqbit:0.1.7
     ports:
       - "8080:80"
     build: .
