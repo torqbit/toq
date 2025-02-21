@@ -17,7 +17,7 @@ site:
     ogImage: /icon/torqbit.png
     themeSwitch: true
     defaultTheme: light
-    favicon: /favicon.ico
+    favicon: /static/favicon.ico
     socialLinks:
       discord: https://discord.gg/NserMXcx
       github: https://github.com/torqbit
@@ -25,12 +25,13 @@ site:
     name: Torqbit
     brandColor: "#8980fd"
     title: Modern education starts here
-    icon: https://cdn.torqbit.com/static/brand-icon.png
+    icon: http://localhost:3000/static/1739960230335-icon-light.png
   darkMode: true
   heroSection:
     title: Welcome to Torqbit Academy
     description: >
-      Torqbit, is an open source learning platform to help businesses simplify the onboarding and training of their customers
+      Torqbit, is an open source learning platform to help businesses simplify
+      the onboarding and training of their customers
     actionButtons:
       primary:
         label: Get Started

@@ -14,6 +14,43 @@ export const authConstants = {
 export function capitalizeFirstLetter(val: string) {
   return String(val).charAt(0).toUpperCase() + String(val).slice(1);
 }
+export function isValidImagePath(path: string): boolean {
+  const allowedImagePathPattern =
+    /^(https?:\/\/)?(localhost|[\w-]+(\.[\w-]+)*)(:\d+)?(\/[\w-]+)*\/?[\w-]+\.(jpg|jpeg|png|gif|bmp|webp|svg|tiff)$/i;
+  const isValid = allowedImagePathPattern.test(path);
+  console.log(isValid, "test", path); // Debugging the result
+  return isValid;
+}
+
+export function isValidFilePath(path: string): boolean {
+  const allowedFilePathPattern =
+    /^(https?:\/\/)?([\w-]+(\.[\w-]+)*\/)*[\w-]+\.(pdf|zip|txt|docx|xlsx|pptx|rar|tar|csv|json)$/i;
+  return allowedFilePathPattern.test(path);
+}
+export function isValidVideoPath(path: string): boolean {
+  const allowedVideoPathPattern =
+    /^(https?:\/\/)?([\w-]+(\.[\w-]+)*\/)*[\w-]+\.(mp4|webm|mov|avi|mkv|flv|wmv|mpeg|ogv)$/i;
+  return allowedVideoPathPattern.test(path);
+}
+
+export function isValidGeneralLink(path: string): boolean {
+  // Check if it's a mailto link
+  if (path.startsWith("mailto:")) {
+    const mailtoPattern = /^mailto:[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i;
+    return mailtoPattern.test(path);
+  }
+
+  // Check if it's a tel link
+  if (path.startsWith("tel:")) {
+    const telPattern = /^tel:\+?\d+$/i;
+    return telPattern.test(path);
+  }
+
+  // General link validation (for relative routes or external URLs)
+  const allowedLinkPattern = /^(https?:\/\/[\w-]+(\.[\w-]+)+(?:\/[\w-]+)*\/?|\/[\w-]+(?:\/[\w-]+)*\/?)$/i;
+  return allowedLinkPattern.test(path);
+}
+
 export function convertArrayToString(arr: string[]): string {
   return arr.sort().join(", ");
 }

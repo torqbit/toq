@@ -25,6 +25,7 @@ import type { NotificationArgsProps } from "antd";
 import NotificationPopOver from "../Notification/NotificationPopOver";
 import NotificationView from "../Notification/NotificationView";
 import { getFetch } from "@/services/request";
+import { isValidGeneralLink, isValidImagePath } from "@/lib/utils";
 type NotificationPlacement = NotificationArgsProps["placement"];
 
 const MarketingLayout: FC<{
@@ -274,9 +275,11 @@ const MarketingLayout: FC<{
                 {items.map((navigation, i) => {
                   return (
                     <li key={i}>
-                      <Link href={navigation.link} aria-label={`link to ${navigation.title} page`}>
-                        {navigation.title}
-                      </Link>
+                      {isValidGeneralLink(`${navigation.link}`) && (
+                        <Link href={navigation.link} aria-label={`link to ${navigation.title} page`}>
+                          {navigation.title}
+                        </Link>
+                      )}
                     </li>
                   );
                 })}
@@ -308,7 +311,7 @@ const MarketingLayout: FC<{
           }
         />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-        <link rel="icon" href={siteConfig.brand?.favicon} />
+        {isValidImagePath(`${siteConfig.brand?.favicon}`) && <link rel="icon" href={siteConfig.brand?.favicon} />}
       </Head>
       <section
         className={`${styles.heroWrapper} hero__wrapper`}
