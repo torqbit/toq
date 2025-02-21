@@ -297,6 +297,7 @@ const AssignmentContentTab: FC<{
                           }
                           onConfirm={onSubmitQuestion}
                           onCancel={() => {}}
+                          okButtonProps={{ loading: saveLoading }}
                           okText="Yes"
                           cancelText="No"
                         >
