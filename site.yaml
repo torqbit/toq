@@ -17,7 +17,7 @@ site:
     ogImage: /icon/torqbit.png
     themeSwitch: true
     defaultTheme: light
-    favicon: /static/favicon.ico
+    favicon: /favicon.ico
     socialLinks:
       discord: https://discord.gg/NserMXcx
       github: https://github.com/torqbit
