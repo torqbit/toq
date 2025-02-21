@@ -25,7 +25,7 @@ site:
     name: Torqbit
     brandColor: "#8980fd"
     title: Modern education starts here
-    icon: http://localhost:3000/static/1739960230335-icon-light.png
+    icon: https://cdn.torqbit.com/static/brand-icon.png
   darkMode: true
   heroSection:
     title: Welcome to Torqbit Academy
