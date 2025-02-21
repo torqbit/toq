@@ -5,12 +5,13 @@ import darkThemeConfig from "@/services/darkThemeConfig";
 import { getSiteConfig } from "@/services/getSiteConfig";
 import { PageSiteConfig } from "@/services/siteConstant";
 import { ISiteSetupCard } from "@/types/setup/siteSetup";
+import { Theme } from "@/types/theme";
 import { ConfigProvider } from "antd";
 import { GetServerSidePropsContext, NextPage } from "next";
 import { useEffect } from "react";
 
 const SiteSetupPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
-  const { globalState } = useAppContext();
+  const { globalState, dispatch } = useAppContext();
 
   const setupOptions: ISiteSetupCard[] = [
     {
@@ -38,6 +39,29 @@ const SiteSetupPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig })
   useEffect(() => {
     const root = document.documentElement;
     root.style.setProperty("--btn-primary", `${siteConfig.brand?.brandColor}`);
+  }, []);
+
+  const setGlobalTheme = (theme: Theme) => {
+    dispatch({
+      type: "SWITCH_THEME",
+      payload: theme,
+    });
+  };
+  const onCheckTheme = () => {
+    const currentTheme = localStorage.getItem("theme");
+    if (siteConfig.brand?.themeSwitch && currentTheme) {
+      localStorage.setItem("theme", currentTheme);
+    } else {
+      if (siteConfig.brand?.defaultTheme) {
+        localStorage.setItem("theme", siteConfig.brand?.defaultTheme);
+      } else {
+        localStorage.setItem("theme", "light");
+      }
+    }
+    setGlobalTheme(localStorage.getItem("theme") as Theme);
+  };
+  useEffect(() => {
+    onCheckTheme();
   }, []);
 
   return (
