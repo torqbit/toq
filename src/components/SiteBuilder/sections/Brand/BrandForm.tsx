@@ -86,18 +86,14 @@ const BrandForm: FC<{
         if (res.success) {
           setBrandImage({
             ...brandImage,
-            [imageType]:
-              imageType === "icon"
-                ? `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/static/${res.imgName}`
-                : `/static/${res.imgName}`,
+            [imageType]: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/static/${res.imgName}`,
           });
           setBrandConfig({
             ...brandConfig,
-            [imageType]:
-              imageType === "icon"
-                ? `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/static/${res.imgName}`
-                : `/static/${res.imgName}`,
-            favicon: res.icoFileName ? `/static/${res.icoFileName}` : brandConfig?.favicon,
+            [imageType]: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/static/${res.imgName}`,
+            favicon: res.icoFileName
+              ? `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/static/${res.icoFileName}`
+              : brandConfig?.favicon,
           });
         }
       }

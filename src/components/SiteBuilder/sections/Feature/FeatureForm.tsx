@@ -161,8 +161,11 @@ const FeatureForm: FC<{
         const res = await postRes.json();
 
         if (res.success) {
-          setFeatureImages({ ...featureImages, [imageType]: `/static/${res.imgName}` });
-          handleFeatureChange(index, "img", `/static/${res.imgName}`);
+          setFeatureImages({
+            ...featureImages,
+            [imageType]: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/static/${res.imgName}`,
+          });
+          handleFeatureChange(index, "img", `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/static/${res.imgName}`);
         }
       }
     } catch (error) {

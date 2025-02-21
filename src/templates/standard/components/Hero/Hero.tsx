@@ -8,6 +8,7 @@ import Image from "next/image";
 import { useAppContext } from "@/components/ContextApi/AppContext";
 import { bannerAlignment } from "@/types/schema";
 import { PageSiteConfig } from "@/services/siteConstant";
+import { isValidGeneralLink } from "@/lib/utils";
 
 const MarketingHero: FC<{ isMobile: boolean; user: User; siteConfig: PageSiteConfig }> = ({
   isMobile,
@@ -98,12 +99,18 @@ const MarketingHero: FC<{ isMobile: boolean; user: User; siteConfig: PageSiteCon
           </p>
 
           <Space size={"large"} style={{ marginBottom: 50, padding: "0px 20px" }}>
-            <Link href={user ? `${heroSection?.actionButtons?.primary?.link}` : `/login`}>
-              <Button type="primary">{user ? heroSection?.actionButtons?.primary?.label : " Sign up for free"}</Button>
-            </Link>
-            <a href={`${heroSection?.actionButtons?.secondary?.link}`} aria-label="Contact us through mail">
-              <Button className={styles.btn__contact}>{heroSection?.actionButtons?.secondary?.label}</Button>
-            </a>
+            {isValidGeneralLink(`${heroSection?.actionButtons?.primary?.link}`) && (
+              <Link href={user ? `${heroSection?.actionButtons?.primary?.link}` : `/login`}>
+                <Button type="primary">
+                  {user ? heroSection?.actionButtons?.primary?.label : " Sign up for free"}
+                </Button>
+              </Link>
+            )}
+            {isValidGeneralLink(`${heroSection?.actionButtons?.secondary?.link}`) && (
+              <a href={`${heroSection?.actionButtons?.secondary?.link}`} aria-label="Contact us through mail">
+                <Button className={styles.btn__contact}>{heroSection?.actionButtons?.secondary?.label}</Button>
+              </a>
+            )}
           </Space>
         </Flex>
         {bannerAlign !== "background" && (
