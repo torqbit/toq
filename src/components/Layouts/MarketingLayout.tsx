@@ -313,7 +313,7 @@ const MarketingLayout: FC<{
             }
           />
           <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-          <link rel="icon" href={siteConfig.brand?.favicon} />
+          {isValidImagePath(`${siteConfig.brand?.favicon}`) && <link rel="icon" href={siteConfig.brand?.favicon} />}
         </Head>
         <section
           className={`${styles.heroWrapper} hero__wrapper`}
@@ -343,69 +343,23 @@ const MarketingLayout: FC<{
                   onOpenNotification={setOpenNotification}
                 />
 
-
-  return (
-    <ConfigProvider theme={globalState.theme == "dark" ? darkThemeConfig(siteConfig) : antThemeConfig(siteConfig)}>
-      <Head>
-        <title>{`${siteConfig.brand?.name} · ${siteConfig.brand?.title}`}</title>
-        <meta name="description" content={siteConfig.brand?.description} />
-        <meta
-          property="og:image"
-          content={
-            siteConfig.brand?.themeSwitch && siteConfig.brand.defaultTheme == "dark"
-              ? siteConfig.heroSection?.banner?.darkModePath
-              : siteConfig.heroSection?.banner?.lightModePath
-          }
-        />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-        {isValidImagePath(`${siteConfig.brand?.favicon}`) && <link rel="icon" href={siteConfig.brand?.favicon} />}
-      </Head>
-      <section
-        className={`${styles.heroWrapper} hero__wrapper`}
-        style={{ minHeight: isMobile ? mobileHeroMinHeight : "60px" }}
-      >
-        {contextHolder}
-        {contexMessagetHolder}
-        {isMobile && user?.role == Role.STUDENT ? (
-          <Flex
-            style={{ width: "90vw", padding: "10px 0px" }}
-            align="center"
-            justify="space-between"
-            className={router.pathname.startsWith("/academy/course/") ? "" : appLayoutStyles.userNameWrapper}
-          >
-            <Link href={"/setting"}>
-              <Flex align="center" gap={10} style={{ cursor: "pointer" }}>
-                <Avatar src={user?.image} icon={<UserOutlined />} />
-                <h4 style={{ margin: 0 }}> {user?.name}</h4>
-              </Flex>
-            </Link>
-            <Flex align="center" gap={10}>
-              <NotificationPopOver
-                placement="bottomLeft"
-                minWidth={isMobile ? "70vw" : "420px"}
-                siteConfig={siteConfig}
-                showNotification={showNotification}
-                onOpenNotification={setOpenNotification}
-              />
-
-              <Dropdown
-                className={appLayoutStyles.mobileUserMenu}
-                menu={{
-                  items: [
-                    {
-                      key: "0",
-                      label: (
-                        <div
-                          onClick={() => {
-                            const newTheme: Theme = globalState.theme == "dark" ? "light" : "dark";
-                            updateTheme(newTheme);
-                          }}
-                        >
-                          {globalState.theme !== "dark" ? "Dark mode" : "Light mode"}
-                        </div>
-                      ),
-                    },
-
+                <Dropdown
+                  className={appLayoutStyles.mobileUserMenu}
+                  menu={{
+                    items: [
+                      {
+                        key: "0",
+                        label: (
+                          <div
+                            onClick={() => {
+                              const newTheme: Theme = globalState.theme == "dark" ? "light" : "dark";
+                              updateTheme(newTheme);
+                            }}
+                          >
+                            {globalState.theme !== "dark" ? "Dark mode" : "Light mode"}
+                          </div>
+                        ),
+                      },
 
                       {
                         key: "1",
