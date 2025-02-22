@@ -43,34 +43,54 @@ const Testimonials: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) 
         },
       });
   };
+  let showSaveButton = () => {
+    if (config.sections?.testimonials?.items && siteConfig.sections?.testimonials?.items) {
+      return config.sections?.testimonials?.items.length !== siteConfig.sections.testimonials.items.length;
+    } else if (
+      (config.sections?.testimonials?.items &&
+        config.sections.testimonials.items.length > 0 &&
+        !siteConfig?.sections?.testimonials?.items) ||
+      (!config.sections?.testimonials?.items &&
+        siteConfig?.sections?.testimonials?.items &&
+        siteConfig?.sections?.testimonials?.items.length > 0)
+    ) {
+      return true;
+    } else {
+      false;
+    }
+  };
 
   return (
     <SiteBuilderLayout siteConfig={siteConfig} siteContent={<ContentNavigation activeMenu={"testimonials"} />}>
       {contentHolder}
-      <Flex vertical gap={20}>
-        <h4 style={{ margin: "0" }}> Testimonials</h4>
+      <Flex vertical justify="center" align="center" style={{ marginTop: 10 }}>
+        <Flex vertical gap={20}>
+          <h4 style={{ margin: "0" }}> Testimonials</h4>
 
-        <BasicInfoForm
-          form={form}
-          onFinish={onSaveBasicInfo}
-          extraContent={
-            <Button type="primary" onClick={() => updateYamlFile("Testimonials basic info has been updated")}>
-              Save
-            </Button>
-          }
-          initialValue={{
-            title: siteConfig.sections?.testimonials?.title,
-            description: siteConfig.sections?.testimonials?.description,
-          }}
-        />
-        <Flex align="center" justify="space-between" style={{ marginBottom: 20, maxWidth: 1000 }}>
-          <h4 style={{ margin: "0" }}>Add Testimonials</h4>
+          <BasicInfoForm
+            form={form}
+            onFinish={onSaveBasicInfo}
+            extraContent={
+              <Button type="primary" onClick={() => updateYamlFile("Testimonials basic info has been updated")}>
+                Save
+              </Button>
+            }
+            initialValue={{
+              title: siteConfig.sections?.testimonials?.title,
+              description: siteConfig.sections?.testimonials?.description,
+            }}
+          />
+          <Flex align="center" justify="space-between" style={{ marginBottom: 20, maxWidth: 1000 }}>
+            <h4 style={{ margin: "0" }}>Add Testimonials</h4>
 
-          <Button type="primary" loading={loading} onClick={() => updateYamlFile()}>
-            Save
-          </Button>
+            {showSaveButton() && (
+              <Button type="primary" loading={loading} onClick={() => updateYamlFile()}>
+                Save
+              </Button>
+            )}
+          </Flex>
+          <AddTestimonial siteConfig={config} setConfig={setConfig} />
         </Flex>
-        <AddTestimonial siteConfig={config} setConfig={setConfig} />
       </Flex>
     </SiteBuilderLayout>
   );

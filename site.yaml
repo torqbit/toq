@@ -30,7 +30,8 @@ site:
   heroSection:
     title: Welcome to Torqbit Academy
     description: >
-      Torqbit, is an open source learning platform to help businesses simplify the onboarding and training of their customers
+      Torqbit, is an open source learning platform to help businesses simplify
+      the onboarding and training of their customers
     actionButtons:
       primary:
         label: Get Started
@@ -79,7 +80,9 @@ site:
       description: Description on blogs
     faq:
       enabled: true
-      items: null
+      items:
+        - question: asdf
+          answer: asf
       title: FAQ
       description: Frequently asked questions by the students
     testimonials:

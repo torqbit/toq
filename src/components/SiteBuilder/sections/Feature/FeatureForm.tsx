@@ -336,7 +336,7 @@ const FeatureForm: FC<{
 
   return (
     <div className={styles.feature__wrapper}>
-      <ConfigFormLayout formTitle="Add Features">
+      <ConfigFormLayout width="1000px" formTitle="Add Features">
         <Form form={form} requiredMark={false} initialValues={initialValues}>
           {featureItems.map((item, i) => {
             return (
