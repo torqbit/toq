@@ -130,7 +130,7 @@ const darkThemeConfig = (siteConfig: PageSiteConfig) => {
         activeBg: themeColors.dark.bgTertiary,
         hoverBg: themeColors.dark.bgSecondary,
         colorIcon: themeColors.dark.fontPlaceholder,
-        addonBg: "#383e4b",
+        addonBg: themeColors.dark.colorSplit,
         colorTextPlaceholder: themeColors.dark.fontPlaceholder,
         activeBorderColor: themeColors.dark.fontSecondary,
       },
