@@ -61,6 +61,13 @@ export interface IBlogConfig {
   title?: string;
   description?: string;
 }
+export interface IBusinessInfo {
+  gstNumber: string;
+  panNumber: string;
+  address: string;
+  state: string;
+  country: string;
+}
 
 export interface ILearningConfig {
   enabled?: boolean;
@@ -75,6 +82,7 @@ export interface ThemeSchema {
   brand?: IBrandConfig;
   darkMode?: boolean;
   heroSection?: IHeroConfig;
+  businessInfo?: IBusinessInfo;
   sections?: {
     courses?: ICourseConfig;
     blog?: IBlogConfig;

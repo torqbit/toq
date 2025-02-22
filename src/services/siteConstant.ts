@@ -1,5 +1,6 @@
-import { bannerAlignment, ThemeSchema } from "@/types/schema";
+import { bannerAlignment, IBusinessInfo, ThemeSchema } from "@/types/schema";
 import { Theme } from "@/types/theme";
+import { businessConfig } from "./businessConfig";
 
 export type PageSiteConfig = ThemeSchema;
 
@@ -63,6 +64,7 @@ export const DEFAULT_THEME = {
       position: "bottom" as bannerAlignment,
     },
   },
+  buisnessInfo: businessConfig,
   sections: {
     courses: {
       enable: false,
