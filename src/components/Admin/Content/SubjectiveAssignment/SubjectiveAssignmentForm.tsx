@@ -48,6 +48,9 @@ const SubjectiveAssignmentForm: FC<{
       }
     },
     onDrop(e) {},
+    onPreview: (file) => {
+      window.open(`/download/private-file?fileUrl=${subjectiveForm?.getFieldsValue()?.archiveUrl}`, "_blank");
+    },
   };
 
   useEffect(() => {
@@ -55,7 +58,6 @@ const SubjectiveAssignmentForm: FC<{
       setFileList([
         {
           uid: "-1",
-
           name: `file.${subjectiveForm.getFieldsValue().file_for_candidate}`,
           status: "done",
           url: subjectiveForm.getFieldsValue().archiveUrl as string,

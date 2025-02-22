@@ -81,7 +81,6 @@ export const uploadArchive = async (
 
     if (cmsConfig) {
       // deleting thumbnail
-
       if (existingFilePath) {
         await cms.deleteCDNImage(cmsConfig, existingFilePath);
       }
