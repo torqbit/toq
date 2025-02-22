@@ -3,6 +3,8 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 import { withMethods } from "@/lib/api-middlewares/with-method";
 import { getSiteConfig } from "@/services/getSiteConfig";
+import { withAuthentication } from "@/lib/api-middlewares/with-authentication";
+import { withUserAuthorized } from "@/lib/api-middlewares/with-authorized";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
@@ -18,4 +20,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default withMethods(["GET"], handler);
+export default withMethods(["GET"], withAuthentication(withUserAuthorized(handler)));
