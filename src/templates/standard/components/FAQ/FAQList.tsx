@@ -1,4 +1,3 @@
-
 import { Collapse, CollapseProps } from "antd";
 import React, { FC } from "react";
 
@@ -15,7 +14,7 @@ const FAQList: FC<{
     <section className={isEditable ? styles.faq__form__container : styles.faq__list__container}>
       <Collapse
         accordion
-        style={{ borderRadius: 4 }}
+        style={{ borderRadius: 4, width: 1000 }}
         collapsible={expandIcon ? "icon" : "header"}
         expandIconPosition="end"
         expandIcon={({ isActive }) =>
@@ -23,7 +22,6 @@ const FAQList: FC<{
         }
         items={listItems}
       />
-
     </section>
   );
 };

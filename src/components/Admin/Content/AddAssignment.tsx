@@ -359,7 +359,7 @@ const AddAssignment: FC<{
                   <ConfigForm
                     input={
                       <Form.Item name="maximumScore">
-                        <Input addonAfter="points" type="number" defaultValue="5" />
+                        <InputNumber addonAfter="points" type="number" defaultValue="5" />
                       </Form.Item>
                     }
                     title={"Maximum Scores"}
@@ -370,7 +370,7 @@ const AddAssignment: FC<{
                   <ConfigForm
                     input={
                       <Form.Item name="passingScore">
-                        <Input addonAfter="%" type="number" defaultValue="80" />
+                        <InputNumber addonAfter="%" type="number" defaultValue="80" />
                       </Form.Item>
                     }
                     title={"Passing Scores"}
@@ -404,7 +404,7 @@ const AddAssignment: FC<{
                                   </Col>
                                   <Col span={10}>
                                     <Form.Item {...restField} name={[name, "score"]} rules={[{ required: true }]}>
-                                      <Input placeholder="points" type="number" addonAfter="points" />
+                                      <InputNumber placeholder="points" type="number" addonAfter="points" />
                                     </Form.Item>
                                   </Col>
                                 </Row>

@@ -140,12 +140,11 @@ const AddFAQ: FC<{ siteConfig: PageSiteConfig; setConfig: (value: PageSiteConfig
         </Flex>
       ),
 
-      label: <h4 style={{ margin: 0 }}> {faq.question}</h4>,
-      children: <p>{faq.answer}</p>,
+      label: <h4 style={{ margin: 0 }}> {faq?.question}</h4>,
+      children: <p>{faq?.answer}</p>,
       showArrow: false,
     };
   });
-
   return (
     <>
       {contentHolder}
