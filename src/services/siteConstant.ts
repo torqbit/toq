@@ -26,15 +26,15 @@ export const DEFAULT_THEME = {
 
   brand: {
     name: "TORQBIT",
-    logo: "/icon/torqbit.png",
-    darkLogo: "/icon/torqbit.png",
+    logo: "https://cdn.torqbit.com/static/landing/logo.png",
+    darkLogo: "https://cdn.torqbit.com/static/landing/logo-dark.png",
     defaultTheme: "light" as Theme,
     themeSwitch: true,
-    icon: "/img/brand/torqbit-icon.png",
+    icon: "https://cdn.torqbit.com/static/brand-icon.png",
     title: "Become a Pro Product Builder",
     description: "Master the art of product building and turn your ideas into successful, scalable products",
-    ogImage: "/icon/torqbit.png",
-    favicon: "/favicon.ico",
+    ogImage: "https://cdn.torqbit.com/static/brand-icon.png",
+    favicon: "hhttps://cdn.torqbit.com/static/landing/favicon.ico",
     brandColor: "#5b63d3",
     socialLinks: {
       discord: "https://discord.gg/NserMXcx",
@@ -59,8 +59,8 @@ export const DEFAULT_THEME = {
       },
     },
     banner: {
-      lightModePath: "/img/macbook-light.png",
-      darkModePath: "/img/macbook-dark.png",
+      lightModePath: "https://cdn.torqbit.com/static/landing/hero-bg.png",
+      darkModePath: "https://cdn.torqbit.com/static/landing/hero-bg-dark.png",
       position: "bottom" as bannerAlignment,
     },
   },
@@ -85,21 +85,21 @@ export const DEFAULT_THEME = {
       enabled: true,
       items: [
         {
-          img: "/img/landing/auth.png",
+          img: "https://cdn.torqbit.com/static/landing/auth.png",
           title: "Authentication",
           description: "Configure authentication with Google, Github or any other auth provider supported by NextAuth",
           link: "/docs/auth",
           cardClass: "steps__card__small",
         },
         {
-          img: "/img/landing/auth.png",
+          img: "https://cdn.torqbit.com/static/landing/laptop.png",
           title: "Authentication",
           description: "Configure authentication with Google, Github or any other auth provider supported by NextAuth",
           link: "/docs/auth",
           cardClass: "steps__card__small",
         },
         {
-          img: "/img/landing/auth.png",
+          img: "https://cdn.torqbit.com/static/landing/event.png",
           title: "Authentication",
           description: "Configure authentication with Google, Github or any other auth provider supported by NextAuth",
           link: "/docs/auth",
