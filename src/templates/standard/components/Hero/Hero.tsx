@@ -9,6 +9,7 @@ import { useAppContext } from "@/components/ContextApi/AppContext";
 import { bannerAlignment } from "@/types/schema";
 import { PageSiteConfig } from "@/services/siteConstant";
 import { isValidGeneralLink } from "@/lib/utils";
+import DOMPurify from "isomorphic-dompurify";
 
 const MarketingHero: FC<{ isMobile: boolean; user: User; siteConfig: PageSiteConfig }> = ({
   isMobile,
@@ -102,7 +103,7 @@ const MarketingHero: FC<{ isMobile: boolean; user: User; siteConfig: PageSiteCon
             <Link
               href={
                 user
-                  ? isValidGeneralLink(`${heroSection?.actionButtons?.primary?.link}`)
+                  ? isValidGeneralLink(DOMPurify.sanitize(`${heroSection?.actionButtons?.primary?.link}`))
                     ? `${heroSection?.actionButtons?.primary?.link}`
                     : "#"
                   : `/login`
@@ -113,7 +114,7 @@ const MarketingHero: FC<{ isMobile: boolean; user: User; siteConfig: PageSiteCon
 
             <a
               href={
-                isValidGeneralLink(`${heroSection?.actionButtons?.secondary?.link}`)
+                isValidGeneralLink(DOMPurify.sanitize(`${heroSection?.actionButtons?.secondary?.link}`))
                   ? `${heroSection?.actionButtons?.secondary?.link}`
                   : "#"
               }
