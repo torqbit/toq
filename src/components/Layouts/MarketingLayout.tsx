@@ -278,7 +278,7 @@ const MarketingLayout: FC<{
                   return (
                     <li key={i}>
                       <Link
-                        href={isValidGeneralLink(`${navigation.link}`)}
+                        href={isValidGeneralLink(`${navigation.link}`) ? `${navigation.link}` : "#"}
                         aria-label={`link to ${navigation.title} page`}
                       >
                         {navigation.title}
