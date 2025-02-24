@@ -10,14 +10,14 @@ site:
       - title: Blog
         link: /blogs
   brand:
-    logo: /img/brand/logo.png
-    darkLogo: /img/brand/logo-dark.png
+    logo: https://cdn.torqbit.com/static/brand/logo.png
+    darkLogo: https://cdn.torqbit.com/static/brand/logo-dark.png
     description: Master the art of product building and turn your ideas into
       successful, scalable products
     ogImage: https://cdn.torqbit.com/static/brand-icon.png
     themeSwitch: true
     defaultTheme: light
-    favicon: http://localhost:3000/favicon.ico
+    favicon: https://cdn.torqbit.com/static/landing/favicon.ico
     socialLinks:
       discord: https://discord.gg/NserMXcx
       github: https://github.com/torqbit
@@ -40,8 +40,8 @@ site:
         label: Contact Us
         link: mailto:support@torqbit.com
     banner:
-      lightModePath: http://localhost:3000/img/landing/hero-bg.png
-      darkModePath: http://localhost:3000/img/landing/hero-bg-dark.png
+      lightModePath: https://cdn.torqbit.com/static/landing/hero-bg.png
+      darkModePath: https://cdn.torqbit.com/static/landing/hero-bg-dark.png
       position: background
   businessInfo:
     gstNumber:
@@ -57,17 +57,17 @@ site:
         millions of users, and always available, giving you the flexibility to
         learn from anywhere, anytime.
       items:
-        - img: http://localhost:3000/img/landing/auth.png
+        - img: https://cdn.torqbit.com/static/landing/auth.png
           title: Social Login
           description: Login with any of the support networking platform like Google,
             Github or Facebook
           link: /docs/auth
-        - img: http://localhost:3000/img/landing/laptop.png
+        - img: https://cdn.torqbit.com/static/landing/laptop.png
           title: Portable
           description: Access the course lessons and assignments from anywhere and from
             any device.
           link: /docs/auth
-        - img: http://localhost:3000/img/landing/event.png
+        - img: https://cdn.torqbit.com/static/landing/event.png
           title: Events
           description: Connect with the educator through offline or online events and
             workshops.
