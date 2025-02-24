@@ -33,24 +33,24 @@ export function isValidVideoPath(path: string): boolean {
   return allowedVideoPathPattern.test(path);
 }
 
-export function isValidGeneralLink(path: string): boolean {
+export function isValidGeneralLink(path: string): string {
   // Check if it's a mailto link
   if (path.startsWith("mailto:")) {
     const mailtoPattern = /^mailto:[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i;
-    return mailtoPattern.test(path);
+    return mailtoPattern.test(path) ? path : "#";
   }
 
   // Check if it's a tel link
   if (path.startsWith("tel:")) {
     const telPattern = /^tel:\+?\d+$/i;
-    return telPattern.test(path);
+    return telPattern.test(path) ? path : "#";
   }
 
   // General link validation (for relative routes or external URLs)
   const allowedLinkPattern = `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}`.includes("localhost")
     ? /^(https?:\/\/(localhost|[\w-]+(\.[\w-]+)+(?:\/[\w-]+)*\/?)|\/[\w-]+(?:\/[\w-]+)*\/?)$/i
     : /^(https?:\/\/[\w-]+(\.[\w-]+)+(?:\/[\w-]+)*\/?|\/[\w-]+(?:\/[\w-]+)*\/?)$/i;
-  return allowedLinkPattern.test(path);
+  return allowedLinkPattern.test(path) ? path : "#";
 }
 
 export function convertArrayToString(arr: string[]): string {

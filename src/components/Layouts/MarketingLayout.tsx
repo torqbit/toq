@@ -277,11 +277,12 @@ const MarketingLayout: FC<{
                 {items.map((navigation, i) => {
                   return (
                     <li key={i}>
-                      {isValidGeneralLink(`${navigation.link}`) && (
-                        <Link href={navigation.link} aria-label={`link to ${navigation.title} page`}>
-                          {navigation.title}
-                        </Link>
-                      )}
+                      <Link
+                        href={isValidGeneralLink(`${navigation.link}`)}
+                        aria-label={`link to ${navigation.title} page`}
+                      >
+                        {navigation.title}
+                      </Link>
                     </li>
                   );
                 })}
