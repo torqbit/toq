@@ -23,7 +23,8 @@ export function isValidImagePath(path: string): boolean {
   const imagePattern = /\.(png|jpg|jpeg|gif|ico|bmp|webp|svg|tiff)$/i;
 
   try {
-    const url = new URL(path);
+    const url = new URL(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/${path}`);
+
     return (url.protocol === "https:" || url.protocol === "http:") && imagePattern.test(url.pathname);
   } catch (error) {
     return false;
@@ -55,17 +56,23 @@ export function isValidGeneralLink(path: string): boolean {
 
   // General link validation for both external and internal links
   try {
-    const url = new URL(path);
+    if (path.includes("http")) {
+      const url = new URL(path);
 
-    // If it's an external link (starts with http or https), ensure it's from a trusted domain
-    if (url.protocol === "http:" || url.protocol === "https:") {
-      const trustedDomains = [extractDomain(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}`)];
-      return trustedDomains.some((domain) => url.hostname.includes(domain));
-    }
+      // If it's an external link (starts with http or https), ensure it's from a trusted domain
+      if (url.protocol === "http:" || url.protocol === "https:") {
+        const trustedDomains = [extractDomain(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}`)];
 
-    // If it's a relative link (path starts with '/'), it's automatically valid for internal navigation
-    if (url.hostname === "") {
-      return true;
+        return trustedDomains.some((domain) => url.hostname.includes(domain));
+      }
+
+      // If it's a relative link (path starts with '/'), it's automatically valid for internal navigation
+      if (url.hostname === "") {
+        return true;
+      }
+    } else {
+      const allowedLinkPattern = /^(https?:\/\/[\w-]+(\.[\w-]+)+(?:\/[\w-]+)*\/?|\/[\w-]+(?:\/[\w-]+)*\/?)$/i;
+      return allowedLinkPattern.test(path);
     }
   } catch (e) {
     return false;
@@ -73,24 +80,6 @@ export function isValidGeneralLink(path: string): boolean {
 
   return false;
 }
-
-// export function isValidGeneralLink(path: string): boolean {
-//   // Check if it's a mailto link
-//   if (path.startsWith("mailto:")) {
-//     const mailtoPattern = /^mailto:[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i;
-//     return mailtoPattern.test(path);
-//   }
-
-//   // Check if it's a tel link
-//   if (path.startsWith("tel:")) {
-//     const telPattern = /^tel:\+?\d+$/i;
-//     return telPattern.test(path);
-//   }
-
-//   // General link validation (for relative routes or external URLs)
-//   const allowedLinkPattern = /^(https?:\/\/[\w-]+(\.[\w-]+)+(?:\/[\w-]+)*\/?|\/[\w-]+(?:\/[\w-]+)*\/?)$/i;
-//   return allowedLinkPattern.test(path);
-// }
 
 export function convertArrayToString(arr: string[]): string {
   return arr.sort().join(", ");
