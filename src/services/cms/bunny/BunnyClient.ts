@@ -236,7 +236,7 @@ export class BunnyClient {
   deleteCDNImage = async (filePath: string, linkedHostname: string, zoneName: string): Promise<APIResponse<string>> => {
     const parseUrl = filePath && url.parse(filePath);
     const existingPath = parseUrl && parseUrl.pathname;
-    if (parseUrl && parseUrl.host === linkedHostname && this.isValidPath(existingPath || "")) {
+    if (parseUrl && parseUrl.host === linkedHostname && this.isValidPath(parseUrl && parseUrl.href)) {
       const deleteUrl = `https://storage.bunnycdn.com/${zoneName}/${encodeURIComponent(existingPath || "")}`;
       const response = await fetch(deleteUrl, this.getDeleteOption());
       if (response.ok) {
@@ -548,7 +548,7 @@ export class BunnyClient {
   };
   isValidPath(path: string): boolean {
     const allowedPathPattern =
-      /^(https?:\/\/)?([\w-]+(\.[\w-]+)*\/)*[\w-]+\.(jpg|jpeg|png|gif|bmp|webp|svg|tiff|pdf|zip)$/i;
+      /^(https?:\/\/)?([\w-]+(\.[\w-]+)*\/)*[\w-]+\.(jpg|jpeg|png|gif|bmp|webp|svg|tiff|pdf|zip|xls|xlsx|doc|docx)$/i;
     return allowedPathPattern.test(path);
   }
 }
