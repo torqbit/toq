@@ -17,7 +17,7 @@ site:
     ogImage: https://cdn.torqbit.com/static/brand-icon.png
     themeSwitch: true
     defaultTheme: light
-    favicon: /favicon.ico
+    favicon: http://localhost:3000/favicon.ico
     socialLinks:
       discord: https://discord.gg/NserMXcx
       github: https://github.com/torqbit
@@ -40,8 +40,8 @@ site:
         label: Contact Us
         link: mailto:support@torqbit.com
     banner:
-      lightModePath: /img/landing/hero-bg.png
-      darkModePath: /img/landing/hero-bg-dark.png
+      lightModePath: http://localhost:3000/img/landing/hero-bg.png
+      darkModePath: http://localhost:3000/img/landing/hero-bg-dark.png
       position: background
   businessInfo:
     gstNumber:
@@ -57,17 +57,17 @@ site:
         millions of users, and always available, giving you the flexibility to
         learn from anywhere, anytime.
       items:
-        - img: /img/landing/auth.png
+        - img: http://localhost:3000/img/landing/auth.png
           title: Social Login
           description: Login with any of the support networking platform like Google,
             Github or Facebook
           link: /docs/auth
-        - img: /img/landing/laptop.png
+        - img: http://localhost:3000/img/landing/laptop.png
           title: Portable
           description: Access the course lessons and assignments from anywhere and from
             any device.
           link: /docs/auth
-        - img: /img/landing/event.png
+        - img: http://localhost:3000/img/landing/event.png
           title: Events
           description: Connect with the educator through offline or online events and
             workshops.
