@@ -15,10 +15,10 @@ export function capitalizeFirstLetter(val: string) {
   return String(val).charAt(0).toUpperCase() + String(val).slice(1);
 }
 export function isValidImagePath(path: string): boolean {
-  const allowedImagePathPattern =
-    /^(https?:\/\/)?(localhost|[\w-]+(\.[\w-]+)*)(:\d+)?(\/[\w-]+)*\/?[\w-]+\.(jpg|jpeg|png|gif|bmp|webp|svg|tiff)$/i;
+  const allowedImagePathPattern = `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}`.includes("localhost")
+    ? /^(https?:\/\/)?(localhost|[\w-]+(\.[\w-]+)*)(:\d+)?(\/[\w-]+)*\/?[\w-]+\.(jpg|jpeg|png|gif|bmp|webp|svg|tiff)$/i
+    : /^(https?:\/\/)?([\w-]+(\.[\w-]+)*\/)*[\w-]+\.(jpg|jpeg|png|gif|bmp|webp|svg|tiff)$/i;
   const isValid = allowedImagePathPattern.test(path);
-  console.log(isValid, "test", path); // Debugging the result
   return isValid;
 }
 
@@ -47,7 +47,9 @@ export function isValidGeneralLink(path: string): boolean {
   }
 
   // General link validation (for relative routes or external URLs)
-  const allowedLinkPattern = /^(https?:\/\/[\w-]+(\.[\w-]+)+(?:\/[\w-]+)*\/?|\/[\w-]+(?:\/[\w-]+)*\/?)$/i;
+  const allowedLinkPattern = `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}`.includes("localhost")
+    ? /^(https?:\/\/(localhost|[\w-]+(\.[\w-]+)+(?:\/[\w-]+)*\/?)|\/[\w-]+(?:\/[\w-]+)*\/?)$/i
+    : /^(https?:\/\/[\w-]+(\.[\w-]+)+(?:\/[\w-]+)*\/?|\/[\w-]+(?:\/[\w-]+)*\/?)$/i;
   return allowedLinkPattern.test(path);
 }
 

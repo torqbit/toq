@@ -14,7 +14,7 @@ site:
     darkLogo: /img/brand/logo-dark.png
     description: Master the art of product building and turn your ideas into
       successful, scalable products
-    ogImage: /icon/torqbit.png
+    ogImage: https://cdn.torqbit.com/static/brand-icon.png
     themeSwitch: true
     defaultTheme: light
     favicon: /favicon.ico
