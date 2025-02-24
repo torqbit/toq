@@ -779,33 +779,7 @@ class ProgramService {
       }
     });
   };
-  deleteVideo = (
-    videoId: string,
 
-    onSuccess: (response: ApiResponse) => void,
-    onFailure: (message: string) => void
-  ) => {
-    fetch(`/api/v1/upload/video/delete`, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ videoId }),
-    }).then((result) => {
-      if (result.status == 400) {
-        result.json().then((r) => {
-          const failedResponse = r as FailedApiResponse;
-          onFailure(failedResponse.error);
-        });
-      } else if (result.status == 200) {
-        result.json().then((r) => {
-          const apiResponse = r as ApiResponse;
-          onSuccess(apiResponse);
-        });
-      }
-    });
-  };
   deleteFile = (
     name: string,
     dir: string,
