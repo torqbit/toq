@@ -103,7 +103,7 @@ const MarketingHero: FC<{ isMobile: boolean; user: User; siteConfig: PageSiteCon
             <Link
               href={
                 user
-                  ? isValidGeneralLink(DOMPurify.sanitize(`${heroSection?.actionButtons?.primary?.link}`))
+                  ? DOMPurify.sanitize(`${heroSection?.actionButtons?.primary?.link}`)
                     ? `${heroSection?.actionButtons?.primary?.link}`
                     : "#"
                   : `/login`
@@ -114,7 +114,7 @@ const MarketingHero: FC<{ isMobile: boolean; user: User; siteConfig: PageSiteCon
 
             <a
               href={
-                isValidGeneralLink(DOMPurify.sanitize(`${heroSection?.actionButtons?.secondary?.link}`))
+                DOMPurify.sanitize(`${heroSection?.actionButtons?.secondary?.link}`)
                   ? `${heroSection?.actionButtons?.secondary?.link}`
                   : "#"
               }
