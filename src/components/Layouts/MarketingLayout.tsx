@@ -26,6 +26,8 @@ import NotificationPopOver from "../Notification/NotificationPopOver";
 import NotificationView from "../Notification/NotificationView";
 import { getFetch } from "@/services/request";
 import { isValidGeneralLink, isValidImagePath } from "@/lib/utils";
+import DOMPurify from "isomorphic-dompurify";
+
 type NotificationPlacement = NotificationArgsProps["placement"];
 
 const MarketingLayout: FC<{
@@ -278,7 +280,7 @@ const MarketingLayout: FC<{
                   return (
                     <li key={i}>
                       <Link
-                        href={isValidGeneralLink(`${navigation.link}`) ? `${navigation.link}` : "#"}
+                        href={isValidGeneralLink(DOMPurify.sanitize(`${navigation.link}`)) ? `${navigation.link}` : "#"}
                         aria-label={`link to ${navigation.title} page`}
                       >
                         {navigation.title}
