@@ -2,9 +2,10 @@ import { FC } from "react";
 import styles from "./features.module.scss";
 import Link from "next/link";
 import { IFeatureCard, IFeatureInfo } from "@/types/landing/feature";
+import DOMPurify from "isomorphic-dompurify";
 
 const FeatureCard: FC<IFeatureCard> = ({ img, title, description, link, cardClass }) => (
-  <Link href={link ? `${link}` : "#"} className={`${styles.features__card} ${cardClass}`}>
+  <Link href={link ? `${DOMPurify.sanitize(link)}` : "#"} className={`${styles.features__card} ${cardClass}`}>
     <img alt={title} aria-label={`icon for ${title.toLowerCase()}`} src={img} />
     <h4>{title}</h4>
     <p>{description}</p>

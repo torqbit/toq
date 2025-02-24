@@ -4,6 +4,7 @@ import Link from "next/link";
 import { INavBarProps } from "@/types/landing/navbar";
 import styles from "./NavBar.module.scss";
 import MobileNav from "./SideNavBar";
+import DOMPurify from "isomorphic-dompurify";
 
 const NavBar: FC<INavBarProps> = ({
   user,
@@ -36,11 +37,11 @@ const NavBar: FC<INavBarProps> = ({
       ) : (
         <div className={styles.navBarContainer}>
           <nav style={{ width: navBarWidth ? navBarWidth : "var(--marketing-container-width)" }}>
-            <Link href={homeLink} aria-label="Go back to landing page">
+            <Link href={DOMPurify.sanitize(homeLink)} aria-label="Go back to landing page">
               <Flex align="center" gap={5}>
                 {typeof brand.logo === "string" && typeof brand.darkLogo === "string" ? (
                   <img
-                    src={activeTheme == "dark" ? brand.darkLogo : brand.logo}
+                    src={activeTheme == "dark" ? DOMPurify.sanitize(brand.darkLogo) : DOMPurify.sanitize(brand.logo)}
                     style={{ width: "auto", height: 30 }}
                     alt={`logo of ${brand.name}`}
                   />
