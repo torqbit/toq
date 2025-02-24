@@ -11,15 +11,23 @@ export const authConstants = {
   ENV_GITHUB_ID: "GITHUB_ID",
   ENV_GITHUB_SECRET: "GITHUB_SECRET",
 };
+const extractDomain = (url: string): string => {
+  const parsedUrl = new URL(url); // Create a URL object from the full URL
+  return parsedUrl.hostname; // Extract the domain (e.g., 'yourwebsite.com')
+};
 export function capitalizeFirstLetter(val: string) {
   return String(val).charAt(0).toUpperCase() + String(val).slice(1);
 }
 export function isValidImagePath(path: string): boolean {
-  const allowedImagePathPattern =
-    /^(https?:\/\/)?(localhost|[\w-]+(\.[\w-]+)*)(:\d+)?(\/[\w-]+)*\/?[\w-]+\.(jpg|jpeg|png|gif|bmp|webp|svg|tiff)$/i;
-  const isValid = allowedImagePathPattern.test(path);
-  console.log(isValid, "test", path); // Debugging the result
-  return isValid;
+  // Ensure the URL points to an image file (e.g., .png, .ico)
+  const imagePattern = /\.(png|jpg|jpeg|gif|ico|bmp|webp|svg|tiff)$/i;
+
+  try {
+    const url = new URL(path);
+    return (url.protocol === "https:" || url.protocol === "http:") && imagePattern.test(url.pathname);
+  } catch (error) {
+    return false;
+  }
 }
 
 export function isValidFilePath(path: string): boolean {
@@ -32,24 +40,57 @@ export function isValidVideoPath(path: string): boolean {
     /^(https?:\/\/)?([\w-]+(\.[\w-]+)*\/)*[\w-]+\.(mp4|webm|mov|avi|mkv|flv|wmv|mpeg|ogv)$/i;
   return allowedVideoPathPattern.test(path);
 }
-
 export function isValidGeneralLink(path: string): boolean {
-  // Check if it's a mailto link
+  // Check if it's a mailto link (basic validation)
   if (path.startsWith("mailto:")) {
     const mailtoPattern = /^mailto:[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i;
     return mailtoPattern.test(path);
   }
 
-  // Check if it's a tel link
+  // Check if it's a tel link (basic validation)
   if (path.startsWith("tel:")) {
     const telPattern = /^tel:\+?\d+$/i;
     return telPattern.test(path);
   }
 
-  // General link validation (for relative routes or external URLs)
-  const allowedLinkPattern = /^(https?:\/\/[\w-]+(\.[\w-]+)+(?:\/[\w-]+)*\/?|\/[\w-]+(?:\/[\w-]+)*\/?)$/i;
-  return allowedLinkPattern.test(path);
+  // General link validation for both external and internal links
+  try {
+    const url = new URL(path);
+
+    // If it's an external link (starts with http or https), ensure it's from a trusted domain
+    if (url.protocol === "http:" || url.protocol === "https:") {
+      const trustedDomains = [extractDomain(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}`)];
+      return trustedDomains.some((domain) => url.hostname.includes(domain));
+    }
+
+    // If it's a relative link (path starts with '/'), it's automatically valid for internal navigation
+    if (url.hostname === "") {
+      return true;
+    }
+  } catch (e) {
+    return false;
+  }
+
+  return false;
 }
+
+// export function isValidGeneralLink(path: string): boolean {
+//   // Check if it's a mailto link
+//   if (path.startsWith("mailto:")) {
+//     const mailtoPattern = /^mailto:[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i;
+//     return mailtoPattern.test(path);
+//   }
+
+//   // Check if it's a tel link
+//   if (path.startsWith("tel:")) {
+//     const telPattern = /^tel:\+?\d+$/i;
+//     return telPattern.test(path);
+//   }
+
+//   // General link validation (for relative routes or external URLs)
+//   const allowedLinkPattern = /^(https?:\/\/[\w-]+(\.[\w-]+)+(?:\/[\w-]+)*\/?|\/[\w-]+(?:\/[\w-]+)*\/?)$/i;
+//   return allowedLinkPattern.test(path);
+// }
 
 export function convertArrayToString(arr: string[]): string {
   return arr.sort().join(", ");
