@@ -286,7 +286,7 @@ const MarketingLayout: FC<{
                             ? DOMPurify.sanitize(`${navigation.link}`)
                             : "#"
                         }
-                        aria-label={`link to ${DOMPurify.sanitize(`${navigation.link}`)} page`}
+                        aria-label={`link to ${DOMPurify.sanitize(`${navigation.title}`)} page`}
                       >
                         {navigation.title}
                       </Link>
