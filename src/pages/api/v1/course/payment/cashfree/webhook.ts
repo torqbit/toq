@@ -21,8 +21,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   // cashfreeService.handleWebhook(order: ZodOrder): Promise<CourseRegistration| undefined>
   // billingService.sendCourseInvoice(cr: CourseRegistration): Promise<boolean>
 
-  console.log(req.body, "webhook body info");
-
   if (body.data.order) {
     const signature = req.headers["cf-signature"];
 

@@ -56,6 +56,7 @@ const MarketingLayout: FC<{
   const [showNotification, setOpenNotification] = useState(false);
   const [api, contextHolder] = notification.useNotification();
   const [messageApi, contexMessagetHolder] = message.useMessage();
+  const authorizedUrls = ["/courses", "/blogs", "/setting", "/dashboard", "/login"];
 
   const router = useRouter();
   const { data: session } = useSession();
@@ -280,8 +281,12 @@ const MarketingLayout: FC<{
                   return (
                     <li key={i}>
                       <Link
-                        href={DOMPurify.sanitize(`${navigation.link}`)}
-                        aria-label={`link to ${navigation.title} page`}
+                        href={
+                          authorizedUrls.includes(DOMPurify.sanitize(`${navigation.link}`))
+                            ? DOMPurify.sanitize(`${navigation.link}`)
+                            : "#"
+                        }
+                        aria-label={`link to ${DOMPurify.sanitize(`${navigation.link}`)} page`}
                       >
                         {navigation.title}
                       </Link>
@@ -301,24 +306,32 @@ const MarketingLayout: FC<{
         );
     }
   };
+  const getOgImagSrc = () => {
+    if (siteConfig.brand?.themeSwitch && siteConfig.brand.defaultTheme == "dark") {
+      return isValidImagePath(`${siteConfig.heroSection?.banner?.darkModePath}`)
+        ? `${siteConfig.heroSection?.banner?.darkModePath}`
+        : "";
+    } else {
+      return isValidImagePath(`${siteConfig.heroSection?.banner?.lightModePath}`)
+        ? `${siteConfig.heroSection?.banner?.lightModePath}`
+        : "";
+    }
+  };
   if (!globalState.pageLoading) {
     return (
       <ConfigProvider theme={globalState.theme == "dark" ? darkThemeConfig(siteConfig) : antThemeConfig(siteConfig)}>
         <Head>
           <title>{`${siteConfig.brand?.name} · ${siteConfig.brand?.title}`}</title>
           <meta name="description" content={siteConfig.brand?.description} />
-          <meta
-            property="og:image"
-            content={
-              siteConfig.brand?.themeSwitch && siteConfig.brand.defaultTheme == "dark"
-                ? siteConfig.heroSection?.banner?.darkModePath
-                : siteConfig.heroSection?.banner?.lightModePath
+          <meta property="og:image" content={getOgImagSrc()} />
+          <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+          <link
+            rel="icon"
+            href={
+              isValidImagePath(`${siteConfig.brand?.favicon}`) ? DOMPurify.sanitize(`${siteConfig.brand?.favicon}`) : ""
             }
           />
-          <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-          {isValidImagePath(`${siteConfig.brand?.favicon}`) && (
-            <link rel="icon" href={DOMPurify.sanitize(`${siteConfig.brand?.favicon}`)} />
-          )}
         </Head>
         <section
           className={`${styles.heroWrapper} hero__wrapper`}
