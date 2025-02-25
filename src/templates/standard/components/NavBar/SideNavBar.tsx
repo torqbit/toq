@@ -11,19 +11,9 @@ import ResponsiveAppNavBar from "./ResponsiveAppNavBar";
 import DOMPurify from "isomorphic-dompurify";
 import { Theme } from "@/types/theme";
 import { isValidImagePath } from "@/lib/utils";
+import appConstant from "@/services/appConstant";
 
-const authorizedUrls = [
-  "/home",
-  "/about",
-  "/contact",
-  "/courses",
-  "/blogs",
-  "/academy",
-  "/changelog",
-  "/terms-conditions",
-  "/events",
-  "/workshops",
-];
+const authorizedUrls = appConstant.authorizedUrls;
 
 const MobileNav: FC<INavBarProps> = ({ items, showThemeSwitch, activeTheme, brand, previewMode, user }) => {
   const [showSideNav, setSideNav] = useState(false);

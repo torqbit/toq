@@ -3,14 +3,18 @@ import styles from "./features.module.scss";
 import Link from "next/link";
 import { IFeatureCard, IFeatureInfo } from "@/types/landing/feature";
 import DOMPurify from "isomorphic-dompurify";
-import { isValidGeneralLink } from "@/lib/utils";
+import { isValidGeneralLink, isValidImagePath } from "@/lib/utils";
 
 const FeatureCard: FC<IFeatureCard> = ({ img, title, description, link, cardClass }) => (
   <Link
     href={isValidGeneralLink(link) ? `${DOMPurify.sanitize(link)}` : "#"}
     className={`${styles.features__card} ${cardClass}`}
   >
-    <img alt={title} aria-label={`icon for ${title.toLowerCase()}`} src={img} />
+    <img
+      alt={title}
+      aria-label={`icon for ${title.toLowerCase()}`}
+      src={isValidImagePath(img) ? DOMPurify.sanitize(img) : ""}
+    />
     <h4>{title}</h4>
     <p>{description}</p>
   </Link>

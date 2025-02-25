@@ -25,8 +25,10 @@ import type { NotificationArgsProps } from "antd";
 import NotificationPopOver from "../Notification/NotificationPopOver";
 import NotificationView from "../Notification/NotificationView";
 import { getFetch } from "@/services/request";
+
 import { isValidGeneralLink, isValidImagePath } from "@/lib/utils";
 import DOMPurify from "isomorphic-dompurify";
+import appConstant from "@/services/appConstant";
 
 type NotificationPlacement = NotificationArgsProps["placement"];
 
@@ -56,20 +58,7 @@ const MarketingLayout: FC<{
   const [showNotification, setOpenNotification] = useState(false);
   const [api, contextHolder] = notification.useNotification();
   const [messageApi, contexMessagetHolder] = message.useMessage();
-  const authorizedUrls = [
-    "/courses",
-    "/blogs",
-    "/setting",
-    "/dashboard",
-    "/login",
-    "/signup",
-    "/academy",
-    "/",
-    "/updates",
-    "/events",
-    "/admin",
-    "/setting",
-  ];
+  const authorizedUrls = appConstant.authorizedUrls;
 
   const router = useRouter();
   const { data: session } = useSession();
