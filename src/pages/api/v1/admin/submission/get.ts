@@ -21,7 +21,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     assign.id as assignmentId,
     assign.content as assignContent,
     ev.maximumScore as maximumScore,
-    ev.passingScore as passingScore
+    ev.passingScore as passingScore,
+    ev.scoreSummary as scoreSummary
 FROM 
     AssignmentSubmission as sub
 INNER JOIN 
@@ -47,6 +48,7 @@ WHERE
         passingScore: resultRows[0].passingScore,
         lessonId: resultRows[0].lessonId,
         assignmentName: resultRows[0].assignmentName,
+        scoreSummary: resultRows[0].scoreSummary,
       };
       return res.status(200).json(new APIResponse(true, 200, "Submission Detail has been fetched", detail));
     } else {

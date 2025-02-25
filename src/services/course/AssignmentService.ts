@@ -7,6 +7,8 @@ import {
   IAssignmentSubmissionDetail,
   IAssignmentSubmissionResponse,
   IEvaluationResult,
+  ISubjectiveScores,
+  QuestionScore,
 } from "@/types/courses/assignment";
 import { APIResponse } from "@/types/apis";
 
@@ -29,6 +31,10 @@ export interface ISubmissionList {
   studentName: string;
   isEvaluated: boolean;
 }
+
+export interface IScoreSummary extends IAssignmentDetails {
+  eachQuestionScore: ISubjectiveScores[] | QuestionScore[];
+}
 export interface ISubmissionDetail {
   content: IAssignmentDetails;
   assignContent?: IAssignmentDetails;
@@ -40,6 +46,7 @@ export interface ISubmissionDetail {
   comment?: string;
   lessonId: number;
   assignmentName: string;
+  scoreSummary: IScoreSummary;
 }
 export interface IAllSubmmissionsDetail {
   submissionId: number;
@@ -453,11 +460,10 @@ class AssignmentSerivce {
     submissionId: number,
     onSuccess: (response: ApiResponse) => void,
     onFailure: (message: string) => void,
-    comment?: string,
-    score?: number
+    subjectiveScore?: ISubjectiveScores
   ) => {
     postFetch(
-      { comment, score },
+      { subjectiveScore },
       `/api/v1/course/${courseId}/assignment/${assignmentId}/${lessonId}/submission/${submissionId}/evaluate`
     ).then((result) => {
       if (result.status == 200) {

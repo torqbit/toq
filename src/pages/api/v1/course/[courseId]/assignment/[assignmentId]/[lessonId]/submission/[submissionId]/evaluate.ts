@@ -32,7 +32,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     let cookieName = getCookieName();
     const token = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
     const { submissionId, lessonId, assignmentId } = validateReqQuery.parse(req.query);
-    const { comment, score } = req.body;
+    const { subjectiveScore } = req.body;
     const savedSubmission = await prisma.assignmentSubmission.update({
       where: {
         id: submissionId,
@@ -117,10 +117,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       );
     } else if (assignmentData._type === AssignmentType.SUBJECTIVE) {
       evaluatedData = AssignmentEvaluationService.evaluateSubjectiveAssignment(
-        Number(score),
+        subjectiveScore,
         assignmentDetail?.maximumPoints as number,
-        assignmentDetail?.passingScore as number,
-        comment as string
+        assignmentDetail?.passingScore as number
       );
     } else {
       return res.status(404).json(new APIResponse(false, 404, "Evaluation not submitted"));
@@ -144,10 +143,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             score: evaluatedData.score,
             passingScore: evaluatedData.passingScore,
             maximumScore: evaluatedData.maximumScore,
-            scoreSummary: {
+            scoreSummary: JSON.stringify({
               _type: assignmentData._type,
               eachQuestionScore: evaluatedData.eachQuestionScore,
-            },
+            }),
             comment: evaluatedData.comment,
           },
         }),
