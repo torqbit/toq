@@ -7,8 +7,8 @@ const UserInfo: FC<{ name: string; image: string; extraInfo: string }> = ({ name
     <Flex align="center" gap={10} className={styles.user__info}>
       <Avatar src={image} className={styles.user__avatar} />
       <div>
-        <div>{name}</div>
-        <div>{extraInfo}</div>
+        <div className={styles.list__bar__para__wrapper}>{name}</div>
+        <div className={styles.list__bar__para__wrapper}>{extraInfo}</div>
       </div>
     </Flex>
   );

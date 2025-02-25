@@ -1,7 +1,6 @@
 import appConstant from "@/services/appConstant";
 
 import md5 from "md5";
-import _ from "lodash";
 
 export const authConstants = {
   CREDENTIALS_AUTH_PROVIDER: "credentials",
