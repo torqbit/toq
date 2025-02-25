@@ -56,7 +56,21 @@ const MarketingLayout: FC<{
   const [showNotification, setOpenNotification] = useState(false);
   const [api, contextHolder] = notification.useNotification();
   const [messageApi, contexMessagetHolder] = message.useMessage();
-  const authorizedUrls = ["/courses", "/blogs", "/setting", "/dashboard", "/login"];
+  const authorizedUrls = [
+    "/courses",
+    "/blogs",
+    "/setting",
+    "/dashboard",
+    "/login",
+    "/signup",
+    "/academy",
+    "/",
+    "updates",
+    "events",
+    "admin",
+    "setting",
+    "courses",
+  ];
 
   const router = useRouter();
   const { data: session } = useSession();
