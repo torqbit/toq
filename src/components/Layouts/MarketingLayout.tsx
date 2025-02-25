@@ -316,7 +316,9 @@ const MarketingLayout: FC<{
             }
           />
           <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-          {isValidImagePath(`${siteConfig.brand?.favicon}`) && <link rel="icon" href={siteConfig.brand?.favicon} />}
+          {isValidImagePath(`${siteConfig.brand?.favicon}`) && (
+            <link rel="icon" href={DOMPurify.sanitize(`${siteConfig.brand?.favicon}`)} />
+          )}
         </Head>
         <section
           className={`${styles.heroWrapper} hero__wrapper`}
