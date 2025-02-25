@@ -1,6 +1,7 @@
 import SiteBuilderLayout from "@/components/Layouts/SiteBuilderLayout";
 import ContentNavigation from "@/components/SiteBuilder/ContentNavigation";
 import BasicInfoForm from "@/components/SiteBuilder/sections/BasicInfoForm/BasicInfoForm";
+import { compareObject } from "@/lib/utils";
 import { getSiteConfig } from "@/services/getSiteConfig";
 import { postFetch } from "@/services/request";
 import { PageSiteConfig } from "@/services/siteConstant";
@@ -43,22 +44,6 @@ const Testimonials: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) 
         },
       });
   };
-  let showSaveButton = () => {
-    if (config.sections?.testimonials?.items && siteConfig.sections?.testimonials?.items) {
-      return config.sections?.testimonials?.items.length !== siteConfig.sections.testimonials.items.length;
-    } else if (
-      (config.sections?.testimonials?.items &&
-        config.sections.testimonials.items.length > 0 &&
-        !siteConfig?.sections?.testimonials?.items) ||
-      (!config.sections?.testimonials?.items &&
-        siteConfig?.sections?.testimonials?.items &&
-        siteConfig?.sections?.testimonials?.items.length > 0)
-    ) {
-      return true;
-    } else {
-      false;
-    }
-  };
 
   return (
     <SiteBuilderLayout siteConfig={siteConfig} siteContent={<ContentNavigation activeMenu={"testimonials"} />}>
@@ -80,10 +65,10 @@ const Testimonials: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) 
               description: siteConfig.sections?.testimonials?.description,
             }}
           />
-          <Flex align="center" justify="space-between" style={{ marginBottom: 20, maxWidth: 1000 }}>
+          <Flex align="center" justify="space-between" style={{ maxWidth: 1000 }}>
             <h4 style={{ margin: "0" }}>Add Testimonials</h4>
 
-            {showSaveButton() && (
+            {!compareObject(siteConfig.sections?.testimonials, config.sections?.testimonials) && (
               <Button type="primary" loading={loading} onClick={() => updateYamlFile()}>
                 Save
               </Button>

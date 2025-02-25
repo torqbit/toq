@@ -25,7 +25,6 @@ const AddTestimonial: FC<{ siteConfig: PageSiteConfig; setConfig: (value: PageSi
   const [open, setOpen] = useState<boolean>(false);
   const [isEdit, setEdit] = useState<boolean>(false);
   const [form] = Form.useForm();
-  const [basicForm] = Form.useForm();
   const [activeIndex, setActiveIndex] = useState<number>();
 
   const updateSiteConfig = (testimonialItems: ITestimonialItems[]) => {
@@ -200,13 +199,14 @@ const AddTestimonial: FC<{ siteConfig: PageSiteConfig; setConfig: (value: PageSi
             okText="Yes"
             cancelText="No"
           >
-            <i>{SvgIcons.delete}</i>
+            <i style={{ cursor: "pointer" }}>{SvgIcons.delete}</i>
           </Popconfirm>
           <div className={styles.edit__pipe}></div>
           <i
             onClick={() => {
               handleEdit(i);
             }}
+            style={{ cursor: "pointer" }}
           >
             {SvgIcons.boxEdit}
           </i>

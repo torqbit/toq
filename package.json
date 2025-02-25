@@ -80,6 +80,7 @@
   },
   "devDependencies": {
     "@types/formidable": "^2.0.6",
+    "@types/md5": "^2.3.5",
     "@types/node": "22.13.2",
     "@types/react": "18.2.45",
     "@types/react-dom": "18.2.25",
