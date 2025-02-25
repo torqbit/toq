@@ -1,6 +1,7 @@
 import appConstant from "@/services/appConstant";
 
-const md5 = require("md5");
+import md5 from "md5";
+import _ from "lodash";
 
 export const authConstants = {
   CREDENTIALS_AUTH_PROVIDER: "credentials",
@@ -13,6 +14,10 @@ export const authConstants = {
 };
 export function capitalizeFirstLetter(val: string) {
   return String(val).charAt(0).toUpperCase() + String(val).slice(1);
+}
+
+export function compareObject(a: any, b: any) {
+  return _.isEqual(a, b);
 }
 export function isValidImagePath(path: string): boolean {
   const allowedImagePathPattern = `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}`.includes("localhost")
@@ -35,6 +40,9 @@ export function isValidVideoPath(path: string): boolean {
 
 export function isValidGeneralLink(path: string): boolean {
   // Check if it's a mailto link
+  if (!path) {
+    return false;
+  }
   if (path.startsWith("mailto:")) {
     const mailtoPattern = /^mailto:[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i;
     return mailtoPattern.test(path);

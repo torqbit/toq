@@ -44,11 +44,11 @@ site:
       darkModePath: https://cdn.torqbit.com/static/landing/hero-bg-dark.png
       position: background
   businessInfo:
-    gstNumber:
-    panNumber:
-    country:
-    state:
-    address:
+    gstNumber: null
+    panNumber: null
+    country: null
+    state: null
+    address: null
   sections:
     features:
       enabled: true
@@ -95,4 +95,4 @@ site:
       enabled: true
       title: "Teachers love our product "
       description: "Find out what excites our users, when using our product "
-      items: null
+      items: []
