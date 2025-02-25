@@ -65,11 +65,10 @@ const MarketingLayout: FC<{
     "/signup",
     "/academy",
     "/",
-    "updates",
-    "events",
-    "admin",
-    "setting",
-    "courses",
+    "/updates",
+    "/events",
+    "/admin",
+    "/setting",
   ];
 
   const router = useRouter();
