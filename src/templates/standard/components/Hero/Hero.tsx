@@ -8,6 +8,8 @@ import Image from "next/image";
 import { useAppContext } from "@/components/ContextApi/AppContext";
 import { bannerAlignment } from "@/types/schema";
 import { PageSiteConfig } from "@/services/siteConstant";
+import { isValidGeneralLink, isValidImagePath } from "@/lib/utils";
+import DOMPurify from "isomorphic-dompurify";
 
 const MarketingHero: FC<{ isMobile: boolean; user: User; siteConfig: PageSiteConfig }> = ({
   isMobile,
@@ -71,6 +73,14 @@ const MarketingHero: FC<{ isMobile: boolean; user: User; siteConfig: PageSiteCon
     margin: "0px auto",
   };
 
+  const getHeroImagSrc = () => {
+    if (globalState.theme === "dark" && heroSection?.banner?.darkModePath) {
+      return isValidImagePath(heroSection.banner.darkModePath) ? `${heroSection.banner.darkModePath}` : "";
+    } else {
+      return isValidImagePath(`${heroSection?.banner?.lightModePath}`) ? `${heroSection?.banner?.lightModePath}` : "";
+    }
+  };
+
   return (
     <section
       id="hero"
@@ -98,10 +108,14 @@ const MarketingHero: FC<{ isMobile: boolean; user: User; siteConfig: PageSiteCon
           </p>
 
           <Space size={"large"} style={{ marginBottom: 50, padding: "0px 20px" }}>
-            <Link href={user ? `${heroSection?.actionButtons?.primary?.link}` : `/login`}>
+            <Link href={user ? DOMPurify.sanitize(`${heroSection?.actionButtons?.primary?.link}`) : `/login`}>
               <Button type="primary">{user ? heroSection?.actionButtons?.primary?.label : " Sign up for free"}</Button>
             </Link>
-            <a href={`${heroSection?.actionButtons?.secondary?.link}`} aria-label="Contact us through mail">
+
+            <a
+              href={DOMPurify.sanitize(`${heroSection?.actionButtons?.secondary?.link}`)}
+              aria-label="Contact us through mail"
+            >
               <Button className={styles.btn__contact}>{heroSection?.actionButtons?.secondary?.label}</Button>
             </a>
           </Space>
@@ -113,11 +127,7 @@ const MarketingHero: FC<{ isMobile: boolean; user: User; siteConfig: PageSiteCon
             style={{ height: "auto" }}
             width={getBannerWidth(bannerAlign as bannerAlignment)}
             loading="lazy"
-            src={`${
-              globalState.theme === "dark" && heroSection?.banner?.darkModePath
-                ? heroSection.banner.darkModePath
-                : heroSection?.banner?.lightModePath
-            }`}
+            src={getHeroImagSrc()}
           />
         )}
       </Flex>

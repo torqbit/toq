@@ -8,19 +8,12 @@ import Hamburger from "hamburger-react";
 import { Role } from "@prisma/client";
 import SvgIcons from "@/components/SvgIcons";
 import ResponsiveAppNavBar from "./ResponsiveAppNavBar";
+import DOMPurify from "isomorphic-dompurify";
+import { Theme } from "@/types/theme";
+import { isValidImagePath } from "@/lib/utils";
+import appConstant from "@/services/appConstant";
 
-const authorizedUrls = [
-  "/home",
-  "/about",
-  "/contact",
-  "/courses",
-  "/blogs",
-  "/academy",
-  "/changelog",
-  "/terms-conditions",
-  "/events",
-  "/workshops",
-];
+const authorizedUrls = appConstant.authorizedUrls;
 
 const MobileNav: FC<INavBarProps> = ({ items, showThemeSwitch, activeTheme, brand, previewMode, user }) => {
   const [showSideNav, setSideNav] = useState(false);
@@ -81,6 +74,16 @@ const MobileNav: FC<INavBarProps> = ({ items, showThemeSwitch, activeTheme, bran
       key: "setting",
     },
   ];
+
+  const getLogoSrc = (activeTheme: Theme) => {
+    switch (activeTheme) {
+      case "dark":
+        return isValidImagePath(`${brand?.darkLogo}`) ? DOMPurify.sanitize(`${brand?.darkLogo}`) : "";
+
+      default:
+        return isValidImagePath(`${brand?.logo}`) ? DOMPurify.sanitize(`${brand?.logo}`) : "";
+    }
+  };
   return (
     <>
       {user?.role === Role.STUDENT ? (
@@ -98,7 +101,7 @@ const MobileNav: FC<INavBarProps> = ({ items, showThemeSwitch, activeTheme, bran
                     <Flex align="center" gap={5}>
                       {typeof brand?.logo === "string" && typeof brand.darkLogo === "string" ? (
                         <img
-                          src={activeTheme == "dark" ? brand?.darkLogo : brand?.logo}
+                          src={getLogoSrc(activeTheme)}
                           style={{ width: "auto", height: 30 }}
                           alt={`logo of ${brand.name}`}
                         />
@@ -108,7 +111,7 @@ const MobileNav: FC<INavBarProps> = ({ items, showThemeSwitch, activeTheme, bran
                       {!brand?.logo && (
                         <Flex align="center" gap={10}>
                           <img
-                            src={`${brand?.icon}`}
+                            src={isValidImagePath(`${brand?.icon}`) ? DOMPurify.sanitize(`${brand?.icon}`) : ""}
                             style={{ width: "auto", height: 30 }}
                             alt={`logo of ${brand?.name}`}
                           />
@@ -167,7 +170,7 @@ const MobileNav: FC<INavBarProps> = ({ items, showThemeSwitch, activeTheme, bran
               <Flex align="center" gap={5}>
                 {typeof brand?.logo === "string" && typeof brand.darkLogo === "string" ? (
                   <img
-                    src={activeTheme == "dark" ? brand?.darkLogo : brand?.logo}
+                    src={activeTheme == "dark" ? DOMPurify.sanitize(brand?.darkLogo) : DOMPurify.sanitize(brand?.logo)}
                     style={{ width: "auto", height: 30 }}
                     alt={`logo of ${brand.name}`}
                   />
@@ -176,7 +179,11 @@ const MobileNav: FC<INavBarProps> = ({ items, showThemeSwitch, activeTheme, bran
                 )}
                 {!brand?.logo && (
                   <Flex align="center" gap={10}>
-                    <img src={`${brand?.icon}`} style={{ width: "auto", height: 30 }} alt={`logo of ${brand?.name}`} />
+                    <img
+                      src={isValidImagePath(`${brand?.icon}`) ? DOMPurify.sanitize(`${brand?.icon}`) : ""}
+                      style={{ width: "auto", height: 30 }}
+                      alt={`logo of ${brand?.name}`}
+                    />
                     <h1 className="font-brand">{brand?.name}</h1>
                   </Flex>
                 )}

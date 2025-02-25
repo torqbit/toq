@@ -46,8 +46,13 @@ const ContentManagementSystem: FC<{ siteConfig: PageSiteConfig; active: boolean 
   const [pageLoading, setPageLoading] = useState<boolean>(true);
   const [configState, setConfigState] = useState<ConfigurationState>(ConfigurationState.INITIATED);
   const [current, setCurrent] = useState<number>(0);
-  let logoUrl = `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/${siteConfig.brand?.logo}`;
-  let iconUrl = `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/${siteConfig.brand?.icon}`;
+  let logoUrl =
+    siteConfig.brand?.defaultTheme == "dark"
+      ? (siteConfig.brand.darkLogo as string)
+      : (siteConfig.brand?.logo as string);
+  let iconUrl = `${siteConfig.brand?.icon as string}`;
+
+  console.log(logoUrl);
 
   const videoItems = [
     {
@@ -105,7 +110,7 @@ const ContentManagementSystem: FC<{ siteConfig: PageSiteConfig; active: boolean 
             }}
             className={logoUrl === selectedWatermark ? styles.selected__watermark : ""}
           >
-            <img src={logoUrl} alt="torqbit logo" />
+            <img src={logoUrl} alt={siteConfig.brand?.name} />
           </div>
         </Flex>
       ),

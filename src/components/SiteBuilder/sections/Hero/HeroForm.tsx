@@ -57,10 +57,10 @@ const HeroForm: FC<{
         const res = await postRes.json();
 
         if (res.success) {
-          setHeroImages({ ...heroImages, [mode]: `/static/${res.imgName}` });
+          setHeroImages({ ...heroImages, [mode]: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/static/${res.imgName}` });
           setHeroConfig({
             ...heroConfig,
-            banner: { ...heroConfig?.banner, [mode]: `/static/${res.imgName}` },
+            banner: { ...heroConfig?.banner, [mode]: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/static/${res.imgName}` },
           });
         }
       }

@@ -5,7 +5,7 @@ import BasicInfoForm from "@/components/SiteBuilder/sections/BasicInfoForm/Basic
 import { getSiteConfig } from "@/services/getSiteConfig";
 import { postFetch } from "@/services/request";
 import { PageSiteConfig } from "@/services/siteConstant";
-import { Form, message, Button } from "antd";
+import { Form, message, Button, Flex } from "antd";
 import { GetServerSidePropsContext, NextPage } from "next";
 import { useState } from "react";
 
@@ -40,21 +40,27 @@ const BlogContent: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) =
   return (
     <SiteBuilderLayout siteConfig={siteConfig} siteContent={<ContentNavigation activeMenu={"blogs"} />}>
       {contentHolder}
-      <h4 style={{ margin: "0 0 20px 0" }}>Blogs</h4>
-      <BasicInfoForm
-        form={form}
-        onFinish={onSaveBasicInfo}
-        extraContent={
-          <Button type="primary" onClick={updateYamlFile}>
-            Save
-          </Button>
-        }
-        initialValue={{
-          title: siteConfig.sections?.blog?.title,
-          description: siteConfig.sections?.blog?.description,
-        }}
-      />
-      <ContentList contentType={"BLOG"} />
+
+      <Flex vertical style={{ marginTop: 10 }} gap={40} justify="center" align="center">
+        <div>
+          <h4 style={{ margin: "0 0 20px 0px" }}>Blogs</h4>
+
+          <BasicInfoForm
+            form={form}
+            onFinish={onSaveBasicInfo}
+            extraContent={
+              <Button type="primary" onClick={updateYamlFile}>
+                Save
+              </Button>
+            }
+            initialValue={{
+              title: siteConfig.sections?.blog?.title,
+              description: siteConfig.sections?.blog?.description,
+            }}
+          />
+          <ContentList contentType={"BLOG"} />
+        </div>
+      </Flex>
     </SiteBuilderLayout>
   );
 };

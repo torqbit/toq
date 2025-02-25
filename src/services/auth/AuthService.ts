@@ -23,21 +23,27 @@ class AuthService {
   };
 
   checkSiteStatus = async (userRole: Role, redirectUrl?: string) => {
-    const configDetails = await prisma.serviceProvider.findMany({
-      select: {
-        service_type: true,
-      },
-    });
-    const serviceType = configDetails.map((s) => s.service_type);
-    const allExist = serviceType.includes(ServiceType.CMS) && serviceType.includes(ServiceType.PAYMENTS);
+    let redirectUrlFinal = redirectUrl;
+    if (redirectUrl && redirectUrl.startsWith("/")) {
+      redirectUrlFinal = redirectUrl.substring(1);
+    }
+
     if (userRole === Role.ADMIN) {
+      const configDetails = await prisma.serviceProvider.findMany({
+        select: {
+          service_type: true,
+        },
+      });
+
+      const serviceType = configDetails.map((s) => s.service_type);
+      const allExist = serviceType.includes(ServiceType.CMS) && serviceType.includes(ServiceType.PAYMENTS);
       if (allExist) {
-        return redirectUrl !== "undefined" ? `/${redirectUrl}` : "/dashboard";
+        return redirectUrl !== "undefined" ? `/${redirectUrlFinal}` : "/dashboard";
       } else {
         return "/admin/onboard/complete";
       }
     } else {
-      return redirectUrl !== "undefined" ? `/${redirectUrl}` : "/dashboard";
+      return redirectUrl !== "undefined" ? `/${redirectUrlFinal}` : "/dashboard";
     }
   };
 }

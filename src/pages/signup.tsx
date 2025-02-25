@@ -18,6 +18,7 @@ import darkThemeConfig from "@/services/darkThemeConfig";
 import prisma from "@/lib/prisma";
 import { useAppContext } from "@/components/ContextApi/AppContext";
 import Link from "next/link";
+import { Theme } from "@/types/theme";
 
 const LoginPage: NextPage<{
   loginMethods: { available: string[]; configured: string[] };
@@ -33,7 +34,30 @@ const LoginPage: NextPage<{
   const { data: session, status: sessionStatus } = useSession();
   const [signupForm] = Form.useForm();
   const [messageApi, contextHolder] = message.useMessage();
-  const { globalState } = useAppContext();
+  const { globalState, dispatch } = useAppContext();
+
+  const setGlobalTheme = (theme: Theme) => {
+    dispatch({
+      type: "SWITCH_THEME",
+      payload: theme,
+    });
+  };
+  const onCheckTheme = () => {
+    const currentTheme = localStorage.getItem("theme");
+    if (siteConfig.brand?.themeSwitch && currentTheme) {
+      localStorage.setItem("theme", currentTheme);
+    } else {
+      if (siteConfig.brand?.defaultTheme) {
+        localStorage.setItem("theme", siteConfig.brand?.defaultTheme);
+      } else {
+        localStorage.setItem("theme", "light");
+      }
+    }
+    setGlobalTheme(localStorage.getItem("theme") as Theme);
+  };
+  useEffect(() => {
+    onCheckTheme();
+  }, []);
 
   React.useEffect(() => {
     if (router.query.error) {

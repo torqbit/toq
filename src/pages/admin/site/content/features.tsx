@@ -29,13 +29,15 @@ const AddFeature: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) =>
   return (
     <SiteBuilderLayout siteConfig={siteConfig} siteContent={<ContentNavigation activeMenu={"features"} />}>
       {contentHolder}
-      <Flex align="center" justify="space-between" style={{ marginBottom: 20, width: 1000 }}>
-        <h4 style={{ margin: 0 }}> Features</h4>
-        <Button type="primary" loading={loading} onClick={updateYamlFile}>
-          Save
-        </Button>
+      <Flex align="center" justify="center" vertical style={{ marginTop: 10 }} gap={10}>
+        <Flex align="center" justify="space-between" style={{ marginBottom: 20, width: 1000 }}>
+          <h4 style={{ margin: 0 }}> Features</h4>
+          <Button type="primary" loading={loading} onClick={updateYamlFile}>
+            Save
+          </Button>
+        </Flex>
+        <FeatureForm config={siteConfig} updateSiteConfig={setConfig} />
       </Flex>
-      <FeatureForm config={siteConfig} updateSiteConfig={setConfig} />
     </SiteBuilderLayout>
   );
 };

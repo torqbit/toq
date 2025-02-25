@@ -161,8 +161,11 @@ const FeatureForm: FC<{
         const res = await postRes.json();
 
         if (res.success) {
-          setFeatureImages({ ...featureImages, [imageType]: `/static/${res.imgName}` });
-          handleFeatureChange(index, "img", `/static/${res.imgName}`);
+          setFeatureImages({
+            ...featureImages,
+            [imageType]: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/static/${res.imgName}`,
+          });
+          handleFeatureChange(index, "img", `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/static/${res.imgName}`);
         }
       }
     } catch (error) {
@@ -333,7 +336,7 @@ const FeatureForm: FC<{
 
   return (
     <div className={styles.feature__wrapper}>
-      <ConfigFormLayout formTitle="Add Features">
+      <ConfigFormLayout width="1000px" formTitle="Add Features">
         <Form form={form} requiredMark={false} initialValues={initialValues}>
           {featureItems.map((item, i) => {
             return (

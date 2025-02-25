@@ -115,7 +115,7 @@ const AddTestimonial: FC<{ siteConfig: PageSiteConfig; setConfig: (value: PageSi
         }
         const res = await postRes.json();
         if (res.success) {
-          return `/static/${res.imgName}`;
+          return `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/static/${res.imgName}`;
         }
       }
     } catch (error) {

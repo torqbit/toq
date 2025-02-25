@@ -12,6 +12,9 @@ import { useState } from "react";
 const FAQPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const [messageApi, contentHolder] = message.useMessage();
   const [config, setConfig] = useState<PageSiteConfig>(siteConfig);
+  console.log(config.sections?.faq, "faq from local config");
+  console.log(siteConfig.sections?.faq, "faq from site config");
+
   const [loading, setLoading] = useState<boolean>(false);
   const [form] = Form.useForm();
   const updateYamlFile = async () => {
@@ -42,36 +45,52 @@ const FAQPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
       });
   };
 
+  let showSaveButton = () => {
+    if (config.sections?.faq?.items && siteConfig.sections?.faq?.items) {
+      return config.sections?.faq?.items.length !== siteConfig.sections.faq.items.length;
+    } else if (
+      (config.sections?.faq?.items && config.sections.faq.items.length > 0 && !siteConfig?.sections?.faq?.items) ||
+      (!config.sections?.faq?.items && siteConfig?.sections?.faq?.items && siteConfig?.sections?.faq?.items.length > 0)
+    ) {
+      return true;
+    } else {
+      false;
+    }
+  };
+
   return (
     <SiteBuilderLayout siteConfig={siteConfig} siteContent={<ContentNavigation activeMenu={"faq"} />}>
       {contentHolder}
 
-      <Flex vertical gap={20}>
-        <h4 style={{ margin: "0px 0 0 0" }}> FAQ</h4>
+      <Flex vertical justify="center" align="center" style={{ marginTop: 10 }}>
+        <Flex vertical gap={20}>
+          <h4 style={{ margin: "0px 0 0 0" }}> FAQ</h4>
 
-        <BasicInfoForm
-          form={form}
-          onFinish={onSaveBasicInfo}
-          extraContent={
-            <Button type="primary" onClick={updateYamlFile}>
-              Save
-            </Button>
-          }
-          initialValue={{
-            title: siteConfig.sections?.faq?.title,
-            description: siteConfig.sections?.faq?.description,
-          }}
-        />
-        <Flex align="center" justify="space-between" style={{ marginBottom: 20, maxWidth: 1000 }}>
-          {" "}
-          <h4 style={{ margin: "0px 0 0 0" }}> Add FAQ</h4>
-          <Button style={{ margin: "5px 0 0 0" }} type="primary" loading={loading} onClick={updateYamlFile}>
-            Save
-          </Button>
+          <BasicInfoForm
+            form={form}
+            onFinish={onSaveBasicInfo}
+            extraContent={
+              <Button type="primary" onClick={updateYamlFile}>
+                Save
+              </Button>
+            }
+            initialValue={{
+              title: siteConfig.sections?.faq?.title,
+              description: siteConfig.sections?.faq?.description,
+            }}
+          />
+          <Flex align="center" justify="space-between" style={{ marginBottom: 20, maxWidth: 1000 }}>
+            <h4 style={{ margin: "0px 0 0 0" }}> Add FAQ</h4>
+            {showSaveButton() && (
+              <Button style={{ margin: "5px 0 0 0" }} type="primary" loading={loading} onClick={updateYamlFile}>
+                Save
+              </Button>
+            )}
+          </Flex>
         </Flex>
-      </Flex>
 
-      <AddFAQ siteConfig={siteConfig} setConfig={setConfig} />
+        <AddFAQ siteConfig={siteConfig} setConfig={setConfig} />
+      </Flex>
     </SiteBuilderLayout>
   );
 };

@@ -10,7 +10,7 @@ const BasicInfoForm: FC<{
   onFinish: () => void;
 }> = ({ form, initialValue, onFinish, extraContent }) => {
   return (
-    <ConfigFormLayout showArrow={false} formTitle="Basic info" extraContent={extraContent}>
+    <ConfigFormLayout width="1000px" showArrow={false} formTitle="Basic info" extraContent={extraContent}>
       <Form form={form} initialValues={initialValue} onChange={onFinish}>
         <Flex vertical gap={10}>
           <ConfigForm

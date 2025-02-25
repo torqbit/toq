@@ -18,12 +18,13 @@ import { useAppContext } from "@/components/ContextApi/AppContext";
 import darkThemeConfig from "@/services/darkThemeConfig";
 import antThemeConfig from "@/services/antThemeConfig";
 import Link from "next/link";
+import { Theme } from "@/types/theme";
 
 const LoginPage: NextPage<{
   loginMethods: { available: string[]; configured: string[] };
   siteConfig: PageSiteConfig;
 }> = ({ loginMethods, siteConfig }) => {
-  const { globalState } = useAppContext();
+  const { globalState, dispatch } = useAppContext();
   const router = useRouter();
   const [gitHubLoading, setGitHubLoading] = useState<boolean>(false);
   const [googleLoading, setGoogleLoading] = useState<boolean>(false);
@@ -36,6 +37,28 @@ const LoginPage: NextPage<{
   const { data: session, status: sessionStatus } = useSession();
   const [messageApi, contextHolder] = message.useMessage();
   const { brand } = siteConfig;
+  const setGlobalTheme = (theme: Theme) => {
+    dispatch({
+      type: "SWITCH_THEME",
+      payload: theme,
+    });
+  };
+  const onCheckTheme = () => {
+    const currentTheme = localStorage.getItem("theme");
+    if (siteConfig.brand?.themeSwitch && currentTheme) {
+      localStorage.setItem("theme", currentTheme);
+    } else {
+      if (siteConfig.brand?.defaultTheme) {
+        localStorage.setItem("theme", siteConfig.brand?.defaultTheme);
+      } else {
+        localStorage.setItem("theme", "light");
+      }
+    }
+    setGlobalTheme(localStorage.getItem("theme") as Theme);
+  };
+  useEffect(() => {
+    onCheckTheme();
+  }, []);
 
   useEffect(() => {
     const root = document.documentElement;

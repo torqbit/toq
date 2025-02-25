@@ -1,3 +1,4 @@
+import BusinessConfiguration from "@/components/Configuration/Business/BusinessConfigiguration";
 import ContentManagementSystem from "@/components/Configuration/CMS/ContentManagementSystem";
 import EmailServiceSystem from "@/components/Configuration/Email/EmailServiceSystem";
 import PaymentManagementSystem from "@/components/Configuration/Payment/PaymentManagementSystem";
@@ -29,6 +30,11 @@ const ConfigurationPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfi
       key: "EMS",
       label: "Email Service",
       children: <EmailServiceSystem active={activeKey === "EMS"} />,
+    },
+    {
+      key: "BUSINESS",
+      label: "Business",
+      children: <BusinessConfiguration siteConfig={siteConfig} active={activeKey === "BUSINESS"} />,
     },
   ];
 
