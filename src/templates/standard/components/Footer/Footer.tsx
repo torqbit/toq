@@ -6,6 +6,8 @@ import SvgIcons from "@/components/SvgIcons";
 import { FC } from "react";
 import { PageSiteConfig } from "@/services/siteConstant";
 import { Theme } from "@/types/theme";
+import { isValidImagePath } from "@/lib/utils";
+import DOMPurify from "isomorphic-dompurify";
 
 const Footer: FC<{ siteConfig: PageSiteConfig; homeLink: string; isMobile: boolean; activeTheme: Theme }> = ({
   siteConfig,
@@ -14,6 +16,16 @@ const Footer: FC<{ siteConfig: PageSiteConfig; homeLink: string; isMobile: boole
   activeTheme,
 }) => {
   const { navBar, brand } = siteConfig;
+
+  const getLogoSrc = (activeTheme: Theme) => {
+    switch (activeTheme) {
+      case "dark":
+        return isValidImagePath(`${brand?.darkLogo}`) ? DOMPurify.sanitize(`${brand?.darkLogo}`) : "";
+
+      default:
+        return isValidImagePath(`${brand?.logo}`) ? DOMPurify.sanitize(`${brand?.logo}`) : "";
+    }
+  };
 
   const footerContent = [
     {
@@ -101,13 +113,13 @@ const Footer: FC<{ siteConfig: PageSiteConfig; homeLink: string; isMobile: boole
     <section className={styles.footerContainer}>
       <footer>
         <div>
-          <Link href={homeLink}>
+          <Link href={DOMPurify.sanitize(homeLink)}>
             <Flex align="center" gap={5}>
               {siteConfig.brand &&
               typeof siteConfig.brand?.logo === "string" &&
               typeof siteConfig.brand?.darkLogo === "string" ? (
                 <img
-                  src={activeTheme == "dark" ? siteConfig.brand?.darkLogo : siteConfig.brand?.logo}
+                  src={getLogoSrc(activeTheme)}
                   style={{ width: "auto", height: 30 }}
                   alt={`logo of ${siteConfig.brand?.name}`}
                 />
@@ -131,7 +143,7 @@ const Footer: FC<{ siteConfig: PageSiteConfig; homeLink: string; isMobile: boole
                     {content?.links?.map((link, i) => {
                       return (
                         <li key={i} style={{ display: !link.href ? "none" : "block" }}>
-                          <Link href={`${link.href}`}> {link.label}</Link>
+                          <Link href={DOMPurify.sanitize(`${link.href}`)}> {link.label}</Link>
                         </li>
                       );
                     })}
