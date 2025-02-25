@@ -16,9 +16,34 @@ export function capitalizeFirstLetter(val: string) {
   return String(val).charAt(0).toUpperCase() + String(val).slice(1);
 }
 
-export function compareObject(a: any, b: any) {
-  return _.isEqual(a, b);
+export function compareObject(obj1: any, obj2: any) {
+  // Check if both are the same reference
+  if (obj1 === obj2) return true;
+
+  // Check if both are objects and not null
+  if (typeof obj1 !== "object" || obj1 === null || typeof obj2 !== "object" || obj2 === null) {
+    return false;
+  }
+
+  // Get object keys
+  const keys1 = Object.keys(obj1);
+  const keys2 = Object.keys(obj2);
+
+  // Check number of keys
+  if (keys1.length !== keys2.length) return false;
+
+  // Recursively check each key
+  for (let key of keys1) {
+    if (!keys2.includes(key)) return false;
+    if (!compareObject(obj1[key], obj2[key])) return false;
+  }
+
+  return true;
 }
+
+// export function compareObject(a: any, b: any) {
+//   return _.isEqual(a, b);
+// }
 export function isValidImagePath(path: string): boolean {
   const allowedImagePathPattern = `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}`.includes("localhost")
     ? /^(https?:\/\/)?(localhost|[\w-]+(\.[\w-]+)*)(:\d+)?(\/[\w-]+)*\/?[\w-]+\.(jpg|jpeg|png|gif|bmp|webp|svg|tiff)$/i

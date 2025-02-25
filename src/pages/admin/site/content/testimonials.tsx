@@ -65,7 +65,7 @@ const Testimonials: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) 
               description: siteConfig.sections?.testimonials?.description,
             }}
           />
-          <Flex align="center" justify="space-between" style={{ marginBottom: 20, maxWidth: 1000 }}>
+          <Flex align="center" justify="space-between" style={{ maxWidth: 1000 }}>
             <h4 style={{ margin: "0" }}>Add Testimonials</h4>
 
             {!compareObject(siteConfig.sections?.testimonials, config.sections?.testimonials) && (
