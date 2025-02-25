@@ -1,4 +1,4 @@
-import AssignmentService, { ISubmissionDetail } from "@/services/course/AssignmentService";
+import AssignmentService, { IScoreSummary, ISubmissionDetail } from "@/services/course/AssignmentService";
 import {
   Breadcrumb,
   Button,
@@ -6,18 +6,21 @@ import {
   Drawer,
   Flex,
   Form,
+  Input,
   InputNumber,
   message,
   Modal,
   Segmented,
   Space,
   Spin,
+  Steps,
   Tooltip,
 } from "antd";
 import { GetServerSidePropsContext, NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import style from "@/styles/AssignmentEvaluation.module.scss";
+import styles from "@/styles/AddAssignment.module.scss";
 import TextEditor from "@/components/Editor/Quilljs/Editor";
 import appConstant from "@/services/appConstant";
 import { SegmentedValue } from "antd/es/segmented";
@@ -34,8 +37,15 @@ import AppLayout from "@/components/Layouts/AppLayout";
 import { PageSiteConfig } from "@/services/siteConstant";
 import { getSiteConfig } from "@/services/getSiteConfig";
 import { DownloadOutlined, LoadingOutlined } from "@ant-design/icons";
-import { AssignmentType, SubjectiveAssignment, SubjectiveSubmissionContent } from "@/types/courses/assignment";
+import {
+  AssignmentType,
+  QuestionScore,
+  SubjectiveAssignment,
+  SubjectiveSubmissionContent,
+} from "@/types/courses/assignment";
 import SubjectiveAssignmentView from "@/components/Assignment/Content/SubjectiveAssignment/SubjectiveAssignmentView";
+import ConfigFormLayout from "@/components/Configuration/ConfigFormLayout";
+import ConfigForm from "@/components/Configuration/ConfigForm";
 
 const EvaluatePage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -82,13 +92,9 @@ const EvaluatePage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) 
       setLoading(false);
     }
   };
-  const evaluateSubmission = () => {
+  const evaluateSubmission = async () => {
+    await form.validateFields();
     setEvaluationLoading(true);
-    if (!editorValue) {
-      setEvaluationLoading(false);
-      messageApi.warning("Add a comment first");
-      return;
-    }
     AssignmentService.completeSubmission(
       router.query.slug as string,
       Number(submissionDetail?.assignmentId),
@@ -108,8 +114,7 @@ const EvaluatePage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) 
         messageApi.error(error);
         setEvaluationLoading(false);
       },
-      replaceEmptyParagraphs(editorValue),
-      Number(form.getFieldsValue().score)
+      form.getFieldsValue()
     );
   };
 
@@ -145,7 +150,8 @@ const EvaluatePage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) 
           />
           <Space direction="vertical" style={{ marginTop: 30 }}>
             <Flex align="center" justify="space-between">
-              {submissionDetail?.content._type === AssignmentType.SUBJECTIVE && (
+              {submissionDetail?.content._type === AssignmentType.SUBJECTIVE &&
+              subjectiveSubmission?.answerArchiveUrl ? (
                 <Tooltip title="Download submitted file">
                   <Button
                     target="_blank"
@@ -156,6 +162,8 @@ const EvaluatePage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) 
                     Submitted file
                   </Button>
                 </Tooltip>
+              ) : (
+                <div></div>
               )}
               <>
                 {submissionDetail?.isEvaluated ? (
@@ -184,55 +192,88 @@ const EvaluatePage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) 
                 )}
             </section>
           </Space>
-          <Modal
-            maskClosable={false}
+          <Drawer
+            title="Evaluate Submission"
+            placement="right"
+            width={600}
+            onClose={() => setOpen(false)}
             open={open}
-            onCancel={() => setOpen(false)}
-            onOk={form.submit}
-            okButtonProps={{
-              disabled: !form.getFieldsValue().score || countAlphabets(replaceEmptyParagraphs(editorValue)) === 0,
-            }}
-            confirmLoading={evaluationLoading}
-          >
-            {subjectiveQuestion && (
-              <Descriptions title="Grading Parameters" style={{ marginBottom: 20 }}>
-                {subjectiveQuestion.gradingParameters.map((grading, index) => (
-                  <Descriptions.Item key={index} label={<h5>{grading.questionIndex} : </h5>}>
-                    {grading.score} points
-                  </Descriptions.Item>
-                ))}
-              </Descriptions>
-            )}
-            <Form layout="vertical" form={form} onFinish={evaluateSubmission}>
-              <Form.Item
-                name="score"
-                label="Add Score"
-                rules={[
-                  { required: true, message: "Add a score" },
-                  {
-                    type: "number",
-                    min: 0,
-                    max: maxScore,
-                    message: "Invalid score",
-                  },
-                ]}
+            extra={
+              <Button
+                type="primary"
+                onClick={form.submit}
+                loading={evaluationLoading}
+                // disabled={!form.getFieldsValue().score || countAlphabets(replaceEmptyParagraphs(editorValue)) === 0}
               >
-                <InputNumber style={{ width: 300 }} placeholder="Input score" />
-              </Form.Item>
-              <TextEditor
-                defaultValue={String(editorValue)}
-                handleDefaultValue={setEditorValue}
-                readOnly={false}
-                theme="snow"
-                placeholder="Evaluation Comment"
-              />
-            </Form>
-          </Modal>
+                Submit Evaluation
+              </Button>
+            }
+          >
+            <Steps
+              current={subjectiveQuestion?.gradingParameters?.length}
+              status="finish"
+              size="small"
+              progressDot
+              direction="vertical"
+              className={styles.ant_steps_container}
+              items={subjectiveQuestion?.gradingParameters.map((grading, index) => {
+                return {
+                  title: (
+                    <ConfigFormLayout formTitle={`${grading.questionIndex}`} width="530px">
+                      <Form form={form} onFinish={evaluateSubmission}>
+                        <ConfigForm
+                          title="Award points"
+                          divider
+                          description="The points will be added to the total score for this assessment"
+                          input={
+                            <Form.Item
+                              name={[index, "score"]}
+                              rules={[
+                                { required: true, message: "Add a score" },
+                                {
+                                  type: "number",
+                                  min: 0,
+                                  max: grading.score,
+                                  message: "Invalid score",
+                                },
+                              ]}
+                            >
+                              <InputNumber
+                                min={0}
+                                max={grading.score}
+                                addonAfter={`/${grading.score}`}
+                                style={{ width: 150 }}
+                              />
+                            </Form.Item>
+                          }
+                        />
+                        <ConfigForm
+                          title="Comments"
+                          layout="vertical"
+                          description="Add descriptive comments to help the student to understand the feedback provided"
+                          input={
+                            <Form.Item
+                              name={[index, "comment"]}
+                              rules={[{ required: true, message: `Please enter comment for ${grading.questionIndex}` }]}
+                            >
+                              <Input.TextArea rows={4} placeholder="Add your comments here" />
+                            </Form.Item>
+                          }
+                        />
+                      </Form>
+                    </ConfigFormLayout>
+                  ),
+                };
+              })}
+            />
+          </Drawer>
           <ViewResult
             score={Number(submissionDetail?.score)}
             comment={String(submissionDetail?.comment)}
             maximumScore={submissionDetail?.maximumScore as number}
             passingScore={submissionDetail?.passingScore as number}
+            scoreSummary={submissionDetail?.scoreSummary && JSON.parse(submissionDetail?.scoreSummary as any)}
+            gradingParameter={subjectiveQuestion?.gradingParameters as QuestionScore[]}
             drawerOpen={drawerOpen}
             setDrawerOpen={setDrawerOpen}
           />

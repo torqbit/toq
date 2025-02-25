@@ -1,4 +1,4 @@
-import { AssignmentType, MCQAssignment, QuestionScore } from "@/types/courses/assignment";
+import { AssignmentType, ISubjectiveScores, MCQAssignment, QuestionScore } from "@/types/courses/assignment";
 
 type Answers = {
   [key: number]: string[];
@@ -9,7 +9,7 @@ type EvaluationResult = {
   isPassed: boolean;
   passingScore: number;
   maximumScore: number;
-  eachQuestionScore?: QuestionScore[];
+  eachQuestionScore?: QuestionScore[] | ISubjectiveScores[];
   comment: string;
 };
 
@@ -60,19 +60,20 @@ class AssignmentEvaluationService {
   }
 
   evaluateSubjectiveAssignment(
-    score: number,
+    subjectiveScore: ISubjectiveScores[],
     maximumPoints: number,
-    passingScorePercentage: number,
-    comment: string
+    passingScorePercentage: number
   ): EvaluationResult {
     const passingScore = (maximumPoints * passingScorePercentage) / 100;
+    const score = Object.values(subjectiveScore).reduce((acc, cur: any) => acc + Number(cur?.score), 0);
     const isPass = score >= passingScore;
     return {
       score: score,
       isPassed: isPass,
       maximumScore: maximumPoints,
       passingScore: passingScore,
-      comment: comment,
+      eachQuestionScore: subjectiveScore,
+      comment: "",
     };
   }
 

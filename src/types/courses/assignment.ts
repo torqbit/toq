@@ -26,6 +26,11 @@ export enum AssignmentType {
   SUBJECTIVE = "SUBJECTIVE",
 }
 
+export interface ISubjectiveScores {
+  score: number;
+  comment: string;
+}
+
 export enum ProjectFramework {
   STATIC_WEB = "STATIC_WEB",
   REACTJS = "REACTJS",
@@ -115,8 +120,9 @@ export interface SubjectiveSubmissionContent extends IAssignmentDetails {
 }
 
 export type QuestionScore = {
-  questionIndex: number;
+  questionIndex: number | string;
   score: number;
+  comment?: string;
 };
 
 export interface MCQEvaluationResult {
