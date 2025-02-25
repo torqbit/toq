@@ -182,11 +182,13 @@ const AddTestimonial: FC<{ siteConfig: PageSiteConfig; setConfig: (value: PageSi
     return {
       key: i,
       label: (
-        <UserInfo
-          image={testimonial.author.img}
-          name={testimonial.author.name}
-          extraInfo={testimonial.author.designation}
-        />
+        <div style={{ maxWidth: 400 }}>
+          <UserInfo
+            image={testimonial.author.img}
+            name={testimonial.author.name}
+            extraInfo={testimonial.author.designation}
+          />
+        </div>
       ),
       showArrow: false,
       children: <p>{testimonial.description}</p>,

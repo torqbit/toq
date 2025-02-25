@@ -127,10 +127,11 @@ const AddFAQ: FC<{ siteConfig: PageSiteConfig; setConfig: (value: PageSiteConfig
             okText="Yes"
             cancelText="No"
           >
-            <i>{SvgIcons.delete}</i>
+            <i style={{ cursor: "pointer" }}>{SvgIcons.delete}</i>
           </Popconfirm>
           <div className={styles.edit__pipe}></div>
           <i
+            style={{ cursor: "pointer" }}
             onClick={() => {
               handleEdit(i);
             }}
