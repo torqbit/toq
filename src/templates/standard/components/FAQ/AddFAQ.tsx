@@ -7,8 +7,6 @@ import { PageSiteConfig } from "@/services/siteConstant";
 import SvgIcons from "@/components/SvgIcons";
 import FAQList from "./FAQList";
 import FAQForm from "./FAQForm";
-import BasicInfoForm from "@/components/SiteBuilder/sections/BasicInfoForm/BasicInfoForm";
-import { postFetch } from "@/services/request";
 
 const AddFAQ: FC<{ siteConfig: PageSiteConfig; setConfig: (value: PageSiteConfig) => void }> = ({
   siteConfig,
@@ -141,7 +139,12 @@ const AddFAQ: FC<{ siteConfig: PageSiteConfig; setConfig: (value: PageSiteConfig
         </Flex>
       ),
 
-      label: <h4 style={{ margin: 0 }}> {faq?.question}</h4>,
+      label: (
+        <h4 className={styles.list__bar__para__wrapper} style={{ margin: 0 }}>
+          {" "}
+          {faq?.question}
+        </h4>
+      ),
       children: <p>{faq?.answer}</p>,
       showArrow: false,
     };
