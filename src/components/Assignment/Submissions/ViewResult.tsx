@@ -19,7 +19,6 @@ const ViewResult: FC<{
   gradingParameter: QuestionScore[];
   drawerOpen: boolean;
 }> = ({ score, comment, drawerOpen, setDrawerOpen, maximumScore, passingScore, scoreSummary, gradingParameter }) => {
-  console.log("summary", scoreSummary, scoreSummary?.eachQuestionScore[0]);
   return (
     <Drawer
       width={"35vw"}
@@ -67,7 +66,7 @@ const ViewResult: FC<{
                     <ConfigForm
                       title="Awarded points"
                       divider
-                      description={`You get :  ${scoreSummary?.eachQuestionScore[index]?.score}/${grading.score}`}
+                      description={`Scored :  ${scoreSummary?.eachQuestionScore[index]?.score}/${grading.score}`}
                       input={<></>}
                     />
                     <ConfigForm

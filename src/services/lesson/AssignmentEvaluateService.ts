@@ -65,7 +65,7 @@ class AssignmentEvaluationService {
     passingScorePercentage: number
   ): EvaluationResult {
     const passingScore = (maximumPoints * passingScorePercentage) / 100;
-    const score = Object.values(subjectiveScore).reduce((acc, cur: any) => acc + Number(cur?.score), 0);
+    const score = Number(Object.values(subjectiveScore).reduce((acc, cur: any) => acc + Number(cur?.score), 0));
     const isPass = score >= passingScore;
     return {
       score: score,
