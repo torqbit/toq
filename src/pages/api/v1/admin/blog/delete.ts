@@ -28,10 +28,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       select: {
         banner: true,
         authorId: true,
+        contentType: true,
       },
     });
 
     if (isBlogExist) {
+      let contentType = isBlogExist.contentType;
+
       if (token?.id === isBlogExist?.authorId || token?.role === Role.ADMIN) {
         if (isBlogExist.banner) {
           const cms = new ContentManagementService().getCMS(appConstant.defaultCMSProvider);
@@ -45,7 +48,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           },
         });
 
-        return res.status(200).json({ success: true, message: "Blog has been deleted" });
+        return res
+          .status(200)
+          .json({
+            success: true,
+            message: contentType === "BLOG" ? "Blog has been deleted" : "Update has been deleted",
+          });
       } else {
         return res.status(403).json({ success: false, error: "You are not authorized" });
       }

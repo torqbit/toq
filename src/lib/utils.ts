@@ -40,13 +40,10 @@ export function compareObject(obj1: any, obj2: any) {
   return true;
 }
 
-// export function compareObject(a: any, b: any) {
-//   return _.isEqual(a, b);
-// }
 export function isValidImagePath(path: string): boolean {
   const allowedImagePathPattern = `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}`.includes("localhost")
-    ? /^(https?:\/\/)?(localhost|[\w-]+(\.[\w-]+)*)(:\d+)?(\/[\w-]+)*\/?[\w-]+\.(jpg|jpeg|png|gif|bmp|webp|svg|tiff)$/i
-    : /^(https?:\/\/)?([\w-]+(\.[\w-]+)*\/)*[\w-]+\.(jpg|jpeg|png|gif|bmp|webp|svg|tiff)$/i;
+    ? /^(https?:\/\/)?(localhost|[\w-]+(\.[\w-]+)*)(:\d+)?(\/[\w-]+)*\/?[\w-]+\.(jpg|jpeg|png|gif|ico|bmp|webp|svg|tiff)$/i
+    : /^(https?:\/\/)?([\w-]+(\.[\w-]+)*\/)*[\w-]+\.(jpg|jpeg|png|gif|ico|bmp|webp|svg|tiff)$/i;
   const isValid = allowedImagePathPattern.test(path);
   return isValid;
 }

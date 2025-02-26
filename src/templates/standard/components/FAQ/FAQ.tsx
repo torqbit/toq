@@ -25,7 +25,7 @@ const FAQ: FC<{
           return {
             key: i,
 
-            label: <Skeleton.Input size="small" style={{ width: "50vw" }} />,
+            label: <Skeleton.Input size="small" style={{ width: "40vw" }} />,
             children: <Skeleton paragraph />,
             showArrow: true,
           };

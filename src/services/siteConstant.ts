@@ -34,7 +34,7 @@ export const DEFAULT_THEME = {
     title: "Become a Pro Product Builder",
     description: "Master the art of product building and turn your ideas into successful, scalable products",
     ogImage: "https://cdn.torqbit.com/static/brand-icon.png",
-    favicon: "hhttps://cdn.torqbit.com/static/landing/favicon.ico",
+    favicon: "https://cdn.torqbit.com/static/favicon.ico",
     brandColor: "#5b63d3",
     socialLinks: {
       discord: "https://discord.gg/NserMXcx",
