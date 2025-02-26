@@ -1,6 +1,7 @@
 import SiteBuilderLayout from "@/components/Layouts/SiteBuilderLayout";
 import ContentNavigation from "@/components/SiteBuilder/ContentNavigation";
 import BasicInfoForm from "@/components/SiteBuilder/sections/BasicInfoForm/BasicInfoForm";
+import { compareObject } from "@/lib/utils";
 import { getSiteConfig } from "@/services/getSiteConfig";
 import { postFetch } from "@/services/request";
 import { PageSiteConfig } from "@/services/siteConstant";
@@ -45,19 +46,6 @@ const FAQPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
       });
   };
 
-  let showSaveButton = () => {
-    if (config.sections?.faq?.items && siteConfig.sections?.faq?.items) {
-      return config.sections?.faq?.items.length !== siteConfig.sections.faq.items.length;
-    } else if (
-      (config.sections?.faq?.items && config.sections.faq.items.length > 0 && !siteConfig?.sections?.faq?.items) ||
-      (!config.sections?.faq?.items && siteConfig?.sections?.faq?.items && siteConfig?.sections?.faq?.items.length > 0)
-    ) {
-      return true;
-    } else {
-      false;
-    }
-  };
-
   return (
     <SiteBuilderLayout siteConfig={siteConfig} siteContent={<ContentNavigation activeMenu={"faq"} />}>
       {contentHolder}
@@ -81,7 +69,7 @@ const FAQPage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
           />
           <Flex align="center" justify="space-between" style={{ marginBottom: 20, maxWidth: 1000 }}>
             <h4 style={{ margin: "0px 0 0 0" }}> Add FAQ</h4>
-            {showSaveButton() && (
+            {!compareObject(siteConfig.sections?.faq, config.sections?.faq) && (
               <Button style={{ margin: "5px 0 0 0" }} type="primary" loading={loading} onClick={updateYamlFile}>
                 Save
               </Button>

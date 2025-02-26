@@ -8,6 +8,15 @@ const FAQDesign: FC<{
   config: PageSiteConfig;
   updateSiteConfig: (config: PageSiteConfig) => void;
 }> = ({ updateSiteConfig, config }) => {
+  const showAddButton = () => {
+    if (!config.sections?.faq?.items) {
+      return true;
+    } else if (config.sections?.faq?.items && config.sections?.faq?.items.length === 0) {
+      return true;
+    } else {
+      return false;
+    }
+  };
   const router = useRouter();
   return (
     <div className={styles.faq__design__wrapper}>
@@ -29,22 +38,21 @@ const FAQDesign: FC<{
         />
       </Flex>
 
-      {(config.sections?.faq?.items && config.sections?.faq?.items.length === 0) ||
-        (!config.sections?.faq?.items && (
-          <Flex vertical justify="center">
-            <p>No FAQ exists</p>
-            <Button
-              onClick={() => {
-                router.push("/admin/site/content/faq");
-              }}
-              type="primary"
-            >
-              <Flex align="center" gap={10}>
-                Add FAQ <i style={{ fontSize: 18, lineHeight: 0 }}> {SvgIcons.arrowRight}</i>
-              </Flex>
-            </Button>
-          </Flex>
-        ))}
+      {showAddButton() && (
+        <Flex vertical justify="center">
+          <p>No FAQ exists</p>
+          <Button
+            onClick={() => {
+              router.push("/admin/site/content/faq");
+            }}
+            type="primary"
+          >
+            <Flex align="center" gap={10}>
+              Add FAQ <i style={{ fontSize: 18, lineHeight: 0 }}> {SvgIcons.arrowRight}</i>
+            </Flex>
+          </Button>
+        </Flex>
+      )}
     </div>
   );
 };

@@ -12,7 +12,7 @@ import { UploadOutlined } from "@ant-design/icons";
 import { getBase64 } from "@/lib/utils";
 
 const TestimonialsForm: FC<ITestimonialForm> = ({ handleTestimonial, form, index, edit, onClose, open }) => {
-  const [profile, setProfile] = useState<string>(form.getFieldsValue().profile);
+  const [profile, setProfile] = useState<string>("");
 
   const onUpload = async (file: RcFile) => {
     if (file) {
@@ -25,6 +25,10 @@ const TestimonialsForm: FC<ITestimonialForm> = ({ handleTestimonial, form, index
   useEffect(() => {
     edit && setProfile(form.getFieldsValue().profile);
   }, [edit]);
+
+  useEffect(() => {
+    !edit && setProfile("");
+  }, [open]);
   return (
     <Drawer
       open={open}

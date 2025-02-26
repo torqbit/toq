@@ -17,9 +17,10 @@ import Link from "next/link";
 import SvgIcons from "../SvgIcons";
 import { useRouter } from "next/router";
 import { RcFile } from "antd/es/upload";
-import { createSlug } from "@/lib/utils";
+import { createSlug, isValidImagePath } from "@/lib/utils";
 import { useSession } from "next-auth/react";
 import { LoadingOutlined } from "@ant-design/icons";
+import DOMPurify from "isomorphic-dompurify";
 
 const { Content, Sider } = Layout;
 const SiteBuilderLayout: FC<{
@@ -189,7 +190,14 @@ const SiteBuilderLayout: FC<{
               name="viewport"
               content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
             />
-            <link rel="icon" href={siteConfig.brand?.favicon} />
+            <link
+              rel="icon"
+              href={
+                isValidImagePath(`${siteConfig.brand?.favicon}`)
+                  ? DOMPurify.sanitize(`${siteConfig.brand?.favicon}`)
+                  : ""
+              }
+            />
           </Head>
           <Spin spinning={globalState.pageLoading} indicator={<LoadingOutlined spin />} size="large">
             <div>
