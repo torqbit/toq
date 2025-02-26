@@ -14,7 +14,7 @@ const FAQList: FC<{
     <section className={isEditable ? styles.faq__form__container : styles.faq__list__container}>
       <Collapse
         accordion
-        style={{ borderRadius: 4, width: 1000 }}
+        style={{ borderRadius: 4, maxWidth: 1000 }}
         collapsible={expandIcon ? "icon" : "header"}
         expandIconPosition="end"
         expandIcon={({ isActive }) =>

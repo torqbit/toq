@@ -416,97 +416,91 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
     const root = document.documentElement;
     root.style.setProperty("--btn-primary", `${brand?.brandColor}`);
   }, [brand?.brandColor]);
-  if (globalState.pageLoading) {
-    return (
-      <>
-        <Spin spinning={globalState.pageLoading} indicator={<LoadingOutlined spin />} fullscreen size="large" />
-      </>
-    );
-  } else {
-    return (
-      <ConfigProvider theme={globalState.theme == "dark" ? darkThemeConfig(siteConfig) : antThemeConfig(siteConfig)}>
-        <Head>
-          <title>{`${siteConfig.brand?.name} · ${siteConfig.brand?.title}`}</title>
+  return (
+    <ConfigProvider theme={globalState.theme == "dark" ? darkThemeConfig(siteConfig) : antThemeConfig(siteConfig)}>
+      <Spin spinning={globalState.pageLoading} indicator={<LoadingOutlined spin />} fullscreen size="large" />
 
-          <meta name="description" content={siteConfig.brand?.description} />
-          <meta
-            property="og:image"
-            content={
-              siteConfig.brand?.themeSwitch && siteConfig.brand.defaultTheme == "dark"
-                ? siteConfig.heroSection?.banner?.darkModePath
-                : siteConfig.heroSection?.banner?.lightModePath
-            }
-          />
-          <link
-            rel="icon"
-            href={
-              isValidImagePath(`${siteConfig.brand?.favicon}`) ? DOMPurify.sanitize(`${siteConfig.brand?.favicon}`) : ""
-            }
-          />
-        </Head>
-        <Spin spinning={globalState.pageLoading} indicator={<LoadingOutlined spin />} size="large">
-          {contextHolder}
-          {contextMessageHolder}
-          {globalState.onlineStatus ? (
-            <Layout hasSider className="default-container">
-              <Sidebar menu={user?.role && user.role == Role.ADMIN ? adminMenu : userMenu} siteConfig={siteConfig} />
-              <Layout className={`layout2-wrapper ${styles.layout2_wrapper} `}>
-                <Content className={`${styles.sider_content} ${styles.className}`}>
-                  <Flex
-                    align="center"
-                    justify="space-between"
-                    className={router.pathname.startsWith("/academy/course/") ? "" : styles.userNameWrapper}
+      <Head>
+        <title>{`${siteConfig.brand?.name} · ${siteConfig.brand?.title}`}</title>
+
+        <meta name="description" content={siteConfig.brand?.description} />
+        <meta
+          property="og:image"
+          content={
+            siteConfig.brand?.themeSwitch && siteConfig.brand.defaultTheme == "dark"
+              ? siteConfig.heroSection?.banner?.darkModePath
+              : siteConfig.heroSection?.banner?.lightModePath
+          }
+        />
+        <link
+          rel="icon"
+          href={
+            isValidImagePath(`${siteConfig.brand?.favicon}`) ? DOMPurify.sanitize(`${siteConfig.brand?.favicon}`) : ""
+          }
+        />
+      </Head>
+      <Spin spinning={globalState.pageLoading} indicator={<LoadingOutlined spin />} size="large">
+        {contextHolder}
+        {contextMessageHolder}
+        {globalState.onlineStatus ? (
+          <Layout hasSider className="default-container">
+            <Sidebar menu={user?.role && user.role == Role.ADMIN ? adminMenu : userMenu} siteConfig={siteConfig} />
+            <Layout className={`layout2-wrapper ${styles.layout2_wrapper} `}>
+              <Content className={`${styles.sider_content} ${styles.className}`}>
+                <Flex
+                  align="center"
+                  justify="space-between"
+                  className={router.pathname.startsWith("/academy/course/") ? "" : styles.userNameWrapper}
+                >
+                  {isMobile && <h4>Hello {user?.user?.name}</h4>}
+                  <Dropdown
+                    className={styles.mobileUserMenu}
+                    menu={{
+                      items: [
+                        {
+                          key: "0",
+                          label: (
+                            <div
+                              onClick={() => {
+                                const newTheme: Theme = globalState.theme == "dark" ? "light" : "dark";
+                                updateTheme(newTheme);
+                              }}
+                            >
+                              {globalState.theme !== "dark" ? "Dark mode" : "Light mode"}
+                            </div>
+                          ),
+                        },
+
+                        {
+                          key: "1",
+                          label: "Logout",
+                          onClick: () => {
+                            signOut();
+                          },
+                        },
+                      ],
+                    }}
+                    trigger={["click"]}
+                    placement="bottomRight"
+                    arrow={{ pointAtCenter: true }}
                   >
-                    {isMobile && <h4>Hello {user?.user?.name}</h4>}
-                    <Dropdown
-                      className={styles.mobileUserMenu}
-                      menu={{
-                        items: [
-                          {
-                            key: "0",
-                            label: (
-                              <div
-                                onClick={() => {
-                                  const newTheme: Theme = globalState.theme == "dark" ? "light" : "dark";
-                                  updateTheme(newTheme);
-                                }}
-                              >
-                                {globalState.theme !== "dark" ? "Dark mode" : "Light mode"}
-                              </div>
-                            ),
-                          },
+                    <i style={{ fontSize: 30, color: "var(--font-secondary)" }} className={styles.verticalDots}>
+                      {SvgIcons.verticalThreeDots}
+                    </i>
+                  </Dropdown>
+                </Flex>
 
-                          {
-                            key: "1",
-                            label: "Logout",
-                            onClick: () => {
-                              signOut();
-                            },
-                          },
-                        ],
-                      }}
-                      trigger={["click"]}
-                      placement="bottomRight"
-                      arrow={{ pointAtCenter: true }}
-                    >
-                      <i style={{ fontSize: 30, color: "var(--font-secondary)" }} className={styles.verticalDots}>
-                        {SvgIcons.verticalThreeDots}
-                      </i>
-                    </Dropdown>
-                  </Flex>
-
-                  {children}
-                </Content>
-              </Layout>
-              <ResponsiveNavBar items={responsiveNav} />
+                {children}
+              </Content>
             </Layout>
-          ) : (
-            <Offline />
-          )}
-        </Spin>
-      </ConfigProvider>
-    );
-  }
+            <ResponsiveNavBar items={responsiveNav} />
+          </Layout>
+        ) : (
+          <Offline />
+        )}
+      </Spin>
+    </ConfigProvider>
+  );
 };
 
 export default AppLayout;
