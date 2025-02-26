@@ -5,6 +5,7 @@ import SvgIcons from "../SvgIcons";
 import { Flex, Segmented, Tooltip } from "antd";
 import Link from "next/link";
 import { PreviewMode } from "@/types/template";
+import { isValidImagePath } from "@/lib/utils";
 interface PreviewProps extends IframeHTMLAttributes<HTMLIFrameElement> {
   siteConfig: PageSiteConfig;
 }
@@ -54,7 +55,9 @@ const PreviewSite = forwardRef<HTMLIFrameElement, PreviewProps>((props, ref) => 
             <div></div>
           </div>
           <div className={styles.tab_wrapper}>
-            {props.siteConfig.brand?.favicon && <img src={props.siteConfig.brand?.favicon} alt="" />}
+            {isValidImagePath(`${props.siteConfig.brand?.favicon}`) && (
+              <img src={props.siteConfig.brand?.favicon} alt="" />
+            )}
             <p>
               {props.siteConfig.brand?.name} · {props.siteConfig.brand?.title}
             </p>
