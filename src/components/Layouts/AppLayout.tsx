@@ -23,6 +23,7 @@ import { Theme } from "@/types/theme";
 import { PageSiteConfig } from "@/services/siteConstant";
 import { LoadingOutlined } from "@ant-design/icons";
 import { Role } from "@prisma/client";
+import DOMPurify from "isomorphic-dompurify";
 import NotificationView from "../Notification/NotificationView";
 
 const { Content } = Layout;
@@ -30,6 +31,7 @@ const { Content } = Layout;
 import type { NotificationArgsProps } from "antd";
 import { getFetch } from "@/services/request";
 import ResponsiveNavBar from "../Sidebar/ResponsiveNavBar";
+import { isValidImagePath } from "@/lib/utils";
 
 type NotificationPlacement = NotificationArgsProps["placement"];
 
@@ -435,8 +437,12 @@ const AppLayout: FC<{ children?: React.ReactNode; className?: string; siteConfig
                 : siteConfig.heroSection?.banner?.lightModePath
             }
           />
-
-          <link rel="icon" href={siteConfig.brand?.favicon} />
+          <link
+            rel="icon"
+            href={
+              isValidImagePath(`${siteConfig.brand?.favicon}`) ? DOMPurify.sanitize(`${siteConfig.brand?.favicon}`) : ""
+            }
+          />
         </Head>
         <Spin spinning={globalState.pageLoading} indicator={<LoadingOutlined spin />} size="large">
           {contextHolder}
