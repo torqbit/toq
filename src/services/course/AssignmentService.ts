@@ -371,8 +371,12 @@ class AssignmentSerivce {
       }
     });
   };
-  listSubmission = (onSuccess: (response: ApiResponse) => void, onFailure: (message: string) => void) => {
-    getFetch(`/api/v1/admin/submission/list`).then((result) => {
+  listSubmission = (
+    courseId: number,
+    onSuccess: (response: ApiResponse) => void,
+    onFailure: (message: string) => void
+  ) => {
+    getFetch(`/api/v1/admin/submission/list?courseId=${courseId}`).then((result) => {
       if (result.status == 200) {
         result.json().then((r) => {
           const apiResponse = r as ApiResponse;

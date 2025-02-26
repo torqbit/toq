@@ -1,5 +1,5 @@
 import { Button, Dropdown, message, Table } from "antd";
-import { useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import SvgIcons from "../../SvgIcons";
 import AssignmentService, {
   ISubmissionTableInfo,
@@ -8,7 +8,7 @@ import AssignmentService, {
 } from "@/services/course/AssignmentService";
 import Link from "next/link";
 
-const SubmissionList = () => {
+const SubmissionList: FC<{ courseId: number }> = ({ courseId }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [messageApi, contextHolder] = message.useMessage();
   const [data, setData] = useState<ISubmissionTableInfo[]>([]);
@@ -111,6 +111,7 @@ const SubmissionList = () => {
     setLoading(true);
     try {
       AssignmentService.listSubmission(
+        courseId,
         (result) => {
           setData(flattenMapValues(result.submissionList));
           setLoading(false);
