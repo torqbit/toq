@@ -8,8 +8,14 @@ import { withUserAuthorized } from "@/lib/api-middlewares/with-authorized";
 import { $Enums, submissionStatus } from "@prisma/client";
 import { generateDayAndYear, getCookieName } from "@/lib/utils";
 import { getToken } from "next-auth/jwt";
+import { z } from "zod";
+
+export const validateReqQuery = z.object({
+  courseId: z.coerce.number(),
+});
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
+    const { courseId } = validateReqQuery.parse(req.query);
     const cookieName = getCookieName();
     const token = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
     const resultRows = await prisma.$queryRaw<
@@ -24,7 +30,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       INNER JOIN Chapter as ch ON re.chapterId = ch.chapterId
       INNER JOIN Course as co ON co.courseId = ch.courseId 
       LEFT OUTER JOIN AssignmentEvaluation as ev ON ev.submissionId = sub.id
-      WHERE ch.state = ${$Enums.StateType.ACTIVE} AND re.state = ${$Enums.StateType.ACTIVE} AND co.authorId = ${token?.id} AND sub.status <> ${submissionStatus.NOT_SUBMITTED}
+      WHERE ch.state = ${$Enums.StateType.ACTIVE} AND co.courseId = ${courseId}  AND re.state = ${$Enums.StateType.ACTIVE} AND co.authorId = ${token?.id} AND sub.status <> ${submissionStatus.NOT_SUBMITTED}
       ORDER BY submissionDate;`;
 
     const mapByCourseId: Map<string, string> = resultRows.reduce((map, submission) => {

@@ -227,7 +227,7 @@ const SiteBuilderLayout: FC<{
                       <Dropdown.Button
                         size="small"
                         onClick={downloadYamlFile}
-                        icon={<i style={{ fontSize: 14, lineHeight: 0 }}>{SvgIcons.chevronDown}</i>}
+                        icon={<i style={{ fontSize: 14, lineHeight: 0 }}>{SvgIcons.chevronDownOutline}</i>}
                         menu={{
                           items: [
                             {

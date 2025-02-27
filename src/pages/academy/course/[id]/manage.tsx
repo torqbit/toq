@@ -34,7 +34,7 @@ const AnalyticsPage: NextPage<{ siteConfig: PageSiteConfig; courseInfo: { name: 
     {
       key: "SUBMISSIONS" as IContentTabType,
       label: "Submissions",
-      children: <SubmissionList />,
+      children: <SubmissionList courseId={courseInfo.id} />,
     },
   ];
 
