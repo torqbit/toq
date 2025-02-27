@@ -254,7 +254,9 @@ const EvaluatePage: NextPage<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) 
                           input={
                             <Form.Item
                               name={[index, "comment"]}
-                              rules={[{ required: true, message: `Please enter comment for ${grading.questionIndex}` }]}
+                              rules={[
+                                { required: false, message: `Please enter comment for ${grading.questionIndex}` },
+                              ]}
                             >
                               <Input.TextArea rows={4} placeholder="Add your comments here" />
                             </Form.Item>

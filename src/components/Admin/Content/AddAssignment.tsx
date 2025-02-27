@@ -403,8 +403,12 @@ const AddAssignment: FC<{
                                     </Form.Item>
                                   </Col>
                                   <Col span={10}>
-                                    <Form.Item {...restField} name={[name, "score"]} rules={[{ required: true }]}>
-                                      <InputNumber placeholder="points" type="number" addonAfter="points" />
+                                    <Form.Item
+                                      {...restField}
+                                      name={[name, "score"]}
+                                      rules={[{ required: true }, { type: "number", min: 0 }]}
+                                    >
+                                      <InputNumber min={0} placeholder="points" type="number" addonAfter="points" />
                                     </Form.Item>
                                   </Col>
                                 </Row>
