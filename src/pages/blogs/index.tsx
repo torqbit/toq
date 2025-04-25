@@ -11,6 +11,8 @@ import { Flex, Space } from "antd";
 import Image from "next/image";
 import prisma from "@/lib/prisma";
 import styles from "@/styles/Marketing/Blog/Blog.module.scss";
+import BlogCard from "@/components/Blog/BlogCard";
+import { BlogCardType } from "@/components/Blog/BlogCard";
 
 import Link from "next/link";
 import { UserOutlined } from "@ant-design/icons";
@@ -22,19 +24,13 @@ import NoContentFound from "@/components/NoContentFound";
 interface IProps {
   user: User;
   siteConfig: PageSiteConfig;
-  blogData: {
-    title: string;
-    id: string;
-    banner: string;
-    authorName: string;
-    authorImage: string;
-    slug: string;
-  }[];
+  blogs: BlogCardType[]
 }
 
-const BlogPage: FC<IProps> = ({ user, blogData, siteConfig }) => {
+const BlogPage: FC<IProps> = ({ user, blogs, siteConfig }) => {
   const { dispatch, globalState } = useAppContext();
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
+
 
   return (
     <MarketingLayout
@@ -44,13 +40,13 @@ const BlogPage: FC<IProps> = ({ user, blogData, siteConfig }) => {
       user={user}
       heroSection={
         <>
-          {((!isMobile && blogData && !globalState.pageLoading) || !user) && (
+          {((!isMobile && blogs && !globalState.pageLoading) || !user) && (
             <HeroBlog title="Blog" description="Our engineering experience, explained in detail" />
           )}
         </>
       }
     >
-      {blogData.length === 0 ? (
+      { blogs.length === 0 ? (
         <NoContentFound
           content="  There are no blogs currently. Visit here later again"
           isMobile={isMobile}
@@ -66,46 +62,21 @@ const BlogPage: FC<IProps> = ({ user, blogData, siteConfig }) => {
           {isMobile && <h4 style={{ padding: "20px 0 0 20px", margin: 0 }}>Blogs</h4>}
           <div className={styles.blogListPageWrapper}>
             <div className={styles.primaryBlog}>
-              {blogData.slice(0, 2).map((blog, i) => {
+              {blogs.map((blog, i) => {
                 return (
-                  <Link href={`/blogs/${blog.slug}`} key={i} onClick={() => {}} className={styles.blogCard}>
-                    <Image
-                      src={blog.banner}
-                      alt="blog-img"
-                      height={isMobile ? 175 : 250}
-                      width={isMobile ? 350 : 500}
-                    />
-                    <div>
-                      <Flex className={styles.authorInfo} align="center" gap={10}>
-                        {blog.authorImage ? (
-                          <Image src={blog.authorImage} alt="blog-img" height={40} width={40} />
-                        ) : (
-                          <div className={styles.userOutlineImage}>
-                            <i>
-                              <UserOutlined style={{ fontSize: 20 }} />
-                            </i>
-                          </div>
-                        )}
-                        <Space direction="vertical" size={5}>
-                          <span>A blog by </span>
-                          <div>{blog.authorName}</div>
-                        </Space>
-                      </Flex>
-                      <h1>{blog.title}</h1>
-                    </div>
-                  </Link>
+                  <BlogCard blog={blog} key={i} isMobile={isMobile} />
                 );
               })}
             </div>
             <div>
               <div
                 className={
-                  blogData.slice(2).length > 2
+                  blogs.slice(2).length > 2
                     ? styles.secondaryBlog
-                    : `${blogData.slice(2).length === 1 ? styles.singleSecondaryBlog : styles.doubleSecondaryBlog}`
+                    : `${blogs.slice(2).length === 1 ? styles.singleSecondaryBlog : styles.doubleSecondaryBlog}`
                 }
               >
-                {blogData.slice(2).map((blog, i) => {
+                {blogs.slice(2).map((blog, i) => {
                   return (
                     <Link href={`/blogs/${blog.slug}`} key={i} onClick={() => {}} className={styles.blogCard}>
                       <Image src={blog.banner} alt="blog-img" height={175} width={350} />
@@ -171,7 +142,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
     return {
       props: {
         user,
-        blogData: blog.map((b) => {
+        blogs: blog.map((b) => {
           return {
             title: b.title,
             id: b.id,
@@ -188,7 +159,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
     return {
       props: {
         user,
-        blogData: [],
+        blogs: [],
         siteConfig,
       },
     };
