@@ -5,7 +5,7 @@ import { Space, Flex } from 'antd';
 import styles from '@/styles/Marketing/Blog/BlogCard.module.scss';
 import { FC } from 'react';
 
-export interface BlogCardType {
+export interface IBlogCard {
   slug: string;
   banner: string;
   title: string;
@@ -16,7 +16,7 @@ export interface BlogCardType {
   date?: string;
 }
 
-interface BlogCardProps {
+interface BlogCardProps{
   blog: BlogCardType;
   isMobile: boolean;
 }

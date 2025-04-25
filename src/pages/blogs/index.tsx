@@ -12,7 +12,7 @@ import Image from "next/image";
 import prisma from "@/lib/prisma";
 import styles from "@/styles/Marketing/Blog/Blog.module.scss";
 import BlogCard from "@/components/Blog/BlogCard";
-import { BlogCardType } from "@/components/Blog/BlogCard";
+import { IBlogCard } from "../../components/Blog/BlogCard";
 
 import Link from "next/link";
 import { UserOutlined } from "@ant-design/icons";
@@ -24,7 +24,7 @@ import NoContentFound from "@/components/NoContentFound";
 interface IProps {
   user: User;
   siteConfig: PageSiteConfig;
-  blogs: BlogCardType[]
+  blogs: IBlogCard[]
 }
 
 const BlogPage: FC<IProps> = ({ user, blogs, siteConfig }) => {
