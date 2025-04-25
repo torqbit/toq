@@ -17,7 +17,7 @@ export interface IBlogCard {
 }
 
 interface BlogCardProps{
-  blog: BlogCardType;
+  blog: IBlogCard;
   isMobile: boolean;
 }
 
