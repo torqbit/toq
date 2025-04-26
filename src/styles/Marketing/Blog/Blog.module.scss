@@ -230,53 +230,13 @@ p.emptyPlaceholder:first-child::before {
   flex-direction: column;
   gap: 40px;
 
-  img {
-    aspect-ratio: 2/1;
-    border-radius: 8px 8px 0px 0px;
-  }
-  .blogCard {
-    transition: all 0.3s ease;
-    box-shadow: var(--hd-box-shadow);
-
-    &:hover {
-      transform: scale(1.05);
-    }
-    h1 {
-      margin: 0;
-      margin-bottom: 5px;
-      font-size: 17px;
-    }
-    cursor: pointer;
-    border-radius: 8px;
-    background-color: var(--bg-primary);
-    > div:last-child {
-      padding: 10px;
-    }
-  }
-  .authorInfo {
-    margin: 10px 0px;
-    color: var(--font-primary);
-    font-size: 12px;
-    .userOutlineImage {
-      height: 40px;
-      width: 40px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background-color: var(--bg-secondary);
-    }
-    span {
-      color: var(--font-secondary);
-    }
-    img {
-      border-radius: 50%;
-    }
-  }
+  
   .primaryBlog {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 40px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3rem;
+    align-items: start;
+    justify-items: center;
   }
   .secondaryBlog,
   .singleSecondaryBlog,
@@ -284,15 +244,7 @@ p.emptyPlaceholder:first-child::before {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 40px;
-    .blogCard {
-      .infoWrapper {
-        h2 {
-          margin: 0;
-          margin-bottom: 5px;
-          font-size: 14px;
-        }
-      }
-    }
+    
   }
   .singleSecondaryBlog {
     grid-template-columns: 1fr;
