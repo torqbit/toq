@@ -22,7 +22,7 @@ site:
       discord: https://discord.gg/NserMXcx
       github: https://github.com/torqbit
       youtube: https://youtube.com/@torqbit
-    name: Aisha
+    name: Torqbit
     brandColor: "#8980fd"
     title: Modern education starts here
     icon: https://cdn.torqbit.com/static/brand-icon.png
@@ -44,11 +44,11 @@ site:
       darkModePath: https://cdn.torqbit.com/static/landing/hero-bg-dark.png
       position: background
   businessInfo:
-    gstNumber: null
-    panNumber: null
-    country: null
-    state: null
-    address: null
+    gstNumber:
+    panNumber:
+    country:
+    state:
+    address:
   sections:
     features:
       enabled: true
@@ -82,8 +82,8 @@ site:
       enable: false
     blog:
       enable: true
-      title: Blog
-      description: ""
+      title: Blogs
+      description: Description on blogs
     faq:
       enabled: true
       items:
