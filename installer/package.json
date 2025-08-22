@@ -1,0 +1,46 @@
+{
+  "name": "torqbit",
+  "version": "1.0.4",
+  "description": "One-command installer to set up and run Torqbit via Docker Compose",
+  "bin": {
+    "torqbit": "index.js"
+  },
+  "type": "module",
+  "license": "MIT",
+  "author": "Torqbit",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/torqbit/torqbit.git"
+  },
+  "bugs": {
+    "url": "https://github.com/torqbit/torqbit/issues"
+  },
+  "homepage": "https://github.com/torqbit/torqbit#readme",
+  "engines": {
+    "node": ">=16"
+  },
+  "files": [
+    "index.js",
+    "docker-compose.yml",
+    "README.md"
+  ],
+  "keywords": [
+    "torqbit",
+    "ai-assistant",
+    "llm",
+    "rag",
+    "qdrant",
+    "openai",
+    "customer-education"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "prompts": "^2.4.2",
+    "semver": "^7.6.3",
+    "which": "^4.0.0",
+    "yaml": "^2.5.1"
+  }
+}

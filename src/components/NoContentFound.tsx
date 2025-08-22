@@ -12,7 +12,7 @@ const NoContentFound: FC<{
   icon: React.ReactNode;
 }> = ({ content, isMobile, icon }) => {
   return (
-    <Flex align="center" justify="center" gap={10}>
+    <Flex align="center" justify="center" gap={10} style={{ margin: "100px 0" }}>
       <div
         style={{
           height: 400,

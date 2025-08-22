@@ -1,11 +1,43 @@
 /** @type {import('next').NextConfig} */
-
+import cacheConfig from "./cacheConfig.mjs";
 const { protocol, hostname } = new URL(process.env.NEXTAUTH_URL || "http://localhost:3000");
 import pwa from "next-pwa";
-import cacheConfig from "./cacheConfig.mjs";
+import * as sass from "sass";
+const isDev = process.env.NODE_ENV === "development";
+
+// Completely disable Sass logger to silence deprecation warnings
+const sassOptions = {
+  sassOptions: {
+    implementation: sass,
+    logger: {
+      debug: () => {},
+      warn: () => {},
+      error: () => {},
+    },
+  },
+};
 
 const nextConfig = {
-  // reactStrictMode: true,
+  ...sassOptions,
+  reactStrictMode: isDev,
+  swcMinify: true,
+  experimental: {
+    // Enable Turbo mode with better caching
+    turbo: {},
+
+    // Better package optimization
+    optimizePackageImports: [
+      "antd",
+      "lucide-react",
+      "@ant-design/icons",
+      "react-icons",
+      "@tiptap/react",
+      "@tiptap/core",
+    ],
+
+    // Optimize server components
+    serverComponentsExternalPackages: ["sharp", "canvas", "puppeteer", "ffmpeg", "sodium-native"],
+  },
   transpilePackages: [
     // antd & deps
     "@ant-design",
@@ -61,7 +93,7 @@ const nextConfig = {
     ],
   },
 
-  productionBrowserSourceMaps: false,
+  productionBrowserSourceMaps: isDev,
   typescript: {
     //for production
     ignoreBuildErrors: true,
@@ -76,7 +108,7 @@ const withPWA = pwa({
   dest: "public",
   register: true,
   skipWaiting: true,
-  disable: process.env.NODE_ENV === "development",
+  disable: isDev,
   runtimeCaching: cacheConfig,
 });
 

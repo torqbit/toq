@@ -1,12 +1,12 @@
 import { FC, useEffect, useState } from "react";
 import styles from "./Analytics.module.scss";
-import { Flex, Segmented } from "antd";
+import { Flex, Segmented, Spin } from "antd";
 import { AnalyticsDuration, AnalyticsType, IAnalyticStats } from "@/types/courses/analytics";
 import LineChart from "@/components/Admin/Analytics/LineChart";
 import { Serie } from "@nivo/line";
-import appConstant from "@/services/appConstant";
-import { capsToPascalCase } from "@/lib/utils";
+
 import { PageSiteConfig } from "@/services/siteConstant";
+import { LoadingOutlined } from "@ant-design/icons";
 
 export const ToolTipContainer: FC<{ title: string; value: string; date: string }> = ({ title, value, date }) => {
   return (
@@ -29,24 +29,12 @@ const Analytics: FC<{
   const [segment, setSegment] = useState<AnalyticsDuration>("month");
   const getDescription = (type: AnalyticsType) => {
     switch (type) {
-      case "Earnings":
+      case "AIMessages":
         return (
           <p>
-            This {segment} you earned{" "}
-            <strong>
-              {currency} {info.total}
-            </strong>
-            &nbsp; which is <strong>{Math.abs(info.comparedPercentage)}% </strong>{" "}
-            {info.comparedPercentage > 0 ? "more" : "less"} than last {segment}
-          </p>
-        );
-
-      case "Enrollments":
-        return (
-          <p>
-            This {segment}, you had <strong>{info.total}</strong> new enrollments, which is
-            <strong> {Math.abs(info.comparedPercentage)}% </strong> {info.comparedPercentage > 0 ? "more" : "less"} than
-            last {segment}
+            This {segment}, <strong>{info.total}</strong> new chat messages were asked by members, which is{" "}
+            <strong>{Math.abs(info.comparedPercentage)}% </strong>
+            {info.comparedPercentage > 0 ? "more" : "less"} than last {segment}.
           </p>
         );
 
@@ -63,6 +51,19 @@ const Analytics: FC<{
             last {segment}
           </p>
         );
+      case "PageViews":
+        <p>
+          This {segment}, you had <strong>{info.total}</strong> page views, which is{" "}
+          <strong>{Math.abs(info.comparedPercentage)}% </strong> {info.comparedPercentage > 0 ? "more" : "less"} than
+          last {segment}
+        </p>;
+        return (
+          <p>
+            This {segment} you had <strong>{info.total}</strong> page views which is{" "}
+            <strong>{Math.abs(info.comparedPercentage)}% </strong> {info.comparedPercentage > 0 ? "more" : "less"} than
+            last {segment}
+          </p>
+        );
 
       default:
         break;
@@ -75,11 +76,23 @@ const Analytics: FC<{
 
   const TooltipWrapper = (value: number, date: string): React.ReactNode => {
     switch (info.type) {
-      case "Earnings":
+      case "AIMessages":
         return (
           <ToolTipContainer
-            title="Earned"
-            value={` ${currency} ${value}`}
+            title="Messages"
+            value={`${value} ${value > 0 && value > 1 ? "Messages" : "Message"}`}
+            date={
+              segment === "month"
+                ? `on ${date} ${new Date().toLocaleString("default", { month: "short" })}`
+                : `in ${date}`
+            }
+          />
+        );
+      case "PageViews":
+        return (
+          <ToolTipContainer
+            title="Views"
+            value={`${value} ${value > 0 && value > 1 ? "Views" : "View"}`}
             date={
               segment === "month"
                 ? `on ${date} ${new Date().toLocaleString("default", { month: "short" })}`
@@ -88,18 +101,6 @@ const Analytics: FC<{
           />
         );
 
-      case "Enrollments":
-        return (
-          <ToolTipContainer
-            title="Enrolled"
-            value={`${value} ${value > 0 && value > 1 ? "students" : "Student"}`}
-            date={
-              segment === "month"
-                ? `on ${date} ${new Date().toLocaleString("default", { month: "short" })}`
-                : `in ${date}`
-            }
-          />
-        );
       case "Users":
         return (
           <ToolTipContainer
@@ -151,45 +152,47 @@ const Analytics: FC<{
   };
   return (
     <div className={styles.analytics__wrapper}>
-      <Flex vertical gap={50}>
-        <Flex align="center" justify="space-between">
-          {getDescription(info.type)}
-          <Segmented
-            className={styles.segment}
-            value={segment}
-            onChange={(value: AnalyticsDuration) => {
-              setSegment(value);
-              handleAnalytic(value, info.type);
-            }}
-            options={[
-              {
-                label: "This Month",
-                value: "month",
-              },
-              {
-                label: "Quarter",
-                value: "quarter",
-              },
-              {
-                label: "Year",
-                value: "year",
-              },
-            ]}
-          />
+      <Spin spinning={loading} indicator={<LoadingOutlined spin />} size="large">
+        <Flex vertical gap={50}>
+          <Flex align="center" justify="space-between">
+            {getDescription(info.type)}
+            <Segmented
+              className={styles.segment}
+              value={segment}
+              onChange={(value: AnalyticsDuration) => {
+                setSegment(value);
+                handleAnalytic(value, info.type);
+              }}
+              options={[
+                {
+                  label: "This Month",
+                  value: "month",
+                },
+                {
+                  label: "Quarter",
+                  value: "quarter",
+                },
+                {
+                  label: "Year",
+                  value: "year",
+                },
+              ]}
+            />
+          </Flex>
+          <div className={styles.line__chart__wrapper} style={{ height: "50vh" }}>
+            <LineChart
+              key={segment}
+              TooltipWrapper={TooltipWrapper}
+              data={data}
+              title={"Rupees"}
+              axisBottomTitle={getAxisBottomTitle()}
+              axisLeftTitle={info.type}
+              yMaxLength={data.length > 0 ? getYmaxLength(data[0].data.map((d) => Number(d.y))) : undefined}
+              color={siteConfig.brand?.brandColor}
+            />
+          </div>
         </Flex>
-        <div className={styles.line__chart__wrapper} style={{ height: "50vh" }}>
-          <LineChart
-            key={segment}
-            TooltipWrapper={TooltipWrapper}
-            data={data}
-            title={"Rupees"}
-            axisBottomTitle={getAxisBottomTitle()}
-            axisLeftTitle={info.type}
-            yMaxLength={data.length > 0 ? getYmaxLength(data[0].data.map((d) => Number(d.y))) : undefined}
-            color={siteConfig.brand?.brandColor}
-          />
-        </div>
-      </Flex>
+      </Spin>
     </div>
   );
 };

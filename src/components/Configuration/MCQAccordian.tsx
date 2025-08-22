@@ -1,9 +1,7 @@
 import { FC, useEffect } from "react";
+import styles from "./cms.module.scss";
 
-import styles from "./CMS/CMS.module.scss";
 import { Collapse } from "antd";
-import SvgIcons from "../SvgIcons";
-import { CaretRightOutlined, RightOutlined } from "@ant-design/icons";
 
 const ConfigFormLayout: FC<{
   children?: React.ReactNode;

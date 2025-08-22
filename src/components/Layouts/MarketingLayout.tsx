@@ -9,10 +9,9 @@ import darkThemeConfig from "@/services/darkThemeConfig";
 import antThemeConfig from "@/services/antThemeConfig";
 import { DEFAULT_THEME, PageSiteConfig } from "@/services/siteConstant";
 import { useMediaQuery } from "react-responsive";
-import { Role, User } from "@prisma/client";
+import { Role, TenantRole, User } from "@prisma/client";
 import { IBrandInfo } from "@/types/landing/navbar";
 import { Theme } from "@/types/theme";
-import Footer from "@/templates/standard/components/Footer/Footer";
 import NavBar from "@/templates/standard/components/NavBar/NavBar";
 import { LoadingOutlined, UserOutlined } from "@ant-design/icons";
 import Link from "next/link";
@@ -22,13 +21,13 @@ import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import appLayoutStyles from "@/styles/Layout2.module.scss";
 import type { NotificationArgsProps } from "antd";
-import NotificationPopOver from "../Notification/NotificationPopOver";
-import NotificationView from "../Notification/NotificationView";
 import { getFetch } from "@/services/request";
 
 import { isValidGeneralLink, isValidImagePath } from "@/lib/utils";
 import DOMPurify from "isomorphic-dompurify";
 import appConstant from "@/services/appConstant";
+import SupportClientService from "@/services/client/tenant/SupportClientService";
+import { getChatHistoryList } from "@/actions/getChatHistoryList";
 
 type NotificationPlacement = NotificationArgsProps["placement"];
 
@@ -42,6 +41,11 @@ const MarketingLayout: FC<{
   showFooter?: boolean;
   navBarWidth?: string | number;
   mobileHeroMinHeight?: string | number;
+  metaData?: {
+    title: string;
+    ogImage: string;
+    description: string;
+  };
 }> = ({
   children,
   heroSection,
@@ -52,16 +56,15 @@ const MarketingLayout: FC<{
   showFooter = true,
   navBarWidth,
   mobileHeroMinHeight = "30vh",
+  metaData,
 }) => {
   const { globalState, dispatch } = useAppContext();
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
   const [showNotification, setOpenNotification] = useState(false);
   const [api, contextHolder] = notification.useNotification();
   const [messageApi, contexMessagetHolder] = message.useMessage();
-  const authorizedUrls = appConstant.authorizedUrls;
 
-  const router = useRouter();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
 
   const { brand } = siteConfig;
   useEffect(() => {
@@ -92,7 +95,7 @@ const MarketingLayout: FC<{
     });
     dispatch({
       type: "SET_USER",
-      payload: { ...session },
+      payload: { ...session, role: session?.role, tenantRole: session?.tenant?.role },
     });
 
     dispatch({
@@ -124,6 +127,15 @@ const MarketingLayout: FC<{
       payload: siteConfig,
     });
     if (localStorage.getItem("theme")) {
+      if (!globalState.appLoaded) {
+        if (session?.tenant?.role == TenantRole.MEMBER) {
+          getChatHistoryList().then((res) => {
+            dispatch({ type: "SET_CHAT_LIST", payload: res });
+          });
+        }
+
+        dispatch({ type: "SET_APP_LOADED", payload: true });
+      }
       dispatch({
         type: "SET_LOADER",
         payload: false,
@@ -132,81 +144,8 @@ const MarketingLayout: FC<{
   };
 
   useEffect(() => {
-    let eventSource: EventSource;
-    if (user) {
-      eventSource = new EventSource("/api/v1/notification/push");
-
-      eventSource.addEventListener("open", (event) => {});
-
-      eventSource.addEventListener("message", (event) => {
-        try {
-          const data = JSON.parse(event.data);
-
-          const getNotificationView = NotificationView({ ...data, hasViewed: true });
-          dispatch({
-            type: "SET_UNREAD_NOTIFICATION",
-            payload: data.notificationCount || 0,
-          });
-
-          data.notificationType &&
-            openNotification(
-              "topRight",
-              getNotificationView.message,
-              getNotificationView.description,
-              getNotificationView.objectId,
-              getNotificationView.targetLink
-            );
-        } catch (e) {
-          console.error("Error parsing message:", e);
-        }
-      });
-
-      eventSource.addEventListener("error", (error) => {
-        console.error("EventSource error:", error);
-        eventSource.close();
-      });
-    }
-    return () => {
-      if (eventSource) {
-        eventSource.close();
-      }
-    };
-  }, []);
-
-  const updateNotification = async (id: number, targetLink?: string) => {
-    try {
-      let apiPath = `/api/v1/notification/update/${id}`;
-      getFetch(apiPath);
-
-      targetLink && router.push(targetLink);
-    } catch (err) {
-      messageApi.error(`${err}`);
-    }
-  };
-
-  const openNotification = (
-    placement: NotificationPlacement,
-    message: React.ReactNode,
-    description: React.ReactNode,
-    objectId?: string,
-    targetLink?: string
-  ) => {
-    api.open({
-      message: message,
-      closeIcon: <i style={{ fontSize: 18, color: "var(--font-secondary)", lineHeight: 0 }}>{SvgIcons.xMark}</i>,
-      description: description,
-
-      style: { cursor: "pointer" },
-      placement,
-      onClick: () => {
-        objectId && updateNotification(Number(objectId), targetLink);
-      },
-    });
-  };
-
-  useEffect(() => {
-    onCheckTheme();
-  }, [siteConfig.brand?.defaultTheme]);
+    status !== "loading" && onCheckTheme();
+  }, [siteConfig.brand?.defaultTheme, session]);
 
   const getNavBarExtraContent = (userRole?: Role) => {
     let showThemeSwitch = siteConfig.brand?.themeSwitch;
@@ -215,45 +154,27 @@ const MarketingLayout: FC<{
       case Role.STUDENT:
         return (
           <>
-            <ul>
-              <li>
-                <Link href={"/courses"} style={{ color: "var(--font-secnodary)" }} aria-label={`link to course page`}>
-                  Courses
-                </Link>
-              </li>
-              <li>
-                <Link href={"/blogs"} style={{ color: "var(--font-secnodary)" }} aria-label={`link to blogs page`}>
-                  Blogs
-                </Link>
-              </li>
-            </ul>
-
             <Flex align="center" gap={30}>
               <Flex align="center" gap={20} style={{ marginTop: 2 }}>
                 {showThemeSwitch && (
                   <ThemeSwitch activeTheme={globalState.theme ?? "light"} previewMode={previewMode} />
                 )}
-
-                <NotificationPopOver
-                  minWidth={isMobile ? "70vw" : "420px"}
-                  placement="bottomLeft"
-                  siteConfig={siteConfig}
-                  showNotification={showNotification}
-                  onOpenNotification={setOpenNotification}
-                />
               </Flex>
               <Dropdown
                 menu={{
                   items: [
                     {
                       key: "0",
-                      label: <Link href={`/setting`}>Setting</Link>,
+                      label: <Link href={`/settings`}>Setting</Link>,
                     },
                     {
                       key: "1",
                       label: <>Logout</>,
-                      onClick: () => {
-                        signOut();
+                      onClick: async () => {
+                        await signOut({
+                          redirect: false,
+                          callbackUrl: `/login`,
+                        });
                       },
                     },
                   ],
@@ -272,31 +193,8 @@ const MarketingLayout: FC<{
         );
 
       default:
-        let items = siteConfig.navBar?.links || [];
         return (
           <>
-            {siteConfig.navBar?.links && siteConfig.navBar?.links.length === 0 ? (
-              <div></div>
-            ) : (
-              <ul>
-                {items.map((navigation, i) => {
-                  return (
-                    <li key={i}>
-                      <Link
-                        href={
-                          authorizedUrls.includes(DOMPurify.sanitize(`${navigation.link}`))
-                            ? DOMPurify.sanitize(`${navigation.link}`)
-                            : "#"
-                        }
-                        aria-label={`link to ${DOMPurify.sanitize(`${navigation.title}`)} page`}
-                      >
-                        {navigation.title}
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
             <Flex align="center" gap={20}>
               {showThemeSwitch && <ThemeSwitch activeTheme={globalState.theme ?? "light"} previewMode={previewMode} />}
 
@@ -321,12 +219,33 @@ const MarketingLayout: FC<{
   };
   return (
     <ConfigProvider theme={globalState.theme == "dark" ? darkThemeConfig(siteConfig) : antThemeConfig(siteConfig)}>
-      <Spin spinning={globalState.pageLoading} indicator={<LoadingOutlined spin />} fullscreen size="large" />
+      <Spin spinning={globalState.pageLoading} fullscreen indicator={<LoadingOutlined spin />} size="large">
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            minHeight: "100vh",
+            backgroundColor: "red",
+          }}
+        ></div>
+      </Spin>
 
       <Head>
-        <title>{`${siteConfig.brand?.name} · ${siteConfig.brand?.title}`}</title>
-        <meta name="description" content={siteConfig.brand?.description} />
-        <meta property="og:image" content={getOgImagSrc()} />
+        <title>{`${siteConfig.brand?.name} · ${
+          metaData && metaData.title ? metaData.title : siteConfig.brand?.title
+        }`}</title>
+        <meta
+          name="description"
+          content={
+            metaData && metaData.description ? metaData.description.substring(0, 100) : siteConfig.brand?.description
+          }
+        />
+        <meta
+          property="og:image"
+          content={metaData && metaData.ogImage ? metaData.ogImage : siteConfig.brand?.ogImage}
+        />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
         <link
@@ -336,108 +255,108 @@ const MarketingLayout: FC<{
           }
         />
       </Head>
-      <section
-        className={`${styles.heroWrapper} hero__wrapper`}
-        style={{ minHeight: isMobile ? mobileHeroMinHeight : "60px" }}
-      >
-        {contextHolder}
-        {contexMessagetHolder}
-        {isMobile && user?.role == Role.STUDENT ? (
-          <Flex
-            style={{ width: "90vw", padding: "10px 0px" }}
-            align="center"
-            justify="space-between"
-            className={router.pathname.startsWith("/academy/course/") ? "" : appLayoutStyles.userNameWrapper}
-          >
-            <Link href={"/setting"}>
-              <Flex align="center" gap={10} style={{ cursor: "pointer" }}>
-                <Avatar src={user?.image} icon={<UserOutlined />} />
-                <h4 style={{ margin: 0 }}> {user?.name}</h4>
-              </Flex>
-            </Link>
-            <Flex align="center" gap={10}>
-              <NotificationPopOver
-                placement="bottomLeft"
-                minWidth={isMobile ? "70vw" : "420px"}
-                siteConfig={siteConfig}
-                showNotification={showNotification}
-                onOpenNotification={setOpenNotification}
-              />
-
-              <Dropdown
-                className={appLayoutStyles.mobileUserMenu}
-                menu={{
-                  items: [
-                    {
-                      key: "0",
-                      label: (
-                        <div
-                          onClick={() => {
-                            const newTheme: Theme = globalState.theme == "dark" ? "light" : "dark";
-                            updateTheme(newTheme);
-                          }}
-                        >
-                          {globalState.theme !== "dark" ? "Dark mode" : "Light mode"}
-                        </div>
-                      ),
-                    },
-
-                    {
-                      key: "1",
-                      label: "Logout",
-                      onClick: () => {
-                        signOut();
+      <div style={{ display: globalState.pageLoading ? "none" : "inherit" }}>
+        <section
+          className={`${styles.heroWrapper} hero__wrapper`}
+          style={{ minHeight: isMobile ? mobileHeroMinHeight : "60px" }}
+        >
+          {contextHolder}
+          {contexMessagetHolder}
+          {isMobile && user?.role == Role.STUDENT ? (
+            <Flex
+              style={{ width: "90vw", padding: "10px 0px" }}
+              align="center"
+              justify="space-between"
+              className={appLayoutStyles.userNameWrapper}
+            >
+              <Link href={"/settings"}>
+                <Flex align="center" gap={10} style={{ cursor: "pointer" }}>
+                  <Avatar src={user?.image} icon={<UserOutlined />} />
+                  <h4 style={{ margin: 0 }}> {user?.name}</h4>
+                </Flex>
+              </Link>
+              <Flex align="center" gap={10}>
+                <Dropdown
+                  className={appLayoutStyles.mobileUserMenu}
+                  menu={{
+                    items: [
+                      {
+                        key: "0",
+                        label: (
+                          <div
+                            onClick={() => {
+                              const newTheme: Theme = globalState.theme == "dark" ? "light" : "dark";
+                              updateTheme(newTheme);
+                            }}
+                          >
+                            {globalState.theme !== "dark" ? "Dark mode" : "Light mode"}
+                          </div>
+                        ),
                       },
-                    },
-                  ],
-                }}
-                trigger={["click"]}
-                placement="bottomRight"
-                arrow={{ pointAtCenter: true }}
-              >
-                <i style={{ fontSize: 30, color: "var(--font-secondary)" }} className={appLayoutStyles.verticalDots}>
-                  {SvgIcons.verticalThreeDots}
-                </i>
-              </Dropdown>
+
+                      {
+                        key: "1",
+                        label: "Logout",
+                        onClick: () => {
+                          signOut({
+                            redirect: false,
+                            callbackUrl: window.location.origin,
+                          }).then((r) => {
+                            window.location.reload();
+                          });
+                        },
+                      },
+                    ],
+                  }}
+                  trigger={["click"]}
+                  placement="bottomRight"
+                  arrow={{ pointAtCenter: true }}
+                >
+                  <i style={{ fontSize: 30, color: "var(--font-secondary)" }} className={appLayoutStyles.verticalDots}>
+                    {SvgIcons.verticalThreeDots}
+                  </i>
+                </Dropdown>
+              </Flex>
             </Flex>
-          </Flex>
-        ) : (
-          <></>
-        )}
+          ) : (
+            <></>
+          )}
 
-        {NavBarComponent && (
-          <NavBarComponent
-            user={user}
-            isMobile={isMobile}
-            defaultNavlink={previewMode ? "#" : "/login"}
+          {NavBarComponent && (
+            <NavBarComponent
+              user={user}
+              isMobile={isMobile}
+              siteConfig={siteConfig}
+              defaultNavlink={previewMode ? "#" : "/login"}
+              homeLink={homeLink ? homeLink : "/"}
+              items={siteConfig.navBar?.links ?? []}
+              showThemeSwitch={siteConfig.brand?.themeSwitch ?? DEFAULT_THEME.brand.themeSwitch}
+              activeTheme={globalState.theme ?? "light"}
+              brand={brandInfo}
+              previewMode={previewMode}
+              extraContent={getNavBarExtraContent(user?.role)}
+              navBarWidth={navBarWidth}
+            />
+          )}
+
+          {heroSection}
+        </section>
+        <div
+          className={`${landingPage.children_wrapper} children__wrapper`}
+          style={{ minHeight: isMobile && heroSection ? `calc(50vh - 250px)` : `calc(100vh - 250px)` }}
+        >
+          {children}
+        </div>
+
+        {/* {showFooter && (
+          <Footer
+            siteConfig={siteConfig}
             homeLink={homeLink ? homeLink : "/"}
-            items={siteConfig.navBar?.links ?? []}
-            showThemeSwitch={siteConfig.brand?.themeSwitch ?? DEFAULT_THEME.brand.themeSwitch}
+            isMobile={isMobile}
             activeTheme={globalState.theme ?? "light"}
-            brand={brandInfo}
-            previewMode={previewMode}
-            extraContent={getNavBarExtraContent(user?.role)}
-            navBarWidth={navBarWidth}
           />
-        )}
-
-        {heroSection}
-      </section>
-      <div
-        className={`${landingPage.children_wrapper} children__wrapper`}
-        style={{ minHeight: isMobile && heroSection ? `calc(50vh - 250px)` : `calc(100vh - 250px)` }}
-      >
-        {children}
+        )} */}
       </div>
-
-      {showFooter && (
-        <Footer
-          siteConfig={siteConfig}
-          homeLink={homeLink ? homeLink : "/"}
-          isMobile={isMobile}
-          activeTheme={globalState.theme ?? "light"}
-        />
-      )}
     </ConfigProvider>
   );
 };

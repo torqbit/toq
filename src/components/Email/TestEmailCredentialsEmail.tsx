@@ -1,6 +1,4 @@
 import { ITestEmailConfig } from "@/lib/emailConfig";
-import { getSiteConfig } from "@/services/getSiteConfig";
-import { PageSiteConfig } from "@/services/siteConstant";
 import {
   Body,
   Button,
@@ -15,15 +13,14 @@ import {
   Section,
   Text,
   Tailwind,
-  TailwindConfig,
 } from "@react-email/components";
-import * as React from "react";
+
 interface IProps {
   configData: ITestEmailConfig;
 }
 
 export const TestEmailCredentialsEmail = ({ configData }: IProps) => {
-  const { site }: { site: PageSiteConfig } = getSiteConfig();
+  const site = configData.site;
 
   return (
     <Tailwind>

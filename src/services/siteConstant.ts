@@ -13,27 +13,19 @@ export const DEFAULT_THEME = {
         title: "Courses",
         link: "/courses",
       },
-      {
-        title: "Events",
-        link: "/events",
-      },
-      {
-        title: "Blog",
-        link: "/blogs",
-      },
     ],
   },
 
   brand: {
-    name: "TORQBIT",
-    logo: "https://cdn.torqbit.com/static/landing/logo.png",
-    darkLogo: "https://cdn.torqbit.com/static/landing/logo-dark.png",
+    name: "Torqbit",
+    logo: "https://cdn.torqbit.com/static/brand/logo.png",
+    darkLogo: "https://cdn.torqbit.com/static/brand/logo-dark.png",
     defaultTheme: "light" as Theme,
     themeSwitch: true,
-    icon: "https://cdn.torqbit.com/static/brand-icon.png",
-    title: "Become a Pro Product Builder",
-    description: "Master the art of product building and turn your ideas into successful, scalable products",
-    ogImage: "https://cdn.torqbit.com/static/brand-icon.png",
+    icon: "https://cdn.torqbit.com/static/brand/brand-icon.png",
+    title: "Unified Customer support and education platform",
+    description: "One platform to scale support, onboard faster, and reduce repetitive questions.",
+    ogImage: "https://cdn.torqbit.com/static/brand/brand-icon.png",
     favicon: "https://cdn.torqbit.com/static/favicon.ico",
     brandColor: "#5b63d3",
     socialLinks: {
@@ -45,7 +37,7 @@ export const DEFAULT_THEME = {
 
   darkMode: true,
   heroSection: {
-    title: "Become a Pro Product Builder",
+    title: "One platform to scale support, onboard faster, and reduce repetitive questions.",
     description:
       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores rerum voluptatum perferendis autem veritatis nostrum. Libero aliquam dignissimos sunt voluptatum!",
     actionButtons: {
@@ -64,7 +56,7 @@ export const DEFAULT_THEME = {
       position: "bottom" as bannerAlignment,
     },
   },
-  buisnessInfo: businessConfig,
+  businessInfo: businessConfig,
   sections: {
     courses: {
       enable: false,
@@ -81,38 +73,10 @@ export const DEFAULT_THEME = {
       title: "Blogs",
       description: "Description for the blog list",
     },
-    features: {
-      enabled: true,
-      items: [
-        {
-          img: "https://cdn.torqbit.com/static/landing/auth.png",
-          title: "Authentication",
-          description: "Configure authentication with Google, Github or any other auth provider supported by NextAuth",
-          link: "/docs/auth",
-          cardClass: "steps__card__small",
-        },
-        {
-          img: "https://cdn.torqbit.com/static/landing/laptop.png",
-          title: "Authentication",
-          description: "Configure authentication with Google, Github or any other auth provider supported by NextAuth",
-          link: "/docs/auth",
-          cardClass: "steps__card__small",
-        },
-        {
-          img: "https://cdn.torqbit.com/static/landing/event.png",
-          title: "Authentication",
-          description: "Configure authentication with Google, Github or any other auth provider supported by NextAuth",
-          link: "/docs/auth",
-          cardClass: "steps__card__small",
-        },
-      ],
-      title: "Features",
-      description: "Features for the learning platform",
-    },
 
     faq: {
       title: "FAQ",
-      description: "FFrequently asked questions by the students",
+      description: "Frequently asked questions by the students",
       items: [
         {
           question: "First question",
@@ -129,7 +93,7 @@ export const DEFAULT_THEME = {
       ],
       enabled: true,
     },
-    tesimonials: {
+    testimonials: {
       items: [],
       enabled: true,
       title: "Teachers love our product",

@@ -1,3 +1,4 @@
+import { PageSiteConfig } from "@/services/siteConstant";
 import { Theme } from "@/types/theme";
 import { User } from "next-auth";
 import { ReactNode } from "react";
@@ -9,7 +10,7 @@ export interface IBrandInfo {
   darkLogo: string | ReactNode;
 }
 export interface INavBarProps {
-  user?: User;
+  user?: any;
   showThemeSwitch: boolean;
   activeTheme: Theme;
   isMobile: boolean;
@@ -19,7 +20,7 @@ export interface INavBarProps {
   previewMode?: boolean;
   extraContent: React.ReactNode;
   navBarWidth?: string | number;
-
+  siteConfig: PageSiteConfig;
   items: {
     title: string;
     link: string;

@@ -1,6 +1,6 @@
 import { FC, useEffect } from "react";
 
-import styles from "./CMS/CMS.module.scss";
+import styles from "./cms.module.scss";
 import { Collapse } from "antd";
 import SvgIcons from "../SvgIcons";
 import { CaretRightOutlined, RightOutlined } from "@ant-design/icons";
@@ -18,7 +18,7 @@ const ConfigFormLayout: FC<{
   formTitle,
   extraContent,
   isCollapsible = false,
-  width = "1200px",
+  width = "var(--main-content-width)",
   marginBottom,
   showArrow = true,
 }) => {

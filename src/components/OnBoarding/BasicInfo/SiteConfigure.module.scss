@@ -32,10 +32,11 @@
       margin-bottom: 15px;
     }
     .form__container {
+      width: 100%;
       margin: 20px;
-      .name__input {
-        width: 300px;
-      }
+      // .name__input {
+      //   width: 300px;
+      // }
       .form__color__picker {
         height: 30px;
         display: flex;

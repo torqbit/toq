@@ -5,6 +5,15 @@
   min-height: 60px;
 }
 
+.chat__history__list {
+  max-width: 200px;
+  -webkit-line-clamp: 1;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .landing__hero {
   .hero_img_bg {
     background-color: var(--bg-secondary);
@@ -15,10 +24,10 @@
 
   div.heroContentContainer {
     position: relative;
-    max-width: var(--marketing-container-width);
+    max-width: var(--main-content-width);
 
     margin: 0 auto;
-    padding: 160px 0 100px 0;
+    padding: 100px 0 100px 0;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -49,7 +58,7 @@
 
     h1 {
       padding: 0px 20px;
-      font-size: 5rem;
+      font-size: 4rem;
       font-weight: 900;
       text-align: center;
     }
@@ -61,6 +70,7 @@
       line-height: 1.4;
       margin-bottom: 40px;
       padding: 0 20px;
+      line-break: auto;
     }
   }
 
@@ -127,17 +137,18 @@
       margin-top: -200px;
     }
 
-    .heroContentContainer {
-      width: 100vw;
+    div.heroContentContainer {
+      width: calc(100vw - 10px);
 
       h1 {
-        font-size: 35px;
+        font-size: 2rem;
       }
 
       img {
         width: 80vw;
         height: auto;
-        margin: 0 auto;
+        margin: 0;
+        max-width: 80vw;
       }
 
       button {

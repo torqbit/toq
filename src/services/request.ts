@@ -3,6 +3,12 @@ export const defaultBodyHeaders = {
   "Content-Type": "application/json",
 };
 
+const handleRedirect = (url: string) => {
+  if (window) {
+    window.location.replace(url);
+  }
+};
+
 export const postFetch = async (body: any, path: string, headers?: any) => {
   if (path.startsWith("http://") || path.startsWith("https://")) {
     throw new Error("Absolute URLs are not allowed. Use relative paths instead.");
@@ -32,6 +38,10 @@ export const postFetch = async (body: any, path: string, headers?: any) => {
     },
   });
 
+  if (res.redirected && res.url && !res.url.includes("api")) {
+    handleRedirect(res.url);
+  }
+
   return res;
 };
 export const postWithFile = async (body: any, path: string, headers?: any) => {
@@ -40,11 +50,13 @@ export const postWithFile = async (body: any, path: string, headers?: any) => {
     body,
   });
 
+  if (res.redirected && res.url && !res.url.includes("api")) {
+    handleRedirect(res.url);
+  }
   return res;
 };
 export const getFetch = async (path: string) => {
   try {
-    // Validate path format
     if (path.startsWith("http://") || path.startsWith("https://")) {
       throw new Error("Absolute URLs are not allowed. Use relative paths instead.");
     }
@@ -68,6 +80,9 @@ export const getFetch = async (path: string) => {
       method: "GET",
       credentials: "same-origin",
     });
+    if (res.redirected && res.url && !res.url.includes("api")) {
+      handleRedirect(res.url);
+    }
 
     return res;
   } catch (error: any) {
@@ -78,6 +93,9 @@ export const getDelete = async (path: string) => {
   const res = await fetch(path, {
     method: "DELETE",
   });
+  if (res.redirected && res.url && !res.url.includes("api")) {
+    handleRedirect(res.url);
+  }
 
   return res;
 };

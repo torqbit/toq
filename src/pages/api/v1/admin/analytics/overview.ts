@@ -1,19 +1,20 @@
 import { NextApiResponse, NextApiRequest } from "next";
 import { errorHandler } from "@/lib/api-middlewares/errorHandler";
 import { withMethods } from "@/lib/api-middlewares/with-method";
-
-import { withUserAuthorized } from "@/lib/api-middlewares/with-authorized";
 import analytics from "@/actions/analytics";
-import { IAnalyticStats } from "@/types/courses/analytics";
-import appConstant from "@/services/appConstant";
+import { withTenantOwnerAuthorized } from "@/lib/api-middlewares/with-tenant-authorized";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
-    const overviewResponse = await analytics.getOverviewDetails();
+    const session = await getServerSession(req, res, await authOptions(req));
+
+    const overviewResponse = await analytics.getOverviewDetails(String(session?.tenant?.tenantId));
     return res.status(overviewResponse.status).json(overviewResponse);
   } catch (error) {
     return errorHandler(error, res);
   }
 };
 
-export default withMethods(["GET"], withUserAuthorized(handler));
+export default withMethods(["GET"], withTenantOwnerAuthorized(handler));

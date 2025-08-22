@@ -1,11 +1,79 @@
 export default {
+  noOfFreeTrialDays: 14,
+  // countryPhoneCode: [
+  //   { flagUrl: "https://flagcdn.com/w40/in.png", code: "+91" }, // India
+  //   { flagUrl: "https://flagcdn.com/w40/us.png", code: "+1" }, // United States
+  //   { flagUrl: "https://flagcdn.com/w40/gb.png", code: "+44" }, // United Kingdom
+  //   { flagUrl: "https://flagcdn.com/w40/ae.png", code: "+971" }, // United Arab Emirates
+  //   { flagUrl: "https://flagcdn.com/w40/sa.png", code: "+966" }, // Saudi Arabia
+  //   { flagUrl: "https://flagcdn.com/w40/qa.png", code: "+974" }, // Qatar
+  //   { flagUrl: "https://flagcdn.com/w40/kw.png", code: "+965" }, // Kuwait
+  //   { flagUrl: "https://flagcdn.com/w40/om.png", code: "+968" }, // Oman
+  //   { flagUrl: "https://flagcdn.com/w40/bh.png", code: "+973" }, // Bahrain
+  //   { flagUrl: "https://flagcdn.com/w40/tr.png", code: "+90" }, // Turkey
+  //   { flagUrl: "https://flagcdn.com/w40/pk.png", code: "+92" }, // Pakistan
+  //   { flagUrl: "https://flagcdn.com/w40/bd.png", code: "+880" }, // Bangladesh
+  //   { flagUrl: "https://flagcdn.com/w40/np.png", code: "+977" }, // Nepal
+  //   { flagUrl: "https://flagcdn.com/w40/lk.png", code: "+94" }, // Sri Lanka
+  //   { flagUrl: "https://flagcdn.com/w40/ir.png", code: "+98" }, // Iran
+  //   { flagUrl: "https://flagcdn.com/w40/id.png", code: "+62" }, // Indonesia
+  //   { flagUrl: "https://flagcdn.com/w40/my.png", code: "+60" }, // Malaysia
+  //   { flagUrl: "https://flagcdn.com/w40/ph.png", code: "+63" }, // Philippines
+  //   { flagUrl: "https://flagcdn.com/w40/th.png", code: "+66" }, // Thailand
+  //   { flagUrl: "https://flagcdn.com/w40/vn.png", code: "+84" }, // Vietnam
+  //   { flagUrl: "https://flagcdn.com/w40/cn.png", code: "+86" }, // China
+  //   { flagUrl: "https://flagcdn.com/w40/jp.png", code: "+81" }, // Japan
+  //   { flagUrl: "https://flagcdn.com/w40/kr.png", code: "+82" }, // South Korea
+  //   { flagUrl: "https://flagcdn.com/w40/sg.png", code: "+65" }, // Singapore
+  //   { flagUrl: "https://flagcdn.com/w40/il.png", code: "+972" }, // Israel
+  //   { flagUrl: "https://flagcdn.com/w40/au.png", code: "+61" }, // Australia
+  //   { flagUrl: "https://flagcdn.com/w40/ru.png", code: "+7" }, // Russia
+  //   { flagUrl: "https://flagcdn.com/w40/ca.png", code: "+1" }, // Canada
+  // ],
+  countryPhoneCode: [
+    { flag: "🇮🇳", code: "+91" }, // India
+    { flag: "🇺🇸", code: "+1" }, // United States
+    { flag: "🇬🇧", code: "+44" }, // United Kingdom
+    { flag: "🇦🇪", code: "+971" }, // United Arab Emirates
+    { flag: "🇸🇦", code: "+966" }, // Saudi Arabia
+    { flag: "🇶🇦", code: "+974" }, // Qatar
+    { flag: "🇰🇼", code: "+965" }, // Kuwait
+  ],
+  months: [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ],
+  availableModels: ["gpt-4o-mini", "gpt-4.1-mini"],
+  targetAudience: ["Developers", "Marketers", "Admins", "Partners", "Analysts"],
+  academyCategory: ["Marketing Automation", "CRM", "DevOps", "CI/CD"],
+  websiteUrl: "https://torqbit.com",
   cmnErrorMsg: "Something went wrong. Please try again later",
-  platformName: "TORQBIT",
-  certificateTemplate: "golden-standard",
-  platformLogo: `/public/icon/torqbit.png`,
-  courseTags: ["HTML", "CSS", "JS", "ReactJS"],
-  assignmentLang: ["html", "css", "javascript", "java", "python", "go", "nodejs", "reactjs"],
-  assignmentFiles: ["index.html", "global.css", "index.js", , "index.ts", "index.tsx", "index.jsx"],
+  platformName: "Torqbit",
+  subDomain: "torq.local:3000",
+  ignoredIP: ["127.0.0.1", "198.168.1.1", "localhost:3000"],
+  platformLogo: `https://cdn.torqbit.com/static/brand/logo.png`,
+  platformIcon: `https://cdn.torqbit.com/static/brand/brand-icon.png`,
+  defaultAgentTemperature: 0.1,
+  defaultAgentPrompt: `
+  You are a smart, friendly, and professional virtual assistant for a SaaS platform. Your role is to guide users through the product, help them complete tasks, understand features, troubleshoot issues, and make the most of the platform. You must respond clearly and concisely, avoiding technical jargon unless the user is experienced. Provide step-by-step instructions when needed, and always ask clarifying questions if the user’s request is unclear or missing context.
+
+  You understand the full scope of the SaaS product, including its features, pricing plans, onboarding steps, integrations, and limitations. You tailor your responses based on the user's experience level and goals—offering quick tips for power users and in-depth help for beginners.
+
+  Maintain a helpful and positive tone, like a supportive team member. When a task isn’t possible or requires external services, explain why and offer alternatives if possible. Always prioritize user success and clear outcomes.
+  
+  `,
+  videoTranscribeDuration: 45,
+  TextToTextModel: "gpt-4.1-mini",
   documentExtensions: [
     { value: "pdf", label: "PDF" },
     { value: "docx", label: "Word" },
@@ -13,9 +81,7 @@ export default {
     { value: "zip", label: "Archive" },
   ],
   authorizedUrls: [
-    "/courses",
     "/blogs",
-    "/setting",
     "/dashboard",
     "/login",
     "/signup",
@@ -24,11 +90,10 @@ export default {
     "/updates",
     "/events",
     "/admin",
-    "/setting",
+    "/settings",
     "/home",
     "/about",
     "/contact",
-    "/courses",
     "/academy",
     "/changelog",
     "/terms-conditions",
@@ -109,28 +174,20 @@ export default {
     { key: "sql", value: "SQL" },
   ],
 
-  courseType: ["FREE", "PAID"],
   defaultPageSize: 5,
   address: "Your address",
   state: "Your state",
   country: "Your country",
-  privatePath: ["/add-course"],
   homeDirName: ".torqbit",
   staticFileDirName: "static",
   defaultCMSProvider: "bunny.net",
+  defaultCMSReplicatedRegions: ["SYD", "SG"],
+  defaultMainStorageRegion: "DE",
+  defaultVideoResolutions: ["360p", "480p", "720p"],
   attachmentFileFolder: "discussion-attachment",
-  assignmentFileFolder: "assignment-files",
-  certificateDirectory: "/courses/certificates/",
   supportEmail: "support@torqbit.com",
-  thumbnailCdnPath: "/courses/lesson/thumbnails/",
   convertMiliSecondsToMinutes: 60 * 1000,
-  assignmentSubmissionLimit: 3,
-  assignmentMinScore: 1,
-  assignmentMaxScore: 10,
-  assignmentPassingMarks: 8,
-  certificateTempFolder: "certificates",
   mediaTempDir: "media",
-  assignmentTempDir: "assignments",
   invoiceTempDir: "invoices",
   currency: "INR",
 

@@ -1,8 +1,6 @@
 import { getFetch, postFetch } from "@/services/request";
 import { APIResponse } from "@/types/apis";
 import { IEmailCredentials } from "@/types/cms/email";
-import { CFPaymentsConfig, PaymentAuthConfig, PaymentInfoConfig } from "@/types/payment";
-import { $Enums, ConfigurationState } from "@prisma/client";
 
 class EmailClient {
   saveAndTestEmailCredentials = (
@@ -42,7 +40,11 @@ class EmailClient {
       });
   };
 
-  updateEmailConfig = (config: IEmailCredentials, onSuccess: (response: APIResponse<any>) => void, onFailure: (err: string) => void) => {
+  updateEmailConfig = (
+    config: IEmailCredentials,
+    onSuccess: (response: APIResponse<any>) => void,
+    onFailure: (err: string) => void
+  ) => {
     postFetch(config, `/api/v1/admin/config/payments/configure`)
       .then(async (result) => {
         const response = (await result.json()) as APIResponse<any>;

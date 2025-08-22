@@ -1,37 +1,63 @@
 services:
   web:
-    image: torqbit/torqbit:0.1.7
+    image: torqbit/torqbit:v1.0.3
     ports:
-      - "8080:80"
+      - "8080:8080"
     build: .
-    command: ["sh", "-c", "nginx ; npx prisma db push --accept-data-loss; PORT=8080 yarn start"]
+    command: ["sh", "-c", "npx prisma db push --accept-data-loss; PORT=8080 yarn start"]
 
     depends_on:
       db:
         condition: service_healthy
+
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:80/api/user/get-all || exit 1"]
+      test: ["CMD", "curl", "-f", "http://localhost:8080/ || exit 1"]
       interval: 30s
       timeout: 2s
       retries: 5
       start_period: 15s
 
     environment:
-      DATABASE_URL: "mysql://admin:torq123@db:3306/torqbitdb"
+      # Core
       NODE_ENV: "production"
       PORT: 8080
-      NEXT_PUBLIC_SECRET: "1RIpybeRHk21xmtzk2jjPxvayAD8FEtHauQTbx8bShE="
+
+      # Database
+      DATABASE_OS_URL: "mysql://admin:torq123@db:3306/torqbitdb"
+
+      # Auth + URLs
+      NEXTAUTH_SECRET: "dev-secret-change-me"
       NEXTAUTH_URL: "http://localhost:8080"
-      NEXT_PUBLIC_APP_ENV: "development"
       NEXT_PUBLIC_NEXTAUTH_URL: "http://localhost:8080"
+      NEXT_PUBLIC_APP_ENV: "development"
+
+      # Vector DB (Qdrant)
+      QDRANT_HOST: qdrant
+      QDRANT_PORT: 6333
+      # Cookies / domains
+      COOKIE_DOMAIN: "localhost"
+
+      # Email
+      NEXT_SMTP_HOST: "smtp.example.com"
+      NEXT_SMTP_USER: "user@example.com"
+      NEXT_SMTP_EMAIL: "no-reply@example.com"
+      NEXT_SMTP_PASSWORD: "password"
+
+      # App settings
+      ADMIN_EMAIL: "admin@example.com"
+      CRAWLEE_STORAGE_DIR: "/tmp/crawlee"
+      EMBED_SCRIPT_PATH: "https://cdn.torqbit.com/static/js/chat-embed.dev.js"
+
+      # Puppeteer cache (if used)
+      PUPPETEER_CACHE_DIR: "/root/.puppeteer-cache"
 
     networks:
       - app-network
 
   db:
-    image: mysql:8.0.12
+    image: mysql:8.2.0
     hostname: db.torqbit.com
-    command: --default-authentication-plugin=mysql_native_password
+    command: --default-authentication-plugin=caching_sha2_password
     healthcheck:
       test: mysqladmin ping -h 127.0.0.1 -u $$MYSQL_USER --password=$$MYSQL_PASSWORD
       interval: 2s
@@ -51,9 +77,21 @@ services:
     networks:
       - app-network
 
+  qdrant:
+    image: qdrant/qdrant:v1.15.3
+    container_name: qdrant
+    ports:
+      - "6333:6333" # REST
+      - "6334:6334" # gRPC
+    volumes:
+      - qdrant-data:/qdrant/storage
+    networks:
+      - app-network
+
 networks:
   app-network:
     driver: bridge
 
 volumes:
   db-data:
+  qdrant-data:

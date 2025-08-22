@@ -1,8 +1,25 @@
-import { FC } from "react";
+import { FC, ReactNode } from "react";
 
-import styles from "./CMS/CMS.module.scss";
-import { IConfigForm } from "./CMS/ContentManagementSystem";
+import styles from "./cms.module.scss";
 import { Divider, Flex } from "antd";
+
+export interface IConfigForm {
+  title: string;
+  description: string;
+  input: ReactNode;
+  optional?: boolean;
+  divider?: boolean;
+  layout?: "vertical" | "horizontal";
+  inputName?: string;
+}
+
+export interface IConfigInput {
+  title: string;
+  description: string;
+  input: ReactNode;
+  inputName: string;
+  optional?: boolean;
+}
 
 export const ConfigFormItem: FC<IConfigForm> = ({ title, description, input, divider, optional, layout }) => {
   return (

@@ -1,27 +1,17 @@
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
-import { authConstants } from "../utils";
+import { AuthProvider } from "@prisma/client";
 
-export default function getLoginMethods() {
+export default async function getLoginMethods(req: any) {
   let loginMethods: string[] = [];
-  const configuredProviders = authOptions.providers.map((p) => p.id);
-  authOptions.providers.forEach((provider) => {
-    if (
-      provider.id === authConstants.GOOGLE_AUTH_PROVIDER &&
-      process.env[authConstants.ENV_GOOGLE_ID] &&
-      process.env[authConstants.ENV_GOOGLE_ID] !== "" &&
-      process.env[authConstants.ENV_GOOGLE_SECRET] &&
-      process.env[authConstants.ENV_GOOGLE_SECRET] != ""
-    ) {
+
+  const configuredProviders = (await authOptions(req)).providers.map((p) => p.id);
+
+  (await authOptions(req)).providers.forEach((provider) => {
+    if (provider.id.toUpperCase() === AuthProvider.EMAIL) {
       loginMethods.push(provider.id);
-    } else if (
-      provider.id === authConstants.GITHUB_AUTH_PROVIDER &&
-      process.env[authConstants.ENV_GITHUB_ID] &&
-      process.env[authConstants.ENV_GITHUB_ID] != "" &&
-      process.env[authConstants.ENV_GITHUB_SECRET] &&
-      process.env[authConstants.ENV_GITHUB_SECRET] != ""
-    ) {
+    } else if (provider.id.toUpperCase() === AuthProvider.GOOGLE) {
       loginMethods.push(provider.id);
-    } else if (provider.id == authConstants.CREDENTIALS_AUTH_PROVIDER) {
+    } else if (provider.id.toUpperCase() === AuthProvider.GITHUB) {
       loginMethods.push(provider.id);
     }
   });

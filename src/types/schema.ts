@@ -1,5 +1,4 @@
 import { FC, ReactNode } from "react";
-import { IFeatureCard, IFeatureInfo } from "./landing/feature";
 export type bannerAlignment = "left" | "right" | "bottom" | "background";
 import { Theme } from "@/types/theme";
 import { IFaqInfo } from "./landing/faq";
@@ -9,7 +8,7 @@ export interface ISocialLinks {
   github?: string;
   youtube?: string;
   instagram?: string;
-  twitter?: string;
+  xcom?: string;
   discord?: string;
 }
 export interface IBrandConfig {
@@ -86,7 +85,6 @@ export interface ThemeSchema {
   sections?: {
     courses?: ICourseConfig;
     blog?: IBlogConfig;
-    features?: IFeatureInfo;
     faq?: IFaqInfo;
     testimonials?: ITestimonialInfo;
     learning?: ILearningConfig;

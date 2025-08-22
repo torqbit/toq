@@ -1,20 +1,31 @@
 import { createCache, extractStyle, StyleProvider } from "@ant-design/cssinjs";
 import Document, { Head, Html, Main, NextScript } from "next/document";
 import type { DocumentContext } from "next/document";
+import Script from "next/script";
 import React from "react";
 
 export default function MyDocument() {
   return (
-    <Html lang='en' data-theme='light'>
+    <Html lang="en" data-theme="light">
       <Head>
-        <link rel='manifest' href='/manifest.json' />
-        <link rel='apple-touch-icon' href='/favicon.ico'></link>
-        <meta name='theme-color' content='#000' />
-        <link rel='preconnect' href='https://fonts.googleapis.com' />
-        <link rel='preconnect' href='https://fonts.gstatic.com' crossOrigin='anonymous' />
-        <link href='https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;1,500&display=swap' rel='stylesheet'></link>
-        <link href='https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css' rel='stylesheet'></link>
-        <script src='https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js'></script>
+        <link rel="manifest" href="/manifest.json" />
+        <link rel="apple-touch-icon" href="/favicon.ico"></link>
+        <meta name="theme-color" content="#000" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;1,500&display=swap"
+          rel="stylesheet"
+        ></link>
+        <link
+          href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css"
+          rel="stylesheet"
+        ></link>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+        <script id="razorpay-checkout-js" src="https://checkout.razorpay.com/v1/checkout.js" />
+        {process.env.NODE_ENV == "production" && (
+          <Script src="https://cdn.seline.com/seline.js" data-token={"a2fdad6b83637a8"} strategy="afterInteractive" />
+        )}
       </Head>
       <body>
         <Main />
@@ -29,8 +40,7 @@ MyDocument.getInitialProps = async (ctx: DocumentContext) => {
   const originalRenderPage = ctx.renderPage;
   ctx.renderPage = () =>
     originalRenderPage({
-      enhanceApp: (App) => (props) =>
-      (
+      enhanceApp: (App) => (props) => (
         <StyleProvider hashPriority="high" cache={cache}>
           <App {...props} />
         </StyleProvider>

@@ -1,17 +1,25 @@
-import { IAnalyticStats } from "@/types/courses/analytics";
+import { AnalyticsType, IAnalyticStats } from "@/types/courses/analytics";
 import styles from "./Analytics.module.scss";
 import { Card, Flex, Tag } from "antd";
 import { FC } from "react";
-import appConstant from "@/services/appConstant";
 import SvgIcons from "../SvgIcons";
 
 const AnalyticsCard: FC<IAnalyticStats> = ({ type, total, comparedPercentage, currency }) => {
+  const getTitle = (type: AnalyticsType) => {
+    switch (type) {
+      case "AIMessages":
+        return "AI Messages";
+      case "PageViews":
+        return "Page Views";
+
+      default:
+        return type;
+    }
+  };
   return (
     <Card className={styles.stats}>
-      <p>Total {type}</p>
-      <h2>
-        {type == "Earnings" && currency ? currency : ""} {total}
-      </h2>
+      <p>Total {getTitle(type)}</p>
+      <h2>{total}</h2>
       <Flex align="center">
         {comparedPercentage && comparedPercentage !== 0 ? (
           <Tag color={comparedPercentage > 0 ? "green" : "volcano"}>

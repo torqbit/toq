@@ -1,0 +1,46 @@
+.glow__card {
+  /* @property won't work in many browsers - let's use a standard CSS animation approach instead */
+
+  aspect-ratio: 1;
+  position: relative;
+  color: white;
+  padding: 2rem;
+  border-radius: 50%;
+  overflow: hidden;
+  display: grid;
+  place-content: center;
+  box-shadow: 0 0 40px hsla(0, 100%, 50%, 0.05);
+
+  &::before {
+    position: absolute;
+    inset: 0;
+    content: "";
+    z-index: -2;
+    background-image: conic-gradient(#007498, #00d493, #d91982, #f5a95b, #007498);
+    animation: rotate 7s linear infinite;
+    animation-name: rotate; /* This helps CSS Modules identify the animation name for scoping */
+  }
+
+  &::after {
+    position: absolute;
+    width: 94%;
+    height: 94%;
+    top: 3%;
+    left: 3%;
+    border-radius: 50%;
+    content: "";
+    z-index: -1;
+    background: black;
+    filter: blur(12px);
+  }
+}
+
+/* Use :global to prevent CSS Modules from renaming the animation */
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

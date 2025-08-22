@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
 import type { AppProps } from "next/app";
-import "../styles/globals.css";
 import "../styles/globalStyles.scss";
 import "antd/dist/reset.css";
+import "../styles/globals.css";
 import "aos/dist/aos.css";
 import { SessionProvider } from "next-auth/react";
 import { Session } from "next-auth";

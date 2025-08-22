@@ -1,12 +1,52 @@
 .footerContainer {
   background-color: var(--bg-primary);
-  padding: 40px 0px;
+  padding: 20px 0px;
+
+  .social__links__icon {
+    background-color: var(--bg-secondary);
+    transition: all 0.4s ease-in-out;
+    padding: 10px;
+    border-radius: 50%;
+    i {
+      font-size: 18px;
+      line-height: 0;
+      color: var(--font-secondary);
+    }
+    &:hover {
+      background-color: var(--bg-tag);
+    }
+  }
+
+  .powered__by {
+    a {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--bg-tag);
+      padding: 5px 10px;
+      border-radius: 4px;
+      transition: all 0.2s ease-in-out;
+
+      &:hover {
+        color: var(--font-primary);
+      }
+
+      p {
+        margin: 0;
+        color: inherit;
+      }
+
+      img {
+        height: 30px;
+      }
+    }
+  }
 
   footer {
     max-width: var(--marketing-container-width);
     margin: 0 auto;
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: space-between;
     a {
       color: var(--font-secondary);
@@ -59,12 +99,13 @@
 
     footer {
       width: calc(100vw - 40px);
-      gap: 40px;
-      flex-direction: column-reverse;
+      gap: 20px;
+      flex-direction: column;
+      justify-content: center;
 
       > div:first-child {
-        flex-direction: row;
         align-items: center;
+        justify-items: center;
         width: 100%;
         gap: 70px;
       }

@@ -19,7 +19,7 @@ const LegalAgreement: FC<IProps> = ({ content, titleDescription, isMobile }) => 
             return (
               <Space key={i} direction="vertical" id={list.id}>
                 <Flex align={isMobile ? "flex-start" : "flex-start"} gap={5} className={styles.titleWrapper}>
-                  {i + 1}.<h1>{list.title}</h1>
+                  {i + 1}.<h4>{list.title}</h4>
                 </Flex>
                 <div className={styles.descriptionWrapper}>
                   {list.label !== "" && <p>{list.label}</p>}

@@ -12,7 +12,7 @@
     overflow: hidden;
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
-
+    height: calc(100vh);
     .site__preview__titlebar {
       padding: 0px 10px;
       border-top-left-radius: 8px;
@@ -55,6 +55,7 @@
         width: 200px;
         display: flex;
         align-items: center;
+        justify-content: space-between;
         gap: 5px;
         padding: 5px 10px;
         border-radius: 30px;
@@ -89,7 +90,7 @@
       border-bottom-right-radius: 8px;
       overflow-x: hidden;
       transform-origin: 0 0;
-      height: calc(100vh - 110px);
+      height: calc(100vh - 120px);
       transition: all 0.4s;
     }
   }
@@ -102,7 +103,7 @@
   align-items: center;
   .site__preview__container {
     .site__preview__titlebar {
-      width: calc(100vw - 400px);
+      // width: calc(100vw - 400px);
       .new__window__link_wrapper {
         position: absolute;
         left: 42%;

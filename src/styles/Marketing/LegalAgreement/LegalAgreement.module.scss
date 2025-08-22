@@ -3,7 +3,7 @@
   background-color: var(--bg-secondary);
   .titleWrapper {
     color: var(--font-primary);
-    font-size: 24px;
+    font-size: 18px;
     font-weight: 500;
   }
   .termAndCondionContent {
@@ -19,7 +19,7 @@
     p {
       color: var(--font-secondary);
       line-height: 1.5;
-      font-size: 1.3rem;
+      margin-bottom: 5px;
       margin-left: 0px;
     }
     h1 {
@@ -69,7 +69,7 @@
       font-size: 1.2rem;
     }
     .titleWrapper {
-      font-size: 20px;
+      font-size: 18px;
       color: var(--font-primary);
       h1 {
         font-size: 20px;

@@ -1,59 +1,86 @@
-<br /><br />
-
 <p align="center">
-  <a href="https://www.torqbit.com">
-    <img src="./public/img/brand/torqbit-icon.png"" width="80px" alt="Torqbit logo" />
-  </a>
-</p>
-<h2 align="center" >The Open-Source LMS for businesses</h3>
-<p align="center">Create unmatched learning experience for your  customers</p>
-
-<p align="center"><a href="https://torqbit.com">🌐 Website</a> · <a href="https://torqbit.com/docs">📚 Documentation</a>
-
-<p align="center">
-  <a href="https://www.torqbit.com.com">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="./public/readme/torqbit-dark.png">
-      <source media="(prefers-color-scheme: light)" srcset="./public/readme/torqbit-light.png">
-      <img src="./public/readme/torqbit-os-hero.png" alt="Companies view" />
-    </picture>
+  <a href="https://github.com/torqbit/torqbit" target="_blank" rel="noopener noreferrer">
+    <img src="https://cdn.torqbit.com/static/brand/logo.png" alt="Torqbit Logo" width="250"/>
   </a>
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/github/commit-activity/m/torqbit/torqbit" alt="Commit Activity">
-  <img src="https://img.shields.io/docker/pulls/torqbit/torqbit" alt="Docker Pulls">
+  AI Assistant for Documentation — Open Source and Developer-First  
 </p>
 
-<br>
+<p align="center">
+  <a href="https://github.com/torqbit/torqbit/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">
+    <img src="https://img.shields.io/github/license/torqbit/torqbit?style=flat" alt="License"/>
+  </a>
+  <a href="https://github.com/torqbit/torqbit/graphs/contributors" target="_blank" rel="noopener noreferrer">
+    <img src="https://img.shields.io/github/contributors/torqbit/torqbit?style=flat" alt="Contributors"/>
+  </a>
+  <a href="https://github.com/torqbit/torqbit/issues" target="_blank" rel="noopener noreferrer">
+    <img src="https://img.shields.io/github/issues/torqbit/torqbit?style=flat" alt="Issues"/>
+  </a>
+</p>
 
-Torqbit is an open-source learning management system tailored for software companies to effectively train their customers. It offers unparalleled customization of your academy page, allowing you to align it with your brand identity. With self-hosting capabilities, you maintain complete control over your data and users, ensuring privacy and security. This flexibility empowers organizations to adapt the platform to their unique requirements, integrate seamlessly with existing tools, and enhance the overall user experience.
+<p align="center">
+  <img src="screenshots/ai-assistant.png" alt="Torqbit" width="800" style="border-radius: 4px;"/>
+</p>
 
-⚠️ Torqbit is currently under active development. Expect a series of updates in the coming weeks.
+---
 
-## 🍙 Self Hosting
+## What is Torqbit?
 
-### Prerequisite
+Torqbit makes your **documentation AI-powered and conversational**. Developers can ask questions directly inside your docs, GitHub repos, wikis, or knowledge bases, and get instant, accurate answers without hunting through pages.
 
-Development system must have docker engine installed and running.
+**Embed** Torqbit easily into any doc site — GitBook, ReadMe, Mintlify, Docusaurus, and more — and transform your documentation into an interactive AI assistant.
 
-### Steps
+---
 
-Setting up local environment is extremely easy and straight forward. Follow the below step and you will be ready to contribute
+## 🚀 Features at a Glance
 
-1. Clone the code locally using `git clone https://github.com/torqbit/torqbit`
-1. Switch to the code folder `cd torqbit`
-1. Edit the `docker-compose.yml` file to include the Google & Github client credentials, and the email id that will be the admin for the platform.
-1. Now run the command `docker-compose up` to launch the web app and the MySQL server.
+| Feature                           | Why It Matters                                               |
+| --------------------------------- | ------------------------------------------------------------ |
+| 🤖 **AI Assistant for Docs**      | Provides instant, conversational answers from your content   |
+| 🔎 **Semantic Search**            | Understands context, not just keywords                       |
+| 📚 **Multi-source Knowledge**     | Integrate GitHub, GitBook, Notion, Google Drive, Markdown    |
+| 🔗 **Universal Embedding**        | Widget works seamlessly with any static or dynamic docs site |
+| 🔄 **Auto-Sync Updates**          | Always stays current with your docs evolution                |
+| 🛠 **Open Source & Extensible**   | Customize connectors and behaviors easily                    |
+| 🔒 **Multi-tenant & Agent Ready** | Manage multiple projects or teams with a single deployment   |
 
-You are ready to play around the platform. Do not forget to refresh the browser (in case it does not auto-reload)
+---
 
-Thats it!
+## 🎬 Demo Preview
 
-## 🚀 Features
+<p align="center">
+ <video src="https://cdn.torqbit.com/static/mintlify-demo.mp4" loop autoplay muted width="700" controls allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" style="border-radius:4px;"></video>
+</p>
 
-- **Manage Courses**: Create courses with video lessons.
-- **Video Streaming**: Stream your course videos, which are powered by Bunny.net
-- **Tracking Learning Progress**: Monitor learning progress with detailed analytics, enabling learners and instructors to assess skill development and mastery.
-- **Course Discussion**: Foster collaboration and engagement through course-specific discussion forums, facilitating knowledge sharing and peer interaction.
-- **Alert Comment Notification**: Enable timely communication by alerting users to new comments and replies to queries, enabling greater engagment.
+_Chat directly inside your docs for real-time answers._
+
+---
+
+## 🏁 Quick Start using Docker
+
+```bash
+npx torqbit
+```
+
+- What it does:
+  - Checks for Docker and Docker Compose.
+  - Writes a `docker-compose.yml` to your current directory (asks before overwriting).
+  - Starts the stack with `docker compose up -d --build`.
+
+- Services exposed by default:
+  - Web: http://localhost:8080
+  - MySQL: localhost:3360
+  - Qdrant: http://localhost:6333
+
+---
+
+## 🚀 Quick Start using Source Code
+
+```bash
+git clone https://github.com/torqbit/torqbit.git
+cd torqbit
+yarn install
+yarn dev
+```

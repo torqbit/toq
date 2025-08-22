@@ -1,64 +1,58 @@
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 import styles from "@/styles/Layout2.module.scss";
-import { IResponsiveNavMenu, useAppContext } from "../ContextApi/AppContext";
-import { Badge, Flex } from "antd";
-import Link from "next/link";
+import { IResponsiveNavMenu, ISiderMenu, useAppContext } from "../ContextApi/AppContext";
+import { Badge, Flex, Menu, MenuProps } from "antd";
+import { TenantRole, User } from "@prisma/client";
+import { useRouter } from "next/router";
 
 const ResponsiveNavBar: FC<{
-  items: {
-    title: string;
-    icon: React.JSX.Element;
-    link: string;
-    key: string;
-  }[];
-}> = ({ items }) => {
+  user?: any;
+  menu: MenuProps["items"];
+}> = ({ menu, user }) => {
   const { globalState, dispatch } = useAppContext();
+  const router = useRouter();
+  let defaultOpenKeys = menu?.filter((m: any) => m.children && m.children.length > 0).map((m) => m?.key);
+  const [openKeys, setOpenKeys] = useState<string[]>(defaultOpenKeys as string[]);
+  useEffect(() => {
+    if (globalState.chatList.length > 0 && !openKeys.includes("group-3")) {
+      setOpenKeys([...openKeys, "group-3"]);
+    }
+  }, [globalState.chatList]);
+
+  const getDefaultSelectedSideMenu = () => {
+    switch (user?.tenant?.role) {
+      case TenantRole.ADMIN:
+        return "dashboard";
+
+      case TenantRole.OWNER:
+        return router.pathname == "/" ? "home" : "dashboard";
+
+      case TenantRole.MEMBER:
+        return "home";
+
+      default:
+        return "home";
+    }
+  };
   return (
     <>
-      <div className={styles.responsiveNavContainer}>
-        {items.map((nav, i) => {
-          return (
-            <div key={i}>
-              {nav.title === "Notifications" ? (
-                <Badge
-                  key={i}
-                  color="blue"
-                  classNames={{ indicator: styles.badgeIndicator }}
-                  count={globalState.notifications && globalState.notifications > 0 ? globalState.notifications : 0}
-                  style={{ fontSize: 8, paddingTop: 1.5 }}
-                  size="small"
-                >
-                  <div
-                    className={globalState.selectedResponsiveMenu === nav.link ? styles.selectedNavBar : styles.navBar}
-                    onClick={() => dispatch({ type: "SET_NAVBAR_MENU", payload: nav.link as IResponsiveNavMenu })}
-                  >
-                    <Link href={`/${nav.link}`}>
-                      <span></span>
-                      <Flex vertical align="center" gap={5} justify="space-between">
-                        <i>{nav.icon}</i>
-                        <div className={styles.navTitle}>{nav.title}</div>
-                      </Flex>
-                    </Link>
-                  </div>
-                </Badge>
-              ) : (
-                <div
-                  className={globalState.selectedResponsiveMenu === nav.key ? styles.selectedNavBar : styles.navBar}
-                  onClick={() => dispatch({ type: "SET_NAVBAR_MENU", payload: nav.key as IResponsiveNavMenu })}
-                >
-                  <Link href={`/${nav.link}`}>
-                    <span></span>
-                    <Flex vertical align="center" gap={5} justify="space-between">
-                      <i>{nav.icon}</i>
-                      <div className={styles.navTitle}>{nav.title}</div>
-                    </Flex>
-                  </Link>
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
+      <Menu
+        mode="inline"
+        rootClassName={styles.content__menu__wrapper}
+        onSelect={(value) => dispatch({ type: "SET_SELECTED_SIDER_MENU", payload: value.key as ISiderMenu })}
+        defaultSelectedKeys={[getDefaultSelectedSideMenu()]}
+        openKeys={openKeys}
+        onOpenChange={(e) => {
+          setOpenKeys(e);
+        }}
+        onClick={(v) => {
+          dispatch({ type: "SET_RESPONSIVE_SIDE_NAV", payload: false });
+        }}
+        className={styles.menu}
+        selectedKeys={[globalState.selectedSiderMenu]}
+        style={{ width: "100%", borderInlineEnd: "none" }}
+        items={menu}
+      />
     </>
   );
 };

@@ -1,0 +1,201 @@
+.page_wrapper {
+  padding: 30px 0;
+}
+
+.orgs_detail_page {
+  .orgs_breadcrumb {
+    padding: 10px;
+    background-color: var(--bg-primary);
+  }
+
+  .orgs_detial {
+    padding: 30px 0;
+  }
+}
+
+.stats {
+  min-width: 250px;
+  height: 150px;
+  background-color: var(--bg-primary);
+  p {
+    margin: 0;
+  }
+  h2 {
+    margin: 0 0 10px 0;
+    color: var(--font-secondary);
+  }
+  i {
+    font-size: 14px;
+    line-height: 0;
+  }
+}
+
+.tenant_dashboard {
+  // background-color: #f0f2f5;
+  min-height: 100vh;
+
+  .dashboard_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+
+    .dashboard_actions {
+      display: flex;
+      gap: 12px;
+    }
+  }
+
+  .tenant_table_card {
+    margin-bottom: 24px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+
+    .tenant_name {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      .tenant_logo {
+        width: 40px;
+        height: 40px;
+        border-radius: 4px;
+        object-fit: cover;
+      }
+    }
+  }
+
+  .tenant_details {
+    .tenant_details_header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+
+      .tenant_info {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+
+        .tenant_detail_logo {
+          width: 60px;
+          height: 60px;
+          border-radius: 8px;
+          object-fit: cover;
+        }
+
+        h2 {
+          margin: 0 0 8px 0;
+          font-size: 20px;
+          font-weight: 600;
+        }
+      }
+    }
+
+    .stats_row {
+      margin-bottom: 24px;
+
+      .stats_card {
+        // height: 100%;
+        min-height: 150px;
+      }
+
+      .subscription_details {
+        margin-top: 12px;
+        color: rgba(0, 0, 0, 0.65);
+        font-size: 14px;
+
+        p {
+          margin: 4px 0;
+        }
+      }
+
+      .growth_indicator {
+        margin-top: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        .growth_label {
+          color: rgba(0, 0, 0, 0.65);
+          font-size: 14px;
+        }
+      }
+
+      .chart_indicators {
+        margin-top: 12px;
+        display: flex;
+        gap: 16px;
+
+        .chart_icon {
+          font-size: 18px;
+          color: #1890ff;
+          cursor: pointer;
+          transition: color 0.3s;
+
+          &:hover {
+            color: #096dd9;
+          }
+        }
+      }
+    }
+
+    .transaction_card {
+      margin-bottom: 24px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    .analytics_row {
+      .analytics_card {
+        height: 300px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+
+        .chart_placeholder {
+          height: 220px;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          background-color: #f9f9f9;
+          border-radius: 4px;
+          color: #bfbfbf;
+
+          .anticon {
+            font-size: 48px;
+            margin-bottom: 16px;
+          }
+
+          p {
+            margin: 0;
+            font-size: 14px;
+          }
+        }
+      }
+    }
+  }
+
+  // Responsive styles
+  @media (max-width: 768px) {
+    padding: 16px;
+
+    .dashboard_header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+
+      .dashboard_actions {
+        width: 100%;
+        justify-content: space-between;
+      }
+    }
+
+    .tenant_details_header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+
+      button {
+        align-self: flex-end;
+      }
+    }
+  }
+}

@@ -4,7 +4,7 @@ import { authOptions } from "../../pages/api/auth/[...nextauth]";
 
 export function withAuthentication(handler: NextApiHandler) {
   return async function (req: NextApiRequest, res: NextApiResponse) {
-    const session = await getServerSession(req, res, authOptions);
+    const session = await getServerSession(req, res, await authOptions(req));
 
     if (!session) {
       return res.status(403).end();

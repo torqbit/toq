@@ -15,7 +15,12 @@ export const themeColors = {
     colorSplit: "#454545",
     bgTertiary: "#131313",
   },
-  light: {},
+  light: {
+    bgPrimary: "#fff",
+    bgSecondary: "#f5f5f5",
+    fontPrimary: "#000",
+    fontSecondary: "#666",
+  },
 };
 export const getIconTheme = (
   theme: Theme,
@@ -49,6 +54,7 @@ const darkThemeConfig = (siteConfig: PageSiteConfig) => {
       borderRadius: 4,
       colorText: themeColors.dark.fontSecondary,
       colorBgContainer: themeColors.dark.bgPrimary,
+
       colorBorder: themeColors.dark.colorSplit,
       colorTextPlaceholder: themeColors.dark.fontPlaceholder,
       colorPrimary: `${siteConfig.brand?.brandColor}`,
@@ -88,7 +94,7 @@ const darkThemeConfig = (siteConfig: PageSiteConfig) => {
       },
       Menu: {
         itemColor: themeColors.dark.fontSecondary,
-        groupTitleColor: "#eee",
+        groupTitleColor: themeColors.dark.fontSecondary,
         itemActiveBg: themeColors.dark.bgSecondary,
         itemSelectedBg: themeColors.dark.bgSecondary,
         itemSelectedColor: "#fff",
@@ -127,6 +133,18 @@ const darkThemeConfig = (siteConfig: PageSiteConfig) => {
       Input: {
         borderRadius: 4,
         activeShadow: "none",
+        colorBgContainer: themeColors.dark.bgSecondary,
+        activeBg: themeColors.dark.bgTertiary,
+        hoverBg: themeColors.dark.bgSecondary,
+        colorIcon: themeColors.dark.fontPlaceholder,
+        addonBg: themeColors.dark.colorSplit,
+        colorTextPlaceholder: themeColors.dark.fontPlaceholder,
+        activeBorderColor: themeColors.dark.fontSecondary,
+      },
+      InputNumber: {
+        borderRadius: 4,
+        activeShadow: "none",
+        colorBgContainer: themeColors.dark.bgSecondary,
         activeBg: themeColors.dark.bgTertiary,
         hoverBg: themeColors.dark.bgSecondary,
         colorIcon: themeColors.dark.fontPlaceholder,
@@ -191,6 +209,8 @@ const darkThemeConfig = (siteConfig: PageSiteConfig) => {
         borderColor: themeColors.dark.colorSplit,
         colorText: themeColors.dark.fontSecondary,
         headerSplitColor: themeColors.dark.bgSecondary,
+        rowSelectedBg: themeColors.dark.bgTertiary,
+        rowSelectedHoverBg: themeColors.dark.bgTertiary,
       },
       Pagination: {
         colorPrimaryBorder: themeColors.dark.bgSecondary,

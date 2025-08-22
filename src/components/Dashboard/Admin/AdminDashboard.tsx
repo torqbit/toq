@@ -34,10 +34,10 @@ const AdminDashboard: FC<{ siteConfig: PageSiteConfig }> = ({ siteConfig }) => {
 
   useEffect(() => {
     setLoadingOverview(true);
-    AnalyticsService.overviewStats(
+    AnalyticsService.platformOverviewStats(
       (result) => {
         setOverViewStat(result);
-        handleAnalytics("month", "Earnings");
+        handleAnalytics("month", "AIMessages");
 
         setLoadingOverview(false);
       },

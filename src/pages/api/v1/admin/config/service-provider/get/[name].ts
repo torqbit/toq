@@ -4,6 +4,7 @@ import { withMethods } from "@/lib/api-middlewares/with-method";
 import { errorHandler } from "@/lib/api-middlewares/errorHandler";
 import { decrypt } from "../../encryption";
 import { withUserAuthorized } from "@/lib/api-middlewares/with-authorized";
+import { withTenantOwnerAuthorized } from "@/lib/api-middlewares/with-tenant-authorized";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
@@ -25,4 +26,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     return errorHandler(err, res);
   }
 };
-export default withMethods(["GET"], withUserAuthorized(handler));
+export default withMethods(["GET"], withTenantOwnerAuthorized(handler));

@@ -1,20 +1,25 @@
 import React, { FC } from "react";
-import { User } from "@prisma/client";
+import { Role, TenantRole, User } from "@prisma/client";
 import { GetServerSidePropsContext } from "next";
 import MarketingLayout from "@/components/Layouts/MarketingLayout";
 import { useMediaQuery } from "react-responsive";
 import appConstant from "@/services/appConstant";
 import Link from "next/link";
 
-import DefaulttHero from "@/components/Marketing/DefaultHero/DefaultHero";
 import { getCookieName } from "@/lib/utils";
-import { getToken } from "next-auth/jwt";
 import LegalAgreement from "@/components/Marketing/LegalAgreement";
 import { PageSiteConfig } from "@/services/siteConstant";
 
 import { getSiteConfig } from "@/services/getSiteConfig";
+import { getServerSession } from "next-auth";
+import { authOptions } from "./api/auth/[...nextauth]";
+import MarketingAppLayout from "@/components/Layouts/MarketingAppLayout";
 
-const TermAndConditonPage: FC<{ user: User; siteConfig: PageSiteConfig }> = ({ user, siteConfig }) => {
+const TermAndConditonPage: FC<{ user: User; siteConfig: PageSiteConfig; tenantRole: TenantRole }> = ({
+  user,
+  siteConfig,
+  tenantRole,
+}) => {
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
 
   const termAndCondionList = [
@@ -301,35 +306,29 @@ Violate These Terms Or ${siteConfig.brand?.name}'s Then-Current Policies And Or 
   ];
 
   return (
-    <MarketingLayout
-      siteConfig={siteConfig}
-      user={user}
-      heroSection={
-        <DefaulttHero
-          title="Term & Conditions"
-          description="Explore our comprehensive Terms and Conditions, where we outline the rules, policies, and agreements that govern your use of our services."
-        />
-      }
-    >
+    <MarketingAppLayout siteConfig={siteConfig} user={{ ...user }}>
+      <h3>Legal Agreement</h3>
       <LegalAgreement content={termAndCondionList} isMobile={isMobile} />
-    </MarketingLayout>
+    </MarketingAppLayout>
   );
 };
 
 export default TermAndConditonPage;
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const { req } = ctx;
+  const { req, res } = ctx;
+  const domain = req.headers.host || "";
 
   let cookieName = getCookieName();
-  const { site } = getSiteConfig();
+  const { site } = await getSiteConfig(ctx.res, domain);
   const siteConfig = site;
-  const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
+  const user = await getServerSession(req, res, await authOptions(req));
 
   return {
     props: {
       user,
       siteConfig,
+      tenantRole: user?.tenant?.role || null,
     },
   };
 };

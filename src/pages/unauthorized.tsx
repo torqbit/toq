@@ -8,10 +8,11 @@ import { useMediaQuery } from "react-responsive";
 import { getSiteConfig } from "@/services/getSiteConfig";
 import { PageSiteConfig } from "@/services/siteConstant";
 import { getCookieName } from "@/lib/utils";
-import { getToken } from "next-auth/jwt";
-import { Role, User } from "@prisma/client";
+import { Role, TenantRole, User } from "@prisma/client";
 import MarketingLayout from "@/components/Layouts/MarketingLayout";
 import { useSession } from "next-auth/react";
+import { getServerSession } from "next-auth";
+import { authOptions } from "./api/auth/[...nextauth]";
 
 const UnAuthorized: NextPage<{ siteConfig: PageSiteConfig; userRole: Role }> = ({ siteConfig, userRole }) => {
   const router = useRouter();
@@ -54,13 +55,6 @@ const UnAuthorized: NextPage<{ siteConfig: PageSiteConfig; userRole: Role }> = (
                 </h1>
               </Flex>
               <Flex align="center" justify="center" gap={20}>
-                {router.query.from === "lesson" && (
-                  <Button type="primary" onClick={() => router.push("/academy")}>
-                    <Flex justify="space-between" gap={10}>
-                      Browse Courses <i style={{ fontSize: 18, lineHeight: 0 }}> {SvgIcons.arrowRight}</i>
-                    </Flex>{" "}
-                  </Button>
-                )}
                 <Button onClick={() => router.push("/dashboard")}>Go Home</Button>
               </Flex>
             </Space>
@@ -77,13 +71,6 @@ const UnAuthorized: NextPage<{ siteConfig: PageSiteConfig; userRole: Role }> = (
                 <h1 style={{ textAlign: "center", margin: 0 }}>You are not authorized to view this page</h1>
               </Flex>
               <Flex align="center" justify="center" gap={20}>
-                {router.query.from === "lesson" && (
-                  <Button type="primary" onClick={() => router.push("/courses")}>
-                    <Flex justify="space-between" gap={10}>
-                      Browse Courses <i style={{ fontSize: 18, lineHeight: 0 }}> {SvgIcons.arrowRight}</i>
-                    </Flex>{" "}
-                  </Button>
-                )}
                 <Button onClick={() => router.push("/dashboard")}>Go Home</Button>
               </Flex>
             </Space>
@@ -97,17 +84,26 @@ const UnAuthorized: NextPage<{ siteConfig: PageSiteConfig; userRole: Role }> = (
 export default UnAuthorized;
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const { req } = ctx;
-  const siteConfig = getSiteConfig();
-  let cookieName = getCookieName();
+  const { req, res } = ctx;
+  const domain = req.headers.host || "";
 
-  const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
+  const siteConfig = await getSiteConfig(ctx.res, domain);
+  let cookieName = getCookieName();
+  const user = await getServerSession(req, res, await authOptions(req));
+
   const { site } = siteConfig;
+  let userRole = user?.role;
+  if (user?.role == Role.CUSTOMER && user.tenant?.role == TenantRole.OWNER) {
+    userRole = Role.AUTHOR;
+  }
+  if (user?.role == Role.CUSTOMER && user.tenant?.role == TenantRole.MEMBER) {
+    userRole = Role.STUDENT;
+  }
 
   return {
     props: {
       siteConfig: site,
-      userRole: user?.role,
+      userRole,
     },
   };
 };

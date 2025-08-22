@@ -1,0 +1,109 @@
+.courses__list {
+  padding: 20px 0px;
+}
+
+.course__grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(3, 380px);
+}
+.course__card {
+  width: 380px;
+  > div:first-child {
+    height: 214px;
+  }
+
+  .meta {
+    // min-height: 130px;
+    & > div {
+      height: 135px;
+      h4 {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: break-spaces;
+        margin: 5px 0 0 0;
+      }
+    }
+    & > div > div:last-child {
+      margin: -15px 0 0 0;
+      -webkit-line-clamp: 2;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+  div.card__footer {
+    margin: 15px -20px -20px;
+    padding: 10px 20px;
+    border-top: 1px solid var(--border-color);
+  }
+  .invalid__img {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 380px;
+    height: auto;
+    height: 214px;
+    border-bottom: 1px solid var(--border-color);
+    i {
+      font-size: 40px;
+      color: var(--font-secondary);
+    }
+  }
+  .card__img {
+    width: 380px;
+    height: auto;
+    max-height: 214px;
+    object-fit: cover;
+  }
+}
+
+@media only screen and (max-width: 435px) {
+  .courses__list {
+    padding: 20px;
+  }
+  .course__grid {
+    grid-template-columns: 1fr;
+    width: 80vw;
+    margin: 0 auto 60px auto;
+  }
+  .course__card {
+    width: 80vw;
+    margin: 0 auto;
+    .meta {
+      & > div {
+        height: 150px;
+      }
+    }
+
+    .card__footer {
+      margin: 15px -20px -20px;
+      padding: 10px 20px;
+      border-top: 1px solid var(--border-color);
+    }
+    .invalid__img {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: calc(100vw - 40px);
+
+      height: 214px;
+      border-bottom: 1px solid var(--border-color);
+      i {
+        font-size: 40px;
+        color: var(--font-secondary);
+      }
+    }
+    .card__img {
+      width: calc(100vw - 40px);
+
+      height: auto;
+      max-height: 214px;
+      object-fit: cover;
+    }
+  }
+}

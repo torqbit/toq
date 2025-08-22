@@ -69,7 +69,9 @@
     width: 500px;
     height: 230px;
     background-color: var(--bg-primary);
-    box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+    box-shadow:
+      rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,
+      rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
     transition: all 0.3s;
     border: 1px solid var(--border-color);
     &:hover {
@@ -214,7 +216,7 @@
     }
 
     .add_course_setting {
-      max-width: var(--marketing-container-width);
+      max-width: var(--main-content-width);
 
       .setting__video__segment {
         margin: 0 auto 10px auto;
@@ -475,59 +477,7 @@
   }
 }
 
-.notifications_list {
-  .notification_bar {
-    background-color: var(--bg-primary);
-    .notification_content {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 5px;
-    }
-  }
-  .title {
-    color: var(--font-primary);
-  }
-  .reply_text {
-    margin-left: 10px;
-    color: var(--font-secondary);
-    span {
-      color: var(--font-primary);
-    }
-  }
-  .description_text {
-    color: var(--font-secondary);
-    width: 80vw;
-  }
-}
-
 @media only screen and (max-width: 435px) {
-  .notifications_list {
-    margin-bottom: 60px;
-
-    .notification_bar {
-      .notification_content {
-        display: flex;
-        align-items: flex-start;
-        justify-content: space-between;
-        > div:first-child {
-          > div:last-child {
-            width: 100%;
-            a {
-              display: flex;
-              flex-direction: column;
-              align-items: flex-start;
-              margin: 0;
-            }
-          }
-        }
-      }
-    }
-    .reply_text {
-      margin-left: 0px;
-    }
-  }
-
   .course_content {
     padding: 0px 20px 20px 20px;
     height: 100%;

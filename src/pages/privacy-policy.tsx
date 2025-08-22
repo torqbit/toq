@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { User } from "@prisma/client";
+import { Role, TenantRole, User } from "@prisma/client";
 import { GetServerSidePropsContext } from "next";
 import MarketingLayout from "@/components/Layouts/MarketingLayout";
 
@@ -8,14 +8,17 @@ import appConstant from "@/services/appConstant";
 import Link from "next/link";
 import LegalAgreement from "@/components/Marketing/LegalAgreement";
 
-import DefaulttHero from "@/components/Marketing/DefaultHero/DefaultHero";
-import { getCookieName } from "@/lib/utils";
-import { getToken } from "next-auth/jwt";
-
 import { PageSiteConfig } from "@/services/siteConstant";
 import { getSiteConfig } from "@/services/getSiteConfig";
+import { getServerSession } from "next-auth";
+import { authOptions } from "./api/auth/[...nextauth]";
+import MarketingAppLayout from "@/components/Layouts/MarketingAppLayout";
 
-const TermAndConditonPage: FC<{ user: User; siteConfig: PageSiteConfig }> = ({ user, siteConfig }) => {
+const TermAndConditonPage: FC<{ user: User; siteConfig: PageSiteConfig; tenantRole: TenantRole }> = ({
+  user,
+  siteConfig,
+  tenantRole,
+}) => {
   const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
 
   const privacyPoliciesList = [
@@ -99,16 +102,8 @@ const TermAndConditonPage: FC<{ user: User; siteConfig: PageSiteConfig }> = ({ u
   ];
 
   return (
-    <MarketingLayout
-      siteConfig={siteConfig}
-      user={user}
-      heroSection={
-        <DefaulttHero
-          title="Privacy Policy"
-          description="Discover our Privacy Policy, designed to safeguard your information and outline our commitment to protecting your privacy."
-        />
-      }
-    >
+    <MarketingAppLayout siteConfig={siteConfig} user={{ ...user }}>
+      <h3>Privacy Policy</h3>
       <LegalAgreement
         content={privacyPoliciesList}
         isMobile={isMobile}
@@ -132,23 +127,24 @@ const TermAndConditonPage: FC<{ user: User; siteConfig: PageSiteConfig }> = ({ u
           </p>
         }
       />
-    </MarketingLayout>
+    </MarketingAppLayout>
   );
 };
 
 export default TermAndConditonPage;
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const { req } = ctx;
+  const { req, res } = ctx;
 
-  let cookieName = getCookieName();
+  const domain = req.headers.host || "";
+  const user = await getServerSession(req, res, await authOptions(req));
 
-  const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
-  const { site } = getSiteConfig();
+  const { site } = await getSiteConfig(ctx.res, domain);
   const siteConfig = site;
   return {
     props: {
       user,
       siteConfig,
+      tenantRole: user?.tenant?.role || null,
     },
   };
 };

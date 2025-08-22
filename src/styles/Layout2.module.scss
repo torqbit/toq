@@ -13,8 +13,9 @@
   .sider_content {
     flex-basis: 100%;
     height: 100vh;
-    width: 1200px;
+    width: 100%;
     margin: 0 auto;
+    position: relative;
 
     .mobileUserMenu {
       display: none;
@@ -303,7 +304,7 @@
     }
   }
 
-  .layout2_wrapper {
+  .layout2_wrappe {
     .sider_content {
       .mobileUserMenu {
         display: flex;

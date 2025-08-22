@@ -1,9 +1,10 @@
 import { getCookieName } from "@/lib/utils";
 import { Role } from "@prisma/client";
 import { GetServerSidePropsContext, NextPage } from "next";
-import { getToken } from "next-auth/jwt";
 
 import AuthService from "@/services/auth/AuthService";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../api/auth/[...nextauth]";
 
 const RedirectPage: NextPage = () => {
   return <></>;
@@ -12,17 +13,22 @@ const RedirectPage: NextPage = () => {
 export default RedirectPage;
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const { req } = ctx;
+  const { req, res } = ctx;
 
   const params = ctx?.query;
-
-  let cookieName = getCookieName();
-  const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
+  console.log("params", params);
+  const user = await getServerSession(req, res, await authOptions(req));
 
   const getRedirectUrl = await AuthService.checkSiteStatus(
+    user?.id || "",
     user?.role as Role,
-    params ? (params.redirect as string) : undefined
+    (params.domain as string) || req?.headers?.host || "",
+    user?.tenant?.tenantId || "",
+    params ? (params.redirect as string) : undefined,
+    typeof params?.domain !== "undefined"
   );
+
+  console.log("getRedirectUrl", getRedirectUrl);
 
   return {
     redirect: {

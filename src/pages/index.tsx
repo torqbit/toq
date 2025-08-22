@@ -1,71 +1,85 @@
-import React, { FC } from "react";
-import { Role, StateType, User } from "@prisma/client";
+import React, { FC, useEffect } from "react";
+import { ActivityType, Role, TenantRole, User } from "@prisma/client";
 import { GetServerSidePropsContext } from "next";
-import { getCookieName } from "@/lib/utils";
-import { getToken } from "next-auth/jwt";
 import { PageSiteConfig } from "@/services/siteConstant";
-import StandardTemplate from "@/templates/standard/StandardTemplate";
 import { getSiteConfig } from "@/services/getSiteConfig";
-import getBlogList from "@/actions/getBlogList";
-import { IBlogCard } from "@/types/landing/blog";
-import { ICourseListItem } from "@/types/courses/Course";
-import { listCourseListItems } from "@/actions/courses";
-import StudentDashboard from "@/components/Dashboard/StudentDashboard";
-import { useMediaQuery } from "react-responsive";
-import learningPath from "@/actions/learningPath";
-import { ILearningPathDetail } from "@/types/learingPath";
+
+import { UpdateActivitiesStats } from "@/actions/updateActivitiesStats";
+import { getServerSession } from "next-auth";
+import { authOptions } from "./api/auth/[...nextauth]";
+import { useAppContext } from "@/components/ContextApi/AppContext";
+import { useSession } from "next-auth/react";
+import AppLayout from "@/components/Layouts/AppLayout";
+import MarketingAppLayout from "@/components/Layouts/MarketingAppLayout";
+import AIChatWidget from "@/components/AIConversation/AIChatWidget";
 
 interface IProps {
   user: User;
   siteConfig: PageSiteConfig;
-  courseList: ICourseListItem[];
-  blogList: IBlogCard[];
-  learningList: ILearningPathDetail[];
+  tenantRole: TenantRole;
 }
 
-const LandingPage: FC<IProps> = ({ user, siteConfig, courseList, blogList, learningList }) => {
-  const isMobile = useMediaQuery({ query: "(max-width: 435px)" });
+const LandingPage: FC<IProps> = ({ user, siteConfig, tenantRole }) => {
+  const { dispatch } = useAppContext();
+  const { data: session } = useSession();
+  useEffect(() => {
+    dispatch({
+      type: "SET_SITE_CONFIG",
+      payload: siteConfig,
+    });
+    dispatch({
+      type: "SET_USER",
+      payload: { ...session, role: session?.role, tenantRole: session?.tenant?.role },
+    });
+  }, []);
 
   return (
     <>
-      {user && user.role == Role.STUDENT ? (
-        <StudentDashboard
-          coursesList={courseList.length > 0 ? courseList.filter((c) => c.state == StateType.ACTIVE) : []}
-          pathList={learningList.length > 0 ? learningList.filter((l) => l.state == StateType.ACTIVE) : []}
-          siteConfig={siteConfig}
-          userRole={user.role}
-        />
+      {user && user.role == Role.CUSTOMER ? (
+        <AppLayout siteConfig={siteConfig} previewMode>
+          <AIChatWidget userName={user.name} readOnly={false} />
+        </AppLayout>
       ) : (
-        <StandardTemplate
-          user={user}
-          learningList={learningList.length > 0 ? learningList.filter((l) => l.state == StateType.ACTIVE) : []}
-          courseList={courseList.length > 0 ? courseList.filter((c) => c.state == StateType.ACTIVE) : []}
+        <MarketingAppLayout
           siteConfig={siteConfig}
-          blogList={blogList}
-        />
+          user={user}
+          previewMode={false}
+          navBarWidth={"100%"}
+          homeLink={"/"}
+          heroSection={
+            <>
+              <AIChatWidget userName={"Guest"} readOnly={false} />
+            </>
+          }
+        ></MarketingAppLayout>
       )}
     </>
   );
 };
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const { req } = ctx;
-  let cookieName = getCookieName();
-  const user = await getToken({ req, secret: process.env.NEXT_PUBLIC_SECRET, cookieName });
-  const { site } = getSiteConfig();
+  const { res, req } = ctx;
+  const domain = req.headers.host || "";
+  const user = await getServerSession(req, res, await authOptions(req));
+  const { site } = await getSiteConfig(res, domain);
   const siteConfig = site;
-  const courselist: ICourseListItem[] | undefined =
-    siteConfig.sections?.courses?.enable && (await listCourseListItems(user));
-  const blogList = siteConfig.sections?.blog?.enable && (await getBlogList());
-  const pathListResponse = await learningPath.listLearningPath(user?.role, user?.id);
-  return {
-    props: {
-      user,
-      siteConfig,
-      courseList: courselist || [],
-      blogList: blogList || [],
-      learningList: pathListResponse.body ? pathListResponse.body : [],
-    },
-  };
+
+  if (user) {
+    return {
+      props: {
+        user: JSON.parse(JSON.stringify(user)),
+        siteConfig,
+        tenantRole: user?.tenant?.role || null,
+      },
+    };
+  } else {
+    return {
+      props: {
+        user: null,
+        siteConfig,
+        tenantRole: null,
+      },
+    };
+  }
 };
 export default LandingPage;

@@ -17,20 +17,22 @@ const AnalyticView: FC<{
   handleAnalytics: (duration: AnalyticsDuration, type: AnalyticsType) => void;
   currency?: string;
 }> = ({ siteConfig, analyticStats, overviewStats, loadingOverview, handleAnalytics, loadingAnalytics, currency }) => {
-  const [selectedTab, setTab] = useState<AnalyticsType>("Earnings");
+  const [selectedTab, setTab] = useState<AnalyticsType>("AIMessages");
   const handleTabs = (value: AnalyticsType) => {
     setTab(value);
     handleAnalytics("month", value);
   };
   const items: TabsProps["items"] = [
     {
-      key: "Earnings",
-      label: "Earnings",
+      key: "AIMessages",
+      label: "AI Messages",
+      disabled: loadingAnalytics && selectedTab !== "AIMessages",
+
       children: (
         <>
           {analyticStats?.info ? (
             <Analytics
-              key={"Earnings"}
+              key={"AIMessages"}
               loading={loadingAnalytics}
               info={analyticStats.info as IAnalyticStats}
               handleAnalytic={handleAnalytics}
@@ -44,30 +46,35 @@ const AnalyticView: FC<{
         </>
       ),
     },
-    {
-      key: "Enrollments",
-      label: "Enrollments",
-      children: (
-        <>
-          {analyticStats?.info ? (
-            <Analytics
-              key={"Enrollments"}
-              loading={loadingAnalytics}
-              info={analyticStats.info as IAnalyticStats}
-              handleAnalytic={handleAnalytics}
-              data={analyticStats.data}
-              siteConfig={siteConfig}
-              currency={currency}
-            />
-          ) : (
-            <AnalyticSkeleton />
-          )}
-        </>
-      ),
-    },
+    // {
+    //   key: "PageViews",
+    //   label: "Page Views",
+    //   disabled: loadingAnalytics && selectedTab !== "PageViews",
+
+    //   children: (
+    //     <>
+    //       {analyticStats?.info ? (
+    //         <Analytics
+    //           key={"PageViews"}
+    //           loading={loadingAnalytics}
+    //           info={analyticStats.info as IAnalyticStats}
+    //           handleAnalytic={handleAnalytics}
+    //           data={analyticStats.data}
+    //           siteConfig={siteConfig}
+    //           currency={currency}
+    //         />
+    //       ) : (
+    //         <AnalyticSkeleton />
+    //       )}
+    //     </>
+    //   ),
+    // },
+
     {
       key: "Users",
       label: "Users",
+      disabled: loadingAnalytics && selectedTab !== "Users",
+
       children: (
         <>
           {analyticStats?.info ? (

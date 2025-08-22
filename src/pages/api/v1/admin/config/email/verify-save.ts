@@ -3,24 +3,23 @@ import { withMethods } from "@/lib/api-middlewares/with-method";
 import { errorHandler } from "@/lib/api-middlewares/errorHandler";
 import { withUserAuthorized } from "@/lib/api-middlewares/with-authorized";
 import { emailCredentials } from "@/types/cms/email";
-import EmailManagemetService from "@/services/cms/email/EmailManagementService";
-import { getToken } from "next-auth/jwt";
+import { EmailManagementService } from "@/services/email/EmailManagementService";
 import { getCookieName } from "@/lib/utils";
+import { withTenantOwnerAuthorized } from "@/lib/api-middlewares/with-tenant-authorized";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     let cookieName = getCookieName();
-    const token = await getToken({
-      req,
-      secret: process.env.NEXT_PUBLIC_SECRET,
-      cookieName,
-    });
+    const session = await getServerSession(req, res, await authOptions(req));
     const body = await req.body;
     const accessConfig = emailCredentials.parse(body);
-    const result = await EmailManagemetService.verifyEmailCredentialsAndSave(
+    const result = await new EmailManagementService().verifyEmailCredentialsAndSave(
       accessConfig,
-      token?.name as string,
-      token?.email as string
+      session?.name as string,
+      session?.email as string,
+      String(session?.tenant?.tenantId)
     );
     return res.status(result.status).json(result);
   } catch (error) {
@@ -28,4 +27,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default withMethods(["POST"], withUserAuthorized(handler));
+export default withMethods(["POST"], withTenantOwnerAuthorized(handler));

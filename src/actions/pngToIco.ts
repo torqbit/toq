@@ -8,10 +8,24 @@ const constants = {
   headerSize: 6,
 };
 
+//create a function to convert a png to ico
+//the sizeList is an array of sizes in pixels
+//the image is a sharp object
+//the output is a buffer
+
+export async function toIcoBuffer(image: Sharp, sizeList: number[]): Promise<Buffer> {
+  const icoBuffers = await Promise.all(sizeList.map((size) => image.resize(size, size).toFormat("png").toBuffer()));
+
+  // Combine all buffers into a single ICO buffer
+  const icoBuffer = Buffer.concat(icoBuffers);
+  return icoBuffer;
+}
+
 export async function toIco(image: Sharp, sizeList: number[]) {
   const { info } = await image.toBuffer({ resolveWithObject: true });
   const size = info.width;
-  if (info.format !== "png" || size !== info.height) throw new Error("Please give me a square PNG image.");
+  console.log(size);
+  // if (info.format !== "png" || size !== info.height) throw new Error("Please give me a square PNG image.");
 
   const resizedImages = sizeList.map((targetSize) =>
     image.clone().resize(targetSize, targetSize, {

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Loader</title>
+    <style>
+      html,
+      body {
+        height: 100%;
+        font-size: 24px;
+      }
+
+      body {
+        display: grid;
+        place-content: center;
+        background: #202020;
+      }
+      @property --rotation {
+        syntax: "<angle>";
+        initial-value: 0turn;
+        inherits: false;
+      }
+      /* ai-loader.css - regular CSS file (not module) */
+
+      @-webkit-keyframes hue-rotation {
+        from {
+          --rotation: 0turn;
+        }
+        to {
+          --rotation: 2turn;
+        }
+      }
+
+      @keyframes hue-rotation {
+        from {
+          --rotation: 0turn;
+        }
+        to {
+          --rotation: 2turn;
+        }
+      }
+
+      .glow-card {
+        aspect-ratio: 1;
+        position: relative;
+        color: white;
+        padding: 2rem;
+        border-radius: 50%;
+        overflow: hidden;
+        display: grid;
+        place-content: center;
+        box-shadow: 0 0 40px rgba(255, 255, 255, 0.05);
+      }
+      .glow-card::before {
+        position: absolute;
+        inset: 0;
+        content: "";
+        z-index: -2;
+        background-image: conic-gradient(from var(--rotation, 0turn), #007498, #00d493, #d91982, #f5a95b, #007498);
+        -webkit-animation: 7s hue-rotation infinite linear;
+        animation: 7s hue-rotation infinite linear;
+      }
+      .glow-card::after {
+        position: absolute;
+        width: 94%;
+        height: 94%;
+        top: 3%;
+        left: 3%;
+        border-radius: 50%;
+        content: "";
+        z-index: -1;
+        background: #fff;
+        filter: blur(12px);
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="glow-card">Hello AI</div>
+  </body>
+</html>

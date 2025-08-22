@@ -5,9 +5,8 @@ generator client {
 }
 
 datasource db {
-  provider     = "mysql"
-  url          = env("DATABASE_URL")
-  relationMode = "prisma"
+  provider = "mysql"
+  url      = env("DATABASE_OS_URL")
 }
 
 //****  DB CONFIG END  ****//
@@ -22,66 +21,143 @@ enum Theme {
 enum Role {
   STUDENT
   AUTHOR
+  CUSTOMER
+  MEMBER
   ADMIN
   MENTOR
   NOT_ENROLLED
   NA
 }
 
+// Add after Theme enum and before Role enum
+enum TenantRole {
+  OWNER
+  ADMIN
+  MEMBER
+  STAFF
+}
+
+// Add new enum for auth providers
+enum AuthProvider {
+  GOOGLE
+  GITHUB
+  CREDENTIALS
+  EMAIL
+}
+
+// Add new model for tenant auth config
+model TenantAuthConfig {
+  id           String       @id @default(cuid())
+  tenantId     String
+  provider     AuthProvider
+  clientId     String?      @db.Text
+  clientSecret String?      @db.Text
+  isEnabled    Boolean      @default(false)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  tenant       Tenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, provider])
+  @@index([tenantId])
+}
+
+enum SupportStatus {
+  PENDING
+  OPEN
+  REOPEN
+  RESOLVED
+  CLOSED
+}
+
+// Modify Tenant model to add auth config relation
+model Tenant {
+  id                   String       @id @default(cuid())
+  name                 String
+  domain               String       @unique
+  customDomain         String?
+  certificateGenerated Boolean      @default(false)
+  logo                 String?
+  siteConfig           String       @db.Text()
+  description          String?      @db.Text()
+  isActive             Boolean      @default(true)
+  onBoarding           Boolean      @default(false)
+  createdAt            DateTime     @default(now())
+  updatedAt            DateTime     @updatedAt
+  users                UserTenant[]
+
+  authConfigs            TenantAuthConfig[]
+  services               ServiceProvider[]
+  secrets                SecretStore[]
+  Account                Account[]
+  activities             Activities[]
+  knowledgeSources       KnowledgeSource[]
+  assistantConversations AssistantConversation[]
+  sessions               Session[]
+  aiAgents               aiAgent[]
+
+  @@index([customDomain])
+}
+
+model UserTenant {
+  id        String     @id @default(cuid())
+  userId    String
+  tenantId  String
+  role      TenantRole @default(STAFF)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tenant    Tenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, tenantId])
+  @@index([userId])
+  @@index([tenantId])
+}
+
+// Modify User model to add tenant relation
 model User {
   id            String    @id @default(cuid())
   name          String
-  email         String?   @unique
+  email         String    @unique
   phone         String?
   image         String?
   emailVerified DateTime?
   isActive      Boolean   @default(true)
   role          Role      @default(STUDENT)
 
-  dateJoined         DateTime             @default(now())
-  createdAt          DateTime             @default(now())
-  CourseRegistration CourseRegistration[]
-  account            Account[]
-  sessions           Session[]
-  course             Course[]             @relation("userCourse")
-  discussion         Discussion[]
-  CourseProgress     CourseProgress[]
-  conversation       Conversation[]
-  blogs              Blog[]
-  learningPaths      LearningPath[]
+  dateJoined DateTime  @default(now())
+  createdAt  DateTime  @default(now())
+  account    Account[]
+  sessions   Session[]
 
-  orders           Order[]
-  invoices         Invoice[]
-  submissions      AssignmentSubmission[]
-  evaluations      AssignmentEvaluation[]
-  events           Events[]
-  eventsRegistered EventRegistration[]
-
-  notifications Notification[] @relation("recipient")
+  tenants UserTenant[]
 }
 
 //****** User Schema End ******//
 
 //****** Account Schema ******//
 model Account {
-  id                 String  @id @default(cuid())
+  id                 String   @id @default(cuid())
   userId             String
-  password           String? @db.Text()
+  password           String?  @db.Text()
   type               String
   provider           String
-  providerAccountId  String  @map("provider_account_id")
-  refresh_token      String? @db.Text()
-  access_token       String? @db.Text()
+  providerAccountId  String   @map("provider_account_id")
+  refresh_token      String?  @db.Text()
+  access_token       String?  @db.Text()
   expires_at         Int?
-  token_type         String? @db.Text()
-  scope              String? @db.Text()
-  id_token           String? @db.Text()
+  token_type         String?  @db.Text()
+  scope              String?  @db.Text()
+  createdAt          DateTime @default(now())
+  id_token           String?  @db.Text()
   session_state      String?
   oauth_token_secret String?
-  oauth_token        String? @db.Text()
-  user               User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  oauth_token        String?  @db.Text()
+  tenantId           String
+  lastActivity       DateTime @default(now())
+  tenant             Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([provider, providerAccountId])
+  @@unique([provider, providerAccountId, tenantId])
   @@index([userId])
 }
 
@@ -90,15 +166,18 @@ model Account {
 //****** Session Schema  ******//
 model Session {
   id           String   @id @default(cuid())
-  sessionToken String   @unique @map("session_token")
+  sessionToken String   @map("session_token")
   userId       String
   expires      DateTime
-  accessToken  String   @unique
+  tenantId     String
+  accessToken  String?  @unique
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
+  @@unique([sessionToken, tenantId])
   @@index([userId])
 }
 
@@ -117,251 +196,14 @@ model VerificationToken {
 //****** VerificationToken Schema End ******//
 
 //****** Course Schema  ******//
-enum CourseType {
-  PAID
-  FREE
-}
-
-enum StateType {
-  ACTIVE
-  INACTIVE
-  DRAFT
-}
-
-enum courseDifficultyType {
-  Beginner
-  Intermediate
-  Advance
-}
-
-model Course {
-  courseId            Int         @id
-  name                String
-  about               String      @db.Text()
-  description         String      @db.Text()
-  slug                String?
-  tvProviderId        String?
-  tvProviderName      String?
-  tvUrl               String?
-  tvThumbnail         String?
-  tvState             VideoState?
-  icon                String?
-  authorId            String
-  skills              Json?
-  createdAt           DateTime    @default(now())
-  updatedAt           DateTime    @default(now())
-  courseType          CourseType  @default(FREE)
-  certificateTemplate String?
-  isActive            Boolean     @default(true)
-  coursePrice         Float       @default(0)
-  sequenceId          Int?
-  previewMode         Boolean?
-
-  expiryInDays     Int                  @default(365)
-  difficultyLevel  courseDifficultyType @default(Beginner)
-  durationInMonths Int                  @default(12)
-  user             User                 @relation(name: "userCourse", fields: [authorId], references: [id])
-  totalResources   Int                  @default(0)
-  state            StateType            @default(DRAFT)
-  chapters         Chapter[]
-  product          Product              @relation(name: "course_product", fields: [courseId], references: [productId])
-
-  courseProgress      CourseProgress[]
-  learningPathCourses LearningPathCourses[]
-
-  @@unique([slug])
-  @@unique([courseId, name])
-  @@index([authorId])
-}
-
-//****** Course Schema  End******//
-
-//****** Chapter Schema  ******//
-model Chapter {
-  chapterId   Int        @id @default(autoincrement())
-  courseId    Int
-  objective   String?    @db.Text()
-  name        String
-  description String?    @db.Text()
-  sequenceId  Int
-  isActive    Boolean    @default(true)
-  state       StateType  @default(DRAFT)
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  course      Course     @relation(fields: [courseId], references: [courseId], onDelete: Cascade)
-  resource    Resource[]
-
-  @@unique([chapterId])
-  @@index([courseId])
-}
-
-//****** Chapter Schema End******//
-
-//****** Reource Schema  ******//
-enum ResourceContentType {
-  Video
-  Assignment
-}
-
-model Resource {
-  resourceId        Int                 @id @default(autoincrement())
-  name              String
-  description       String?             @db.Text()
-  chapterId         Int
-  sequenceId        Int
-  contentType       ResourceContentType
-  isActive          Boolean             @default(true)
-  isStudentNotified Boolean             @default(false)
-  state             StateType           @default(DRAFT)
-  createdAt         DateTime            @default(now())
-  updatedAt         DateTime            @updatedAt
-  chapter           Chapter             @relation(fields: [chapterId], references: [chapterId], onDelete: Cascade)
-  courseProgress    CourseProgress[]
-  discussions       Discussion[]
-
-  video      Video?
-  assignment Assignment?
-
-  @@unique([resourceId])
-  @@index([chapterId])
-}
-
-enum VideoState {
-  PROCESSING
-  FAILED
-  READY
-  UPLOADING
-}
-
-model Video {
-  id              Int        @id @default(autoincrement())
-  videoUrl        String     @db.VarChar(200)
-  providerVideoId String?    @db.VarChar(500)
-  videoDuration   Int
-  resourceId      Int        @unique
-  resource        Resource   @relation(fields: [resourceId], references: [resourceId], onDelete: Cascade)
-  thumbnail       String     @db.VarChar(200)
-  state           VideoState @default(PROCESSING)
-  mediaProvider   String?
-}
-
-//****** Reource Schema End ******//
-
-//****** CourseRegistration Schema  ******//
-enum CourseState {
-  ENROLLED
-  STARTED
-  COMPLETED
-}
-
-model CourseRegistration {
-  registrationId Int                  @id @default(autoincrement())
-  orderId        String               @unique
-  studentId      String
-  courseState    CourseState          @default(ENROLLED)
-  courseType     CourseType           @default(FREE)
-  image          String?
-  isActive       Boolean              @default(true)
-  dateJoined     DateTime             @default(now())
-  createdAt      DateTime             @default(now())
-  updatedAt      DateTime             @updatedAt
-  expireIn       DateTime?
-  order          Order                @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  user           User                 @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  certificate    CourseCertificates[]
-
-  @@unique([studentId, orderId])
-  @@index([studentId])
-}
-
-//****** CourseRegistration Schema End******//
-
-//****** CourseProgress Schema  ******//
-model CourseProgress {
-  courseProgressId Int      @id @default(autoincrement())
-  courseId         Int
-  resourceId       Int
-  studentId        String
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-  user             User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  resource         Resource @relation(fields: [resourceId], references: [resourceId], onDelete: Cascade)
-  course           Course   @relation(fields: [courseId], references: [courseId], onDelete: Cascade)
-
-  @@unique([studentId, resourceId])
-  @@index([resourceId])
-  @@index([courseId])
-}
-
-//****** Discussion Schema ******//
-model Discussion {
-  id              Int      @unique @default(autoincrement()) @db.Int()
-  userId          String
-  resourceId      Int
-  tagCommentId    Int?
-  comment         String?  @db.MediumText
-  attachedFiles   Json?
-  parentCommentId Int?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  resource        Resource @relation(fields: [resourceId], references: [resourceId], onDelete: Cascade)
-
-  @@index([userId])
-  @@index([resourceId])
-}
 
 //****** Discussion Schema End******//
 
-//****** Notification Schema ******//
-enum NotificationType {
-  POST_QUERY
-  REPLY_QUERY
-  ENROLLED
-  VIDEO_UPLOAD
-}
-
-enum EntityType {
-  USER
-  COURSE
-  LEARNING_PATH
-  EVENT
-  VIDEO_LESSON
-  ASSIGNMENT_LESSON
-  VIDEO
-  ASSIGNMENT
-}
-
-model Notification {
-  id               Int              @unique @default(autoincrement()) @db.Int()
-  notificationType NotificationType
-  recipientId      String
-  subjectId        String
-  subjectType      EntityType
-  objectId         String
-  objectType       EntityType
-  activity         String?
-  createdAt        DateTime         @default(now())
-  hasViewed        Boolean          @default(false)
-  recipient        User             @relation("recipient", fields: [recipientId], references: [id])
-
-  @@index([recipientId])
-}
-
 //****   conversation table ****//
-
-model Conversation {
-  id                   Int      @unique @default(autoincrement()) @db.Int()
-  authorId             String
-  comment              String?  @db.Text
-  attachedFiles        Json?
-  isView               Boolean  @default(false)
-  parentConversationId Int?
-  createdAt            DateTime @default(now())
-  updatedAt            DateTime @updatedAt
-  user                 User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
-
-  @@index([authorId])
+enum MessageUserType {
+  USER
+  SYSTEM
+  VISITOR
 }
 
 //****** UserJoinWaiting Schema ******//
@@ -397,303 +239,149 @@ enum ServiceType {
 
 model ServiceProvider {
   id             Int                @default(autoincrement()) @db.Int()
-  service_type   ServiceType        @unique
+  service_type   ServiceType
   provider_name  String             @db.Text()
+  tenantId       String
   providerDetail Json?
   state          ConfigurationState @default(INITIATED)
-  dt_added       DateTime           @default(now())
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @default(now())
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@unique([id])
-}
-
-model CourseCertificates {
-  id               String             @id @default(cuid())
-  registrationId   Int
-  productId        Int
-  imagePath        String?
-  pdfPath          String?
-  issueDate        DateTime           @default(now())
-  RegisteredCourse CourseRegistration @relation(fields: [registrationId], references: [registrationId], onDelete: Cascade)
-  product          Product            @relation(fields: [productId], references: [productId], onDelete: Cascade)
-
-  @@unique([registrationId, productId])
-  @@index([productId])
-}
-
-model CourseNotification {
-  id              Int       @unique @default(autoincrement()) @db.Int()
-  email           String
-  courseId        Int
-  createdAt       DateTime  @default(now())
-  mailSent        Boolean
-  mailSentDate    DateTime?
-  isEmailVerified Boolean
-
-  @@unique([email, courseId])
-  @@index([email])
-}
-
-model Blog {
-  id          String    @id @unique @default(cuid())
-  authorId    String
-  title       String
-  slug        String    @unique
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @default(now())
-  content     Json
-  banner      String
-  contentType String?
-  state       StateType
-  user        User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
-
-  @@index([authorId])
-}
-
-enum orderStatus {
-  PENDING
-  SUCCESS
-  FAILED
-  INITIATED
-}
-
-enum paymentStatus {
-  SUCCESS
-  FAILED
-  USER_DROPPED
-}
-
-enum gatewayProvider {
-  CASHFREE
-  STRIPE
-  RAZORPAY
-  CASH
-}
-
-enum paymentMode {
-  OFFLINE
-  ONLINE
-}
-
-enum ProductType {
-  COURSE
-  EVENT
-  LEARNING_PATH
-}
-
-model Product {
-  productId          Int                  @id @default(autoincrement())
-  ptype              ProductType
-  orders             Order[]
-  course             Course?              @relation(name: "course_product")
-  learningPath       LearningPath?        @relation(name: "learning_path_product")
-  CourseCertificates CourseCertificates[]
-}
-
-model LearningPath {
-  id                  Int
-  title               String
-  description         String
-  banner              String
-  attributes          Json?
-  price               Int                   @default(0)
-  state               StateType             @default(DRAFT)
-  authorId            String
-  slug                String
-  createdAt           DateTime              @default(now())
-  updatedAt           DateTime              @default(now())
-  author              User                  @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  product             Product               @relation(name: "learning_path_product", fields: [id], references: [productId], onDelete: Cascade)
-  learningPathCourses LearningPathCourses[]
-
-  @@unique([id])
-  @@index([authorId])
-}
-
-model LearningPathCourses {
-  learningPathId Int
-  courseId       Int
-  sequenceId     Int
-  path           LearningPath @relation(fields: [learningPathId], references: [id], onDelete: Cascade)
-  course         Course       @relation(fields: [courseId], references: [courseId], onDelete: Cascade)
-
-  @@unique([learningPathId, courseId])
-  @@index([courseId])
-}
-
-model Order {
-  id               String              @id @default(cuid())
-  gatewayOrderId   String?             @unique
-  orderStatus      orderStatus?
-  paymentStatus    paymentStatus?
-  studentId        String
-  productId        Int
-  currency         String?
-  paymentMode      paymentMode         @default(ONLINE)
-  amount           Int?
-  paymentId        String?
-  message          String?             @db.VarChar(500)
-  paymentChannel   String?
-  paymentTime      DateTime?
-  createdAt        DateTime            @default(now())
-  updatedAt        DateTime            @default(now())
-  paymentGateway   gatewayProvider?
-  Invoice          Invoice?
-  registeredCourse CourseRegistration?
-  product          Product             @relation(fields: [productId], references: [productId], onDelete: Cascade)
-  user             User                @relation(fields: [studentId], references: [id], onDelete: Cascade)
-
-  @@index([studentId, gatewayOrderId])
-  @@index([productId])
-}
-
-model Invoice {
-  id          Int      @id @default(autoincrement())
-  createdAt   DateTime @default(now())
-  studentId   String
-  items       Json
-  amountPaid  Int
-  paidDate    DateTime
-  taxRate     Int?
-  taxIncluded Boolean  @default(false)
-  pdfPath     String?  @db.VarChar(500)
-  orderId     String   @unique
-  user        User     @relation(fields: [studentId], references: [id])
-  order       Order    @relation(fields: [orderId], references: [gatewayOrderId])
-
-  @@index([studentId])
-  @@index([orderId])
-}
-
-model Assignment {
-  id                Int                    @id @unique @default(autoincrement())
-  createdAt         DateTime               @default(now())
-  updatedAt         DateTime               @default(now())
-  lessonId          Int
-  content           Json?
-  submissionConfig  Json?
-  estimatedDuration Int?
-  maximumPoints     Int                    @default(10)
-  passingScore      Int                    @default(8)
-  lesson            Resource               @relation(fields: [lessonId], references: [resourceId], onDelete: Cascade)
-  submission        AssignmentSubmission[]
-
-  @@unique([lessonId])
-  @@index([lessonId])
-}
-
-enum submissionStatus {
-  PASSED
-  COMPLETED
-  PENDING
-  FAILED
-  NOT_SUBMITTED
-}
-
-model AssignmentSubmission {
-  id           Int                   @id @default(autoincrement())
-  createdAt    DateTime              @default(now())
-  updatedAt    DateTime              @default(now())
-  assignmentId Int
-  lessonId     Int
-  studentId    String
-  content      Json?
-  user         User                  @relation(fields: [studentId], references: [id])
-  status       submissionStatus      @default(NOT_SUBMITTED)
-  assignment   Assignment            @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
-  evaluation   AssignmentEvaluation?
-
-  @@unique([id, studentId, assignmentId])
-  @@index([assignmentId, studentId])
-  @@index([studentId])
-}
-
-model AssignmentEvaluation {
-  id           Int                  @id @default(autoincrement())
-  assignmentId Int
-  submissionId Int                  @unique
-  authorId     String
-  score        Int
-  passingScore Int?                 @default(0)
-  maximumScore Int?                 @default(0)
-  scoreSummary Json?
-  comment      Json
-  createdAt    DateTime             @default(now())
-  updatedAt    DateTime             @default(now())
-  submission   AssignmentSubmission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
-  user         User                 @relation(fields: [authorId], references: [id])
-
-  @@unique([submissionId, assignmentId])
-  @@index([submissionId, assignmentId])
-  @@index([authorId])
-}
-
-enum EventType {
-  WORKSHOP
-  TALK
-}
-
-enum EventMode {
-  ONLINE
-  OFFLINE
-}
-
-model Events {
-  id                  Int                 @id @default(autoincrement())
-  title               String?             @unique
-  banner              String?
-  slug                String?             @unique
-  description         String?             @db.MediumText()
-  startTime           DateTime?
-  endTime             DateTime?
-  eventType           EventType?
-  price               Int?
-  eventInstructions   String?             @db.Text()
-  location            String?
-  certificate         Boolean             @default(false)
-  certificateTemplate String?
-  eventLink           String?
-  eventMode           EventMode?
-  registrationEndDate DateTime?
-  state               StateType           @default(DRAFT)
-  createdAt           DateTime            @default(now())
-  updatedAt           DateTime            @default(now())
-  authorId            String
-  user                User                @relation(fields: [authorId], references: [id])
-  attendees           EventRegistration[]
-
-  @@index([authorId])
-}
-
-enum EventAccess {
-  ACCEPTED
-  REJECTED
-  PENDING
-}
-
-model EventRegistration {
-  id                 Int         @id @default(autoincrement())
-  name               String
-  email              String
-  studentId          String?
-  phone              String
-  eventId            Int
-  attended           Boolean     @default(false)
-  certificate        String?
-  certificatePdfPath String?
-  status             EventAccess @default(PENDING)
-  comment            String?
-  createdAt          DateTime    @default(now())
-  updatedAt          DateTime    @default(now())
-  user               User?       @relation(fields: [email], references: [email])
-  event              Events      @relation(fields: [eventId], references: [id], onDelete: Cascade)
-
-  @@unique([eventId, email])
-  @@index([email])
-  @@index([eventId])
+  @@unique([service_type, tenantId])
+  @@index([tenantId])
 }
 
 model SecretStore {
-  name   String @id
-  secret String @db.Text
-  nonce  String
+  name     String
+  secret   String @db.Text
+  nonce    String
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([name, tenantId])
+  @@index([tenantId])
+}
+
+model aiAgent {
+  id            String                  @id @default(cuid())
+  name          String
+  model         String
+  temperature   Float
+  agentPrompt   String                  @db.Text()
+  tenantId      String
+  tenant        Tenant                  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  createdAt     DateTime                @default(now())
+  updatedAt     DateTime                @updatedAt
+  conversations AssistantConversation[]
+
+  @@unique([id, tenantId])
+  @@map("ai_agents")
+}
+
+enum ActivityType {
+  VISIT_PAGE
+  WATCH_VIDEO
+}
+
+model Activities {
+  id         BigInt       @id @default(autoincrement())
+  type       ActivityType
+  dtOccurred DateTime     @db.Date
+  clientIP   String
+  userAgent  String
+  country    String?
+  path       String?
+  currency   String?
+  timeZone   String?
+  city       String?
+  domain     String
+  tenant     Tenant       @relation(fields: [domain], references: [domain], onDelete: Cascade)
+
+  @@unique([clientIP, dtOccurred, domain, path])
+}
+
+enum SourceStatus {
+  NEW
+  FETCHED
+  PROCESSING
+  ADDED
+  EMBEDDED
+  FAILED
+}
+
+enum KnowledgeSourceType {
+  TXT
+  DOCS_WEB_URL
+  MARKETING_WEB_URL
+  SITEMAP
+  URL
+  PDF
+  DOCX
+  VIDEO
+}
+
+model KnowledgeSource {
+  id             String              @id @default(uuid())
+  title          String
+  description    String?             @db.Text
+  sourceType     KnowledgeSourceType @default(URL) // URL, PDF, DOCX, TXT
+  sourceUrl      String?
+  content        String?             @db.MediumText
+  config         Json? // {model, temperature, maxTokens, systemPrompt}
+  metadata       Json?
+  status         SourceStatus        @default(NEW)
+  errorMessage   String?
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+  tenantId       String
+  parentSourceId String?
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([sourceUrl, tenantId])
+  @@index([tenantId, parentSourceId])
+}
+
+enum JobStatus {
+  CREATED
+  EXECUTING
+  COMPLETED
+  FAILED
+}
+
+enum JobType {
+  EMBEDDING
+  SCRAPING
+}
+
+model AssistantConversation {
+  id            String             @id @default(uuid())
+  tenantId      String
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+  summary       String?            @db.Text // Stores the summary of the conversation
+  sessionId     String // New field: To track the user session (can be visitor ID or logged-in user ID)
+  isUserSession Boolean            @default(false)
+  messages      AssistantMessage[] // Relation to individual messages
+  agentId       String
+  agent         aiAgent            @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  tenant        Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@map("assistant_conversations")
+}
+
+// Represents an individual message within a conversation
+model AssistantMessage {
+  id             String                @id @default(uuid())
+  conversationId String
+  conversation   AssistantConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  role           MessageUserType // "human" or "ai"
+  content        String                @db.Text
+  createdAt      DateTime              @default(now())
+
+  @@index([conversationId])
+  @@map("assistant_messages")
 }

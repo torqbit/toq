@@ -1,13 +1,14 @@
 import styles from "./Footer.module.scss";
-import { Flex } from "antd";
+import { Flex, Tooltip } from "antd";
 import Link from "next/link";
 import Image from "next/image";
 import SvgIcons from "@/components/SvgIcons";
 import { FC } from "react";
-import { PageSiteConfig } from "@/services/siteConstant";
+import { DEFAULT_THEME, PageSiteConfig } from "@/services/siteConstant";
 import { Theme } from "@/types/theme";
 import { isValidImagePath } from "@/lib/utils";
 import DOMPurify from "isomorphic-dompurify";
+import { useAppContext } from "@/components/ContextApi/AppContext";
 
 const Footer: FC<{ siteConfig: PageSiteConfig; homeLink: string; isMobile: boolean; activeTheme: Theme }> = ({
   siteConfig,
@@ -15,7 +16,7 @@ const Footer: FC<{ siteConfig: PageSiteConfig; homeLink: string; isMobile: boole
   homeLink,
   activeTheme,
 }) => {
-  const { navBar, brand } = siteConfig;
+  const { brand } = siteConfig;
 
   const getLogoSrc = (activeTheme: Theme) => {
     switch (activeTheme) {
@@ -27,131 +28,88 @@ const Footer: FC<{ siteConfig: PageSiteConfig; homeLink: string; isMobile: boole
     }
   };
 
-  const footerContent = [
+  const socialLinks = [
     {
-      title: "Resources",
-      links: navBar?.links?.map((nav) => {
-        return {
-          href: nav.link,
-          label: nav.title,
-        };
-      }),
+      href: brand?.socialLinks?.discord,
+      icon: <i>{SvgIcons.discord}</i>,
+      name: "Discord",
     },
     {
-      title: "Community",
-      links: [
-        {
-          href: brand?.socialLinks?.discord,
-          label: "Discord",
-        },
-        {
-          href: brand?.socialLinks?.github,
-          label: "Github",
-        },
-        {
-          href: brand?.socialLinks?.youtube,
-          label: "Youtube",
-        },
-        {
-          href: brand?.socialLinks?.instagram,
-          label: "Instagram",
-        },
-        {
-          href: brand?.socialLinks?.twitter,
-          label: "Twitter",
-        },
-      ],
+      href: brand?.socialLinks?.github,
+      icon: <i>{SvgIcons.github}</i>,
+      name: "Github",
     },
     {
-      title: "About ",
-      links: [
-        {
-          arialLabel: "link for story page",
-
-          href: "/story",
-          label: "The Story",
-        },
-        {
-          arialLabel: "link for team page",
-
-          href: "#",
-          label: "Team",
-        },
-        {
-          arialLabel: "link for contact page",
-
-          href: "/contact-us",
-          label: "Contact Us",
-        },
-      ],
+      href: brand?.socialLinks?.youtube,
+      icon: <i>{SvgIcons.youtube}</i>,
+      name: "Youtube",
     },
     {
-      title: "Legal",
-      links: [
-        {
-          arialLabel: "link for terms & conditions page",
-
-          href: "/terms-and-conditions",
-          label: "Terms & Conditions",
-        },
-        {
-          arialLabel: "link for privacy page",
-
-          href: "/privacy-policy",
-          label: "Privacy Policy",
-        },
-        {
-          arialLabel: "link for refund policy page",
-          href: "/terms-and-conditions/#refund",
-          label: "Refund & Cancellation Policy",
-        },
-      ],
+      href: brand?.socialLinks?.instagram,
+      icon: <i>{SvgIcons.instagram}</i>,
+      name: "Instagram",
+    },
+    {
+      href: brand?.socialLinks?.xcom,
+      icon: <i>{SvgIcons.XIcon}</i>,
+      name: "X.com",
     },
   ];
+  const { globalState } = useAppContext();
 
   return (
     <section className={styles.footerContainer}>
       <footer>
         <div>
-          <Link href={DOMPurify.sanitize(homeLink)}>
-            <Flex align="center" gap={5}>
-              {siteConfig.brand &&
-              typeof siteConfig.brand?.logo === "string" &&
-              typeof siteConfig.brand?.darkLogo === "string" ? (
-                <img
-                  src={getLogoSrc(activeTheme)}
-                  style={{ width: "auto", height: 30 }}
-                  alt={`logo of ${siteConfig.brand?.name}`}
-                />
-              ) : (
-                siteConfig.brand?.logo
-              )}
+          {globalState.theme == "light" &&
+          brand?.logo == DEFAULT_THEME.brand.logo &&
+          window.location.origin !== process.env.NEXT_PUBLIC_NEXTAUTH_URL ? (
+            <>
+              <h1 className="font-brand" style={{ marginLeft: 15 }}>
+                {brand?.name}
+              </h1>
+            </>
+          ) : (
+            <Link href={DOMPurify.sanitize(homeLink)}>
+              <Flex align="center" gap={5}>
+                {siteConfig.brand &&
+                typeof siteConfig.brand?.logo === "string" &&
+                typeof siteConfig.brand?.darkLogo === "string" ? (
+                  <Image
+                    className={styles.logo_img}
+                    src={getLogoSrc(activeTheme)}
+                    height={100}
+                    alt={`logo of ${siteConfig.brand?.name}`}
+                    width={200}
+                    style={{ width: "auto", height: 30, cursor: "pointer" }}
+                  />
+                ) : (
+                  siteConfig.brand?.logo
+                )}
 
-              {!brand?.logo && <h1 className="font-brand">{brand?.name}</h1>}
-            </Flex>
-          </Link>
-          <p>{brand?.title}</p>
+                {!brand?.logo && <h1 className="font-brand">{brand?.name}</h1>}
+              </Flex>
+            </Link>
+          )}
         </div>
 
-        <div>
-          <div className={styles.linkWrapper}>
-            {footerContent.map((content, i) => {
+        <Flex gap={10}>
+          {socialLinks.map((link, i) => {
+            if (link.href) {
               return (
-                <div key={i} className={styles.linkList}>
-                  <h4 className={styles.title}>{content.title}</h4>
-                  <ul>
-                    {content?.links?.map((link, i) => {
-                      return (
-                        <li key={i} style={{ display: !link.href ? "none" : "block" }}>
-                          <Link href={DOMPurify.sanitize(`${link.href}`)}> {link.label}</Link>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </div>
+                <Tooltip title={link.name} key={i}>
+                  <Link className={styles.social__links__icon} href={link.href}>
+                    {link.icon}
+                  </Link>
+                </Tooltip>
               );
-            })}
-          </div>
+            }
+          })}
+        </Flex>
+        <div className={styles.powered__by}>
+          <Link href="https://torqbit.com " target="_blank">
+            <p>Powered by Torqbit</p>
+          </Link>
         </div>
       </footer>
     </section>

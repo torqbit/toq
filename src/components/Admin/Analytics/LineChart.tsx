@@ -3,6 +3,7 @@ import { FC } from "react";
 import { ResponsiveLine, Serie } from "@nivo/line";
 import { useAppContext } from "@/components/ContextApi/AppContext";
 import appConstant from "@/services/appConstant";
+import { generateTickValues, generateYSteps, getMaxLineChatY } from "@/lib/utils";
 
 const LineChart: FC<{
   data: Serie[];
@@ -78,7 +79,7 @@ const LineChart: FC<{
           stacked: true,
           reverse: false,
         }}
-        yFormat=" >-.2f"
+        yFormat=" >-.0f"
         curve="linear"
         axisTop={null}
         axisRight={null}
@@ -91,14 +92,16 @@ const LineChart: FC<{
           legendPosition: "middle",
         }}
         axisLeft={{
-          tickValues: 5, // added
+          tickValues: generateTickValues(data), // added
           tickSize: 10,
           tickPadding: 5,
           tickRotation: 0,
           legend: axisLeftTitle, // added
           legendOffset: -60,
           legendPosition: "middle",
-          format: (values) => `${values > 1000 ? `${Math.round(values / 1000)}k` : values}`,
+          format: (values) => {
+            return `${values > 1000 ? `${Math.round(values / 1000)}k` : values}`;
+          },
         }}
         enableGridX={false}
         enableGridY={false}

@@ -6,7 +6,11 @@ import { useAppContext } from "../ContextApi/AppContext";
 import SvgIcons from "../SvgIcons";
 import { Theme } from "@/types/theme";
 
-const ThemeSwitch: FC<{ activeTheme: Theme; previewMode?: boolean }> = ({ activeTheme, previewMode }) => {
+const ThemeSwitch: FC<{ activeTheme: Theme; previewMode?: boolean; size?: number }> = ({
+  activeTheme,
+  previewMode,
+  size = 20,
+}) => {
   const { dispatch, globalState } = useAppContext();
   const handleTheme = (theme: Theme) => {
     !previewMode && localStorage.setItem("theme", theme);
@@ -28,7 +32,7 @@ const ThemeSwitch: FC<{ activeTheme: Theme; previewMode?: boolean }> = ({ active
             handleTheme(globalState.theme === "dark" ? "light" : "dark");
           }}
           icon={
-            <i style={{ lineHeight: 0, color: "var(--font-secondary)", fontSize: 20 }}>
+            <i style={{ lineHeight: 0, color: "var(--font-secondary)", fontSize: size }}>
               {activeTheme == "dark" ? SvgIcons.sun : SvgIcons.moon}
             </i>
           }

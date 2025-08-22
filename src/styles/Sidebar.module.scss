@@ -1,10 +1,56 @@
 .main_sider {
-  height: 100vh;
+  height: calc(100vh - 50px);
   background-color: var(--bg-primary);
   box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
   border-right: 1px solid var(--border-color);
 
+  .theme__switch {
+    cursor: pointer;
+    p {
+      margin: 0;
+    }
+  }
+
+  .powered__by {
+    i {
+      height: 30px;
+      width: 60px;
+      color: var(--font-primary);
+      &:hover {
+        color: var(--font-primary);
+      }
+    }
+
+    a {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      width: 260px;
+      height: 40px;
+      background: var(--bg-tag);
+      padding: 5px 10px;
+      transition: all 0.2s ease-in-out;
+      text-align: center;
+      justify-content: center;
+      color: var(--font-secondary);
+
+      p {
+        margin: 0;
+        color: var(--font-secondary);
+      }
+
+      img {
+        height: 30px;
+      }
+    }
+  }
+
   .menu {
+    :global {
+      .ant-menu-submenu-title {
+        color: var(--font-secondary);
+      }
+    }
     li.menu__item {
       border-radius: 0;
       margin: 4px 0;
@@ -17,7 +63,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-right: 30px;
+    // margin-right: 30px;
 
     .logoText {
       margin: 0;
@@ -155,6 +201,14 @@
 
 .user_name_email {
   line-height: 1.4;
+  > div {
+    max-width: 130px;
+    -webkit-line-clamp: 1;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
   > div:first-child {
     color: var(--font-primary);
     font-size: 16px;

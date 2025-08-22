@@ -10,14 +10,15 @@ export function errorHandler(err: unknown, res: NextApiResponse) {
     err instanceof Prisma.PrismaClientKnownRequestError ||
     err instanceof Prisma.PrismaClientInitializationError
   ) {
-    return res.status(422).json({ success: false, error: err.message });
+    return res.status(400).json({ success: false, error: err.message });
   } else if (err instanceof z.ZodError) {
     return res.status(400).json({ success: false, error: err.errors });
   } else if (typeof err === "string") {
-    return res.status(500).json({ success: false, error: err });
+    return res.status(500).json({ success: false, message: err });
   } else if (err instanceof APIResponse) {
     return res.status(err.status).json(err);
   } else {
-    return res.status(500).json({ success: false, error: appConstant.cmnErrorMsg });
+    console.error(err);
+    return res.status(500).json({ success: false, message: appConstant.cmnErrorMsg });
   }
 }

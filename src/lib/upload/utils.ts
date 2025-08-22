@@ -4,7 +4,6 @@ import fs from "fs";
 import { NextApiRequest } from "next";
 import os from "os";
 import path from "path";
-import { parse } from "node-html-parser";
 
 export async function mergeChunks(
   fileName: string,
@@ -20,7 +19,6 @@ export async function mergeChunks(
   const dirPath = path.join(homeDir, `${appConstant.homeDirName}/${appConstant.staticFileDirName}`);
   for (let i = 0; i < totalChunks; i++) {
     const chunkFilePath = path.join(dirPath, `${fileName}.part${i}.${extention}`);
-
     const partStream = fs.createReadStream(chunkFilePath);
 
     await new Promise<void>((resolve, reject) => {
@@ -35,6 +33,13 @@ export async function mergeChunks(
   }
 
   outFile.end();
+}
+
+export async function fetchImageBuffer(url: string) {
+  const response = await fetch(url);
+  if (!response.ok) throw new Error(`Failed to fetch image: ${response.statusText}`);
+  const arrayBuffer = await response.arrayBuffer();
+  return Buffer.from(arrayBuffer);
 }
 
 export const saveToLocal = async (fileName: string, sourcePath: string): Promise<string> => {
@@ -73,15 +78,3 @@ export const readFieldWithSingleFile = (req: NextApiRequest) => {
     });
   });
 };
-
-export function getFirstTextFromHTML(html: string, charCount = 150) {
-  const root = parse(html);
-  const firstParagraph = root.querySelectorAll("p").find((p) => p.text.trim().length > 0);
-
-  let firstParagraphText = firstParagraph ? firstParagraph.text.trim() : "";
-
-  if (firstParagraphText.length > 150) {
-    firstParagraphText = firstParagraphText.substring(0, charCount); // Truncate to 150 characters
-  }
-  return firstParagraphText;
-}

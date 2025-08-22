@@ -7,8 +7,8 @@ import prisma from "@/lib/prisma";
 import { Buffer } from "buffer";
 
 export interface SecretsProvider {
-  put(name: string, value: string): Promise<boolean>;
-  get(name: string): Promise<string | undefined>;
+  put(name: string, value: string, tenantId: string): Promise<boolean>;
+  get(name: string, tenantId: string): Promise<string | undefined>;
 }
 
 const keyFormat = "base64";
@@ -55,7 +55,7 @@ export class SodiumSecretsProvider implements SecretsProvider {
   constructor() {
     this.initKeyPair();
   }
-  async put(name: string, value: string): Promise<boolean> {
+  async put(name: string, value: string, tenantId: string): Promise<boolean> {
     try {
       const nonce = Buffer.alloc(sodium.crypto_box_NONCEBYTES);
       sodium.randombytes_buf(nonce);
@@ -66,7 +66,10 @@ export class SodiumSecretsProvider implements SecretsProvider {
       const dbNonce = nonce.toString(keyFormat);
       const existingSecret = await prisma.secretStore.findUnique({
         where: {
-          name: name,
+          name_tenantId: {
+            name: name,
+            tenantId: tenantId,
+          },
         },
       });
 
@@ -77,7 +80,10 @@ export class SodiumSecretsProvider implements SecretsProvider {
             nonce: dbNonce,
           },
           where: {
-            name: name,
+            name_tenantId: {
+              name: name,
+              tenantId: tenantId,
+            },
           },
         });
       } else {
@@ -86,6 +92,7 @@ export class SodiumSecretsProvider implements SecretsProvider {
             name: name,
             secret: dbSecret,
             nonce: dbNonce,
+            tenantId: tenantId,
           },
         });
       }
@@ -96,11 +103,14 @@ export class SodiumSecretsProvider implements SecretsProvider {
     }
   }
 
-  async get(name: string): Promise<string | undefined> {
+  async get(name: string, tenantId: string): Promise<string | undefined> {
     try {
       const result = await prisma.secretStore.findUnique({
         where: {
-          name: name,
+          name_tenantId: {
+            name: name,
+            tenantId: tenantId,
+          },
         },
       });
 

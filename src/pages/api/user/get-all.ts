@@ -4,6 +4,7 @@ import { withMethods } from "@/lib/api-middlewares/with-method";
 import { withAuthentication } from "@/lib/api-middlewares/with-authentication";
 import { withUserAuthorized } from "@/lib/api-middlewares/with-authorized";
 import { errorHandler } from "@/lib/api-middlewares/errorHandler";
+import { withTenantOwnerAuthorized } from "@/lib/api-middlewares/with-tenant-authorized";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
@@ -14,4 +15,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default withMethods(["GET"], withAuthentication(withUserAuthorized(handler)));
+export default withMethods(["GET"], withAuthentication(withTenantOwnerAuthorized(handler)));

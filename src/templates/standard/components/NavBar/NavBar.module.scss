@@ -8,10 +8,10 @@
   background-color: var(--bg-primary);
   height: 60px;
   width: 100%;
-  box-shadow: var(--box-shadow);
-  backdrop-filter: blur(10px);
-  background: var(--bg-header);
+  border-bottom: 1px solid var(--border-color);
+
   padding: 5px 35px;
+
   a {
     color: var(--font-secondary);
   }
@@ -163,6 +163,7 @@
     position: fixed;
     top: 0;
     left: 0;
+    padding: 0 10px;
     z-index: 10;
     display: flex;
     align-items: center;

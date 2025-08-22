@@ -21,22 +21,10 @@ const ResponsiveAppNavBar: FC<{
   const onChangeSelectedNavBar = () => {
     let selectedMenu = router.pathname.split("/")[1];
     if (selectedMenu == "admin" && userRole !== Role.STUDENT) {
-      if (router.pathname.split("/")[3] === "path") {
-        selectedMenu = "academy";
-      } else {
-        selectedMenu = router.pathname.split("/")[2];
-      }
       selectedMenu = router.pathname.split("/")[2];
     }
     if (userRole == Role.STUDENT && router.pathname == "/") {
       selectedMenu = "dashboard";
-    }
-    if (
-      router.pathname.startsWith("/academy") ||
-      router.pathname.startsWith("/path") ||
-      router.pathname.startsWith("/courses")
-    ) {
-      selectedMenu = "academy";
     }
 
     dispatch({ type: "SET_NAVBAR_MENU", payload: selectedMenu as IResponsiveNavMenu });

@@ -16,16 +16,13 @@ import {
   Tailwind,
 } from "@react-email/components";
 
-import * as React from "react";
-
-import { getSiteConfig } from "@/services/getSiteConfig";
-import { PageSiteConfig } from "@/services/siteConstant";
 interface IProps {
   configData: IWelcomeEmailConfig;
 }
 
 const WelcomeEmailPage = ({ configData }: IProps) => {
-  const { site }: { site: PageSiteConfig } = getSiteConfig();
+  const site = configData.site;
+
   return (
     <Tailwind>
       <Html>
@@ -39,32 +36,30 @@ const WelcomeEmailPage = ({ configData }: IProps) => {
         <Body className="bg-[#f5f5f5] my-auto mx-auto font-sans ">
           <Container className="border border-solid border-[#eaeaea] rounded my-[40px] mx-auto    max-w-[465px]">
             <Heading className="text-black   w-full  text-[20px] font-normal  my-0  py-2 px-[20px]  mx-0 ">
-              <Img
-                height={50}
-                width={50}
-                style={{ display: "unset" }}
-                src={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/${site.brand?.icon}`}
-              />
+              <Img height={50} width={50} style={{ display: "unset" }} src={`${site.brand?.icon}`} />
             </Heading>
             <Hr className="border border-solid border-[#eaeaea]  mx-0 w-full" />
 
             <Section className="px-[20px]">
               <Text className="text-black text-[20px] leading-[20px]">Hey, {configData.name}!</Text>
               <Text className="text-[#888] text-[14px] leading-[20px]">
-                Welcome to the {`${site.brand?.name}`} Platform. we&apos;re excited to have you join our community. You
-                can now excel in the field of software development, connect with fellow learners and help each other to
-                move forward.
+                Welcome to the {`${site.brand?.name}`} learning center.
+              </Text>
+              <Text className="text-[#888] text-[14px] leading-[20px]">
+                You now have full access to a growing library of <strong> expert-led courses </strong> and a smart,
+                always-available <strong>AI Chat Assistant</strong>
               </Text>
 
               <Text className="text-[#888] text-[14px] leading-[20px]">
-                Visit your dashboard and browse all the courses to start learning.
+                Visit and start a conversation with the AI Chat to get instant help, guidance, or personalized learning
+                suggestions.
               </Text>
 
               <Button
                 href={configData.url}
                 className={`bg-[${site.brand?.brandColor}] px-5 py-2 text-white text-left text-[12px]  rounded`}
               >
-                Visit Dashboard
+                Explore Learning center
               </Button>
 
               <Text className="text-[#888] text-[14px] leading-[20px]">

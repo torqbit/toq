@@ -1,10 +1,13 @@
 .section__wrapper {
+  width: var(--main-content-width);
   padding: 50px 0;
   scroll-margin-top: 50px;
+  margin: 0 auto;
 }
 
 @media only screen and (max-width: 435px) {
   .section__wrapper {
-    padding: 40px 0;
+    padding: 0px 0;
+    width: 80vw;
   }
 }

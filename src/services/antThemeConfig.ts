@@ -45,6 +45,7 @@ const antThemeConfig = (siteConfig: PageSiteConfig) => {
         itemActiveBg: "#eee",
         itemSelectedBg: "#eee",
         itemSelectedColor: "#000",
+        groupTitleColor: "#666",
         itemBg: "#fff",
       },
       Divider: {
@@ -87,6 +88,12 @@ const antThemeConfig = (siteConfig: PageSiteConfig) => {
       Input: {
         borderRadius: 4,
         activeShadow: "none",
+        colorBgContainer: "#f5f5f5",
+      },
+      InputNumber: {
+        borderRadius: 4,
+        activeShadow: "none",
+        colorBgContainer: "#f5f5f5",
       },
       Dropdown: {
         colorPrimary: "#666",

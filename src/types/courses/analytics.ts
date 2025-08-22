@@ -41,7 +41,11 @@ export interface IUsersResponse {
   totalUsers: number;
   comparedPercentage: number;
 }
-export type AnalyticsType = "Earnings" | "Enrollments" | "Users";
+export interface IPageViewResponse {
+  totalViews: number;
+  comparedPercentage: number;
+}
+export type AnalyticsType = "Earnings" | "Enrollments" | "Users" | "Orgs" | "Active Users" | "PageViews" | "AIMessages";
 export type AnalyticsDuration = "month" | "quarter" | "year";
 
 export interface IAnalyticStats {

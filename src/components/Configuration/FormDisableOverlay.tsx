@@ -1,5 +1,5 @@
 import { FC } from "react";
-import styles from "./CMS/CMS.module.scss";
+import styles from "./cms.module.scss";
 
 const FormDisableOverlay: FC<{ message?: string }> = ({ message = "First complete the previous step" }) => {
   return (
