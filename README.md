@@ -50,9 +50,11 @@ Torqbit makes your **documentation AI-powered and conversational**. Developers c
 
 ## 🎬 Demo Preview
 
-<p align="center">
- <video src="https://cdn.torqbit.com/static/mintlify-demo.mp4" loop autoplay muted width="700" controls allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" style="border-radius:4px;"></video>
-</p>
+
+
+https://github.com/user-attachments/assets/e5fd1e8c-de48-42e2-a163-482054665c6a
+
+
 
 _Chat directly inside your docs for real-time answers._
 
