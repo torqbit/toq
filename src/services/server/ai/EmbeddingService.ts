@@ -365,11 +365,16 @@ export class EmbeddingService {
    * Delete document by original document ID (deletes all chunks)
    */
   async deleteDocument(tenantId: string, documentId: string): Promise<void> {
-    const response = await this.qdrant.collectionExists(this.getCollectionName(tenantId));
-    if (response.exists) {
-      await this.deleteDocumentChunks(tenantId, documentId);
-    } else {
-      console.warn(`Collection ${this.getCollectionName(tenantId)} does not exist`);
+    try {
+      const response = await this.qdrant.collectionExists(this.getCollectionName(tenantId));
+      if (response.exists) {
+        await this.deleteDocumentChunks(tenantId, documentId);
+      } else {
+        console.warn(`Collection ${this.getCollectionName(tenantId)} does not exist`);
+      }
+    } catch (error: any) {
+      console.error("Error deleting document:", error.message);
+      throw error;
     }
   }
 
