@@ -78,7 +78,6 @@ services:
 
   qdrant:
     image: qdrant/qdrant:v1.15.3
-    container_name: qdrant
     ports:
       - "6333:6333" # REST
       - "6334:6334" # gRPC

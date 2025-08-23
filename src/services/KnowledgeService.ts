@@ -175,8 +175,8 @@ class AIKnowledgeService {
         });
       } else {
         result.json().then((r) => {
-          const failedResponse = r as FailedApiResponse;
-          onFailure(failedResponse.error);
+          const failedResponse = r as APIResponse<any>;
+          onFailure(failedResponse.message);
         });
       }
     });

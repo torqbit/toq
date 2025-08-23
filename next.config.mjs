@@ -2,13 +2,11 @@
 import cacheConfig from "./cacheConfig.mjs";
 const { protocol, hostname } = new URL(process.env.NEXTAUTH_URL || "http://localhost:3000");
 import pwa from "next-pwa";
-import * as sass from "sass";
 const isDev = process.env.NODE_ENV === "development";
 
 // Completely disable Sass logger to silence deprecation warnings
 const sassOptions = {
   sassOptions: {
-    implementation: sass,
     logger: {
       debug: () => {},
       warn: () => {},

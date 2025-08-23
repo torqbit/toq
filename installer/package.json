@@ -1,6 +1,6 @@
 {
   "name": "torqbit",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "One-command installer to set up and run Torqbit via Docker Compose",
   "bin": {
     "torqbit": "index.js"

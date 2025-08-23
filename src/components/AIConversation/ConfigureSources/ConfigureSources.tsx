@@ -66,7 +66,7 @@ const ConfigureSources: FC = () => {
         messageAPI.open({
           key: messageDeleteKey,
           type: "error",
-          content: "Failed to delete source",
+          content: error,
           duration: 2,
         });
       }
