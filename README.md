@@ -1,6 +1,6 @@
 <p align="center">
-  <a href="https://github.com/torqbit/torqbit" target="_blank" rel="noopener noreferrer">
-    <img src="https://cdn.torqbit.com/static/brand/logo.png" alt="Torqbit Logo" width="250"/>
+  <a href="https://github.com/torqbit/toq" target="_blank" rel="noopener noreferrer">
+    <img src="https://cdn.torqbit.com/static/brand/toq/toq.png" alt="Torqbit Logo" width="250"/>
   </a>
 </p>
 
@@ -9,13 +9,13 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/torqbit/torqbit/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">
+  <a href="https://github.com/torqbit/toq/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">
     <img src="https://img.shields.io/github/license/torqbit/torqbit?style=flat" alt="License"/>
   </a>
-  <a href="https://github.com/torqbit/torqbit/graphs/contributors" target="_blank" rel="noopener noreferrer">
+  <a href="https://github.com/torqbit/toq/graphs/contributors" target="_blank" rel="noopener noreferrer">
     <img src="https://img.shields.io/github/contributors/torqbit/torqbit?style=flat" alt="Contributors"/>
   </a>
-  <a href="https://github.com/torqbit/torqbit/issues" target="_blank" rel="noopener noreferrer">
+  <a href="https://github.com/torqbit/toq/issues" target="_blank" rel="noopener noreferrer">
     <img src="https://img.shields.io/github/issues/torqbit/torqbit?style=flat" alt="Issues"/>
   </a>
   <a href="https://discord.gg/DHU38pGw7C" target="_blank" rel="noopener noreferrer">
@@ -24,7 +24,7 @@
 </p>
 
 <p align="center">
-  <img src="screenshots/ai-assistant.png" alt="Torqbit" width="800" style="border-radius: 4px;"/>
+  <img src="screenshots/ai-assistant.png" alt="toq" width="800" style="border-radius: 4px;"/>
 </p>
 
 ---
@@ -46,7 +46,7 @@ Torqbit makes your **documentation AI-powered and conversational**. Developers c
 | 📚 **Multi-source Knowledge**   | Integrate GitHub, GitBook, Notion, Google Drive, Markdown    |
 | 🔗 **Universal Embedding**      | Widget works seamlessly with any static or dynamic docs site |
 | 🌐 **Dedicated Query Endpoint** | Offer ask.yourdomain.com for direct Q&A access               |
-| 🛠 **Open Source & Extensible** | Customize connectors and behaviors easily                    |
+| 🛠 **Open Source & Extensible**  | Customize connectors and behaviors easily                    |
 
 ---
 
@@ -61,10 +61,11 @@ _Chat directly inside your docs for real-time answers._
 ## 🏁 Quick Start using Docker
 
 ```bash
-npx torqbit
+npx @torqbit/toq
 ```
 
 - What it does:
+
   - Checks for Docker and Docker Compose.
   - Writes a `docker-compose.yml` to your current directory (asks before overwriting).
   - Starts the stack with `docker compose up -d --build`.
@@ -92,8 +93,8 @@ npx torqbit
 ### Run Locally
 
 ```bash
-git clone https://github.com/torqbit/torqbit.git
-cd torqbit
+git clone https://github.com/torqbit/toq.git
+cd toq
 yarn install
 yarn dev
 ```

@@ -1,6 +1,6 @@
 services:
   web:
-    image: torqbit/torqbit:v1.0.3
+    image: torqbit/toq:v1.0.4
     ports:
       - "8080:8080"
     command: ["sh", "-c", "npx prisma db push --accept-data-loss; PORT=8080 yarn start"]
