@@ -1,6 +1,6 @@
 {
   "name": "@torqbit/toq",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "One-command installer to set up and run Toq via Docker Compose",
   "bin": {
     "torqbit": "index.js"
