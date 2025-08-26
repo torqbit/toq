@@ -58,7 +58,7 @@ export default {
   academyCategory: ["Marketing Automation", "CRM", "DevOps", "CI/CD"],
   websiteUrl: "https://torqbit.com",
   cmnErrorMsg: "Something went wrong. Please try again later",
-  platformName: "Torqbit",
+  platformName: "Toq",
   subDomain: "torq.local:3000",
   ignoredIP: ["127.0.0.1", "198.168.1.1", "localhost:3000"],
   platformLogo: `https://cdn.torqbit.com/static/brand/logo.png`,
@@ -185,7 +185,7 @@ export default {
   defaultMainStorageRegion: "DE",
   defaultVideoResolutions: ["360p", "480p", "720p"],
   attachmentFileFolder: "discussion-attachment",
-  supportEmail: "support@torqbit.com",
+  supportEmail: "support@acme.com",
   convertMiliSecondsToMinutes: 60 * 1000,
   mediaTempDir: "media",
   invoiceTempDir: "invoices",
@@ -194,23 +194,23 @@ export default {
   contacts: [
     {
       title: "Legal Entity",
-      description: "TORQBIT",
+      description: "Toq",
     },
     {
       title: "Registered Address",
-      description: "3rd floor, Ramajee Complex, Memco More, DHANBAD, Jharkhand, PIN: 826004",
+      description: "",
     },
     {
       title: "Operational Address",
-      description: "3rd floor, Ramajee Complex, Memco More, DHANBAD, Jharkhand, PIN: 826004",
+      description: "",
     },
     {
       title: "Telephone No",
-      description: "7463811090",
+      description: "",
     },
     {
       title: "E-Mail ID",
-      description: "train@torqbit.com",
+      description: "support@acme.com",
     },
   ],
   payment: {

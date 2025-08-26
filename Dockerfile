@@ -1,6 +1,6 @@
 FROM node:20.19.4 AS builder
 
-WORKDIR /opt/torqbit
+WORKDIR /opt/toq
 
     
 # Install Yarn package manager
@@ -19,17 +19,17 @@ RUN yarn install
 
 # Copy the rest of the application code
 COPY . .
-COPY docker.env /opt/torqbit/.env
+COPY docker.env /opt/toq/.env
 # Generate the schema & build the Next.js application
 RUN npx prisma generate && yarn build 
 
 # Prepare the image to serve the built app
 FROM node:20.19.4-slim
 RUN apt update && apt install -y curl openssl
-WORKDIR /opt/torqbit
+WORKDIR /opt/toq
 
 # Copy .next/ folder (build artifacts)
-COPY --from=builder /opt/torqbit /opt/torqbit
+COPY --from=builder /opt/toq /opt/toq
 
 # Expose the port application will run on
 EXPOSE 8080

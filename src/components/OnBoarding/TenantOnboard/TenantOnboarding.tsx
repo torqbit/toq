@@ -63,7 +63,7 @@ const TenantOnboard: FC<{
     {
       icon: <i style={iconStyles}>{SvgIcons.rocket}</i>,
       title: "Create your workspace",
-      description: "A place to manage your AI assistants and academy",
+      description: "A place to manage your AI assistants",
       statusIcon: <i style={iconStyles}>{getStatusIcon(true)}</i>,
       onClick: () => {},
     },

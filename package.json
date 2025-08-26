@@ -1,10 +1,10 @@
 {
   "description": "",
-  "name": "torqbit",
-  "version": "0.1.2-rc1",
+  "name": "toq",
+  "version": "1.0.4",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbo --hostname 0.0.0.0",
+    "dev": "next dev --turbo",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",

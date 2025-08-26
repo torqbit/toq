@@ -17,15 +17,15 @@ export const DEFAULT_THEME = {
   },
 
   brand: {
-    name: "Torqbit",
-    logo: "https://cdn.torqbit.com/static/brand/logo.png",
-    darkLogo: "https://cdn.torqbit.com/static/brand/logo-dark.png",
+    name: "Toq",
+    logo: "https://cdn.torqbit.com/static/brand/toq/logo-light.png",
+    darkLogo: "https://cdn.torqbit.com/static/brand/toq/logo-dark.png",
     defaultTheme: "light" as Theme,
     themeSwitch: true,
-    icon: "https://cdn.torqbit.com/static/brand/brand-icon.png",
+    icon: "https://cdn.torqbit.com/static/brand/toq/logo.png",
     title: "Unified Customer support and education platform",
     description: "One platform to scale support, onboard faster, and reduce repetitive questions.",
-    ogImage: "https://cdn.torqbit.com/static/brand/brand-icon.png",
+    ogImage: "https://cdn.torqbit.com/static/brand/toq/logo.png",
     favicon: "https://cdn.torqbit.com/static/favicon.ico",
     brandColor: "#5b63d3",
     socialLinks: {

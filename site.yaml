@@ -10,24 +10,24 @@ navBar:
     - title: Blog
       link: /blogs
 brand:
-  logo: https://cdn.torqbit.com/static/brand/logo.png
-  darkLogo: https://cdn.torqbit.com/static/brand/logo-dark.png
+  logo: https://cdn.torqbit.com/static/brand/toq/logo-light.png
+  darkLogo: https://cdn.torqbit.com/static/brand/toq/logo-dark.png
   description: Educate and empower your customers and turn them into lead generating engine
   ogImage: https://cdn.torqbit.com/static/og-torqbit.png
   themeSwitch: true
   defaultTheme: light
   favicon: https://cdn.torqbit.com/static/favicon.ico
   socialLinks:
-    discord: https://discord.gg/NserMXcx
+    discord: https://discord.gg/DHU38pGw7C
     github: https://github.com/torqbit
     youtube: https://youtube.com/@torqbit
-  name: Torqbit
-  brandColor: "#3348c8"
+  name: Toq
+  brandColor: "#5B63D3"
   title: Modern Customer education starts here
-  icon: https://cdn.torqbit.com/static/brand/brand-icon.png
+  icon: https://cdn.torqbit.com/static/brand/toq/logo.png
   darkMode: true
 heroSection:
-  title: Welcome to Torqbit Academy
+  title: Welcome to Toq
   description: >
     Torqbit, is an open source learning platform to help businesses
     simplify the onboarding and training of their customers

@@ -1,4 +1,4 @@
-# Torqbit Docker Installer
+# Toq Docker Installer
 
 One-command installer to set up and run Toq via Docker Compose.
 
@@ -11,7 +11,6 @@ npx @torqbit/toq
 ```
 
 - What it does:
-
   - Checks for Docker and Docker Compose.
   - Writes a `docker-compose.yml` to your current directory (asks before overwriting).
   - Starts the stack with `docker compose up -d --build`.

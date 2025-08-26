@@ -147,16 +147,16 @@ async function main() {
     await runCommand(composeCmd.bin, [...composeCmd.args, "up", "-d", "--build"]);
 
     // Wait for web service to be healthy
-    console.log(chalk.cyan("Waiting for Torqbit (web) to become healthy..."));
+    console.log(chalk.cyan("Waiting for Toq (web) to become healthy..."));
     try {
       await waitForServiceHealthy(composeCmd, "web", 180_000, 3_000);
-      console.log(chalk.green.bold("Torqbit web service is healthy."));
+      console.log(chalk.green.bold("Toq web service is healthy."));
     } catch (e) {
       console.log(chalk.yellow(`Continuing, but health check did not report healthy: ${e?.message || e}`));
     }
 
-    console.log(chalk.green.bold("Torqbit services are starting."));
-    console.log("- Web: http://localhost:8080");
+    console.log(chalk.green.bold("Toq services have started."));
+    console.log("- Toq Web: http://localhost:8080");
     console.log("- MySQL: localhost:3360");
     console.log("- Qdrant: http://localhost:6333");
   } catch (err) {

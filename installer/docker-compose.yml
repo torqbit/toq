@@ -59,7 +59,7 @@ services:
     command: --default-authentication-plugin=caching_sha2_password
     healthcheck:
       test: mysqladmin ping -h 127.0.0.1 -u $$MYSQL_USER --password=$$MYSQL_PASSWORD
-      interval: 2s
+      interval: 5s
       timeout: 2s
       retries: 10
       start_period: 5s

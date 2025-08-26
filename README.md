@@ -10,13 +10,13 @@
 
 <p align="center">
   <a href="https://github.com/torqbit/toq/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">
-    <img src="https://img.shields.io/github/license/torqbit/torqbit?style=flat" alt="License"/>
+    <img src="https://img.shields.io/github/license/torqbit/toq?style=flat" alt="License"/>
   </a>
   <a href="https://github.com/torqbit/toq/graphs/contributors" target="_blank" rel="noopener noreferrer">
-    <img src="https://img.shields.io/github/contributors/torqbit/torqbit?style=flat" alt="Contributors"/>
+    <img src="https://img.shields.io/github/contributors/torqbit/toq?style=flat" alt="Contributors"/>
   </a>
   <a href="https://github.com/torqbit/toq/issues" target="_blank" rel="noopener noreferrer">
-    <img src="https://img.shields.io/github/issues/torqbit/torqbit?style=flat" alt="Issues"/>
+    <img src="https://img.shields.io/github/issues/torqbit/toq?style=flat" alt="Issues"/>
   </a>
   <a href="https://discord.gg/DHU38pGw7C" target="_blank" rel="noopener noreferrer">
     <img src="https://img.shields.io/badge/Discord-Community-5865F2?logo=discord&logoColor=white&style=flat" alt="Discord"/>
@@ -29,24 +29,24 @@
 
 ---
 
-## What is Torqbit?
+## What is Toq?
 
-Torqbit makes your **documentation AI-powered and conversational**. Developers can ask questions directly inside your docs, GitHub repos, wikis, or knowledge bases, and get instant, accurate answers without hunting through pages.
+Toq makes your **documentation AI-powered and conversational**. Developers can ask questions directly inside your docs, GitHub repos, wikis, or knowledge bases, and get instant, accurate answers without hunting through pages.
 
-**Embed** Torqbit easily into any doc site — GitBook, ReadMe, Mintlify, Docusaurus, and more — and transform your documentation into an interactive AI assistant.
+**Embed** Toq easily into any doc site — GitBook, ReadMe, Mintlify, Docusaurus, and more — and transform your documentation into an interactive AI assistant.
 
 ---
 
 ## 🚀 Features at a Glance
 
-| Feature                         | Why It Matters                                               |
-| ------------------------------- | ------------------------------------------------------------ |
-| 🤖 **AI Assistant for Docs**    | Provides instant, conversational answers from your content   |
-| 🔎 **Semantic Search**          | Understands context, not just keywords                       |
-| 📚 **Multi-source Knowledge**   | Integrate GitHub, GitBook, Notion, Google Drive, Markdown    |
-| 🔗 **Universal Embedding**      | Widget works seamlessly with any static or dynamic docs site |
-| 🌐 **Dedicated Query Endpoint** | Offer ask.yourdomain.com for direct Q&A access               |
-| 🛠 **Open Source & Extensible**  | Customize connectors and behaviors easily                    |
+| Feature                         | Why It Matters                                                                |
+| ------------------------------- | ----------------------------------------------------------------------------- |
+| 🤖 **AI Assistant for Docs**    | Provides instant, conversational answers from your content                    |
+| 🔎 **Deep Memory**              | Understands context, has memory and can answer questions based on the context |
+| 📚 **Multi-source Knowledge**   | Integrate GitHub, GitBook, Notion, Google Drive, Markdown                     |
+| 🔗 **Universal Embedding**      | Widget works seamlessly with any static or dynamic docs site                  |
+| 🌐 **Dedicated Query Endpoint** | Offer ask.yourdomain.com for direct Q&A access                                |
+| 🛠 **Open Source & Extensible** | Customize connectors and behaviors easily                                     |
 
 ---
 
@@ -65,7 +65,6 @@ npx @torqbit/toq
 ```
 
 - What it does:
-
   - Checks for Docker and Docker Compose.
   - Writes a `docker-compose.yml` to your current directory (asks before overwriting).
   - Starts the stack with `docker compose up -d --build`.

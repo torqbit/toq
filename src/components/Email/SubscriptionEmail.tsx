@@ -48,8 +48,8 @@ const SubscriptionTenantEmailPage = ({ configData }: IEmailProps) => {
               </Text>
 
               <Text className="text-[#888] text-[14px] leading-[20px] px-[20px]">
-                With Torqbit, you have access to a powerful and intuitive Learning Management System designed to help
-                you train customers, improve the speed of onboarding, and drive business success.
+                With {appConstant.platformName}, you have access to a powerful and intuitive Learning Management System
+                designed to help you train customers, improve the speed of onboarding, and drive business success.
               </Text>
 
               <Text className="text-[#888] text-[14px] leading-[20px] px-[20px]">

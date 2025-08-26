@@ -20,11 +20,9 @@ import { Role, TenantRole } from "@prisma/client";
 import DOMPurify from "isomorphic-dompurify";
 const { Content } = Layout;
 
-import { isValidImagePath, showPlanAlertBar } from "@/lib/utils";
-import PlanAlertBar from "../PlanAlertBar/PlanAlertBar";
+import { isValidImagePath } from "@/lib/utils";
 
-import { getSiderMenu, responsiveNav, superAdminMenu } from "./NavigationItems";
-import SupportClientService from "@/services/client/tenant/SupportClientService";
+import { getSiderMenu, superAdminMenu } from "./NavigationItems";
 import { getChatHistoryList } from "@/actions/getChatHistoryList";
 
 const AppLayout: FC<{
@@ -231,8 +229,6 @@ const AppLayout: FC<{
         <>
           {globalState.onlineStatus ? (
             <>
-              {showPlanAlertBar(user) && <PlanAlertBar onUpgrade={showModal} />}
-
               <Layout hasSider className="default-container">
                 {user?.role === Role.ADMIN && <Sidebar menu={superAdminMenu} siteConfig={siteConfig} />}
                 {user?.role === Role.CUSTOMER && (
@@ -242,10 +238,7 @@ const AppLayout: FC<{
                   />
                 )}
 
-                <Layout
-                  className={`layout2-wrapper ${styles.layout2_wrapper}  `}
-                  style={{ height: showPlanAlertBar(user) ? "calc(100vh - 50px)" : "100vh" }}
-                >
+                <Layout className={`layout2-wrapper ${styles.layout2_wrapper}  `} style={{ height: "100vh" }}>
                   <Content className={`${styles.sider_content} ${styles.className}`}>
                     <Flex align="center" justify="space-between" className={styles.userNameWrapper}>
                       {isMobile && <h4>Hello {user?.user?.name}</h4>}

@@ -6,9 +6,6 @@ import { getCookieName } from "@/lib/utils";
 
 import { getSiteConfig } from "@/services/getSiteConfig";
 
-import { IEmailProps } from "@/components/Email/WelcomeTenantOwner";
-
-import TenantSupportMail from "@/components/Email/TenantSupportMail";
 import { IEmailVerificationConfig, ISupportMail } from "@/lib/emailConfig";
 import EmailVerificationPage from "@/components/Email/EmailVerificationPage";
 import { DEFAULT_THEME } from "@/services/siteConstant";
@@ -23,15 +20,15 @@ const EmailPreviewPage: FC<{ configData: IEmailVerificationConfig }> = ({ config
     title: "Unable to generate invoices",
     tenantOwnerEmail: "mehrab@mail.com",
     brandName: "StarBucks",
-    brandIcon: "https://cdn.torqbit.com/static/brand-icon.png",
+    brandIcon: "https://cdn.torqbit.com/static/toq/logo.png",
     brandColor: "",
   };
   return (
     <EmailVerificationPage
       configData={{
-        url: "",
-
-        email: "mehrab2000alam@gmail.com",
+        url: "http://localhost:8080",
+        mode: "signup",
+        email: "myemail@gmail.com",
         site: DEFAULT_THEME,
       }}
     />
